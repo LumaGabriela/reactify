@@ -9,3 +9,65 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+:root {
+  --purple-primary: #441b97;
+  --nightblue: #0c204b;
+  --black-primary: #1a1a1a;
+  --red-primary: #dc3545;
+  --blue-primary: #5f84ff;
+  --lightblue: #b6d4f2;
+  --lightgrey: #ddd;
+  --green-primary: #108663;
+  --white-primary: #ffffff;
+  --grey-primary: #707478;
+  --orange: #f84c1c;
+}
+.App {
+  box-sizing: border-box;
+  height: 100vh;
+  background: #fff;
+}
+
+.bg-purple {
+  background: var(--purple-primary);
+}
+
+.bg-blue {
+  background: var(--nightblue);
+}
+
+.project-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  margin: auto 2rem;
+
+}
+
+.project-item {
+  border: 1px solid gray;
+  padding: 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  
+}
+td{
+  align-items: center;
+}
+
+.btn-container {
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.back-arrow{
+  width: 2.5rem;
+  height: 2.5rem;
+}
+.back-arrow path{  fill: var(--blue-primary) ;}

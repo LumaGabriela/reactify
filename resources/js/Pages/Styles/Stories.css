@@ -1,0 +1,71 @@
+.title {
+    font-size: 2rem;
+    margin: 2rem auto;    
+    text-align: center;
+}
+
+.stories-container, .goals-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: start;
+  width: 100%;
+}
+.stories-grid, .goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); 
+    grid-template-rows: minmax(7rem, 12rem);
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    width: 50%;
+    margin: 4rem 0 0 0;
+    padding: 0 2rem;
+    box-sizing: border-box;
+}
+
+
+.story-block, .goal-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 12rem;
+    height:13rem;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    border: 1px solid #333;
+}
+
+.story-content, .goal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.story-title, .goal-title {
+    font-size: 14px;
+}
+
+
+
+.user-story, .business-goal {
+    background-color: #59c8ec; 
+}
+
+.system-story, .constraint-goal {
+    background-color: #e2c259; 
+}
+
+.goal-badges {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.goal-type, .goal-priority {
+  border: 2px solid black;
+  padding: 0 0.3rem ;
+}

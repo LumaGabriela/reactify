@@ -1,0 +1,47 @@
+.p-4.product-canvas {
+  max-width: 45rem;
+}
+.p-4.product-canvas .card { margin: 0 0 1rem 0 ;}
+.product-canvas-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: .5rem;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.product-canvas-item {  
+  padding: 10px;
+  position: relative;
+  height: 100%;
+  /* background: var(--grey-primary); */
+  border-radius: 5px;
+  box-shadow: 1px 1px 5px 0px grey;
+}
+
+
+
+.product-canvas-item h5 {
+  margin-bottom: 10px;
+}
+
+.product-canvas-item .form-control {
+  margin: 0 1rem;
+}
+
+.product-canvas-item .btn {
+  margin-right: 5px;
+}
+
+.input-name{
+  width: 65%;
+}
+.input-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  background: var(--nightblue);
+  height: 3rem;
+  border-radius: 5px;
+}
+.btn-remove-persona{height: 100%;}

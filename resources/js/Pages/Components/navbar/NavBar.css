@@ -1,0 +1,19 @@
+.nav-divider {
+  margin: 0.5rem 0;
+  border-color: #000000ea;
+  width: 100%;
+}
+
+.offcanvas {  width: 15rem !important;}
+
+.offcanvas-body, .offcanvas-header{
+  background: var(--nightblue);
+  color: var(--white-primary);
+
+}
+.offcanvas-body .nav-link {padding: 0.7rem 0;}
+.nav-link{
+  padding: 0 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}

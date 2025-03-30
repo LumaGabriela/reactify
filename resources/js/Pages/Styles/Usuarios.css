@@ -1,0 +1,16 @@
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3rem;
+}
+
+span.badge, tr {cursor: pointer;}
+
+td, th{
+  text-align: center;
+}
+
+.bg-admin, .bg-customer {
+  background: var(--blue-primary);
+}

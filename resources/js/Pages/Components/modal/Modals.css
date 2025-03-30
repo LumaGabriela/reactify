@@ -1,0 +1,10 @@
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 1rem;
+  /* min-height: 11rem; */
+}
+.form-select {
+  cursor: pointer;
+}
