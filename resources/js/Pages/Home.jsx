@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { AddProjectModal } from './Components/modal/Modals'
 import { AddButton } from './Components/button/Buttons'
 import { ProjectIcon } from './Components/icons/Icons'
-
+import LeftMenu from './Components/LeftMenu';
 
 const Home = () => {
 
@@ -12,8 +12,8 @@ const Home = () => {
   }, [])
 
   return (
-    <div>
- 
+    <>
+      <LeftMenu />
       {/* <AddProjectModal
         modal={modal}
         handleRemove={handleRemove}
@@ -33,7 +33,7 @@ const Home = () => {
         type={'project'}
         handleRemove={handleRemove}
       /> */}
-    </div>
+    </>
   )
 }
 export default Home

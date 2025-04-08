@@ -23,6 +23,8 @@
   --grey-primary: #707478;
   --orange: #f84c1c;
 }
+/* Permite hover na v4 do tailwindcss */
+@custom-variant hover (&:hover);
 .App {
   box-sizing: border-box;
   height: 100vh;

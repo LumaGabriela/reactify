@@ -20,6 +20,11 @@ return new class extends Migration
 
             $table->timestamps();
         });
+
+        Schema::table('priorities', function (Blueprint $table) {
+            $table->id();
+            $table->string('value');
+        });
     }
 
     /**
@@ -28,5 +33,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('goal_sketches');
+        Schema::dropIfExists('priorities');
     }
 };
