@@ -6,33 +6,46 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 :root {
-  --purple-primary: #441b97;
+  --purple-1: #441b97;
   --nightblue: #0c204b;
-  --black-primary: #1a1a1a;
-  --red-primary: #dc3545;
-  --blue-primary: #5f84ff;
+  --black-1: #1a1a1a;
+  --red-1: #dc3545;
+  --blue-1: #5f84ff;
   --lightblue: #b6d4f2;
   --lightgrey: #ddd;
-  --green-primary: #108663;
-  --white-primary: #ffffff;
-  --grey-primary: #707478;
-  --orange: #f84c1c;
+  --green-1: #108663;
+  --white-1: #ffffff;
+  --grey-1: #707478;
+  --orange-1: #f84c1c;
+  /* Nova paleta escura */
+  --green-1: #4ab178;
+  --gray-1: #1f1d2c;
+  --gray-2: #262837;
+  --secondary: #2f2f4b;
+  --lightgrey: #d1d1d1;
+  --blue-1: #03a9f4;
+  --red-1: #ff5252;
+  --yellow-1: #ffa000;
 }
+
 /* Permite hover na v4 do tailwindcss */
 @custom-variant hover (&:hover);
+
 .App {
   box-sizing: border-box;
   height: 100vh;
   background: #fff;
 }
+.bg-gray-1 {background: var(--gray-1);}
+.bg-gray-2 {background: var(--gray-2);}
 
 .bg-purple {
-  background: var(--purple-primary);
+  background: var(--purple-1);
 }
 
 .bg-blue {
@@ -53,9 +66,10 @@
   padding: 10px;
   border-radius: 15px;
   cursor: pointer;
-  
+
 }
-td{
+
+td {
   align-items: center;
 }
 
@@ -68,8 +82,11 @@ td{
 }
 
 
-.back-arrow{
+.back-arrow {
   width: 2.5rem;
   height: 2.5rem;
 }
-.back-arrow path{  fill: var(--blue-primary) ;}
+
+.back-arrow path {
+  fill: var(--blue-1);
+}

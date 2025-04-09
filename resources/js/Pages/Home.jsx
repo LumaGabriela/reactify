@@ -4,36 +4,15 @@ import { AddProjectModal } from './Components/modal/Modals'
 import { AddButton } from './Components/button/Buttons'
 import { ProjectIcon } from './Components/icons/Icons'
 import LeftMenu from './Components/LeftMenu';
+import RightMenu from './Components/RightMenu';
 
 const Home = () => {
 
-  useEffect(() => {
-    console.log()
-  }, [])
-
   return (
-    <>
+    <div className='flex col justify-between h-screen bg-gray-1 w-screen'>
       <LeftMenu />
-      {/* <AddProjectModal
-        modal={modal}
-        handleRemove={handleRemove}
-        userKey={userKey}
-        users={users}
-        setUsers={setUsers}
-      />
-
-
-      <ProjectIcon
-        userKey={userKey}
-        users={users}
-        setProjectKey={setProjectKey}
-        handleRemove={handleRemove}
-      />      
-      <AddButton
-        type={'project'}
-        handleRemove={handleRemove}
-      /> */}
-    </>
+      <RightMenu />
+    </div>
   )
 }
 export default Home
