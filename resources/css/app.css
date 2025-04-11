@@ -11,26 +11,33 @@
 }
 
 :root {
-  --purple-1: #441b97;
-  --nightblue: #0c204b;
+  /* Paleta de cores reorganizada */
   --black-1: #1a1a1a;
-  --red-1: #dc3545;
-  --blue-1: #5f84ff;
-  --lightblue: #b6d4f2;
-  --lightgrey: #ddd;
-  --green-1: #108663;
   --white-1: #ffffff;
-  --grey-1: #707478;
-  --orange-1: #f84c1c;
-  /* Nova paleta escura */
-  --green-1: #4ab178;
-  --gray-1: #1f1d2c;
-  --gray-2: #262837;
-  --secondary: #2f2f4b;
-  --lightgrey: #d1d1d1;
-  --blue-1: #03a9f4;
-  --red-1: #ff5252;
-  --yellow-1: #ffa000;
+
+  --gray-1: #1f1d2c; /* Cinza escuro */
+  --gray-2: #262837; /* Cinza médio */
+  --lightgray-1: #d1d1d1; /* Cinza claro */
+  --lightgray-2: #ddd; /* Cinza muito claro */
+
+  --purple-1: #441b97; /* Roxo escuro */
+  --purple-2: #806dff; /* Roxo claro */
+
+  --blue-1: #0c204b; /* Azul escuro */
+  --blue-2: #5f84ff; /* Azul médio */
+  --blue-3: #03a9f4; /* Azul claro */
+
+  --green-1: #108663; /* Verde escuro */
+  --green-2: #4ab178; /* Verde claro */
+
+  --red-1: #dc3545; /* Vermelho escuro */
+  --red-2: #ff5252; /* Vermelho claro */
+
+  --orange-1: #f84c1c; /* Laranja */
+  --yellow-1: #ffa000; /* Amarelo */
+
+  --lightblue-1: #b6d4f2; /* Azul claro */
+  --secondary: #2f2f4b; /* Azul secundário */
 }
 
 /* Permite hover na v4 do tailwindcss */
@@ -44,13 +51,11 @@
 .bg-gray-1 {background: var(--gray-1);}
 .bg-gray-2 {background: var(--gray-2);}
 
-.bg-purple {
-  background: var(--purple-1);
-}
-
-.bg-blue {
-  background: var(--nightblue);
-}
+.bg-purple-1 {background: var(--purple-1);}
+.bg-purple-2 {background: var(--purple-2);}
+.bg-purple-2-hover {background: var(--purple-2);}
+.bg-purple-2-hover:hover {background: var(--purple-1);}
+.bg-blue-1 {background: var(--nightblue);}
 
 .project-container {
   display: grid;
@@ -89,4 +94,8 @@ td {
 
 .back-arrow path {
   fill: var(--blue-1);
+}
+a {
+  text-decoration: none !important;
+  color: inherit !important;
 }

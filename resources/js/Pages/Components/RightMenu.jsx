@@ -25,7 +25,7 @@ const RightMenu = () => {
       name: 'John', 
       message: 'well done john', 
       avatar: '/api/placeholder/36/36', 
-      color: 'bg-pink-300',
+      color: 'bg-red-300',
       checked: true
     },
     { 
@@ -33,7 +33,7 @@ const RightMenu = () => {
       name: 'Alexander Purwoto', 
       message: 'we\'ll have a meeting at 9AM', 
       avatar: '/api/placeholder/36/36', 
-      color: 'bg-green-400',
+      color: 'bg-indigo-400',
       checked: true
     }
   ];
@@ -87,11 +87,10 @@ const RightMenu = () => {
 
         <div className="px-4">
           {messages.map(msg => (
-            <div key={msg.id} className="flex items-center justify-between py-3">
+            <div key={msg.id} className="rounded-xl border mb-2 px-2 flex items-center justify-between py-3 cursor-pointer">
               <div className="flex items-center">
                 <div className={`${msg.color} rounded-full p-0.5 mr-3`}>
-                  <img 
-                    src={msg.avatar} 
+                  <User 
                     alt={msg.name} 
                     className="rounded-full w-8 h-8" 
                   />
