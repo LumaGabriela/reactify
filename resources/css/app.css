@@ -53,6 +53,8 @@
 
 .bg-purple-1 {background: var(--purple-1);}
 .bg-purple-2 {background: var(--purple-2);}
+.border-purple-2 {border-color: var(--purple-2);}
+.bg-purple-gradient {background: linear-gradient(45deg, var(--purple-1), var(--purple-2));}
 .bg-purple-2-hover {background: var(--purple-2);}
 .bg-purple-2-hover:hover {background: var(--purple-1);}
 .bg-blue-1 {background: var(--nightblue);}
