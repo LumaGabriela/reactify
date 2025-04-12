@@ -10,7 +10,7 @@ const NavMenu = ({ menuItems, setMenuItems }) => {
   };
 
   return (
-    <div className="flex flex-col w-full min-w-2xl">
+    <div className="flex flex-col w-full">
       <div className="flex w-full min-w-full">
         {menuItems.map((menuItem, index) => (
           <div

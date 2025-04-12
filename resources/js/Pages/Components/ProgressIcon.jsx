@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const ProgressIcon = ({ 
   value = 20, 
-  color = "#FF5733", 
+  color = "#806dff", 
   label = "Journeys",
   link = "#"
 }) => {

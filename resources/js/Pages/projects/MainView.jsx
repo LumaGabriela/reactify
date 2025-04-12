@@ -3,8 +3,8 @@ import ProgressIcon from '../Components/ProgressIcon'
 
 const MainView = () => {
   return (
-    <div>
-      <div className='flex col'>
+    <div className='flex flex-col items-center'>
+      <div className='flex flex-row'>
         <ProgressIcon />
         <ProgressIcon />
         <ProgressIcon />
