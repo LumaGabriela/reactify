@@ -5,6 +5,7 @@ import NavMenu from '../Components/NavMenu'
 import MainView from './MainView';
 import Stories from './Stories';
 import Personas from './Personas';
+import Journeys from './Journeys';
 
 const ProjectView = () => {
   const [project, setProject] = useState( 
@@ -114,9 +115,9 @@ const ProjectView = () => {
   const [menuItems, setMenuItems] = useState([
     { name: 'All', active: false },
     { name: 'Stories', active: false },
-    { name: 'Personas', active: true },
+    { name: 'Personas', active: false },
     { name: 'Goals', active: false },
-    { name: 'Journeys', active: false }
+    { name: 'Journeys', active: true }
   ]);
 
   useEffect(() => {
@@ -127,7 +128,7 @@ const ProjectView = () => {
   }, [menuItems]);
 
   useEffect(() => {
-    console.log(project?.personas)
+    console.log(project?.journeys)
   },[project])
 
   const renderContent = () => {
@@ -141,7 +142,7 @@ const ProjectView = () => {
       case 'Goals':
         return
       case 'Journeys':
-        return
+        return <Journeys project={project} setProject={setProject}/>
       default:
         return null;
     }
