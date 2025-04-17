@@ -58,6 +58,12 @@
 .bg-purple-2-hover {background: var(--purple-2);}
 .bg-purple-2-hover:hover {background: var(--purple-1);}
 .bg-blue-1 {background: var(--nightblue);}
+.bg-red-1 {background: var(--red-1);}
+
+.text-red-1 {color: var(--red-1);}
+.text-red-hover {color: var(--red-1);}
+.text-red-hover:hover {color: var(--red-2);}
+
 
 .project-container {
   display: grid;

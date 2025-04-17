@@ -113,8 +113,9 @@ const Stories = ({ project, setProject }) => {
                     <input
                       type="text"
                       value={editValue}
+                      onKeyUp={(e)=> {if(e.key === 'Enter') {editStory(story)}}}
                       onChange={handleInputChange}
-                      className="text-white  w-full h-max rounded focus:outline-none"
+                      className="text-white mx-1 w-full h-max rounded focus:outline-none"
                       autoFocus
                     />
                   ) : (

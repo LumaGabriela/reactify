@@ -4,6 +4,8 @@ import RightMenu from '../Components/RightMenu';
 import NavMenu from '../Components/NavMenu'
 import MainView from './MainView';
 import Stories from './Stories';
+import Personas from './Personas';
+
 const ProjectView = () => {
   const [project, setProject] = useState( 
     {
@@ -51,6 +53,7 @@ const ProjectView = () => {
       //bg: business goal, cg:constraint goal
       ],
       personas: [{
+        id: '1',
         name: "Thiago - Administrador do sistema",
         profile: [],
         expectations: [],
@@ -59,6 +62,7 @@ const ProjectView = () => {
         
       },
       {
+        id: '2',
         name: "João - Usuário do sistema",
         profile: ['', ''],
         expectations: [],
@@ -109,8 +113,8 @@ const ProjectView = () => {
   const [activeMenu, setActiveMenu] = useState('');
   const [menuItems, setMenuItems] = useState([
     { name: 'All', active: false },
-    { name: 'Stories', active: true },
-    { name: 'Personas', active: false },
+    { name: 'Stories', active: false },
+    { name: 'Personas', active: true },
     { name: 'Goals', active: false },
     { name: 'Journeys', active: false }
   ]);
@@ -122,6 +126,10 @@ const ProjectView = () => {
     }
   }, [menuItems]);
 
+  useEffect(() => {
+    console.log(project?.personas)
+  },[project])
+
   const renderContent = () => {
     switch (activeMenu) {
       case 'All':
@@ -129,7 +137,7 @@ const ProjectView = () => {
       case 'Stories':
         return <Stories project={project} setProject={setProject}/>
       case 'Personas':
-        return
+        return <Personas project={project} setProject={setProject}/>
       case 'Goals':
         return
       case 'Journeys':
@@ -140,7 +148,7 @@ const ProjectView = () => {
   };
 
   return (
-<div className="project-view flex flex-col items-center justify-start w-full ">
+<div className="project-view flex flex-col items-center justify-start w-full px-2">
   <h2 className="text-white text-center w-full my-4 p-0">{project.name}</h2>
   <NavMenu menuItems={menuItems} setMenuItems={setMenuItems} />
   {renderContent()}

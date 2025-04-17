@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Search, MoreVertical, CheckCircle, MessageCircle, Users } from 'lucide-react';
+import {Link} from '@inertiajs/react';
 
 const Dashboard = () => {
   const today = new Date();
@@ -109,7 +110,11 @@ const Dashboard = () => {
               default: color = 'bg-gray-800'
             }
             if ((project.status === activeFilter?.name) || activeFilter?.name === 'All') return (
-            <div key={index} className="bg-gray-800 p-4 rounded-xl cursor-pointer">
+            <Link 
+            href={`/projects/1`}
+             as='div'
+             key={index} 
+             className="bg-gray-800 p-4 rounded-xl cursor-pointer">
               <div className="flex justify-between items-center mb-3">
                 <div className="flex items-center">
                   <div className={`h-2 w-2 ${color} rounded-full mr-2` }></div>
@@ -131,7 +136,7 @@ const Dashboard = () => {
                   <span className="text-gray-400 text-sm">{project.members}</span>
                 </div>
               </div>
-            </div>
+            </Link>
           )})}
         </div>
       </div>
