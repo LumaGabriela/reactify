@@ -6,7 +6,7 @@ import Dashboard from './Components/Dashboard';
 const Home = () => {
 
   return (
-    <div className='flex col justify-between min-h-screen bg-gray-1 w-screen'>
+    <div className='flex  justify-between min-h-screen bg-gray-1 w-min-full'>
       <LeftMenu />
       <Dashboard/>
       <RightMenu />

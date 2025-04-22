@@ -60,6 +60,7 @@
 .bg-blue-1 {background: var(--nightblue);}
 .bg-red-1 {background: var(--red-1);}
 
+.text-purple-2 {color: var(--purple-2);}
 .text-red-1 {color: var(--red-1);}
 .text-red-hover {color: var(--red-1);}
 .text-red-hover:hover {color: var(--red-2);}
@@ -106,4 +107,28 @@ td {
 a {
   text-decoration: none !important;
   color: inherit !important;
+}
+/* animacao de girar para a seta de  */
+@keyframes rotate90 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(90deg);
+  }
+}
+@keyframes rotate90reverse {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-90deg);
+  }
+}
+
+.animate-rotate-90 {
+  animation: rotate90 0.3s ease-out forwards;
+}
+.animate-rotate-90-reverse {
+  animation: rotate90reverse 0.3s ease-out forwards;
 }

@@ -149,7 +149,7 @@ const ProjectView = () => {
   };
 
   return (
-<div className="project-view flex flex-col items-center justify-start w-full px-2">
+<div className="project-view flex flex-col items-center justify-start px-2 w-full max-w-6xl">
   <h2 className="text-white text-center w-full my-4 p-0">{project.name}</h2>
   <NavMenu menuItems={menuItems} setMenuItems={setMenuItems} />
   {renderContent()}
@@ -159,7 +159,7 @@ const ProjectView = () => {
 const Project = () => {
 
   return (
-    <div className='flex col justify-between min-h-screen bg-gray-1 w-screen'>
+    <div className='flex col justify-between min-h-screen bg-gray-1 min-w-screen'>
       <LeftMenu />
       <ProjectView />
       <RightMenu />

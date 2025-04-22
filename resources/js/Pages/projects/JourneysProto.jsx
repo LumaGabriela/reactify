@@ -1,5 +1,68 @@
-import React, { useEffect, useState } from 'react';
-import { Plus, ChevronDown, ChevronRight, Map, ArrowRight, CornerUpRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, ChevronDown, ChevronRight, MapPin, Map, ArrowRight } from 'lucide-react';
+
+const JourneyStep = (steps) => {
+  const colors = [
+    'text-orange-500 border-orange-500', 
+    'text-red-500 border-red-500', 
+    'text-blue-500 border-blue-500', 
+    'text-emerald-500 border-emerald-500'
+  ];
+    const [stepss] = useState([
+      {
+        number: '01',
+        title: 'INFODATA 01',
+        description: 'Lorem consectetur sit amet, consectetur adipiscing elit, sed do eiusmod tempor of labore dolore magna.',
+        color: 'text-orange-500 border-orange-500'
+      },
+      {
+        number: '02',
+        title: 'INFODATA 02',
+        description: 'Lorem consectetur sit amet, consectetur adipiscing elit, sed do eiusmod tempor of labore dolore magna.',
+        color: 'text-red-500 border-red-500'
+      },
+      {
+        number: '03',
+        title: 'INFODATA 03',
+        description: 'Lorem consectetur sit amet, consectetur adipiscing elit, sed do eiusmod tempor of labore dolore magna.',
+        color: 'text-blue-500 border-blue-500'
+      },
+      {
+        number: '04',
+        title: 'INFODATA 04',
+        description: 'Lorem consectetur sit amet, consectetur adipiscing elit, sed do eiusmod tempor of labore dolore magna.',
+        color: 'text-emerald-500 border-emerald-500'
+      }
+    ]);
+  
+    return (
+      <div className="max-w-6xl mx-auto p-6">  
+        <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+          {steps.map((step, index) => {
+            const colorIndex = index % colors.length
+            const currentColor = colors[colorIndex]
+            return (
+            <div key={index} className="relative flex-1 min-w-0">
+              <div className={`rounded-lg border-2 ${step.color} p-6 h-full`}>
+                <div className={`absolute -top-4 -left-1 ${step.color.includes('text') ? step.color : ''} bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold border-2 ${step.color}`}>
+                  {step.number}
+                </div>
+                <h3 className={`font-bold mb-2 mt-2 ${currentColor}`}>{step.title}</h3>
+                <p className="text-gray-600 text-sm">{step.description}</p>
+              </div>
+              
+              {index < steps.length - 1 && (
+                <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                  <div className={`w-8 h-8 rotate-45 border-t-2 border-r-2 ${step.color}`}></div>
+                </div>
+              )}
+            </div>
+          )})}
+        </div>
+      </div>
+    );
+
+}
 
 const Journeys = ({ project, setProject }) => {
   // Estado para controlar qual journey está expandida
@@ -16,17 +79,6 @@ const Journeys = ({ project, setProject }) => {
   const [editJourneyName, setEditJourneyName] = useState('');
   // Estado para confirmação de exclusão de journey
   const [deleteConfirmJourney, setDeleteConfirmJourney] = useState(null);
-  //Cores usadas nos steps
-  const colors = [
-    { text: 'text-orange-500', border: 'border-orange-500' },
-    { text: 'text-violet-500', border: 'border-violet-500' },
-    { text: 'text-blue-500', border: 'border-blue-500' },
-    { text: 'text-emerald-500', border: 'border-emerald-500' },
-    { text: 'text-rose-500', border: 'border-rose-500' },
-    // {text: 'text-indigo-500', border: 'border-indigo-500'},
-    { text: 'text-cyan-500', border: 'border-cyan-500' },
-    { text: 'text-teal-500', border: 'border-teal-500' },
-  ]
 
   // Função para expandir/recolher uma journey
   const toggleJourney = (journeyIndex) => {
@@ -43,10 +95,10 @@ const Journeys = ({ project, setProject }) => {
       name: 'Nova Journey',
       steps: []
     };
-
+    
     const updatedJourneys = project.journeys ? [...project.journeys, newJourney] : [newJourney];
     setProject({ ...project, journeys: updatedJourneys });
-
+    
     // Expandir a journey recém-criada (último índice)
     setExpandedJourney(updatedJourneys.length - 1);
   };
@@ -54,25 +106,24 @@ const Journeys = ({ project, setProject }) => {
   // Função para adicionar um novo step a uma journey
   const addNewStep = (journeyIndex) => {
     if (!project.journeys || journeyIndex >= project.journeys.length) return;
-
+    
     const currentSteps = project.journeys[journeyIndex].steps || [];
     const newStep = {
       step: currentSteps.length + 1,
       description: 'Novo passo'
     };
-
+    
     const updatedJourneys = [...project.journeys];
     updatedJourneys[journeyIndex] = {
       ...updatedJourneys[journeyIndex],
       steps: [...currentSteps, newStep]
     };
-
+    
     setProject({ ...project, journeys: updatedJourneys });
   };
 
   // Função para iniciar a edição de um step
   const startEditStep = (journeyIndex, stepIndex) => {
-    console.log('start editing')
     setEditingStep({ journeyIndex, stepIndex });
     setEditValue(project.journeys[journeyIndex].steps[stepIndex].description);
   };
@@ -80,14 +131,14 @@ const Journeys = ({ project, setProject }) => {
   // Função para salvar a edição de um step
   const saveEditStep = () => {
     const { journeyIndex, stepIndex } = editingStep;
-    console.log('editing step')
+    
     if (journeyIndex === null || stepIndex === null) return;
     if (!project.journeys || journeyIndex >= project.journeys.length) return;
     if (!project.journeys[journeyIndex].steps || stepIndex >= project.journeys[journeyIndex].steps.length) return;
-
+    
     const updatedJourneys = [...project.journeys];
     updatedJourneys[journeyIndex].steps[stepIndex].description = editValue;
-
+    
     setProject({ ...project, journeys: updatedJourneys });
     setEditingStep({ journeyIndex: null, stepIndex: null });
   };
@@ -96,33 +147,30 @@ const Journeys = ({ project, setProject }) => {
   const confirmDeleteStep = (journeyIndex, stepIndex) => {
     setDeleteConfirmStep({ journeyIndex, stepIndex });
   };
-  useEffect(() => {
-    console.log(editingStep)
-  }, [editingStep])
 
   // Função para excluir um step
   const deleteStep = () => {
     const { journeyIndex, stepIndex } = deleteConfirmStep;
-    console.log(deleteConfirmStep)
+    
     if (journeyIndex === null || stepIndex === null) return;
     if (!project.journeys || journeyIndex >= project.journeys.length) return;
     if (!project.journeys[journeyIndex].steps || stepIndex >= project.journeys[journeyIndex].steps.length) return;
-
+    
     const updatedSteps = [...project.journeys[journeyIndex].steps];
     updatedSteps.splice(stepIndex, 1);
-
+    
     // Reajustar os números dos steps
     const reorderedSteps = updatedSteps.map((s, idx) => ({
       ...s,
       step: idx + 1
     }));
-
+    
     const updatedJourneys = [...project.journeys];
     updatedJourneys[journeyIndex] = {
       ...updatedJourneys[journeyIndex],
       steps: reorderedSteps
     };
-
+    
     setProject({ ...project, journeys: updatedJourneys });
     setDeleteConfirmStep({ journeyIndex: null, stepIndex: null });
   };
@@ -136,13 +184,13 @@ const Journeys = ({ project, setProject }) => {
   // Função para salvar a edição de uma journey
   const saveEditJourney = () => {
     if (editingJourney === null || !project.journeys || editingJourney >= project.journeys.length) return;
-
+    
     const updatedJourneys = [...project.journeys];
     updatedJourneys[editingJourney] = {
       ...updatedJourneys[editingJourney],
       name: editJourneyName
     };
-
+    
     setProject({ ...project, journeys: updatedJourneys });
     setEditingJourney(null);
   };
@@ -155,10 +203,10 @@ const Journeys = ({ project, setProject }) => {
   // Função para excluir uma journey inteira
   const deleteJourney = () => {
     if (deleteConfirmJourney === null || !project.journeys || deleteConfirmJourney >= project.journeys.length) return;
-
+    
     const updatedJourneys = [...project.journeys];
     updatedJourneys.splice(deleteConfirmJourney, 1);
-
+    
     setProject({ ...project, journeys: updatedJourneys });
     setExpandedJourney(null);
     setDeleteConfirmJourney(null);
@@ -168,12 +216,12 @@ const Journeys = ({ project, setProject }) => {
     <div className="flex flex-col gap-4 p-4 w-full">
       {project.journeys && project.journeys.length > 0 ? (
         project.journeys.map((journey, journeyIndex) => (
-          <div
-            key={journeyIndex}
-            className="bg-gray-800 rounded-lg shadow-md overflow-hidden">
+          <div 
+          key={journeyIndex} 
+          className="bg-gray-800 rounded-lg shadow-md overflow-hidden">
             {/* Cabeçalho da Journey */}
-            <div
-              className="flex items-center justify-between py-2 px-3 cursor-pointer bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
+            <div 
+              className="flex items-center justify-between py-2 px-3 cursor-pointer bg-gray-700 hover:bg-gray-600 transition-colors"
               onClick={() => toggleJourney(journeyIndex)}
             >
               <div className="flex items-center">
@@ -183,7 +231,7 @@ const Journeys = ({ project, setProject }) => {
                     type="text"
                     value={editJourneyName}
                     onChange={(e) => setEditJourneyName(e.target.value)}
-                    onKeyUp={(e) => { if (e.key === 'Enter') saveEditJourney() }}
+                    onKeyUp={(e) => {if(e.key === 'Enter') saveEditJourney()}}
                     className="bg-gray-800 text-white rounded px-2 py-1 focus:outline-none"
                     autoFocus
                   />
@@ -191,7 +239,7 @@ const Journeys = ({ project, setProject }) => {
                   <h4 className="text-white font-medium">{journey.name}</h4>
                 )}
               </div>
-
+              
               <div className="flex items-center">
                 {editingJourney === journeyIndex ? (
                   <button
@@ -219,7 +267,7 @@ const Journeys = ({ project, setProject }) => {
                     </svg>
                   </button>
                 )}
-
+                
                 <button
                   className="p-1 hover:bg-gray-500 rounded-full mr-2"
                   onClick={(e) => {
@@ -232,7 +280,7 @@ const Journeys = ({ project, setProject }) => {
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                   </svg>
                 </button>
-
+                
                 {expandedJourney === journeyIndex ? (
                   <ChevronRight className="text-white animate-rotate-90" size={20} />
                 ) : (
@@ -240,7 +288,7 @@ const Journeys = ({ project, setProject }) => {
                 )}
               </div>
             </div>
-
+            
             {/* Diálogo de confirmação de exclusão de journey */}
             {deleteConfirmJourney === journeyIndex && (
               <div className="absolute z-10 bg-gray-700 rounded shadow-lg p-2 w-64">
@@ -263,103 +311,106 @@ const Journeys = ({ project, setProject }) => {
                 </div>
               </div>
             )}
-
+            
             {/* Conteúdo da Journey (Steps) */}
             {expandedJourney === journeyIndex && (
               <>
-
+  
                 {journey.steps && journey.steps.length > 0 ? (
                   <div className="flex flex-col">
                     {/* Grid de steps */}
-                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center justify-center p-4">
-                      {/* Steps com setas de conexão */}
-                      {journey.steps.map((step, stepIndex) => {
-
-                        const colorIndex = stepIndex % colors.length;
-                        const currentColor = colors[colorIndex];
-                        return (
-                          <div
-                            key={stepIndex}
-                            className="step relative flex min-h-full min-w-full cursor-pointer rounded hover:bg-gray-700 transition-colors">
-                            <div
-                              onClick={() => startEditStep(journeyIndex, stepIndex)}
-                              className={`rounded-lg border-2 ${currentColor.border} flex min-h-full min-w-full`}>
-                              <div className={`absolute -top-4 -left-1 ${currentColor.text} bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold border-2 ${currentColor.border}`}>
-                                {stepIndex + 1}
+                      <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center justify-center p-3">
+                        {/* Journey como ponto de início */}
+                        <div className="flex flex-col	h-30 items-center justify-start">
+                          <div className="w-14 h-14 rounded-full bg-purple-2 flex items-center justify-center text-white">
+                            <Map size={20} />
+                          </div>
+                          <span className="text-xs text-gray-300 mt-2 block">Início</span>
+                        </div>
+                        
+                        {/* Steps com setas de conexão */}
+                        {journey.steps.map((step, stepIndex) => (
+                          <div key={stepIndex} className='step flex h-30 items-center justify-evenly w-content'>
+                            {/* Seta conectando os steps */}
+                            <ArrowRight size={26} className='icon text-gray-600 my-auto flex flex-shrink-0'/>                            
+                            {/* Step */}
+                            <div className="flex flex-col items-center justify-start relative h-full">
+                              <div 
+                                className="w-14 h-14 rounded-full bg-purple-2 flex items-center justify-center text-white cursor-pointer relative"
+                                onClick={() => startEditStep(journeyIndex, stepIndex)}
+                              >
+                                <MapPin size={20} />
                               </div>
-                              {editingStep.journeyIndex === journeyIndex && editingStep.stepIndex === stepIndex ? (
-                                <div className="h-full w-full p-2" onClick={(e) => e.stopPropagation()}>
-                                  <textarea
-                                    value={editValue}
-                                    onChange={(e) => setEditValue(e.target.value)}
-                                    className="bg-gray-700 text-white rounded p-2 text-xs w-full resize-none focus:outline-none"
-                                    rows={3}
-                                    autoFocus
-                                  />
-                                  <div className="flex justify-between mt-1">
+                              
+                              <div className="text-center">
+                                {editingStep.journeyIndex === journeyIndex && editingStep.stepIndex === stepIndex ? (
+                                  <div className="mt-2">
+                                    <textarea
+                                      value={editValue}
+                                      onChange={(e) => setEditValue(e.target.value)}
+                                      className="bg-gray-700 text-white rounded p-2 text-xs w-full resize-none focus:outline-none"
+                                      rows={3}
+                                      autoFocus
+                                    />
+                                    <div className="flex justify-between mt-1">
+                                      <button
+                                        className="bg-green-600 hover:bg-green-500 text-white text-xs px-2 py-1 rounded"
+                                        onClick={saveEditStep}
+                                      >
+                                        Salvar
+                                      </button>
+                                      <button
+                                        className="bg-red-600 hover:bg-red-500 text-white text-xs px-2 py-1 rounded"
+                                        onClick={() => confirmDeleteStep(journeyIndex, stepIndex)}
+                                      >
+                                        Excluir
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-gray-300 mt-1 block">
+                                    {step.description}
+                                  </span>
+                                )}
+                              </div>
+                              
+                              {/* Diálogo de confirmação de exclusão de step */}
+                              {deleteConfirmStep.journeyIndex === journeyIndex && deleteConfirmStep.stepIndex === stepIndex && (
+                                <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-10 bg-gray-700 rounded shadow-lg p-2 w-48">
+                                  <div className="text-white text-xs mb-2">
+                                    Deseja remover este passo?
+                                  </div>
+                                  <div className="flex justify-between gap-1">
                                     <button
-                                      className="bg-green-600 hover:bg-green-500 text-white text-xs px-2 py-1 rounded"
-                                      onClick={saveEditStep}
+                                      className="bg-red-500 hover:bg-red-600 text-white text-xs py-1 px-2 rounded flex-1"
+                                      onClick={deleteStep}
                                     >
-                                      Salvar
+                                      Sim
                                     </button>
                                     <button
-                                      className="bg-red-600 hover:bg-red-500 text-white text-xs px-2 py-1 rounded"
-                                      onClick={() => confirmDeleteStep(journeyIndex, stepIndex)}
+                                      className="bg-gray-600 hover:bg-gray-500 text-white text-xs py-1 px-2 rounded flex-1"
+                                      onClick={() => setDeleteConfirmStep({ journeyIndex: null, stepIndex: null })}
                                     >
-                                      Excluir
+                                      Não
                                     </button>
                                   </div>
                                 </div>
-                              ) : (
-                                <p className={` mt-2 p-2 text-white text-sm`}>{step.description}</p>
                               )}
                             </div>
-
-                            {/* Diálogo de confirmação de exclusão de step */}
-                            {deleteConfirmStep.journeyIndex === journeyIndex && deleteConfirmStep.stepIndex === stepIndex && (
-                              <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-10 bg-gray-700 rounded shadow-lg p-2 w-48">
-                                <div className="text-white text-xs mb-2">
-                                  Deseja remover este passo?
-                                </div>
-                                <div className="flex justify-between gap-1">
-                                  <button
-                                    className="bg-red-500 hover:bg-red-600 text-white text-xs py-1 px-2 rounded flex-1"
-                                    onClick={deleteStep}
-                                  >
-                                    Sim
-                                  </button>
-                                  <button
-                                    className="bg-gray-600 hover:bg-gray-500 text-white text-xs py-1 px-2 rounded flex-1"
-                                    onClick={() => setDeleteConfirmStep({ journeyIndex: null, stepIndex: null })}
-                                  >
-                                    Não
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                            {/* Seta apontando para proximo passo caso houver */}
-                            {stepIndex < journey.steps.length - 1 && (
-                              <div className={`absolute top-1/2 -right-4 transform -translate-y-1/2 z-10 ${currentColor.text}`}><CornerUpRight size={20} /></div>
-                            )}
                           </div>
-
-
-                        )
-                      })}
-
-                      {/* Botão para adicionar novo passo */}
-                      <div className="ml-2">
-                        <button
-                          className="w-10 h-10 rounded bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-blue-400"
-                          onClick={() => addNewStep(journeyIndex)}
-                        >
-                          <Plus size={18} />
-                        </button>
+                        ))}
+                        
+                        {/* Botão para adicionar novo passo */}
+                        <div className="ml-2">
+                          <button
+                            className="w-10 h-10 rounded bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-blue-400"
+                            onClick={() => addNewStep(journeyIndex)}
+                          >
+                            <Plus size={18} />
+                          </button>
+                        </div>
                       </div>
-
-                    </div>
-
+                   
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center p-4 text-gray-400">
