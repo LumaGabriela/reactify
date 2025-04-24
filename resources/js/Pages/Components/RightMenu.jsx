@@ -39,7 +39,7 @@ const RightMenu = () => {
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-gray-1 text-white w-full max-w-sm ">
+    <div className="flex flex-col h-screen bg-gray-1 text-white max-w-sm ">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-800">
         <div className="flex items-center space-x-3">

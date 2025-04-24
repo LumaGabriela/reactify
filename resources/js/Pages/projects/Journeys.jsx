@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Plus, ChevronDown, ChevronRight, Map, ArrowRight, CornerUpRight } from 'lucide-react';
 
 const Journeys = ({ project, setProject }) => {
+  const textareaRef = useRef(null);
   // Estado para controlar qual journey está expandida
   const [expandedJourney, setExpandedJourney] = useState(0);
   // Estado para controlar qual step está sendo editado
@@ -18,15 +19,28 @@ const Journeys = ({ project, setProject }) => {
   const [deleteConfirmJourney, setDeleteConfirmJourney] = useState(null);
   //Cores usadas nos steps
   const colors = [
-    { text: 'text-orange-500', border: 'border-orange-500' },
-    { text: 'text-violet-500', border: 'border-violet-500' },
-    { text: 'text-blue-500', border: 'border-blue-500' },
-    { text: 'text-emerald-500', border: 'border-emerald-500' },
-    { text: 'text-rose-500', border: 'border-rose-500' },
-    // {text: 'text-indigo-500', border: 'border-indigo-500'},
-    { text: 'text-cyan-500', border: 'border-cyan-500' },
-    { text: 'text-teal-500', border: 'border-teal-500' },
+    { text: 'text-orange-500', border: 'border-orange-500', bg: 'bg-orange-500' },
+    { text: 'text-violet-500', border: 'border-violet-500', bg: 'bg-violet-500' },
+    { text: 'text-blue-500', border: 'border-blue-500', bg: 'bg-blue-500' },
+    { text: 'text-emerald-500', border: 'border-emerald-500', bg: 'bg-emerald-500' },
+    { text: 'text-rose-500', border: 'border-rose-500', bg: 'bg-rose-500' },
+    { text: 'text-cyan-500', border: 'border-cyan-500', bg: 'bg-cyan-500' },
+    { text: 'text-teal-500', border: 'border-teal-500', bg: 'bg-teal-500' },
   ]
+  //Funcao para ajustar a altura do textarea
+  const adjustTextAreaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.resize = 'none';
+      textarea.style.webkitAppearence = 'none';
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }
+  //Aciona a funcao sempre que o texto do textarea mudar
+  useEffect(() => {
+    adjustTextAreaHeight();
+  }, [editValue, editingStep]);
 
   // Função para expandir/recolher uma journey
   const toggleJourney = (journeyIndex) => {
@@ -72,7 +86,6 @@ const Journeys = ({ project, setProject }) => {
 
   // Função para iniciar a edição de um step
   const startEditStep = (journeyIndex, stepIndex) => {
-    console.log('start editing')
     setEditingStep({ journeyIndex, stepIndex });
     setEditValue(project.journeys[journeyIndex].steps[stepIndex].description);
   };
@@ -80,7 +93,6 @@ const Journeys = ({ project, setProject }) => {
   // Função para salvar a edição de um step
   const saveEditStep = () => {
     const { journeyIndex, stepIndex } = editingStep;
-    console.log('editing step')
     if (journeyIndex === null || stepIndex === null) return;
     if (!project.journeys || journeyIndex >= project.journeys.length) return;
     if (!project.journeys[journeyIndex].steps || stepIndex >= project.journeys[journeyIndex].steps.length) return;
@@ -97,13 +109,12 @@ const Journeys = ({ project, setProject }) => {
     setDeleteConfirmStep({ journeyIndex, stepIndex });
   };
   useEffect(() => {
-    console.log(editingStep)
+    // console.log(editingStep)
   }, [editingStep])
 
   // Função para excluir um step
   const deleteStep = () => {
     const { journeyIndex, stepIndex } = deleteConfirmStep;
-    console.log(deleteConfirmStep)
     if (journeyIndex === null || stepIndex === null) return;
     if (!project.journeys || journeyIndex >= project.journeys.length) return;
     if (!project.journeys[journeyIndex].steps || stepIndex >= project.journeys[journeyIndex].steps.length) return;
@@ -153,13 +164,16 @@ const Journeys = ({ project, setProject }) => {
   };
 
   // Função para excluir uma journey inteira
-  const deleteJourney = () => {
+  const handleDeleteJourney = () => {
     if (deleteConfirmJourney === null || !project.journeys || deleteConfirmJourney >= project.journeys.length) return;
 
-    const updatedJourneys = [...project.journeys];
+    const updatedJourneys = project.journeys.slice();
     updatedJourneys.splice(deleteConfirmJourney, 1);
 
-    setProject({ ...project, journeys: updatedJourneys });
+    setProject((prevProject) => ({
+      ...prevProject,
+      journeys: updatedJourneys,
+    }));
     setExpandedJourney(null);
     setDeleteConfirmJourney(null);
   };
@@ -176,7 +190,7 @@ const Journeys = ({ project, setProject }) => {
               className="flex items-center justify-between py-2 px-3 cursor-pointer bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
               onClick={() => toggleJourney(journeyIndex)}
             >
-              <div className="flex items-center">
+              <div className="flex items-center text-2xl">
                 <Map className="text-purple-2 mr-2" size={20} />
                 {editingJourney === journeyIndex ? (
                   <input
@@ -184,11 +198,11 @@ const Journeys = ({ project, setProject }) => {
                     value={editJourneyName}
                     onChange={(e) => setEditJourneyName(e.target.value)}
                     onKeyUp={(e) => { if (e.key === 'Enter') saveEditJourney() }}
-                    className="bg-gray-800 text-white rounded px-2 py-1 focus:outline-none"
+                    className=" text-white font-medium text-2xl rounded h-full focus:outline-none"
                     autoFocus
                   />
                 ) : (
-                  <h4 className="text-white font-medium">{journey.name}</h4>
+                  <h4 className="text-white font-medium m-0">{journey.name}</h4>
                 )}
               </div>
 
@@ -283,28 +297,29 @@ const Journeys = ({ project, setProject }) => {
                             className="step relative flex min-h-full min-w-full cursor-pointer rounded hover:bg-gray-700 transition-colors">
                             <div
                               onClick={() => startEditStep(journeyIndex, stepIndex)}
-                              className={`rounded-lg border-2 ${currentColor.border} flex min-h-full min-w-full`}>
-                              <div className={`absolute -top-4 -left-1 ${currentColor.text} bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold border-2 ${currentColor.border}`}>
+                              className={`rounded-lg border-4 ${currentColor.border} flex min-h-full min-w-full`}>
+                              <div className={`absolute -top-4 -left-1 ${currentColor.bg} text-white rounded-full w-8 h-8 flex items-center justify-center font-bold`}>
                                 {stepIndex + 1}
                               </div>
                               {editingStep.journeyIndex === journeyIndex && editingStep.stepIndex === stepIndex ? (
-                                <div className="h-full w-full p-2" onClick={(e) => e.stopPropagation()}>
+                                <div className="h-full w-full p-2 text-sm bg-gray-700 rounded" onClick={(e) => e.stopPropagation()}>
                                   <textarea
+                                    ref={textareaRef}
                                     value={editValue}
                                     onChange={(e) => setEditValue(e.target.value)}
-                                    className="bg-gray-700 text-white rounded p-2 text-xs w-full resize-none focus:outline-none"
-                                    rows={3}
+                                    className="resize-none overflow-hidden scroll-height-10 text-white rounded text-xs pt-2 w-full min-h-content focus:outline-none"
+                                    rows={4}
                                     autoFocus
                                   />
                                   <div className="flex justify-between mt-1">
                                     <button
-                                      className="bg-green-600 hover:bg-green-500 text-white text-xs px-2 py-1 rounded"
+                                      className="bg-green-600 hover:bg-green-500 text-white text-xs p-1 rounded"
                                       onClick={saveEditStep}
                                     >
                                       Salvar
                                     </button>
                                     <button
-                                      className="bg-red-600 hover:bg-red-500 text-white text-xs px-2 py-1 rounded"
+                                      className="bg-red-600 hover:bg-red-500 text-white text-xs p-1 rounded"
                                       onClick={() => confirmDeleteStep(journeyIndex, stepIndex)}
                                     >
                                       Excluir
@@ -340,7 +355,7 @@ const Journeys = ({ project, setProject }) => {
                             )}
                             {/* Seta apontando para proximo passo caso houver */}
                             {stepIndex < journey.steps.length - 1 && (
-                              <div className={`absolute top-1/2 -right-4 transform -translate-y-1/2 z-10 ${currentColor.text}`}><CornerUpRight size={20} /></div>
+                              <div className={`absolute top-1/2 -right-5 transform -translate-y-1/2 z-10 ${currentColor.text}`}><CornerUpRight size={27} /></div>
                             )}
                           </div>
 

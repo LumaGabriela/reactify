@@ -18,7 +18,7 @@
     "@inertiajs/react": "^2.0.6",
     "@vitejs/plugin-react": "^4.3.4",
     "bootstrap": "^5.3.3",
-    "lucide-react": "^0.487.0",
+    "lucide-react": "^0.503.0",
     "react-dom": "^19.1.0"
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, CircleX, Pencil, Check } from 'lucide-react';
 
 const Stories = ({ project, setProject }) => {
   // Estado para controlar qual story está sendo editada
@@ -75,10 +75,10 @@ const Stories = ({ project, setProject }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 w-full p-4 cursor-pointer items-center">
+    <div className="stories bg-gray-500 rounded grid sm:grid-cols-1 md:grid-cols-2 gap-2 w-full p-2 cursor-pointer items-center">
       {project.stories.length > 0 ? (
         project.stories.map((story) => (
-          <div key={story.id} className="bg-gray-800 rounded-lg p-2 shadow-md w-md">
+          <div key={story.id} className="story bg-gray-800 rounded-lg p-2 shadow-md col-span-1 h-full">
             <div className="flex items-center mb-2 relative">
               <div
                 className={`${story.type === 'user' ? 'bg-pink-600' : 'bg-cyan-600'} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer`}
@@ -123,32 +123,24 @@ const Stories = ({ project, setProject }) => {
                   )}
                 </div>
               </div>
-              <div className="flex space-x-2 relative">
+              <div className="flex gap-1">
                 <button
-                  className={`edit p-1 hover:bg-gray-700 rounded ${editingId === story.id ? 'bg-green-700' : ''}`}
+                  className={`edit flex p-1 hover:bg-gray-700 rounded transition-colors ${editingId === story.id ? 'bg-green-700 hover:bg-green-800' : ''}`}
                   onClick={() => editStory(story)}
                 >
                   {editingId === story.id ? (
                     // Ícone de confirmação quando estiver editando
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-400">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
+                    <Check size={16} class='stroke-green-400'/>
                   ) : (
                     // Ícone de edição quando não estiver editando
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                    </svg>
+                    <Pencil size={16} class='stroke-gray-400'/>
                   )}
                 </button>
                 <button
-                  className="p-1 hover:bg-gray-700 rounded"
+                  className="p-1 flex hover:bg-gray-700 rounded"
                   onClick={() => toggleDeleteConfirm(story.id)}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${deleteConfirmId === story.id ? 'text-red-400' : 'text-gray-400'}`}>
-                    <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"></path>
-                    <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path>
-                  </svg>
+                  <CircleX size={16} class={`${deleteConfirmId === story.id ? 'stroke-red-400' : 'stroke-gray-400'}`}/>
                 </button>
 
                 {/* Diálogo de confirmação de exclusão */}
@@ -201,7 +193,7 @@ const Stories = ({ project, setProject }) => {
 
       {/* Botão "Nova story" */}
       <button
-        className="flex items-center justify-center w-full py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md w-md"
+        className="col-span-2 flex items-center justify-center w-full py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md"
         onClick={addNewStory}
       >
         <Plus size={18} className="mr-2" />

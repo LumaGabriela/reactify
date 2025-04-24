@@ -65,49 +65,11 @@
 .text-red-hover {color: var(--red-1);}
 .text-red-hover:hover {color: var(--red-2);}
 
-
-.project-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  margin: auto 2rem;
-
-}
-
-.project-item {
-  border: 1px solid gray;
-  padding: 10px;
-  border-radius: 15px;
-  cursor: pointer;
-
-}
-
-td {
-  align-items: center;
-}
-
-.btn-container {
-  width: 100%;
-  height: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-
-.back-arrow {
-  width: 2.5rem;
-  height: 2.5rem;
-}
-
-.back-arrow path {
-  fill: var(--blue-1);
-}
 a {
   text-decoration: none !important;
   color: inherit !important;
 }
+
 /* animacao de girar para a seta de  */
 @keyframes rotate90 {
   0% {
