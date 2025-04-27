@@ -1,5 +1,7 @@
 import React from 'react';
 import { Bell, Plus, MessageSquare, MoreVertical, Check, User } from 'lucide-react';
+import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+
 
 const RightMenu = () => {
   const teamMembers = [
@@ -49,6 +51,13 @@ const RightMenu = () => {
           <div>
             <h3 className="font-semibold">Luma Andrade</h3>
             <p className="text-xs text-gray-400">lumagabriela1333@gmail.com</p>
+            <ResponsiveNavLink
+                method="post"
+                href={route('logout')}
+                as="button"
+            >
+                Log Out
+            </ResponsiveNavLink>
           </div>
         </div>
         <Bell className="h-5 w-5 text-gray-400" />

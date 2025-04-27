@@ -11,23 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
+        
+        Schema::create('user_roles', function (Blueprint $table) {
+          $table->id();
+          $table->string('name')->unique(); // Ex: "admin", "editor"
+          $table->boolean('can_create')->default(false);
+          $table->boolean('can_read')->default(false);
+          $table->boolean('can_update')->default(false);  
+        });
+
         Schema::create('users', function (Blueprint $table) {
           $table->id();
           $table->string('name');
           $table->string('email')->unique();
           $table->timestamp('email_verified_at')->nullable();
           $table->string('password');
-          $table->foreignId('user_role_ID')->constrainet('user_roles');
+          $table->foreignId('user_role_id')->constrained('user_roles');
           $table->boolean('active')->default(false);
           $table->rememberToken();
           $table->timestamps();
-        });
-
-        Schema::create('user_roles', function (Blueprint $table) {
-          $table->id();
-          $table->boolean('can_create')->default(false);
-          $table->boolean('can_read')->default(false);
-          $table->boolean('can_update')->default(false);  
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
