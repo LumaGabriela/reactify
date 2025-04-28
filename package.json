@@ -27,6 +27,7 @@
         "@vitejs/plugin-react": "^4.3.4",
         "bootstrap": "^5.3.3",
         "lucide-react": "^0.503.0",
-        "react-dom": "^19.1.0"
+        "react-dom": "^19.1.0",
+        "ziggy-js": "^2.5.2"
     }
 }
