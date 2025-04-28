@@ -17,27 +17,27 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('canvas_personas', function (Blueprint $table) {
+        Schema::create('canvas_personas', function (Blueprint $table) {
           $table->foreignId('product_canvas_id')->constrained('product_canvas');
         });
 
-        Schema::table('canvas_solutions', function (Blueprint $table) {
+        Schema::create('canvas_solutions', function (Blueprint $table) {
           $table->foreignId('product_canvas_id')->constrained('product_canvas');
         });
 
-        Schema::table('canvas_issues', function (Blueprint $table) {
+        Schema::create('canvas_issues', function (Blueprint $table) {
           $table->foreignId('product_canvas_id')->constrained('product_canvas');
         });
 
-        Schema::table('canvas_restrictions', function (Blueprint $table) {
+        Schema::create('canvas_restrictions', function (Blueprint $table) {
           $table->foreignId('product_canvas_id')->constrained('product_canvas');
         });
 
-        Schema::table('canvas_is', function (Blueprint $table) {
+        Schema::create('canvas_is', function (Blueprint $table) {
           $table->foreignId('product_canvas_id')->constrained('product_canvas');
         });
 
-        Schema::table('canvas_is_not', function (Blueprint $table) {
+        Schema::create('canvas_is_not', function (Blueprint $table) {
           $table->foreignId('product_canvas_id')->constrained('product_canvas');
         });
     }

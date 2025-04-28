@@ -11,6 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('priorities', function (Blueprint $table) {
+            $table->id();
+            $table->string('value');
+        });
+
         Schema::create('goal_sketches', function (Blueprint $table) {
             $table->id();
             $table->string(column: 'title');
@@ -19,11 +24,6 @@ return new class extends Migration
             $table->foreignId('priority_id')->constrained('priorities');
 
             $table->timestamps();
-        });
-
-        Schema::table('priorities', function (Blueprint $table) {
-            $table->id();
-            $table->string('value');
         });
     }
 
