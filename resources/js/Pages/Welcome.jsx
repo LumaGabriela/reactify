@@ -3,8 +3,6 @@ import { Head, Link } from '@inertiajs/react';
 <<<<<<< HEAD
 =======
 import { route } from 'ziggy-js'
->>>>>>> f6efe291091f69609fec124aca1d42a11a692214
-
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     return (
         <>
