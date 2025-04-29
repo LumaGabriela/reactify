@@ -1,7 +1,5 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
-<<<<<<< HEAD
-=======
 import { route } from 'ziggy-js'
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     return (
