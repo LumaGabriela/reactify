@@ -1,5 +1,5 @@
 import React from 'react'
-import ProgressIcon from '../Components/ProgressIcon'
+import ProgressIcon from '../../Components/ProgressIcon'
 
 const MainView = () => {
   return (

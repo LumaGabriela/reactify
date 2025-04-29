@@ -51,7 +51,6 @@
 .App {
   box-sizing: border-box;
   height: 100vh;
-  background: #fff;
 }
 .bg-gray-1 {background: var(--gray-1);}
 .bg-gray-2 {background: var(--gray-2);}

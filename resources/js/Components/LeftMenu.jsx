@@ -1,23 +1,27 @@
 import React from 'react';
-import { Grid, Settings, User, Calendar, Mail, FileText, LayoutDashboard, Squirrel } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { Grid, Settings, User, Calendar, Mail, FileText, LayoutDashboard, Squirrel, LogOut } from 'lucide-react';
 
-const LeftMenu = () => {
+const LeftMenu = ({}) => {
   const items = [
     { name: 'My Projects', url: '#', icon: Grid, active: true },
     { name: 'Reports', url: '#', icon: FileText },
     { name: 'Calendar', url: '#', icon: Calendar },
     { name: 'Email', url: '#', icon: Mail, badge: '20' },
-    { name: 'Profile', url: '#', icon: User },
-    { name: 'Settings', url: '#', icon: Settings }
+    { name: 'Profile', url: route('profile.edit'), icon: User },
+    { name: 'Settings', url: '#', icon: Settings },
+    { name: 'Logout', url: route('logout'), icon: LogOut },
   ];
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-2 w-60 text-gray-300 ">
       {/* Header */}
-      <div className="px-2 py-3 h-20 flex items-center justify-evenly cursor-pointer border-b border-gray-700">
-        <div className="bg-blue-800 rounded-full p-2">
-          <Squirrel />
-        </div>
+      <Link 
+        as='div' 
+        className="px-2 py-3 h-20 flex items-center justify-evenly cursor-pointer border-b border-gray-700"
+        href='/home'
+      >
+        <div className="bg-blue-800 rounded-full p-2"><Squirrel /></div>
         <div className='flex flex-col items-start justify-center w-full h-full ml-3'>
           <span className="font-semibold text-white text-sm whitespace-nowrap h-1/2">Sistema Reactify</span>
           <div className='flex col items-center justify-between h-1/2'>
@@ -26,7 +30,7 @@ const LeftMenu = () => {
           </div>
 
         </div>
-      </div>
+      </Link>
 
       {/* Navigation */}
       <nav className="flex-1 p-2 space-y-1">
@@ -34,11 +38,14 @@ const LeftMenu = () => {
           const IconComponent = item.icon;
 
           return (
-            <a
+            <Link 
+              as='button'
               href={item.url}
               key={index}
-              className={`flex items-center px-4 py-2 my-1 rounded-md transition-colors duration-200  [text-decoration:none!important]
-                ${item.active ? 'bg-indigo-900' : 'hover:bg-indigo-900'}`}
+              className={`flex items-center px-4 py-2 my-1 w-full rounded-md transition-colors duration-200 cursor-pointer [text-decoration:none!important]
+                ${item.active ? 'bg-indigo-900' : 'hover:bg-indigo-900'}`
+              }
+              {...(item.name === 'Logout' && { method: 'post'})}
             >
               <div className="flex items-center">
                 {index === 0 ? (
@@ -54,7 +61,7 @@ const LeftMenu = () => {
                   {item.badge}
                 </div>
               )}
-            </a>
+            </Link>
           );
         })}
       </nav>

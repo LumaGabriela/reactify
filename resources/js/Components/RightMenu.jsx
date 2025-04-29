@@ -1,9 +1,11 @@
-import React from 'react';
+import { Link, usePage } from '@inertiajs/react';
+import React, { useState } from 'react';
 import { Bell, Plus, MessageSquare, MoreVertical, Check, User } from 'lucide-react';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 
 
 const RightMenu = () => {
+  const user = usePage().props.auth.user;
   const teamMembers = [
     { id: 1, avatar: '/api/placeholder/24/24', color: 'bg-pink-300' },
     { id: 2, avatar: '/api/placeholder/24/24', color: 'bg-orange-300' },
@@ -49,18 +51,10 @@ const RightMenu = () => {
             <User/>
           </div>
           <div>
-            <h3 className="font-semibold">Luma Andrade</h3>
-            <p className="text-xs text-gray-400">lumagabriela1333@gmail.com</p>
-            <ResponsiveNavLink
-                method="post"
-                href={route('logout')}
-                as="button"
-            >
-                Log Out
-            </ResponsiveNavLink>
+            <h5 className="font-semibold">{user?.name}</h5>
+            <p className="text-xs text-gray-400">{user?.email}</p>
           </div>
         </div>
-        <Bell className="h-5 w-5 text-gray-400" />
       </div>
 
       {/* Team members */}

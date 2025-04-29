@@ -307,7 +307,7 @@ const Journeys = ({ project, setProject }) => {
                                     ref={textareaRef}
                                     value={editValue}
                                     onChange={(e) => setEditValue(e.target.value)}
-                                    className="resize-none overflow-hidden scroll-height-10 text-white rounded text-xs pt-2 w-full min-h-content focus:outline-none"
+                                    className="resize-none overflow-hidden scroll-height-10 text-white bg-transparent rounded text-sm pt-2 w-full min-h-content focus:outline-none border-none focus:ring-0"
                                     rows={4}
                                     autoFocus
                                   />

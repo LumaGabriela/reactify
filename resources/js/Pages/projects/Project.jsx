@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import LeftMenu from '../Components/LeftMenu';
-import RightMenu from '../Components/RightMenu';
-import NavMenu from '../Components/NavMenu'
+import LeftMenu from '../../Components/LeftMenu';
+import RightMenu from '../../Components/RightMenu';
+import NavMenu from '../../Components/NavMenu'
 import MainView from './MainView';
 import Stories from './Stories';
 import Personas from './Personas';
 import Journeys from './Journeys';
-
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 const ProjectView = () => {
   const [project, setProject] = useState( 
     {
@@ -159,11 +159,9 @@ const ProjectView = () => {
 const Project = () => {
 
   return (
-    <div className='flex col justify-between min-h-screen bg-gray-1 min-w-screen'>
-      <LeftMenu />
+    <AuthenticatedLayout >
       <ProjectView />
-      <RightMenu />
-    </div>
+    </AuthenticatedLayout>
   )
 }
 export default Project
