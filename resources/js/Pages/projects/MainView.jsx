@@ -5,10 +5,10 @@ const MainView = () => {
   return (
     <div className='flex flex-col items-center'>
       <div className='flex flex-row'>
-        <ProgressIcon />
-        <ProgressIcon />
-        <ProgressIcon />
-        <ProgressIcon />
+        <ProgressIcon label='Stories'/>
+        <ProgressIcon label='Personas'/>
+        <ProgressIcon label='Goals'/>
+        <ProgressIcon label='Journeys'/>
       </div>
       <div className='grid grid-cols-2 gap-4 mt-4 min-h-65 w-3xl px-4'>
         {Array(4).fill(0).map((_, index) => (

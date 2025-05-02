@@ -145,7 +145,7 @@ const Stories = ({ project, setProject }) => {
 
                 {/* Diálogo de confirmação de exclusão */}
                 {deleteConfirmId === story.id && (
-                  <div className="absolute right-0 top-8 z-10 bg-gray-700 rounded shadow-lg p-2 w-40">
+                  <div className="absolute right-50 top-30 z-10 bg-gray-700 rounded shadow-lg p-2 w-40">
                     <div className="text-white text-xs mb-2">
                       Deseja remover esta story?
                     </div>
