@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import LeftMenu from '../../Components/LeftMenu';
-import RightMenu from '../../Components/RightMenu';
 import NavMenu from '../../Components/NavMenu'
 import MainView from './MainView';
 import Stories from './Stories';

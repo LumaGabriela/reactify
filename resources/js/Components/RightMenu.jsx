@@ -48,7 +48,7 @@ const RightMenu = () => {
       <div className="flex items-center justify-between p-4 border-b border-gray-800">
         <div className="flex items-center space-x-3">
           <div className="relative">
-            <User/>
+            <User className='bg-violet-800/80 p-px rounded-full' size={32}/>
           </div>
           <div>
             <h5 className="font-semibold">{user?.name}</h5>
