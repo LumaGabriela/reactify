@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, CircleX, Pencil, Check } from 'lucide-react';
 
 const Stories = ({ project, setProject }) => {
+  const textareaRef = React.useRef(null);
   // Estado para controlar qual story está sendo editada
   const [editingId, setEditingId] = useState(null);
   // Estado para armazenar o valor temporário durante a edição
@@ -11,6 +12,20 @@ const Stories = ({ project, setProject }) => {
   // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
+  //Aciona a funcao sempre que o texto do textarea mudar
+  useEffect(() => {
+    adjustTextAreaHeight();
+  }, [editValue, editingId]);
+  //Funcao para ajustar a altura do textarea
+  const adjustTextAreaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.resize = 'none';
+      textarea.style.webkitAppearence = 'none';
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }
   // Função para adicionar uma nova story
   const addNewStory = () => {
     setProject({ ...project, stories: [...project.stories, { id: project.stories.length + 1, title: 'Nova Story', type: 'user' }] });
@@ -75,7 +90,7 @@ const Stories = ({ project, setProject }) => {
   };
 
   return (
-    <div className="stories bg-gray-500 rounded grid sm:grid-cols-1 md:grid-cols-2 gap-2 w-full p-2 cursor-pointer items-center">
+    <div className="stories rounded grid sm:grid-cols-1 md:grid-cols-2 gap-2 w-full p-2 cursor-pointer items-center">
       {project.stories.length > 0 ? (
         project.stories.map((story) => (
           <div key={story.id} className="story bg-gray-800 rounded-lg p-2 shadow-md col-span-1 h-full">
@@ -110,12 +125,13 @@ const Stories = ({ project, setProject }) => {
               <div className="flex items-cente w-full">
                 <div className="rounded-full flex items-center justify-center text-white text-xs w-full">
                   {editingId === story.id ? (
-                    <input
+                    <textarea
                       type="text"
+                      ref={textareaRef}
                       value={editValue}
-                      onKeyUp={(e)=> {if(e.key === 'Enter') {editStory(story)}}}
+                      onKeyUp={(e) => { if (e.key === 'Enter') { editStory(story) } }}
                       onChange={handleInputChange}
-                      className="text-white mx-1 w-full h-max rounded focus:outline-none"
+                      className="text-white text-xs bg-transparent p-0 border-none w-full h-max rounded outline-none focus:ring-0 focus:outline-none"
                       autoFocus
                     />
                   ) : (
@@ -130,22 +146,22 @@ const Stories = ({ project, setProject }) => {
                 >
                   {editingId === story.id ? (
                     // Ícone de confirmação quando estiver editando
-                    <Check size={16} class='stroke-green-400'/>
+                    <Check size={16} className='stroke-green-400' />
                   ) : (
                     // Ícone de edição quando não estiver editando
-                    <Pencil size={16} class='stroke-gray-400'/>
+                    <Pencil size={16} className='stroke-gray-400' />
                   )}
                 </button>
                 <button
                   className="p-1 flex hover:bg-gray-700 rounded"
                   onClick={() => toggleDeleteConfirm(story.id)}
                 >
-                  <CircleX size={16} class={`${deleteConfirmId === story.id ? 'stroke-red-400' : 'stroke-gray-400'}`}/>
+                  <CircleX size={16} className={`${deleteConfirmId === story.id ? 'stroke-red-400' : 'stroke-gray-400'}`} />
                 </button>
 
                 {/* Diálogo de confirmação de exclusão */}
                 {deleteConfirmId === story.id && (
-                  <div className="absolute right-50 top-30 z-10 bg-gray-700 rounded shadow-lg p-2 w-40">
+                  <div className="absolute left-1/2 top-1/4 -translate-x-1/2 -translate-y-1/2 z-10 bg-gray-700 rounded shadow-lg p-3 min-w-40">
                     <div className="text-white text-xs mb-2">
                       Deseja remover esta story?
                     </div>
