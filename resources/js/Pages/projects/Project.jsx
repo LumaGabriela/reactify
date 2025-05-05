@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Head } from '@inertiajs/react';
 import NavMenu from '../../Components/NavMenu'
 import MainView from './MainView';
 import Stories from './Stories';
@@ -158,9 +159,12 @@ const ProjectView = () => {
 const Project = () => {
 
   return (
+    <>
+    <Head title="Project" />
     <AuthenticatedLayout >
       <ProjectView />
     </AuthenticatedLayout>
+    </>
   )
 }
 export default Project
