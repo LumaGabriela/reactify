@@ -25,7 +25,6 @@ const Goals = ({ project, setProject }) => {
     // Estado para controlar qual goal está com o diálogo de confirmação de exclusão aberto
     const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
-
     // Função para adicionar uma nova goal
     const addNewGoal = () => {
         setProject({
@@ -128,6 +127,10 @@ const Goals = ({ project, setProject }) => {
         const foundPriority = goalPriorities.find(item => item.title === priority);
         return foundPriority ? foundPriority.color : '';
     };
+    const getGoalTypeColor = (type) => {
+      const foundType = goalTypes.find((item) => item.title === type);
+      return foundType ? foundType.color : '';
+    };
 
 
     return (
@@ -135,10 +138,10 @@ const Goals = ({ project, setProject }) => {
             {project.goalSketches && project.goalSketches.length > 0 ? (
                 project.goalSketches.map((goal) => (
                     <div key={goal.id} className="goal bg-gray-800 rounded-lg p-2 shadow-md col-span-1 h-full">
-                        <div className="flex items-center mb-2 gap-2 relative">
+                        <div className="flex items-center mb-2 gap-2">
                             {/* Tipo da Goal (BG/CG) */}
                             <div
-                                className={`${goal.type === 'BG' ? 'bg-purple-600' : 'bg-orange-600'} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer flex items-center`}
+                                className={`${getGoalTypeColor(goal.type)} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer flex items-center`}
                                 onClick={() => toggleTypeSelect(goal.id)}
                             >
                                 {goal.type}
@@ -150,6 +153,7 @@ const Goals = ({ project, setProject }) => {
                                 <PopUpSelect
                                     types={goalTypes}
                                     onClick={(type) => changeGoalType(goal.id, type.title)}
+                                    onCancel={() => setTypeSelectId(null)}
                                 />
                             )}
 
