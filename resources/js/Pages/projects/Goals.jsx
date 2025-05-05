@@ -167,6 +167,7 @@ const Goals = ({ project, setProject }) => {
                                 <PopUpSelect
                                     types={goalPriorities}
                                     onClick={(priority) => changeGoalPriority(goal.id, priority.title)}
+                                    onCancel={() => setPrioritySelectId(null)}
                                 />
                             )}
                         </div>

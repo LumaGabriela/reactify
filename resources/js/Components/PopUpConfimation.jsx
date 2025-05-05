@@ -2,7 +2,7 @@ const PopUpConfirmation = ({ onConfirm, onCancel, message }) => {
     return (
         <div
             onClick={onCancel}
-            className="h-screen min-w-full bg-gray-900/60 absolute top-0 left-0  z-9 transition-colors">
+            className="h-screen min-w-full bg-gray-900/60 fixed top-0 left-0  z-9 transition-colors">
             <div className="absolute left-1/2 top-1/4 -translate-x-1/2 -translate-y-1/2 z-10 bg-gray-700 rounded shadow-lg p-3 min-w-40">
                 <div className="text-white text-xs mb-2">
                     {message}
@@ -21,9 +21,9 @@ const PopUpConfirmation = ({ onConfirm, onCancel, message }) => {
                         Não
                     </button>
                 </div>
-                      </div>
+            </div>
         </div>
     );
 }
 
-export default PopUpConfirmation;
+export default PopUpConfirmation
