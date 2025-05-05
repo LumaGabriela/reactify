@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, CircleX, Pencil, Check } from 'lucide-react';
-
+import PopUpConfirmation from '@/Components/PopUpConfimation';
+import TextArea from '@/Components/TextArea';
 const Stories = ({ project, setProject }) => {
-  const textareaRef = React.useRef(null);
   // Estado para controlar qual story está sendo editada
   const [editingId, setEditingId] = useState(null);
   // Estado para armazenar o valor temporário durante a edição
@@ -11,21 +11,6 @@ const Stories = ({ project, setProject }) => {
   const [typeSelectId, setTypeSelectId] = useState(null);
   // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-
-  //Aciona a funcao sempre que o texto do textarea mudar
-  useEffect(() => {
-    adjustTextAreaHeight();
-  }, [editValue, editingId]);
-  //Funcao para ajustar a altura do textarea
-  const adjustTextAreaHeight = () => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.resize = 'none';
-      textarea.style.webkitAppearence = 'none';
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }
   // Função para adicionar uma nova story
   const addNewStory = () => {
     setProject({ ...project, stories: [...project.stories, { id: project.stories.length + 1, title: 'Nova Story', type: 'user' }] });
@@ -125,14 +110,10 @@ const Stories = ({ project, setProject }) => {
               <div className="flex items-cente w-full">
                 <div className="rounded-full flex items-center justify-center text-white text-xs w-full">
                   {editingId === story.id ? (
-                    <textarea
-                      type="text"
-                      ref={textareaRef}
+                    <TextArea
                       value={editValue}
-                      onKeyUp={(e) => { if (e.key === 'Enter') { editStory(story) } }}
+                      onEnter={() => editStory(story)}
                       onChange={handleInputChange}
-                      className="text-white text-xs bg-transparent p-0 border-none w-full h-max rounded outline-none focus:ring-0 focus:outline-none"
-                      autoFocus
                     />
                   ) : (
                     <span className="w-full ">{story.title}</span>
@@ -161,25 +142,11 @@ const Stories = ({ project, setProject }) => {
 
                 {/* Diálogo de confirmação de exclusão */}
                 {deleteConfirmId === story.id && (
-                  <div className="absolute left-1/2 top-1/4 -translate-x-1/2 -translate-y-1/2 z-10 bg-gray-700 rounded shadow-lg p-3 min-w-40">
-                    <div className="text-white text-xs mb-2">
-                      Deseja remover esta story?
-                    </div>
-                    <div className="flex justify-between gap-1">
-                      <button
-                        className="bg-red-500 hover:bg-red-600 text-white text-xs py-0.5 px-2 rounded text-center flex-1"
-                        onClick={() => deleteStory(story.id)}
-                      >
-                        Sim
-                      </button>
-                      <button
-                        className="bg-gray-600 hover:bg-gray-500 text-white text-xs py-0.5 px-2 rounded text-center flex-1"
-                        onClick={() => setDeleteConfirmId(null)}
-                      >
-                        Não
-                      </button>
-                    </div>
-                  </div>
+                  <PopUpConfirmation
+                    onConfirm={() => deleteStory(story.id)}
+                    onCancel={() => setDeleteConfirmId(null)}
+                    message="Deseja remover esta story?"
+                  />
                 )}
               </div>
             </div>

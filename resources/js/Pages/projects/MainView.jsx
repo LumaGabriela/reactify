@@ -1,14 +1,14 @@
 import React from 'react'
 import ProgressIcon from '../../Components/ProgressIcon'
 
-const MainView = () => {
+const MainView = ({project}) => {
   return (
     <div className='flex flex-col items-center'>
       <div className='flex flex-row'>
-        <ProgressIcon label='Stories'/>
-        <ProgressIcon label='Personas'/>
-        <ProgressIcon label='Goals'/>
-        <ProgressIcon label='Journeys'/>
+        <ProgressIcon label='Stories' value={project?.stories.length}/>
+        <ProgressIcon label='Personas'value={project?.personas.length}/>
+        <ProgressIcon label='Goals' value={project?.goalSketches.length}/>
+        <ProgressIcon label='Journeys' value={project?.journeys.length}/>
       </div>
       <div className='grid grid-cols-2 gap-4 mt-4 min-h-65 w-3xl px-4'>
         {Array(4).fill(0).map((_, index) => (

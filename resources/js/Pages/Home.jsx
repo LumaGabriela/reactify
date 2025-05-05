@@ -49,15 +49,15 @@ const Dashboard = () => {
       {/* Task Status Summary */}
       <div className="flex items-center justify-between mb-8 w-full h-52">
 
-        <div className="bg-gray-2 rounded p-6 w-2/5 max-w-2xl h-full cursor-pointer">
-          <div className="flex items-center">
-            <div>
+        <div className="bg-gray-2 rounded py-4 px-2 w-2/5 max-w-2xl h-full cursor-pointer">
+          <div className="flex flex-col items-center">
+       
               <p className="font-medium text-lg">You Have 10 Undone Tasks</p>
               <p className="text-gray-400 text-sm">2 Tasks are in progress</p>
-              <button className="bg-purple-2-hover transition-colors rounded hover:bg-indigo-700 px-6 py-2 mt-4 text-sm font-medium ">
+              <button className="bg-purple-2-hover transition-colors rounded hover:bg-indigo-700 px-6 py-2 mt-2 text-sm font-medium ">
                 Check
               </button>
-            </div>
+        
           </div>
         </div>
 

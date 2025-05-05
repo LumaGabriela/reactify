@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Plus, ChevronDown, ChevronRight, Map, ArrowRight, CornerUpRight } from 'lucide-react';
-
+import PopUpConfirmation from '@/Components/PopUpConfimation';
 const Journeys = ({ project, setProject }) => {
   const textareaRef = useRef(null);
   // Estado para controlar qual journey está expandida
@@ -257,25 +257,11 @@ const Journeys = ({ project, setProject }) => {
 
             {/* Diálogo de confirmação de exclusão de journey */}
             {deleteConfirmJourney === journeyIndex && (
-              <div className="absolute z-10 bg-gray-700 rounded shadow-lg p-2 w-64">
-                <div className="text-white text-xs mb-2">
-                  Deseja remover esta journey e todos seus passos?
-                </div>
-                <div className="flex justify-between gap-1">
-                  <button
-                    className="bg-red-500 hover:bg-red-600 text-white text-xs py-1 px-2 rounded flex-1"
-                    onClick={deleteJourney}
-                  >
-                    Sim
-                  </button>
-                  <button
-                    className="bg-gray-600 hover:bg-gray-500 text-white text-xs py-1 px-2 rounded flex-1"
-                    onClick={() => setDeleteConfirmJourney(null)}
-                  >
-                    Não
-                  </button>
-                </div>
-              </div>
+              <PopUpConfirmation
+                onConfirm={handleDeleteJourney}
+                onCancel={() => setDeleteConfirmJourney(null)}
+                message="Deseja remover esta journey e todos seus passos?"
+              />
             )}
 
             {/* Conteúdo da Journey (Steps) */}

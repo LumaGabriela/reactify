@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Plus } from 'lucide-react';
+import PopUpConfirmation from '@/Components/PopUpConfimation';
 const Personas = ({ project, setProject }) => {
   // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
@@ -86,25 +87,11 @@ const Personas = ({ project, setProject }) => {
 
           {/* Diálogo de confirmação de exclusão */}
           {deleteConfirmId === persona.id && (
-            <div className="absolute z-10 translate-x-15 bg-gray-700 rounded shadow-lg p-2 w-54">
-              <div className="text-white text-xs mb-2">
-                Deseja remover esta persona?
-              </div>
-              <div className="flex justify-between gap-1">
-                <button
-                  className="bg-red-500 hover:bg-red-600 text-white text-xs py-0.5 px-2 rounded text-center flex-1"
-                  onClick={() => deletePersona(persona.id)}
-                >
-                  Sim
-                </button>
-                <button
-                  className="bg-gray-600 hover:bg-gray-500 text-white text-xs py-0.5 px-2 rounded text-center flex-1"
-                  onClick={() => setDeleteConfirmId(null)}
-                >
-                  Não
-                </button>
-              </div>
-            </div>
+            <PopUpConfirmation
+              onConfirm={() => deletePersona(persona.id)}
+              onCancel={() => setDeleteConfirmId(null)}
+              message="Deseja remover esta persona?"
+            />
           )}
 
           <input

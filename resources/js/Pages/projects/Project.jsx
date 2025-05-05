@@ -4,6 +4,7 @@ import MainView from './MainView';
 import Stories from './Stories';
 import Personas from './Personas';
 import Journeys from './Journeys';
+import Goals from './Goals';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 const ProjectView = () => {
   const [project, setProject] = useState( 
@@ -112,9 +113,9 @@ const ProjectView = () => {
   const [activeMenu, setActiveMenu] = useState('');
   const [menuItems, setMenuItems] = useState([
     { name: 'All', active: false },
-    { name: 'Stories', active: true },
+    { name: 'Stories', active: false },
     { name: 'Personas', active: false },
-    { name: 'Goals', active: false },
+    { name: 'Goals', active: true },
     { name: 'Journeys', active: false }
   ]);
 
@@ -126,19 +127,19 @@ const ProjectView = () => {
   }, [menuItems]);
 
   useEffect(() => {
-    console.log(project?.journeys)
+    console.log(project)
   },[project])
 
   const renderContent = () => {
     switch (activeMenu) {
       case 'All':
-        return <MainView />;
+        return <MainView project={project}/>;
       case 'Stories':
         return <Stories project={project} setProject={setProject}/>
       case 'Personas':
         return <Personas project={project} setProject={setProject}/>
       case 'Goals':
-        return
+        return <Goals project={project} setProject={setProject}/>
       case 'Journeys':
         return <Journeys project={project} setProject={setProject}/>
       default:
