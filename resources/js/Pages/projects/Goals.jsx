@@ -1,19 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, CircleX, Pencil, Check, ChevronDown } from 'lucide-react';
-import PopUpConfirmation from '@/Components/PopUpConfimation';
-import TextArea from '@/Components/TextArea';
-import PopUpSelect from '@/Components/PopUpSelect';
+import React, { useState } from 'react';
+import { Plus } from 'lucide-react';
+import { GoalCard } from '@/Components/Card';
 const Goals = ({ project, setProject }) => {
-    const [goalTypes] = useState([
-        { color: 'bg-orange-600', title: 'BG' },
-        { color: 'bg-purple-600', title: 'CG' },
-    ])
-    const [goalPriorities] = useState([
-        { color: 'bg-red-600', title: 'HIGH' },
-        { color: 'bg-yellow-600', title: 'MED' },
-        { color: 'bg-green-600', title: 'LOW' },
-        { color: 'bg-pink-600', title: 'URGENT' },
-    ])
+
     // Estado para controlar qual goal está sendo editada
     const [editingId, setEditingId] = useState(null);
     // Estado para armazenar o valor temporário durante a edição
@@ -123,104 +112,113 @@ const Goals = ({ project, setProject }) => {
     };
 
     // Helper para definir a cor de fundo baseada na prioridade
-    const getPriorityColor = (priority) => {
-        const foundPriority = goalPriorities.find(item => item.title === priority);
-        return foundPriority ? foundPriority.color : '';
-    };
-    const getGoalTypeColor = (type) => {
-      const foundType = goalTypes.find((item) => item.title === type);
-      return foundType ? foundType.color : '';
-    };
+
 
 
     return (
         <div className="goalSketches rounded grid sm:grid-cols-1 md:grid-cols-2 gap-2 w-full p-2 cursor-pointer items-center">
             {project.goalSketches && project.goalSketches.length > 0 ? (
-                project.goalSketches.map((goal) => (
-                    <div key={goal.id} className="goal bg-gray-800 rounded-lg p-2 shadow-md col-span-1 h-full">
-                        <div className="flex items-center mb-2 gap-2">
-                            {/* Tipo da Goal (BG/CG) */}
-                            <div
-                                className={`${getGoalTypeColor(goal.type)} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer flex items-center`}
-                                onClick={() => toggleTypeSelect(goal.id)}
-                            >
-                                {goal.type}
-                                <ChevronDown size={14} className="ml-1" />
-                            </div>
+                project.goalSketches.map((goal, i) => (
+                    <GoalCard
+                    key={i}
+                    goal={goal}
+                    toggleTypeSelect={toggleTypeSelect}
+                    togglePrioritySelect={togglePrioritySelect}
+                    toggleDeleteConfirm={toggleDeleteConfirm}
+                    changeGoalType={changeGoalType}
+                    typeSelectId={typeSelectId}
+                    editingId={editingId}
+                    editValue={editValue}
+                    handleInputChange={handleInputChange}
+                    editGoal={editGoal}
+                    deleteConfirmId={deleteConfirmId}
+                    deleteGoal={deleteGoal}
+                    setDeleteConfirmId={setDeleteConfirmId}
+                    />
+                    // <div key={goal.id} className="goal bg-gray-800 rounded-lg p-2 shadow-md col-span-1 h-full">
+                    //     <div className="flex items-center mb-2 gap-2">
+                    //         {/* Tipo da Goal (BG/CG) */}
+                    //         <div
+                    //             className={`${getGoalTypeColor(goal.type)} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer flex items-center`}
+                    //             onClick={() => toggleTypeSelect(goal.id)}
+                    //         >
+                    //             {goal.type}
+                    //             <ChevronDown size={14} className="ml-1" />
+                    //         </div>
 
-                            {/* Seletor de tipo */}
-                            {typeSelectId === goal.id && (
-                                <PopUpSelect
-                                    types={goalTypes}
-                                    onClick={(type) => changeGoalType(goal.id, type.title)}
-                                    onCancel={() => setTypeSelectId(null)}
-                                />
-                            )}
+                    //         {/* Seletor de tipo */}
+                    //         {typeSelectId === goal.id && (
+                    //             <PopUpSelect
+                    //                 types={goalTypes}
+                    //                 onClick={(type) => changeGoalType(goal.id, type.title)}
+                    //                 onCancel={() => setTypeSelectId(null)}
+                    //             />
+                    //         )}
 
-                            {/* Prioridade da Goal */}
-                            <div
-                                className={`${getPriorityColor(goal.priority)} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer flex items-center`}
-                                onClick={() => togglePrioritySelect(goal.id)}
-                            >
-                                {goal.priority}
-                                <ChevronDown size={14} className="ml-1" />
-                            </div>
+                    //         {/* Prioridade da Goal */}
+                    //         <div
+                    //             className={`${getPriorityColor(goal.priority)} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer flex items-center`}
+                    //             onClick={() => togglePrioritySelect(goal.id)}
+                    //         >
+                    //             {goal.priority}
+                    //             <ChevronDown size={14} className="ml-1" />
+                    //         </div>
 
-                            {/* Seletor de prioridade */}
-                            {prioritySelectId === goal.id && (
-                                <PopUpSelect
-                                    types={goalPriorities}
-                                    onClick={(priority) => changeGoalPriority(goal.id, priority.title)}
-                                    onCancel={() => setPrioritySelectId(null)}
-                                />
-                            )}
-                        </div>
+                    //         {/* Seletor de prioridade */}
+                    //         {prioritySelectId === goal.id && (
+                    //             <PopUpSelect
+                    //                 types={goalPriorities}
+                    //                 onClick={(priority) => changeGoalPriority(goal.id, priority.title)}
+                    //                 onCancel={() => setPrioritySelectId(null)}
+                    //             />
+                    //         )}
+                    //     </div>
 
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center w-full">
-                                <div className="rounded-full flex items-center justify-center text-white text-xs w-full">
-                                    {editingId === goal.id ? (
-                                        <TextArea
-                                            value={editValue}
-                                            onChange={handleInputChange}
-                                            onEnter={(e) => { if (e.key === 'Enter') { editGoal(goal) } }}
-                                        />
-                                    ) : (
-                                        <span className="w-full">{goal.title}</span>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="flex gap-1">
-                                <button
-                                    className={`edit flex p-1 hover:bg-gray-700 rounded transition-colors ${editingId === goal.id ? 'bg-green-700 hover:bg-green-800' : ''}`}
-                                    onClick={() => editGoal(goal)}
-                                >
-                                    {editingId === goal.id ? (
-                                        // Ícone de confirmação quando estiver editando
-                                        <Check size={16} className='stroke-green-400' />
-                                    ) : (
-                                        // Ícone de edição quando não estiver editando
-                                        <Pencil size={16} className='stroke-gray-400' />
-                                    )}
-                                </button>
-                                <button
-                                    className="p-1 flex hover:bg-gray-700 rounded"
-                                    onClick={() => toggleDeleteConfirm(goal.id)}
-                                >
-                                    <CircleX size={16} className={`${deleteConfirmId === goal.id ? 'stroke-red-400' : 'stroke-gray-400'}`} />
-                                </button>
+                    //     <div className="flex items-center justify-between">
+                    //         <div className="flex items-center w-full">
+                    //             <div className="rounded-full flex items-center justify-center text-white text-xs w-full">
+                    //                 {editingId === goal.id ? (
+                    //                     <TextArea
+                    //                         value={editValue}
+                    //                         onChange={handleInputChange}
+                    //                         onEnter={(e) => { if (e.key === 'Enter') { editGoal(goal) } }}
+                    //                     />
+                    //                 ) : (
+                    //                     <span className="w-full">{goal.title}</span>
+                    //                 )}
+                    //             </div>
+                    //         </div>
+                    //         <div className="flex gap-1">
+                    //             <button
+                    //                 className={`edit flex p-1 hover:bg-gray-700 rounded transition-colors ${editingId === goal.id ? 'bg-green-700 hover:bg-green-800' : ''}`}
+                    //                 onClick={() => editGoal(goal)}
+                    //             >
+                    //                 {editingId === goal.id ? (
+                    //                     // Ícone de confirmação quando estiver editando
+                    //                     <Check size={16} className='stroke-green-400' />
+                    //                 ) : (
+                    //                     // Ícone de edição quando não estiver editando
+                    //                     <Pencil size={16} className='stroke-gray-400' />
+                    //                 )}
+                    //             </button>
+                    //             <button
+                    //                 className="p-1 flex hover:bg-gray-700 rounded"
+                    //                 onClick={() => toggleDeleteConfirm(goal.id)}
+                    //             >
+                    //                 <CircleX size={16} className={`${deleteConfirmId === goal.id ? 'stroke-red-400' : 'stroke-gray-400'}`} />
+                    //             </button>
 
-                                {/* Diálogo de confirmação de exclusão */}
-                                {deleteConfirmId === goal.id && (
-                                    <PopUpConfirmation
-                                        onConfirm={() => deleteGoal(goal.id)}
-                                        onCancel={() => setDeleteConfirmId(null)}
-                                        message="Deseja remover esta goal?"
-                                    />
-                                )}
-                            </div>
-                        </div>
-                    </div>
+                    //             {/* Diálogo de confirmação de exclusão */}
+                    //             {deleteConfirmId === goal.id && (
+                    //                 <PopUpConfirmation
+                    //                     onConfirm={() => deleteGoal(goal.id)}
+                    //                     onCancel={() => setDeleteConfirmId(null)}
+                    //                     message="Deseja remover esta goal?"
+                    //                 />
+                    //             )}
+                    //         </div>
+                    //     </div>
+                    // </div>
                 ))
             ) : (
                 // Exibir um card de exemplo quando não houver goals
