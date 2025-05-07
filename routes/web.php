@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
 Route::put('/stories/{story}', [StoryController::class, 'update'])->name('stories.update');
 Route::delete('/stories/{story}', [StoryController::class, 'destroy'])->name('stories.delete');
 Route::post('/stories', [StoryController::class, 'store']);

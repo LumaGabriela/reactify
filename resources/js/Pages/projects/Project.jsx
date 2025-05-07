@@ -115,8 +115,8 @@ const ProjectView = () => {
 
   const [activeMenu, setActiveMenu] = useState('');
   const [menuItems, setMenuItems] = useState([
-    { name: 'All', active: false },
-    { name: 'Stories', active: true },
+    { name: 'All', active: true },
+    { name: 'Stories', active: false },
     { name: 'Personas', active: false },
     { name: 'Goals', active: false },
     { name: 'Journeys', active: false }

@@ -267,7 +267,6 @@ const Journeys = ({ project, setProject }) => {
             {/* Conteúdo da Journey (Steps) */}
             {expandedJourney === journeyIndex && (
               <>
-
                 {journey.steps && journey.steps.length > 0 ? (
                   <div className="flex flex-col">
                     {/* Grid de steps */}
@@ -280,7 +279,7 @@ const Journeys = ({ project, setProject }) => {
                         return (
                           <div
                             key={stepIndex}
-                            className="step relative flex min-h-full min-w-full cursor-pointer rounded hover:bg-gray-700 transition-colors">
+                            className="step relative flex min-h-full min-w-full cursor-pointer rounded hover:bg-gray-700 transition-colors popup-animation">
                             <div
                               onClick={() => startEditStep(journeyIndex, stepIndex)}
                               className={`rounded-lg border-4 ${currentColor.border} flex min-h-full min-w-full`}>
