@@ -91,10 +91,26 @@ a {
     transform: rotate(-90deg);
   }
 }
+@keyframes popupAnimation {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
+.popup-animation {
+  animation: popupAnimation 0.3s ease-out forwards;
+  transform-origin: center;
+  backface-visibility: hidden; /* Para uma animação mais suave */
+}
 .animate-rotate-90 {
   animation: rotate90 0.3s ease-out forwards;
 }
 .animate-rotate-90-reverse {
   animation: rotate90reverse 0.3s ease-out forwards;
 }
+

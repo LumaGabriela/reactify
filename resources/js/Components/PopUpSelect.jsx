@@ -8,7 +8,7 @@ const PopUpSelect = ({ onClick, onCancel, types }) => {
     />
     {/* Popup de selecao  */}
     <div 
-        className={`select-container flex flex-col items-center justify-center absolute -translate-y-[3rem] z-20 bg-gray-700 rounded shadow-lg p-2 shadow-md`}
+        className={`select-container flex flex-col items-center justify-center absolute -translate-y-[3rem] z-20 bg-gray-700 rounded shadow-lg p-2 shadow-md popup-animation`}
 
         onClick={(e) => e.stopPropagation()} // Evita que o clique no container feche o popup
       >
