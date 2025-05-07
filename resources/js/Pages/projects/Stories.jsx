@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Plus} from 'lucide-react';
 import { StoryCard } from '@/Components/Card';
+import { router } from '@inertiajs/react';
+
 
 const Stories = ({ project, setProject }) => {
   // Estado para controlar qual story está sendo editada
@@ -14,6 +16,12 @@ const Stories = ({ project, setProject }) => {
   // Função para adicionar uma nova story
   const addNewStory = () => {
     setProject({ ...project, stories: [...project.stories, { id: project.stories.length + 1, title: 'Nova Story', type: 'user' }] });
+    
+    router.post('/stories', {
+      title: 'Nova Story',
+      type: 'user',
+      project_id: project.id // ID do projeto atual
+  }, { preserveScroll: true });
   };
 
   // Função para alternar entre modo de edição e visualização
@@ -30,6 +38,10 @@ const Stories = ({ project, setProject }) => {
       setEditingId(story.id);
       setEditValue(story.title); // Inicializa o campo com o valor atual
     }
+    router.put(`/stories/${story.id}`, {
+      title: editValue,
+      type: story.type
+  }, { preserveScroll: true });
   };
 
   // Função para lidar com mudanças no input
@@ -72,6 +84,12 @@ const Stories = ({ project, setProject }) => {
     const updatedStories = project.stories.filter(s => s.id !== storyId);
     setProject({ ...project, stories: updatedStories });
     setDeleteConfirmId(null); // Fecha o diálogo de confirmação
+    // router.delete(`/stories/${storyId}`, {
+    //     preserveScroll: true,
+    //     onSuccess: () => {
+    //         setDeleteConfirmId(null);
+    //     }
+    // });
   };
 
   return (

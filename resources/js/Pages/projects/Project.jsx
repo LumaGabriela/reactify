@@ -10,6 +10,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 const ProjectView = () => {
   const [project, setProject] = useState(
     {
+      id: 1,
       name: "Spotify Clone",
       visaoGeral: "Aplicação capaz de realizar streaming de músicas, com a possibilidade de criar playlists e compartilhar com amigos.",
       key: "project-key",
@@ -27,22 +28,22 @@ const ProjectView = () => {
       },
       stories: [
         {
-          id: "US01",
+          id: 1,
           title: "Como usuário, quero criar uma conta para acessar o aplicativo",
           type: "user"
         },
         {
-          id: "US02",
+          id: 2,
           title: "Como usuário, quero criar e gerenciar playlists para organizar minhas músicas",
           type: "user"
         },
         {
-          id: "SS01",
+          id: 3,
           title: "Como administrador, quero gerenciar usuários para manter o controle de acesso ao sistema",
           type: "system"
         },
         {
-          id: "SS02",
+          id: 4,
           title: "Guaxinim fofo",
           type: "system"
         }

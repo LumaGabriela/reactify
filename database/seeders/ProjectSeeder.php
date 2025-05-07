@@ -100,6 +100,35 @@ class ProjectSeeder extends Seeder
         // Criar registros básicos para tabelas restantes
         DB::table('personas')->insert(['created_at' => now(), 'updated_at' => now()]);
         DB::table('journeys')->insert(['created_at' => now(), 'updated_at' => now()]);
-        DB::table('stories')->insert(['created_at' => now(), 'updated_at' => now()]);
+        DB::table('stories')->insert([
+            [
+                'title' => 'Como usuário, quero criar uma conta para acessar o aplicativo',
+                'type' => 'user',
+                'project_id' => $projectId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'title' => 'Como usuário, quero criar e gerenciar playlists para organizar minhas músicas',
+                'type' => 'user',
+                'project_id' => $projectId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'title' => 'Como administrador, quero gerenciar usuários para manter o controle de acesso ao sistema',
+                'type' => 'system',
+                'project_id' => $projectId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'title' => 'Guaxinim fofo',
+                'type' => 'system',
+                'project_id' => $projectId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        ]);
     }
 }

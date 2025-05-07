@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,5 +31,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::put('/stories/{story}', [StoryController::class, 'update'])->name('stories.update');
+Route::delete('/stories/{story}', [StoryController::class, 'destroy'])->name('stories.delete');
+Route::post('/stories', [StoryController::class, 'store']);
 
 require __DIR__.'/auth.php';
