@@ -4,6 +4,7 @@ const PopUpSelect = ({ onClick, onCancel, types }) => {
     {/* fundo escuro */}
     <div 
       onClick={onCancel} 
+      style={{ height: document.body.scrollHeight }}
       className="h-screen min-w-full bg-gray-900/60 fixed top-0 left-0 z-10 transition-colors"
     />
     {/* Popup de selecao  */}
