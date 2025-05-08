@@ -9,6 +9,7 @@ export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
     className = '',
+    style
 }) {
     const user = usePage().props.auth.user;
 
@@ -26,8 +27,8 @@ export default function UpdateProfileInformation({
 
     return (
         <section className={className}>
-            <header>
-                <h2 className="text-lg font-medium ">
+            <header className={`text-lg font-medium ${style.text}`}>
+                <h2 className={`text-lg font-medium`}>
                     Profile Information
                 </h2>
 
