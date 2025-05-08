@@ -24,14 +24,6 @@ export default function Login({ status, canResetPassword }) {
     return (
         <GuestLayout>
             <Head title="Log in" />
-            
-            {/* Header com logo */}
-            {/* <div className="w-full max-w-7xl px-6 mb-12">
-                <div className="text-3xl font-bold text-purple-2">
-                    REACTIFY
-                </div>
-            </div> */}
-
             <div className="bg-gray-2 p-8 rounded-xl shadow-xl w-full max-w-md">
                 {status && (
                     <div className="mb-4 text-sm font-medium text-green-1">
@@ -108,7 +100,7 @@ export default function Login({ status, canResetPassword }) {
                         <PrimaryButton 
                             className="ms-4 bg-purple-2 hover:bg-purple-1 text-white"
                             disabled={processing}
-                            dusk="login-button"
+                            id="login-button"
                         >
                             Log in
                         </PrimaryButton>

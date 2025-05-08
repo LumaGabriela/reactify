@@ -4,14 +4,15 @@ import { Grid, Settings, User, Calendar, Mail, FileText, LayoutDashboard, Squirr
 
 const LeftMenu = ({}) => {
   const items = [
-    { name: 'My Projects', url: '#', icon: Grid, active: true },
-    { name: 'Reports', url: '#', icon: FileText },
-    { name: 'Calendar', url: '#', icon: Calendar },
-    { name: 'Email', url: '#', icon: Mail, badge: '20' },
-    { name: 'Profile', url: route('profile.edit'), icon: User },
-    { name: 'Settings', url: '#', icon: Settings },
-    { name: 'Logout', url: route('logout'), icon: LogOut },
+    { name: 'My Projects', url: 'dashboard', icon: Grid},
+    // { name: 'Reports', url: 'home', icon: FileText },
+    // { name: 'Calendar', url: 'home', icon: Calendar },
+    // { name: 'Email', url: 'home', icon: Mail, badge: '20' },
+    { name: 'Profile', url: 'profile.edit', icon: User },
+    { name: 'Settings', url: 'config', icon: Settings },
+    { name: 'Logout', url:'logout', icon: LogOut },
   ];
+  const currentRoute = route().current()
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-2 w-60 text-gray-300 ">
@@ -40,20 +41,20 @@ const LeftMenu = ({}) => {
           return (
             <Link 
               as='button'
-              href={item.url}
+              href={route(item.url)}
               key={index}
               className={`flex items-center px-4 py-2 my-1 w-full rounded-md transition-colors duration-200 cursor-pointer [text-decoration:none!important]
-                ${item.active ? 'bg-indigo-900' : 'hover:bg-indigo-900'}`
+                ${item.url.includes(currentRoute) ? 'bg-indigo-900' : 'hover:bg-indigo-900'}`
               }
               {...(item.name === 'Logout' && { method: 'post'})}
             >
               <div className="flex items-center">
                 {index === 0 ? (
-                  <LayoutDashboard className={`w-5 h-5 mr-3 ${item.active ? 'text-indigo-400' : 'text-gray-400 hover:text-indigo-400'}`} />
+                  <LayoutDashboard className={`w-5 h-5 mr-3 ${item.url.includes(currentRoute) ? 'text-indigo-400' : 'text-gray-400 hover:text-indigo-400'}`} />
                 ) : (
-                  <IconComponent className={`w-5 h-5 mr-3 ${item.active ? 'text-indigo-400' : 'text-gray-400 hover:text-indigo-400'}`} />
+                  <IconComponent className={`w-5 h-5 mr-3 ${item.url.includes(currentRoute) ? 'text-indigo-400' : 'text-gray-400 hover:text-indigo-400'}`} />
                 )}
-                <span className={`${item.active ? 'text-white  no-underline' : 'text-gray-300 hover:text-white  no-underline'}`}>{item.name}</span>
+                <span className={`${item.url.includes(currentRoute) ? 'text-white no-underline' : 'text-gray-300 hover:text-white  no-underline'}`}>{item.name}</span>
               </div>
 
               {item.badge && (

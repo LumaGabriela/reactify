@@ -19,12 +19,20 @@ Route::get('/', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/home', function () {
+Route::get('/dashboard', function () {
     return Inertia::render('Home');
 })->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/projects/{id}', function () {
+
+Route::prefix('projects')->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('projects/Projects');
+    })->name('projects');
+Route::get('/{id}', function () {
     return Inertia::render('projects/Project', [ "id" => 1]);
-  });
+})->name('projects.show');
+
+})->middleware(['auth', 'verified']);
+
   
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -32,6 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/config', function () {
+    return Inertia::render('Config');
+})->middleware(['auth', 'verified'])->name('config');
 
 Route::put('/stories/{story}', [StoryController::class, 'update'])->name('stories.update');
 Route::delete('/stories/{story}', [StoryController::class, 'destroy'])->name('stories.delete');

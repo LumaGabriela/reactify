@@ -158,7 +158,7 @@ const ProjectView = () => {
     </div>
   );
 };
-const Project = () => {
+const Project = ({}) => {
 
   return (
     <>

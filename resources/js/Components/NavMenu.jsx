@@ -15,6 +15,7 @@ const NavMenu = ({ menuItems, setMenuItems }) => {
         {menuItems.map((menuItem, index) => (
           <div
             key={index}
+            dusk={`btn-${menuItem.name.toLowerCase()}`}
             className={`flex-1 py-2 text-center text-white font-medium text-lg cursor-pointer ${
               menuItem.active ? "bg-purple-2" : "bg-gray-800"
             }`}
