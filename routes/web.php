@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\StoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Foundation\Application;
@@ -16,13 +16,6 @@ Route::get('/', function () {
   ]);
 });
 
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Home');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::prefix('projects')->group(function () {
   Route::get('/', [ProjectController::class, 'index'])
@@ -30,9 +23,7 @@ Route::prefix('projects')->group(function () {
 
   Route::post('create', [ProjectController::class, 'store'])
   ->name('projects.store');
-  Route::get('/{id}', function () {
-    return Inertia::render('projects/Project', ["id" => 1]);
-  })->name('projects.show');
+  Route::get('/{id}',[ProjectController::class, 'show'])->name('projects.show');
 })->middleware(['auth', 'verified']);
 
 
@@ -42,12 +33,12 @@ Route::middleware('auth')->group(function () {
   Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Route::get('/config', function () {
-//   return Inertia::render('Config');
-// })->middleware(['auth', 'verified'])->name('config');
+Route::get('/config', function () {
+  return Inertia::render('Config');
+})->middleware(['auth', 'verified'])->name('config');
 
-// Route::put('/stories/{story}', [StoryController::class, 'update'])->name('stories.update');
-// Route::delete('/stories/{story}', [StoryController::class, 'destroy'])->name('stories.delete');
-// Route::post('/stories', [StoryController::class, 'store']);
+Route::put('/stories/{story}', [StoryController::class, 'update'])->name('story.update');
+Route::delete('/stories/{story}', [StoryController::class, 'destroy'])->name('story.delete');
+Route::post('/stories', [StoryController::class, 'store']);
 
 require __DIR__ . '/auth.php';
