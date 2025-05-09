@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -28,16 +29,20 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProjectRequest $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255', 
-            'description' => 'required|string|max:1000',
-        ]);
+        $validatedData = $request->validated();
 
-        Project::create($validatedData);
+        $project = Project::create($validatedData);
 
-        return back()->with('success', 'Project created successfully.');
+        return redirect()
+        ->route('projects.show', $project->id)
+        ->with(
+            [
+                'status' => 'success',
+                'message' => 'Project created successfully. Project id: ' . $project->id,
+            ]
+        );
     }
 
     /**
@@ -45,7 +50,8 @@ class ProjectController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $project = Project::with('stories')->find($id);
+        return Inertia::render('projects/Project', ['project' => $project]);
     }
 
     /**

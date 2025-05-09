@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Inertia } from '@inertiajs/inertia';
-import { router } from '@inertiajs/react';
+
+import { router, usePage } from '@inertiajs/react';
 const ModalConfirmation = ({ onConfirm, onCancel, message }) => {
   const [animationStart, setAnimationStart] = useState(true);
   const handleClick =() => {
@@ -81,6 +81,7 @@ const ModalSelect = ({ onClick, onCancel, types }) => {
 };
 
 const ModalNewProject = ({ onCancel, message}) => {
+  const { errors } = usePage().props;
   const [animationStart, setAnimationStart] = useState(true);
     const [newProject, setNewProject] = useState({
       title: '',
@@ -113,13 +114,13 @@ const ModalNewProject = ({ onCancel, message}) => {
                 type="text" 
                 placeholder="Nome do projeto" 
                 className="bg-gray-600 text-white text-xs py-0.5 px-2 rounded text-center flex-1" />
-
+                {errors.title && <p className="text-red-500 text-xs">{errors.title}</p>}
                 <input 
                 onChange={(e) => setNewProject({ ...newProject, description: e.target.value})}
                 type="text" 
                 placeholder="Descrição do projeto" 
                 className="bg-gray-600 text-white text-xs py-0.5 px-2 rounded text-center flex-1" />
-
+                {errors.description && <p className="text-red-500 text-xs">{errors.description}</p>}
                 <div className="flex justify-between gap-1">
                     <button
                         className="bg-red-500 hover:bg-red-600 text-white text-xs py-0.5 px-2 rounded text-center flex-1"
