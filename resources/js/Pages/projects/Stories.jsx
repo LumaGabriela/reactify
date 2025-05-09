@@ -15,7 +15,7 @@ const Stories = ({ project, setProject }) => {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   // Função para adicionar uma nova story
   const addNewStory = () => {
-    setProject({ ...project, stories: [...project.stories, { id: project.stories.length + 1, title: 'Nova Story', type: 'user' }] });
+    setProject({ ...project, stories: [...project.stories, { id: project?.stories.length + 1, title: 'Nova Story', type: 'user' }] });
     
     router.post('/stories', {
       title: 'Nova Story',
@@ -28,20 +28,19 @@ const Stories = ({ project, setProject }) => {
   const editStory = (story) => {
     if (editingId === story.id) {
       // Se já estiver editando esta story, salve as alterações
-      const updatedStories = project.stories.map(s =>
-        s.id === story.id ? { ...s, title: editValue } : s
-      );
-      setProject({ ...project, stories: updatedStories });
-      setEditingId(null); // Sai do modo de edição
+
+      router.put( route('story.update', story.id), {
+        title: editValue,
+        type: story.type,
+        project_id: project.id
+    }, { preserveScroll: true });
+      setEditingId(null)
     } else {
       // Entra no modo de edição para esta story
       setEditingId(story.id);
       setEditValue(story.title); // Inicializa o campo com o valor atual
     }
-  //   router.put(`/stories/${story.id}`, {
-  //     title: editValue,
-  //     type: story.type
-  // }, { preserveScroll: true });
+    console.log(editValue)
   };
 
   // Função para lidar com mudanças no input
@@ -55,16 +54,21 @@ const Stories = ({ project, setProject }) => {
       setTypeSelectId(null);
     } else {
       setTypeSelectId(storyId);
+
+
       setDeleteConfirmId(null); // Fecha o diálogo de exclusão caso esteja aberto
     }
   };
 
   // Função para alterar o tipo da story
   const changeStoryType = (storyId, newType) => {
-    const updatedStories = project.stories.map(s =>
-      s.id === storyId ? { ...s, type: newType } : s
-    );
-    setProject({ ...project, stories: updatedStories });
+    const story = project.stories.find(story => story.id === storyId)
+    console.log(story)
+    router.put(route('story.update', storyId), {
+      title: story.title,
+      type: newType,
+      project_id: project.id
+    })
     setTypeSelectId(null); // Fecha o seletor de tipo
   };
 
@@ -81,7 +85,7 @@ const Stories = ({ project, setProject }) => {
 
   // Função para excluir a story
   const deleteStory = (storyId) => {
-    const updatedStories = project.stories.filter(s => s.id !== storyId);
+    const updatedStories = project?.stories.filter(s => s.id !== storyId);
     setProject({ ...project, stories: updatedStories });
     setDeleteConfirmId(null); // Fecha o diálogo de confirmação
     router.delete(`/stories/${storyId}`, {
@@ -96,8 +100,8 @@ const Stories = ({ project, setProject }) => {
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-2 cursor-pointer items-start">
       <div className='flex flex-col gap-2 '>
         {/* User stories */}
-      {project.stories.length > 0 ? (
-        project.stories.map((story, i) => {
+      {project?.stories?.length > 0 ? (
+        project?.stories?.map((story, i) => {
           if (story.type === 'user') return (
           <StoryCard 
           key={i}
@@ -141,7 +145,7 @@ const Stories = ({ project, setProject }) => {
 </div>
 {/* System stories */}
 <div className='flex flex-col gap-2 '>
-      {project.stories.map((story, i) => {
+      {project?.stories?.map((story, i) => {
           if (story.type === 'system') return (
           <StoryCard 
           key={i}
