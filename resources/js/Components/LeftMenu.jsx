@@ -4,12 +4,12 @@ import { Grid, Settings, User, Calendar, Mail, FileText, LayoutDashboard, Squirr
 
 const LeftMenu = ({}) => {
   const items = [
-    { name: 'My Projects', url: 'dashboard', icon: Grid},
+    { name: 'My Projects', url: 'projects.index', icon: Grid},
     // { name: 'Reports', url: 'home', icon: FileText },
     // { name: 'Calendar', url: 'home', icon: Calendar },
     // { name: 'Email', url: 'home', icon: Mail, badge: '20' },
     { name: 'Profile', url: 'profile.edit', icon: User },
-    { name: 'Settings', url: 'config', icon: Settings },
+    // { name: 'Settings', url: 'config', icon: Settings },
     { name: 'Logout', url:'logout', icon: LogOut },
   ];
   const currentRoute = route().current()

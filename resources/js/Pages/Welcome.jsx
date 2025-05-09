@@ -15,7 +15,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         <nav className="flex gap-4">
                             {auth.user ? (
                                 <Link
-                                    href={route('dashboard')}
+                                    href={route('projects.index')}
                                     className="px-4 py-2 text-white hover:bg-purple-2 rounded-lg transition-all duration-300"
                                 >
                                     Dashboard

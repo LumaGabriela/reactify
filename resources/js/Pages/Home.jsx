@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Search, MoreVertical, CheckCircle, MessageCircle, Users } from 'lucide-react';
 import {Link} from '@inertiajs/react';
-
-const Dashboard = () => {
+import {ModalNewProject} from '@/Components/Modals';
+const Dashboard = ({projects = []}) => {
   const today = new Date();
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'short',
@@ -12,13 +12,7 @@ const Dashboard = () => {
     year: 'numeric'
   }).format(today);
 
-  const projects = [
-    { name: 'Project 1', id: 1, status: 'In Progress', members: 5 },
-    { name: 'Project 2', id: 2, status: 'Done', members: 3 },
-    { name: 'Project 3', id: 3, status: 'To do', members: 4 },
-    { name: 'Project 4', id: 4, status: 'Done', members: 2 },
-    { name: 'Project 5', id: 5, status: 'To do', members: 6 }
-  ]
+  const [showModal, setShowModal] = useState(false);
 
   const [taskFilters, setTaskFilters] = useState([
     { name: 'All', active: true },
@@ -27,10 +21,16 @@ const Dashboard = () => {
     { name: 'Done', active: false }
   ])
 
-  useEffect(() => {  }, [taskFilters])
+  useEffect(() => { console.log(projects) }, [taskFilters])
+
   return (
     <div className=" text-white p-6 rounded w-full mx-auto">
       {/* Header */}
+      {showModal && 
+      <ModalNewProject 
+      message={'Create a new project'}
+      onCancel={() => setShowModal(false)} />
+      }
       <div className="flex justify-between items-center mb-8">
         <div>
           <p className="text-gray-400 text-sm">Today</p>
@@ -47,40 +47,24 @@ const Dashboard = () => {
       </div>
 
       {/* Task Status Summary */}
-      <div className="flex items-center justify-between mb-8 w-full h-52">
+      <div className="flex items-center justify-center gap-2 mb-8 w-full h-32">
 
-        <div className="bg-gray-2 rounded py-4 px-2 w-2/5 max-w-2xl h-full cursor-pointer">
-          <div className="flex flex-col items-center">
+        <div className="flex flex-col bg-gray-2 rounded p-2 w-1/2 max-w-2xl h-full cursor-pointer">
+   
        
               <p className="font-medium text-lg">You Have 10 Undone Tasks</p>
-              <p className="text-gray-400 text-sm">2 Tasks are in progress</p>
-              <button className="bg-purple-2-hover transition-colors rounded hover:bg-indigo-700 px-6 py-2 mt-2 text-sm font-medium ">
+              <button className="bg-purple-2-hover transition-colors rounded hover:bg-indigo-700 px-6 py-2 text-sm font-medium ">
                 Check
               </button>
-        
-          </div>
-        </div>
 
-        {/* Sprint Progress Card */}
-        <div className="bg-purple-2 rounded p-6 w-2/5 max-w-2xl h-full cursor-pointer">
-          <div className="flex justify-between">
-            <div>
-              <p className="font-bold text-lg">1st Sprint</p>
-              <p className="text-sm mt-2">3 Task</p>
-              <p className="text-sm">5 Done Task</p>
-              <p className="text-sm">2 Undone Task</p>
-            </div>
-            <div className="relative w-20 h-20">
-              <div className="w-20 h-20 rounded-full border-4 border-indigo-400 flex items-center justify-center">
-                <div className="text-center">
-                  <p className="font-bold">30 %</p>
-                  <p className="text-xs">Completed</p>
-                </div>
-              </div>
-              <div className="absolute top-0 left-0 w-20 h-20 border-4 border-indigo-300 rounded-full border-t-transparent transform rotate-45"></div>
-            </div>
-          </div>
         </div>
+        {/* New Project Card */}
+        <button 
+        onClick={() => setShowModal(true)}
+        className="flex flex-col justify-center items-center bg-purple-2 hover:bg-indigo-700 transition-colors rounded p-2 w-1/2 max-w-2xl h-full cursor-pointer">
+
+          <p className="font-bold text-lg">Create New Project</p>
+        </button>
       </div>
 
       {/* Task Overview */}
@@ -100,7 +84,7 @@ const Dashboard = () => {
 
         <div className="tasks grid grid-cols-3 gap-4">
           {/* Todo Task */}
-          {projects.map((project, index) => {
+          {projects && projects.map((project, index) => {
             let color = null
             const activeFilter = taskFilters?.find(filter => filter.active);
 
@@ -112,7 +96,7 @@ const Dashboard = () => {
             }
             if ((project.status === activeFilter?.name) || activeFilter?.name === 'All') return (
             <Link 
-            href={`/projects/1`}
+            href={route('projects.show', project.id)}
              as='div'
              key={index} 
              className="bg-gray-800 p-4 rounded-xl cursor-pointer">
@@ -203,11 +187,11 @@ const Dashboard = () => {
   );
 }
 
-const Home = () => {
+const Home = ({projects}) => {
 
   return (
     <AuthenticatedLayout > 
-      <Dashboard/>
+      <Dashboard projects={projects}/>
     </AuthenticatedLayout>  
   )
 }
