@@ -7,8 +7,8 @@ import Personas from './Personas';
 import Journeys from './Journeys';
 import Goals from './Goals';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-const ProjectView = () => {
-  const [project, setProject] = useState(
+const ProjectView = ({project = []}) => {
+  const [project1, setProject] = useState(
     {
       id: 1,
       name: "Spotify Clone",
@@ -152,19 +152,19 @@ const ProjectView = () => {
 
   return (
     <div className="project-view flex flex-col items-center justify-start px-2 w-full max-w-6xl">
-      <h2 className="text-white text-center w-full my-4 p-0">{project.name}</h2>
+      <h2 className="text-white text-center w-full my-4 p-0">{project.title}</h2>
       <NavMenu menuItems={menuItems} setMenuItems={setMenuItems} />
       {renderContent()}
     </div>
   );
 };
-const Project = ({}) => {
-
+const Project = ({project=[]}) => {
+  console.log(project)
   return (
     <>
       <Head title="Project" />
       <AuthenticatedLayout >
-        <ProjectView />
+        <ProjectView project={project}/>
       </AuthenticatedLayout>
     </>
   )
