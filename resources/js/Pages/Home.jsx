@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Search, MoreVertical, CheckCircle, MessageCircle, Users } from 'lucide-react';
-import {Link} from '@inertiajs/react';
+import {Link, usePage} from '@inertiajs/react';
 import {ModalNewProject} from '@/Components/Modals';
 const Dashboard = ({projects = []}) => {
   const today = new Date();
@@ -12,6 +12,7 @@ const Dashboard = ({projects = []}) => {
     year: 'numeric'
   }).format(today);
 
+  const props = usePage().props;
   const [showModal, setShowModal] = useState(false);
 
   const [taskFilters, setTaskFilters] = useState([
@@ -21,7 +22,7 @@ const Dashboard = ({projects = []}) => {
     { name: 'Done', active: false }
   ])
 
-  useEffect(() => { console.log(projects) }, [taskFilters])
+  useEffect(() => { console.log(props) }, [props])
 
   return (
     <div className=" text-white p-6 rounded w-full mx-auto">
@@ -103,11 +104,11 @@ const Dashboard = ({projects = []}) => {
               <div className="flex justify-between items-center mb-3">
                 <div className="flex items-center">
                   <div className={`h-2 w-2 ${color} rounded-full mr-2` }></div>
-                  <p>{project.name}</p>
+                  <p>{project.title}</p>
                 </div>
                 <MoreVertical size={18} className="text-gray-400" />
               </div>
-              <p className="text-gray-400 text-sm mb-4">Due in 2 days</p>
+              <p className="text-gray-400 text-sm mb-4">{project.description}</p>
               <div className={`${color} text-white text-xs font-medium py-1 px-4 rounded-full inline-block mb-4`}>
                 {project.status}
               </div>
