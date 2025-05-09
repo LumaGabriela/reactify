@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Plus } from 'lucide-react';
-import PopUpConfirmation from '@/Components/PopUpConfimation';
+import {ModalConfirmation} from '@/Components/Modals';
 const Personas = ({ project, setProject }) => {
   // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
@@ -87,7 +87,7 @@ const Personas = ({ project, setProject }) => {
 
           {/* Diálogo de confirmação de exclusão */}
           {deleteConfirmId === persona.id && (
-            <PopUpConfirmation
+            <ModalConfirmation
               onConfirm={() => deletePersona(persona.id)}
               onCancel={() => setDeleteConfirmId(null)}
               message="Deseja remover esta persona?"

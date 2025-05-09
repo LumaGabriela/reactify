@@ -122,6 +122,7 @@ const Goals = ({ project, setProject }) => {
                     <GoalCard
                     key={i}
                     goal={goal}
+                    setTypeSelectId={setTypeSelectId}
                     toggleTypeSelect={toggleTypeSelect}
                     togglePrioritySelect={togglePrioritySelect}
                     toggleDeleteConfirm={toggleDeleteConfirm}
@@ -135,90 +136,6 @@ const Goals = ({ project, setProject }) => {
                     deleteGoal={deleteGoal}
                     setDeleteConfirmId={setDeleteConfirmId}
                     />
-                    // <div key={goal.id} className="goal bg-gray-800 rounded-lg p-2 shadow-md col-span-1 h-full">
-                    //     <div className="flex items-center mb-2 gap-2">
-                    //         {/* Tipo da Goal (BG/CG) */}
-                    //         <div
-                    //             className={`${getGoalTypeColor(goal.type)} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer flex items-center`}
-                    //             onClick={() => toggleTypeSelect(goal.id)}
-                    //         >
-                    //             {goal.type}
-                    //             <ChevronDown size={14} className="ml-1" />
-                    //         </div>
-
-                    //         {/* Seletor de tipo */}
-                    //         {typeSelectId === goal.id && (
-                    //             <PopUpSelect
-                    //                 types={goalTypes}
-                    //                 onClick={(type) => changeGoalType(goal.id, type.title)}
-                    //                 onCancel={() => setTypeSelectId(null)}
-                    //             />
-                    //         )}
-
-                    //         {/* Prioridade da Goal */}
-                    //         <div
-                    //             className={`${getPriorityColor(goal.priority)} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer flex items-center`}
-                    //             onClick={() => togglePrioritySelect(goal.id)}
-                    //         >
-                    //             {goal.priority}
-                    //             <ChevronDown size={14} className="ml-1" />
-                    //         </div>
-
-                    //         {/* Seletor de prioridade */}
-                    //         {prioritySelectId === goal.id && (
-                    //             <PopUpSelect
-                    //                 types={goalPriorities}
-                    //                 onClick={(priority) => changeGoalPriority(goal.id, priority.title)}
-                    //                 onCancel={() => setPrioritySelectId(null)}
-                    //             />
-                    //         )}
-                    //     </div>
-
-                    //     <div className="flex items-center justify-between">
-                    //         <div className="flex items-center w-full">
-                    //             <div className="rounded-full flex items-center justify-center text-white text-xs w-full">
-                    //                 {editingId === goal.id ? (
-                    //                     <TextArea
-                    //                         value={editValue}
-                    //                         onChange={handleInputChange}
-                    //                         onEnter={(e) => { if (e.key === 'Enter') { editGoal(goal) } }}
-                    //                     />
-                    //                 ) : (
-                    //                     <span className="w-full">{goal.title}</span>
-                    //                 )}
-                    //             </div>
-                    //         </div>
-                    //         <div className="flex gap-1">
-                    //             <button
-                    //                 className={`edit flex p-1 hover:bg-gray-700 rounded transition-colors ${editingId === goal.id ? 'bg-green-700 hover:bg-green-800' : ''}`}
-                    //                 onClick={() => editGoal(goal)}
-                    //             >
-                    //                 {editingId === goal.id ? (
-                    //                     // Ícone de confirmação quando estiver editando
-                    //                     <Check size={16} className='stroke-green-400' />
-                    //                 ) : (
-                    //                     // Ícone de edição quando não estiver editando
-                    //                     <Pencil size={16} className='stroke-gray-400' />
-                    //                 )}
-                    //             </button>
-                    //             <button
-                    //                 className="p-1 flex hover:bg-gray-700 rounded"
-                    //                 onClick={() => toggleDeleteConfirm(goal.id)}
-                    //             >
-                    //                 <CircleX size={16} className={`${deleteConfirmId === goal.id ? 'stroke-red-400' : 'stroke-gray-400'}`} />
-                    //             </button>
-
-                    //             {/* Diálogo de confirmação de exclusão */}
-                    //             {deleteConfirmId === goal.id && (
-                    //                 <PopUpConfirmation
-                    //                     onConfirm={() => deleteGoal(goal.id)}
-                    //                     onCancel={() => setDeleteConfirmId(null)}
-                    //                     message="Deseja remover esta goal?"
-                    //                 />
-                    //             )}
-                    //         </div>
-                    //     </div>
-                    // </div>
                 ))
             ) : (
                 // Exibir um card de exemplo quando não houver goals

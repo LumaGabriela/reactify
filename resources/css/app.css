@@ -101,11 +101,27 @@ a {
     transform: scale(1);
   }
 }
-
+@keyframes closeAnimation {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
 .popup-animation {
   animation: popupAnimation 0.3s ease-out forwards;
   transform-origin: center;
   backface-visibility: hidden; /* Para uma animação mais suave */
+}
+
+
+.popup-close-animation {
+  animation: closeAnimation 0.3s ease-out forwards;
+  transform-origin: center;
+  backface-visibility: hidden;
 }
 .animate-rotate-90 {
   animation: rotate90 0.3s ease-out forwards;

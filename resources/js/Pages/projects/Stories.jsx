@@ -38,10 +38,10 @@ const Stories = ({ project, setProject }) => {
       setEditingId(story.id);
       setEditValue(story.title); // Inicializa o campo com o valor atual
     }
-    router.put(`/stories/${story.id}`, {
-      title: editValue,
-      type: story.type
-  }, { preserveScroll: true });
+  //   router.put(`/stories/${story.id}`, {
+  //     title: editValue,
+  //     type: story.type
+  // }, { preserveScroll: true });
   };
 
   // Função para lidar com mudanças no input
@@ -84,12 +84,12 @@ const Stories = ({ project, setProject }) => {
     const updatedStories = project.stories.filter(s => s.id !== storyId);
     setProject({ ...project, stories: updatedStories });
     setDeleteConfirmId(null); // Fecha o diálogo de confirmação
-    // router.delete(`/stories/${storyId}`, {
-    //     preserveScroll: true,
-    //     onSuccess: () => {
-    //         setDeleteConfirmId(null);
-    //     }
-    // });
+    router.delete(`/stories/${storyId}`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            setDeleteConfirmId(null);
+        }
+    });
   };
 
   return (
@@ -104,6 +104,7 @@ const Stories = ({ project, setProject }) => {
           story={story} 
           toggleTypeSelect={toggleTypeSelect}
           changeStoryType={changeStoryType}
+          setTypeSelectId={setTypeSelectId}
           typeSelectId={typeSelectId}
           editingId={editingId} 
           editValue={editValue}
@@ -147,6 +148,7 @@ const Stories = ({ project, setProject }) => {
           story={story} 
           toggleTypeSelect={toggleTypeSelect}
           changeStoryType={changeStoryType}
+          setTypeSelectId={setTypeSelectId}
           typeSelectId={typeSelectId}
           editingId={editingId} 
           editValue={editValue}

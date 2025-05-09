@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, CircleX, Pencil, Check, ChevronDown } from 'lucide-react';
-import PopUpConfirmation from '@/Components/PopUpConfimation';
+import {ModalConfirmation, ModalSelect} from '@/Components/Modals';
 import TextArea from '@/Components/TextArea';
 
 const StoryCard = ({ 
   story, 
   toggleTypeSelect,
   changeStoryType,
+  setTypeSelectId,
   typeSelectId,
   editingId, 
   editValue,
@@ -17,11 +18,15 @@ const StoryCard = ({
   deleteStory,
   setDeleteConfirmId
 }) => {
+  const [storyTypes] = useState([
+    { color: 'bg-violet-600', title: 'user' },
+    { color: 'bg-teal-600', title: 'system' },
+  ])
   return (
     <div  className={`story bg-gray-800 rounded-lg p-2 shadow-md col-span-1`}>
     <div className="flex items-center mb-2 relative">
       <div
-        className={`${story.type === 'user' ? 'bg-pink-600' : 'bg-cyan-600'} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer`}
+        className={`${story.type === 'user' ? 'bg-violet-600' : 'bg-teal-600'} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer`}
         onClick={() => toggleTypeSelect(story.id)}
       >
         {story.type}
@@ -29,20 +34,11 @@ const StoryCard = ({
 
       {/* Seletor de tipo */}
       {typeSelectId === story.id && (
-        <div className="flex items-center justify-center absolute -top-9 -left-2 z-10 bg-gray-700 rounded shadow-lg px-2 py-1 shadow-md">
-          <div
-            className="bg-pink-600 text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer mr-1 shadow-md"
-            onClick={() => changeStoryType(story.id, 'user')}
-          >
-            user
-          </div>
-          <div
-            className="bg-cyan-600 text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer shadow-md"
-            onClick={() => changeStoryType(story.id, 'system')}
-          >
-            system
-          </div>
-        </div>
+          <ModalSelect
+            types={storyTypes}
+            onClick={(type) => changeStoryType(story.id, type.title)}
+            onCancel={() => setTypeSelectId(null)}
+          />
       )}
     </div>
 
@@ -82,7 +78,7 @@ const StoryCard = ({
 
         {/* Diálogo de confirmação de exclusão */}
         {deleteConfirmId === story.id && (
-          <PopUpConfirmation
+          <ModalConfirmation
             onConfirm={() => deleteStory(story.id)}
             onCancel={() => setDeleteConfirmId(null)}
             message="Deseja remover esta story?"
@@ -96,6 +92,7 @@ const StoryCard = ({
 
 const GoalCard = ({ 
     goal,
+    setTypeSelectId,
     toggleTypeSelect,
     changeGoalType,
     typeSelectId,
@@ -144,7 +141,7 @@ const GoalCard = ({
 
         {/* Seletor de tipo */}
         {typeSelectId === goal.id && (
-            <PopUpSelect
+            <ModalSelect
                 types={goalTypes}
                 onClick={(type) => changeGoalType(goal.id, type.title)}
                 onCancel={() => setTypeSelectId(null)}
@@ -162,7 +159,7 @@ const GoalCard = ({
 
         {/* Seletor de prioridade */}
         {prioritySelectId === goal.id && (
-            <PopUpSelect
+            <ModalSelect
                 types={goalPriorities}
                 onClick={(priority) => changeGoalPriority(goal.id, priority.title)}
                 onCancel={() => setPrioritySelectId(null)}
@@ -206,7 +203,7 @@ const GoalCard = ({
 
             {/* Diálogo de confirmação de exclusão */}
             {deleteConfirmId === goal.id && (
-                <PopUpConfirmation
+                <ModalConfirmation
                     onConfirm={() => deleteGoal(goal.id)}
                     onCancel={() => setDeleteConfirmId(null)}
                     message="Deseja remover esta goal?"
