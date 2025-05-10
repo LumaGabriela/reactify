@@ -1,16 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Http\Requests\StoryRequest;
+use App\Http\Requests\StoreStoryRequest;
+use App\Http\Requests\UpdateStoryRequest;
 use App\Models\Story;
 
 class StoryController extends Controller
 {
-    public function update(StoryRequest $request, Story $story) {
-        $validated = $request->validate([
-            'title' => 'required|string',
-            'type' => 'required|in:user,system'
-        ]);
+    public function update(UpdateStoryRequest $request, Story $story) {
+        $validated = $request->validated();
     
         $story->update($validated);
         return back()
@@ -25,7 +23,7 @@ class StoryController extends Controller
         return back()->with('success', 'Story excluída!');
     }
 
-    public function store(StoryRequest $request)
+    public function store(StoreStoryRequest $request)
     {
         $validated = $request->validated();
 
