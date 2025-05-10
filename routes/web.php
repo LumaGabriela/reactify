@@ -37,7 +37,7 @@ Route::get('/config', function () {
   return Inertia::render('Config');
 })->middleware(['auth', 'verified'])->name('config');
 
-Route::put('/stories/{story}', [StoryController::class, 'update'])->name('story.update');
+Route::patch('/stories/{story}', [StoryController::class, 'update'])->name('story.update');
 Route::delete('/stories/{story}', [StoryController::class, 'destroy'])->name('story.delete');
 Route::post('/stories', [StoryController::class, 'store']);
 
