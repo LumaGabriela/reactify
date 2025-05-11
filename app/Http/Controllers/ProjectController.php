@@ -75,6 +75,39 @@ class ProjectController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $project = Project::findOrFail($id);
+        
+        // Excluir registros relacionados
+        $project->stories()->delete();
+        // $project->goalSketches()->delete();
+        // $project->journeys()->delete();
+        // $project->productCanvas()->delete();
+        // $project->personas()->delete();
+        
+        // Excluir o projeto
+        $project->delete();
+        
+        return redirect()->route('projects.index')->with([
+            'status' => 'success',
+            'message' => 'Projeto excluído com sucesso.'
+        ]);
     }
+        
+    public function toggleActive(string $id)
+    {
+        $project = Project::findOrFail($id);
+        
+        $project->active = !$project->active;
+        $project->save();
+        
+        $statusMessage = $project->active ? 'Projeto ativado com sucesso.' : 'Projeto desativado com sucesso.';
+        
+        return redirect()->back()->with([
+            'status' => 'success',
+            'message' => $statusMessage
+        ]);
+    }
+
+
+
 }

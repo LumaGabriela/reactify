@@ -23,7 +23,14 @@ Route::prefix('projects')->group(function () {
 
   Route::post('create', [ProjectController::class, 'store'])
   ->name('projects.store');
+  
   Route::get('/{id}',[ProjectController::class, 'show'])->name('projects.show');
+
+  Route::put('/{id}/toggle-active', [ProjectController::class, 'toggleActive'])
+  ->name('projects.toggle-active');
+  
+  Route::delete('/{id}', [ProjectController::class, 'destroy'])
+    ->name('projects.destroy');
 })->middleware(['auth', 'verified']);
 
 
