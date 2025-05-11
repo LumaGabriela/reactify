@@ -20,7 +20,7 @@ const LeftMenu = ({}) => {
       <Link 
         as='div' 
         className="px-2 py-3 h-20 flex items-center justify-evenly cursor-pointer border-b border-gray-700"
-        href='/home'
+        href='/projects'
       >
         <div className="bg-blue-800 rounded-full p-2"><Squirrel /></div>
         <div className='flex flex-col items-start justify-center w-full h-full ml-3'>
