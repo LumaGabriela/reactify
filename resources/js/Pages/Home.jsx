@@ -109,9 +109,15 @@ const Dashboard = ({projects = []}) => {
                 <MoreVertical size={18} className="text-gray-400" />
               </div>
               <p className="text-gray-400 text-sm mb-4">{project.description}</p>
-              <div className={`${color} text-white text-xs font-medium py-1 px-4 rounded-full inline-block mb-4`}>
-                {project.status}
+              <div className="flex justify-between items-center mt-2">
+                <div className={`${color} text-white text-xs font-medium py-1 px-4 rounded-full inline-block`}>
+                  {project.status}
+                </div>
+                <div className={`${project.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} text-xs font-medium py-1 px-2 rounded-md inline-block mb-2`}>
+                  {project.active ? 'Ativo' : 'Inativo'}
+                </div>
               </div>
+
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-2">
                   <MessageCircle size={16} className="text-gray-400" />

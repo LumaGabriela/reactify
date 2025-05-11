@@ -23,6 +23,7 @@ Route::prefix('projects')->group(function () {
 
   Route::post('create', [ProjectController::class, 'store'])
   ->name('projects.store');
+  
   Route::get('/{id}',[ProjectController::class, 'show'])->name('projects.show');
 })->middleware(['auth', 'verified']);
 
