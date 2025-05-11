@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MoreVertical, Power, Trash2 } from 'lucide-react';
 import { router } from '@inertiajs/react';
+import { ModalConfirmation } from '@/Components/Modals';
 
 const ProjectMenu = ({ project }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
+  
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [showToggleConfirmation, setShowToggleConfirmation] = useState(false);
 
-
+  // Fechar o menu ao clicar fora dele
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -20,24 +24,24 @@ const ProjectMenu = ({ project }) => {
     };
   }, []);
 
-
   const toggleActive = () => {
-    router.put(route('projects.toggle-active', project.id), {}, {
-      onSuccess: () => {
-        setIsOpen(false);
-      }
-    });
+    setIsOpen(false);
+    setShowToggleConfirmation(true);
   };
 
+  const confirmToggleActive = () => {
+    setShowToggleConfirmation(false);
+    router.put(route('projects.toggle-active', project.id));
+  };
 
   const deleteProject = () => {
-    if (confirm(`Tem certeza que deseja excluir o projeto "${project.title}"?`)) {
-      router.delete(route('projects.destroy', project.id), {
-        onSuccess: () => {
-          setIsOpen(false);
-        }
-      });
-    }
+    setIsOpen(false);
+    setShowDeleteConfirmation(true);
+  };
+
+  const confirmDelete = () => {
+    setShowDeleteConfirmation(false);
+    router.delete(route('projects.destroy', project.id));
   };
 
   return (
@@ -67,6 +71,18 @@ const ProjectMenu = ({ project }) => {
             Excluir projeto
           </button>
         </div>
+      )}
+      
+      
+      {/* Modal de confirmação para ativar/desativar */}
+      {showToggleConfirmation && (
+        <ModalConfirmation 
+          message={project.active 
+            ? `Deseja desativar o projeto "${project.title}"? (Você poderá ativá-lo novamente)` 
+            : `Deseja ativar o projeto "${project.title}"?`}
+          onConfirm={confirmToggleActive}
+          onCancel={() => setShowToggleConfirmation(false)}
+        />
       )}
     </div>
   );
