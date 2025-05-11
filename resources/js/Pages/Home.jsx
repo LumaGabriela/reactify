@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Search, MoreVertical, CheckCircle, MessageCircle, Users } from 'lucide-react';
-import {Link, usePage} from '@inertiajs/react';
-import {ModalNewProject} from '@/Components/Modals';
+import { Search, CheckCircle, MessageCircle, Users } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { ModalNewProject } from '@/Components/Modals';
+import ProjectMenu from '@/Components/ProjectMenu';
+
 const Dashboard = ({projects = []}) => {
   const today = new Date();
   const formattedDate = new Intl.DateTimeFormat('en-US', {
@@ -49,21 +51,16 @@ const Dashboard = ({projects = []}) => {
 
       {/* Task Status Summary */}
       <div className="flex items-center justify-center gap-2 mb-8 w-full h-32">
-
         <div className="flex flex-col bg-gray-2 rounded p-2 w-1/2 max-w-2xl h-full cursor-pointer">
-   
-       
-              <p className="font-medium text-lg">You Have 10 Undone Tasks</p>
-              <button className="bg-purple-2-hover transition-colors rounded hover:bg-indigo-700 px-6 py-2 text-sm font-medium ">
-                Check
-              </button>
-
+          <p className="font-medium text-lg">You Have 10 Undone Tasks</p>
+          <button className="bg-purple-2-hover transition-colors rounded hover:bg-indigo-700 px-6 py-2 text-sm font-medium ">
+            Check
+          </button>
         </div>
         {/* New Project Card */}
         <button 
         onClick={() => setShowModal(true)}
         className="flex flex-col justify-center items-center bg-purple-2 hover:bg-indigo-700 transition-colors rounded p-2 w-1/2 max-w-2xl h-full cursor-pointer">
-
           <p className="font-bold text-lg">Create New Project</p>
         </button>
       </div>
@@ -96,39 +93,46 @@ const Dashboard = ({projects = []}) => {
               default: color = 'bg-gray-800'
             }
             if ((project.status === activeFilter?.name) || activeFilter?.name === 'All') return (
-            <Link 
-            href={route('projects.show', project.id)}
-             as='div'
-             key={index} 
-             className="bg-gray-800 p-4 rounded-xl cursor-pointer">
+            <div key={index} className="bg-gray-800 p-4 rounded-xl cursor-pointer">
               <div className="flex justify-between items-center mb-3">
-                <div className="flex items-center">
+                <Link 
+                  href={route('projects.show', project.id)}
+                  className="flex items-center flex-grow"
+                >
                   <div className={`h-2 w-2 ${color} rounded-full mr-2` }></div>
                   <p>{project.title}</p>
-                </div>
-                <MoreVertical size={18} className="text-gray-400" />
+                </Link>
+                
+                {/* Substituindo o ícone MoreVertical pelo componente de menu */}
+                <ProjectMenu project={project} />
               </div>
-              <p className="text-gray-400 text-sm mb-4">{project.description}</p>
-              <div className="flex justify-between items-center mt-2">
-                <div className={`${color} text-white text-xs font-medium py-1 px-4 rounded-full inline-block`}>
-                  {project.status}
+              
+              <Link 
+                href={route('projects.show', project.id)}
+                className="block"
+              >
+                <p className="text-gray-400 text-sm mb-4">{project.description}</p>
+                <div className="flex justify-between items-center mt-2">
+                  <div className={`${color} text-white text-xs font-medium py-1 px-4 rounded-full inline-block`}>
+                    {project.status}
+                  </div>
+                  <div className={`${project.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} text-xs font-medium py-1 px-2 rounded-md inline-block mb-2`}>
+                    {project.active ? 'Ativo' : 'Inativo'}
+                  </div>
                 </div>
-                <div className={`${project.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} text-xs font-medium py-1 px-2 rounded-md inline-block mb-2`}>
-                  {project.active ? 'Ativo' : 'Inativo'}
-                </div>
-              </div>
 
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-2">
-                  <MessageCircle size={16} className="text-gray-400" />
-                  <span className="text-gray-400 text-sm">50</span>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <MessageCircle size={16} className="text-gray-400" />
+                    <span className="text-gray-400 text-sm">50</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Users size={16} className="text-gray-400" />
+                    <span className="text-gray-400 text-sm">{project.members}</span>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Users size={16} className="text-gray-400" />
-                  <span className="text-gray-400 text-sm">{project.members}</span>
-                </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           )})}
         </div>
       </div>
@@ -195,11 +199,11 @@ const Dashboard = ({projects = []}) => {
 }
 
 const Home = ({projects}) => {
-
   return (
     <AuthenticatedLayout > 
       <Dashboard projects={projects}/>
     </AuthenticatedLayout>  
   )
 }
+
 export default Home
