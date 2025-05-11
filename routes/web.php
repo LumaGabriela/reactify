@@ -29,7 +29,8 @@ Route::prefix('projects')->group(function () {
   Route::put('/{id}/toggle-active', [ProjectController::class, 'toggleActive'])
   ->name('projects.toggle-active');
   
-
+  Route::delete('/{id}', [ProjectController::class, 'destroy'])
+    ->name('projects.destroy');
 })->middleware(['auth', 'verified']);
 
 

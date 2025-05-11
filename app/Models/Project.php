@@ -21,13 +21,32 @@ class Project extends Model
         return $this->belongsTo(User::class);
     }
 
+    // public function goalSketches()
+    // {
+    //     return $this->hasMany(GoalSketch::class);
+    // }
 
-    protected $casts = [
-        'active' => 'boolean',
-    ];
+    // public function journeys()
+    // {
+    //     return $this->hasMany(Journey::class);
+    // }
+
+    // public function productCanvas()
+    // {
+    //     return $this->hasOne(ProductCanvas::class);
+    // }
+
+    // public function personas()
+    // {
+    //     return $this->hasMany(Persona::class);
+    // }
     
     public function stories() 
     {
         return $this->hasMany(Story::class);
     }
+
+    protected $casts = [
+        'active' => 'boolean',
+    ];
 }

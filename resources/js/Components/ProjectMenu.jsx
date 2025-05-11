@@ -6,7 +6,6 @@ import { ModalConfirmation } from '@/Components/Modals';
 const ProjectMenu = ({ project }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
-  
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showToggleConfirmation, setShowToggleConfirmation] = useState(false);
 
@@ -73,6 +72,14 @@ const ProjectMenu = ({ project }) => {
         </div>
       )}
       
+      {/* Modal de confirmação para exclusão */}
+      {showDeleteConfirmation && (
+        <ModalConfirmation 
+          message={`Tem certeza que deseja excluir o projeto "${project.title}"?`}
+          onConfirm={confirmDelete}
+          onCancel={() => setShowDeleteConfirmation(false)}
+        />
+      )}
       
       {/* Modal de confirmação para ativar/desativar */}
       {showToggleConfirmation && (
