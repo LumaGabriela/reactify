@@ -25,6 +25,11 @@ Route::prefix('projects')->group(function () {
   ->name('projects.store');
   
   Route::get('/{id}',[ProjectController::class, 'show'])->name('projects.show');
+
+  Route::put('/{id}/toggle-active', [ProjectController::class, 'toggleActive'])
+  ->name('projects.toggle-active');
+  
+
 })->middleware(['auth', 'verified']);
 
 

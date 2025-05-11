@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'title',
         'description',
@@ -17,6 +20,11 @@ class Project extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+
+    protected $casts = [
+        'active' => 'boolean',
+    ];
     
     public function stories() 
     {

@@ -75,6 +75,24 @@ class ProjectController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+
     }
+    
+    public function toggleActive(string $id)
+    {
+        $project = Project::findOrFail($id);
+        
+        $project->active = !$project->active;
+        $project->save();
+        
+        $statusMessage = $project->active ? 'Projeto ativado com sucesso.' : 'Projeto desativado com sucesso.';
+        
+        return redirect()->back()->with([
+            'status' => 'success',
+            'message' => $statusMessage
+        ]);
+    }
+
+
+
 }
