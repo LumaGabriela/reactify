@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreStoryRequest;
 use App\Http\Requests\UpdateStoryRequest;
 use App\Models\Story;
+use Illuminate\Support\Facades\Log;
 
 class StoryController extends Controller
 {
     public function update(UpdateStoryRequest $request, Story $story) {
         $validated = $request->validated();
-    
         $story->update($validated);
         return back()
         ->with([
@@ -29,7 +29,7 @@ class StoryController extends Controller
 
         Story::create($validated);
         
-        return redirect()->back();
+        return back();
     }
     
 }

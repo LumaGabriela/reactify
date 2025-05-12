@@ -24,6 +24,7 @@ class UpdateStoryRequest extends FormRequest
     return [
       'title' => 'nullable|string:max:255',
       'type' => 'nullable|in:user,system',
+      'updated_at' => 'nullable|date',
     ];
   }
 }
