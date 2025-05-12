@@ -29,7 +29,11 @@ const Stories = ({ project, setProject }) => {
     if (editingId === story.id) {
       // Se já estiver editando esta story, salve as alterações
       const updatedStories = project.stories.map(s =>
-        s.id === story.id ? { ...s, title: editValue } : s
+        s.id === story.id ? {
+           ...s, 
+           title: editValue,
+           updated_at: new Date().toISOString()  
+          } : s
       );
       setProject({ ...project, stories: updatedStories });
 
@@ -65,9 +69,14 @@ const Stories = ({ project, setProject }) => {
   // Função para alterar o tipo da story
   const changeStoryType = (storyId, newType) => {
     const updatedStories = project.stories.map(s =>
-      s.id === storyId ? { ...s, type: newType } : s
+      s.id === storyId ? { 
+        ...s, 
+        type: newType,
+        updated_at: new Date().toISOString() 
+      } : s
     );
     setProject({ ...project, stories: updatedStories });
+
     router.patch(route('story.update', storyId), {
       type: newType,
     })
@@ -103,27 +112,30 @@ const Stories = ({ project, setProject }) => {
       <div className='flex flex-col gap-2 '>
         {/* User stories */}
         {project?.stories?.length > 0 ? (
-          project?.stories?.map((story, i) => {
-            if (story.type === 'user') return (
-              <StoryCard
-                key={i}
-                story={story}
-                toggleTypeSelect={toggleTypeSelect}
-                changeStoryType={changeStoryType}
-                setTypeSelectId={setTypeSelectId}
-                typeSelectId={typeSelectId}
-                editingId={editingId}
-                editValue={editValue}
-                handleInputChange={handleInputChange}
-                editStory={editStory}
-                deleteConfirmId={deleteConfirmId}
-                toggleDeleteConfirm={toggleDeleteConfirm}
-                deleteStory={deleteStory}
-                setDeleteConfirmId={setDeleteConfirmId}
-              />
+          project?.stories
+            .filter((story) => story.type === 'user')
+            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+            .map((story, i) => {
+              return (
+                <StoryCard
+                  key={story.id}
+                  story={story}
+                  toggleTypeSelect={toggleTypeSelect}
+                  changeStoryType={changeStoryType}
+                  setTypeSelectId={setTypeSelectId}
+                  typeSelectId={typeSelectId}
+                  editingId={editingId}
+                  editValue={editValue}
+                  handleInputChange={handleInputChange}
+                  editStory={editStory}
+                  deleteConfirmId={deleteConfirmId}
+                  toggleDeleteConfirm={toggleDeleteConfirm}
+                  deleteStory={deleteStory}
+                  setDeleteConfirmId={setDeleteConfirmId}
+                />
 
-            )
-          })
+              )
+            })
         ) : (
           // Exibir um card de exemplo quando não houver stories
           <div className="bg-gray-800 rounded-lg p-4 shadow-md">
@@ -148,27 +160,30 @@ const Stories = ({ project, setProject }) => {
       </div>
       {/* System stories */}
       <div className='flex flex-col gap-2 '>
-        {project?.stories?.map((story, i) => {
-          if (story.type === 'system') return (
-            <StoryCard
-              key={i}
-              story={story}
-              toggleTypeSelect={toggleTypeSelect}
-              changeStoryType={changeStoryType}
-              setTypeSelectId={setTypeSelectId}
-              typeSelectId={typeSelectId}
-              editingId={editingId}
-              editValue={editValue}
-              handleInputChange={handleInputChange}
-              editStory={editStory}
-              deleteConfirmId={deleteConfirmId}
-              toggleDeleteConfirm={toggleDeleteConfirm}
-              deleteStory={deleteStory}
-              setDeleteConfirmId={setDeleteConfirmId}
-            />
-          )
-        }
-        )}
+        {project?.stories
+          .filter((story) => story.type === 'system')
+          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+          .map((story, i) => {
+            return (
+              <StoryCard
+                key={story.id}
+                story={story}
+                toggleTypeSelect={toggleTypeSelect}
+                changeStoryType={changeStoryType}
+                setTypeSelectId={setTypeSelectId}
+                typeSelectId={typeSelectId}
+                editingId={editingId}
+                editValue={editValue}
+                handleInputChange={handleInputChange}
+                editStory={editStory}
+                deleteConfirmId={deleteConfirmId}
+                toggleDeleteConfirm={toggleDeleteConfirm}
+                deleteStory={deleteStory}
+                setDeleteConfirmId={setDeleteConfirmId}
+              />
+            )
+          }
+          )}
       </div>
 
       {/* Botão "Nova story" */}

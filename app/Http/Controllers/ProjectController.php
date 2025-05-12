@@ -31,8 +31,8 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request)
     {
-        $validatedData = $request->validated();
 
+        $validatedData = $request->validated();
         $project = Project::create($validatedData);
 
         return redirect()
