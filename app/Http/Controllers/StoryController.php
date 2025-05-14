@@ -18,7 +18,7 @@ class StoryController extends Controller
         ]);
     }
     
-    public function destroy(StoryRequest $story) {
+    public function destroy(Story $story) {
         $story->delete();
         return back()->with('success', 'Story excluída!');
     }
