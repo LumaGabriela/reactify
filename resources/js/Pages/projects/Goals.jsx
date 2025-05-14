@@ -116,7 +116,7 @@ const Goals = ({ project, setProject }) => {
 
 
     return (
-        <div className="goalSketches rounded grid sm:grid-cols-1 md:grid-cols-2 gap-2 w-full p-2 cursor-pointer items-center">
+        <div className="goalSketches rounded grid sm:grid-cols-1 md:grid-cols-2 gap-2 w-full p-4 cursor-pointer items-center">
             {project.goalSketches && project.goalSketches.length > 0 ? (
                 project.goalSketches.map((goal, i) => (
                     <GoalCard

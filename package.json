@@ -28,6 +28,7 @@
         "bootstrap": "^5.3.3",
         "lucide-react": "^0.503.0",
         "react-dom": "^19.1.0",
+        "recharts": "^2.15.3",
         "ziggy-js": "^2.5.2"
     }
 }

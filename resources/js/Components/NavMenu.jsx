@@ -9,6 +9,10 @@ const NavMenu = ({ menuItems, setMenuItems }) => {
     setMenuItems(updatedMenuItems);
   };
 
+  // Calcula o número total de itens para distribuição do indicador
+  const totalItems = menuItems.length;
+
+
   return (
     <div className="flex flex-col w-full">
       <div className="flex w-full min-w-full">
@@ -31,9 +35,9 @@ const NavMenu = ({ menuItems, setMenuItems }) => {
           menuItem.active && (
             <div
               key={`indicator-${index}`}
-              className="absolute left-1/2 w-6 h-6 bg-purple-2 transform -translate-x-8 -translate-y-1/2 rotate-45"
+              className="absolute w-6 h-6 bg-purple-2 transform -translate-y-1/2 rotate-45"
               style={{
-                left: `${(index * 20) + 12.5}%`,
+                left: `calc(${(index + 0.5) * (100 / totalItems)}% - 12px)`,
               }}
             />
           )

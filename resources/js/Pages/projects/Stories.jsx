@@ -108,7 +108,7 @@ const Stories = ({ project, setProject }) => {
   };
 
   return (
-    <div className="stories rounded grid grid-cols-2 gap-2 w-full p-2 cursor-pointer items-start">
+    <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
       <div className='flex flex-col gap-2 '>
         {/* User stories */}
         {project?.stories?.length > 0 ? (
