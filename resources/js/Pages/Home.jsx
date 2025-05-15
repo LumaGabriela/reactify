@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Search, CheckCircle, MessageCircle, Users } from 'lucide-react';
 import { Link, usePage } from '@inertiajs/react';
-import { ModalNewProject } from '@/Components/Modals';
-import ProjectMenu from '@/Components/ProjectMenu';
+import { ModalNewProject, ProjectMenu } from '@/Components/Modals';
 
 const Dashboard = ({projects = []}) => {
   const today = new Date();
