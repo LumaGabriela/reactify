@@ -16,7 +16,7 @@ class ProjectTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->loginAs(User::find(1))
-            ->visitRoute('projects.show', ['id' => 1])
+            ->visitRoute('projecs.show', ['id' => 1])
             ->click('@btn-stories')
             ->click('button');
             Sleep(5);
