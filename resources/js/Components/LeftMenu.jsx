@@ -22,11 +22,6 @@ const LeftMenu = ({}) => {
         <div className="bg-blue-800 rounded-full p-2"><Squirrel /></div>
         <div className='flex flex-col items-start justify-center w-full h-full ml-3'>
           <span className="font-semibold text-white text-sm whitespace-nowrap h-1/2">Sistema Reactify</span>
-          {/* <div className='flex col items-center justify-between h-1/2'>
-            <span className="text-gray-400 text-xs whitespace-nowrap text-center">Release time</span>
-            <span className="bg-green-500 text-white text-xs rounded ml-1 px-1 text-center h-5 whitespace-nowrap">Oct 28, 2024</span>
-          </div> */}
-
         </div>
       </Link>
 

@@ -166,7 +166,7 @@ const GoalCard = ({
             types={goalPriorities}
             onClick={(priority) => changeGoalPriority(goal.id, priority.title)}
             onCancel={() => setPrioritySelectId(null)}
-             message={'Select priority'}
+            message={'Select priority'}
           />
         )}
       </div>

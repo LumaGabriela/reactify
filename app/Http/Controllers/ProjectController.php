@@ -15,6 +15,7 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::all();
+
         return Inertia::render('Home', [
             'projects' => $projects,
         ]);
@@ -42,8 +43,11 @@ class ProjectController extends Controller
     {
 
         $validatedData = $request->validated();
+
         $project = Project::create($validatedData);
+
         $project->active = true;
+        
         $project->save();
 
         return redirect()

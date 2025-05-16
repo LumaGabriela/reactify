@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import NavMenu from '../../Components/NavMenu'
 import MainView from './MainView';
 import Stories from './Stories';
@@ -40,7 +40,7 @@ const ProjectView = ({ projectDB = [] }) => {
 
   useEffect(() => {
     // console.log(project?.goal_sketches)
-    console.log(menuItems, activeMenu)
+    console.log(route().current(), activeMenu)
   }, [activeMenu])
 
   const renderContent = () => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { GoalCard } from '@/Components/Card';
 import { router } from '@inertiajs/react';
-const Goals = ({ project, setProject }) => {
+const Goals = ({ project, setProject, setActiveMenu }) => {
 
     // Estado para controlar qual goal está sendo editada
     const [editingId, setEditingId] = useState(null);
@@ -76,8 +76,8 @@ const Goals = ({ project, setProject }) => {
             type: 'bg',
             priority: 'high',
             project_id: project.id
-        },{
-            preserveScroll: true, 
+        }, {
+            preserveScroll: true,
             preserveState: false
         })
     };
@@ -127,7 +127,7 @@ const Goals = ({ project, setProject }) => {
 
             router.patch(route('goal.update', goalId), {
                 type: newType,
-            })
+            }, { preserveState: false })
         }
 
         setTypeSelectId(null); // Fecha o seletor de tipo
@@ -136,7 +136,7 @@ const Goals = ({ project, setProject }) => {
     // Função para alterar a prioridade da goal
     const changeGoalPriority = (goalId, newPriority) => {
         const goal = project.goal_sketches.find(g => g.id === goalId);
-        if (goal.type !== newPriority) {
+        if (goal.priority !== newPriority) {
             const updatedGoals = (project.goal_sketches || []).map(g =>
                 g.id === goalId ? {
                     ...g,
