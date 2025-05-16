@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Head, router } from '@inertiajs/react';
 import NavMenu from '../../Components/NavMenu'
 import MainView from './MainView';
@@ -10,7 +10,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 const ProjectView = ({ projectDB = [] }) => {
 
   const [project, setProject] = useState({ ...projectDB });
-  const [activeMenu, setActiveMenu] = useState('Goals');
+  const [activeMenu, setActiveMenu] = useState( 
+    () => localStorage.getItem('activeMenu') || 'All'
+    );
   const [menuItems, setMenuItems] = useState([
     { All: true },
     { Stories: false },
@@ -35,13 +37,14 @@ const ProjectView = ({ projectDB = [] }) => {
 
     })
     setMenuItems(updatedMenuItems)
-
+    localStorage.setItem('activeMenu', activeMenu)
   }, [activeMenu])
 
   useEffect(() => {
     // console.log(project?.goal_sketches)
     console.log(route().current(), activeMenu)
   }, [activeMenu])
+
 
   const renderContent = () => {
     switch (activeMenu) {
