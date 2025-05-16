@@ -137,7 +137,7 @@ const GoalCard = ({
           className={`${getGoalTypeColor(goal.type)} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer flex items-center`}
           onClick={() => toggleTypeSelect(goal.id)}
         >
-          {goal.type.toUpperCase()}
+          {goal?.type?.toUpperCase()}
           <ChevronDown size={14} className="ml-1" />
         </div>
 
@@ -156,7 +156,7 @@ const GoalCard = ({
           className={`${getPriorityColor(goal.priority)} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer flex items-center`}
           onClick={() => togglePrioritySelect(goal.id)}
         >
-          {goal.priority.toUpperCase()}
+          {goal?.priority?.toUpperCase()}
           <ChevronDown size={14} className="ml-1" />
         </div>
 
