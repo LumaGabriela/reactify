@@ -13,43 +13,7 @@ const Stories = ({ project, setProject }) => {
   const [typeSelectId, setTypeSelectId] = useState(null);
   // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-  // Função para adicionar uma nova story
-  const addNewStory = () => {
-    setProject({ ...project, stories: [...project.stories, { id: project?.stories.length + 1, title: 'Nova Story', type: 'user' }] });
 
-    router.post(route('story.store'), {
-      title: 'Nova Story',
-      type: 'user',
-      project_id: project.id // ID do projeto atual
-    }, { preserveScroll: true });
-  };
-
-  // Função para alternar entre modo de edição e visualização
-  const editStory = (story) => {
-    if (editingId === story.id) {
-      // Se já estiver editando esta story, salve as alterações
-      const updatedStories = project.stories.map(s =>
-        s.id === story.id ? {
-           ...s, 
-           title: editValue,
-           updated_at: new Date().toISOString()  
-          } : s
-      );
-      setProject({ ...project, stories: updatedStories });
-
-      router.patch(route('story.update', story.id), {
-        title: editValue,
-      }, {
-        preserveScroll: true,
-      });
-      setEditingId(null)
-    } else {
-      // Entra no modo de edição para esta story
-      setEditingId(story.id);
-      setEditValue(story.title); // Inicializa o campo com o valor atual
-    }
-    console.log(editValue)
-  };
 
   // Função para lidar com mudanças no input
   const handleInputChange = (e) => {
@@ -66,23 +30,6 @@ const Stories = ({ project, setProject }) => {
     }
   };
 
-  // Função para alterar o tipo da story
-  const changeStoryType = (storyId, newType) => {
-    const updatedStories = project.stories.map(s =>
-      s.id === storyId ? { 
-        ...s, 
-        type: newType,
-        updated_at: new Date().toISOString() 
-      } : s
-    );
-    setProject({ ...project, stories: updatedStories });
-
-    router.patch(route('story.update', storyId), {
-      type: newType,
-    })
-    setTypeSelectId(null); // Fecha o seletor de tipo
-  };
-
   // Função para alternar a exibição do diálogo de confirmação de exclusão
   const toggleDeleteConfirm = (storyId) => {
     if (deleteConfirmId === storyId) {
@@ -93,18 +40,79 @@ const Stories = ({ project, setProject }) => {
       setEditingId(null); // Fecha a edição caso esteja aberta
     }
   };
+  // Função para adicionar uma nova story
+  const addNewStory = () => {
+    setProject({ ...project, stories: [...project.stories, { title: 'Nova Story', type: 'user' }] });
+
+    router.post(route('story.store'), {
+      title: 'Nova Story',
+      type: 'user',
+      project_id: project.id // ID do projeto atual
+    }, {
+      preserveState: false,
+      preserveScroll: true
+    });
+  };
+
+  // Função para alternar entre modo de edição e visualização
+  const editStory = (story) => {
+    if (editingId === story.id) {
+      // Se já estiver editando esta story, salve as alterações
+      if (story.title !== editValue) {
+        const updatedStories = project.stories.map(s =>
+          s.id === story.id ? {
+            ...s,
+            title: editValue,
+            updated_at: new Date().toISOString()
+          } : s
+        );
+
+        setProject({ ...project, stories: updatedStories });
+
+        router.patch(route('story.update', story.id), {
+          title: editValue,
+        });
+
+      }
+      setEditingId(null)
+    } else {
+      // Entra no modo de edição para esta story
+      setEditingId(story.id);
+      setEditValue(story.title); // Inicializa o campo com o valor atual
+    }
+    console.log(editValue)
+  };
+
+  // Função para alterar o tipo da story
+  const changeStoryType = (storyId, newType) => {
+    const story = project.stories.find(s => s.id === storyId);
+    if (story.type !== newType) {
+      const updatedStories = project.stories.map(s =>
+        s.id === storyId ? {
+          ...s,
+          type: newType,
+          updated_at: new Date().toISOString()
+        } : s
+      );
+
+
+      setProject({ ...project, stories: updatedStories });
+
+      router.patch(route('story.update', storyId), {
+        type: newType,
+      })
+    }
+
+    setTypeSelectId(null); // Fecha o seletor de tipo
+  };
+
 
   // Função para excluir a story
   const deleteStory = (storyId) => {
     const updatedStories = project?.stories.filter(s => s.id !== storyId);
     setProject({ ...project, stories: updatedStories });
     setDeleteConfirmId(null); // Fecha o diálogo de confirmação
-    router.delete(`/stories/${storyId}`, {
-      preserveScroll: true,
-      onSuccess: () => {
-        setDeleteConfirmId(null);
-      }
-    });
+    router.delete(route('story.delete', storyId));
   };
 
   return (
@@ -118,7 +126,7 @@ const Stories = ({ project, setProject }) => {
             .map((story, i) => {
               return (
                 <StoryCard
-                  key={story.id}
+                  key={i}
                   story={story}
                   toggleTypeSelect={toggleTypeSelect}
                   changeStoryType={changeStoryType}
@@ -160,13 +168,13 @@ const Stories = ({ project, setProject }) => {
       </div>
       {/* System stories */}
       <div className='flex flex-col gap-2 '>
-        {project?.stories
+        {project?.stories?.length > 0 && project?.stories
           .filter((story) => story.type === 'system')
           .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
           .map((story, i) => {
             return (
               <StoryCard
-                key={story.id}
+                key={i}
                 story={story}
                 toggleTypeSelect={toggleTypeSelect}
                 changeStoryType={changeStoryType}
