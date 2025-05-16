@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { GoalCard } from '@/Components/Card';
+import { router } from '@inertiajs/react';
 const Goals = ({ project, setProject }) => {
 
     // Estado para controlar qual goal está sendo editada
@@ -18,16 +19,23 @@ const Goals = ({ project, setProject }) => {
     const addNewGoal = () => {
         setProject({
             ...project,
-            goalSketches: [
-                ...project.goalSketches || [],
+            goal_sketches: [
+                ...project.goal_sketches || [],
                 {
-                    id: project.goalSketches ? project.goalSketches.length + 1 : 1,
-                    title: 'Nova Goal',
-                    type: 'BG',
-                    priority: 'MED'
+                    id: project.goal_sketches ? project.goal_sketches.length + 1 : 1,
+                    title: 'New Goal',
+                    type: 'bg',
+                    priority: 'med'
                 }
             ]
         });
+
+        router.post(route('goal.store'), {
+            title: 'New Goal',
+            type: 'bg',
+            priority: 'high',
+            project_id: project.id
+        })
     };
 
     // Função para alternar entre modo de edição e visualização
@@ -35,11 +43,15 @@ const Goals = ({ project, setProject }) => {
         console.log('editando: ', goal);
         if (editingId === goal.id) {
             // Se já estiver editando esta goal, salve as alterações
-            const updatedGoals = (project.goalSketches || []).map(g =>
+            const updatedGoals = (project.goal_sketches || []).map(g =>
                 g.id === goal.id ? { ...g, title: editValue } : g
             );
-            setProject({ ...project, goalSketches: updatedGoals });
+            setProject({ ...project, goal_sketches: updatedGoals });
             setEditingId(null); // Sai do modo de edição
+
+            router.patch(route('goal.update', goal.id), {
+                title: editValue,
+            })
         } else {
             // Entra no modo de edição para esta goal
             setEditingId(goal.id);
@@ -76,19 +88,19 @@ const Goals = ({ project, setProject }) => {
 
     // Função para alterar o tipo da goal
     const changeGoalType = (goalId, newType) => {
-        const updatedGoals = (project.goalSketches || []).map(g =>
+        const updatedGoals = (project.goal_sketches || []).map(g =>
             g.id === goalId ? { ...g, type: newType } : g
         );
-        setProject({ ...project, goalSketches: updatedGoals });
+        setProject({ ...project, goal_sketches: updatedGoals });
         setTypeSelectId(null); // Fecha o seletor de tipo
     };
 
     // Função para alterar a prioridade da goal
     const changeGoalPriority = (goalId, newPriority) => {
-        const updatedGoals = (project.goalSketches || []).map(g =>
+        const updatedGoals = (project.goal_sketches || []).map(g =>
             g.id === goalId ? { ...g, priority: newPriority } : g
         );
-        setProject({ ...project, goalSketches: updatedGoals });
+        setProject({ ...project, goal_sketches: updatedGoals });
         setPrioritySelectId(null); // Fecha o seletor de prioridade
     };
 
@@ -106,8 +118,8 @@ const Goals = ({ project, setProject }) => {
 
     // Função para excluir a goal
     const deleteGoal = (goalId) => {
-        const updatedGoals = (project.goalSketches || []).filter(g => g.id !== goalId);
-        setProject({ ...project, goalSketches: updatedGoals });
+        const updatedGoals = (project.goal_sketches || []).filter(g => g.id !== goalId);
+        setProject({ ...project, goal_sketches: updatedGoals });
         setDeleteConfirmId(null); // Fecha o diálogo de confirmação
     };
 
@@ -117,24 +129,27 @@ const Goals = ({ project, setProject }) => {
 
     return (
         <div className="goalSketches rounded grid sm:grid-cols-1 md:grid-cols-2 gap-2 w-full p-4 cursor-pointer items-center">
-            {project.goalSketches && project.goalSketches.length > 0 ? (
-                project.goalSketches.map((goal, i) => (
+            {project.goal_sketches && project.goal_sketches.length > 0 ? (
+                project.goal_sketches.map((goal, i) => (
                     <GoalCard
-                    key={i}
-                    goal={goal}
-                    setTypeSelectId={setTypeSelectId}
-                    toggleTypeSelect={toggleTypeSelect}
-                    togglePrioritySelect={togglePrioritySelect}
-                    toggleDeleteConfirm={toggleDeleteConfirm}
-                    changeGoalType={changeGoalType}
-                    typeSelectId={typeSelectId}
-                    editingId={editingId}
-                    editValue={editValue}
-                    handleInputChange={handleInputChange}
-                    editGoal={editGoal}
-                    deleteConfirmId={deleteConfirmId}
-                    deleteGoal={deleteGoal}
-                    setDeleteConfirmId={setDeleteConfirmId}
+                        key={i}
+                        goal={goal}
+                        setTypeSelectId={setTypeSelectId}
+                        setPrioritySelectId={setPrioritySelectId}
+                        toggleTypeSelect={toggleTypeSelect}
+                        togglePrioritySelect={togglePrioritySelect}
+                        toggleDeleteConfirm={toggleDeleteConfirm}
+                        changeGoalType={changeGoalType}
+                        changeGoalPriority={changeGoalPriority}
+                        typeSelectId={typeSelectId}
+                        prioritySelectId={prioritySelectId}
+                        editingId={editingId}
+                        editValue={editValue}
+                        handleInputChange={handleInputChange}
+                        editGoal={editGoal}
+                        deleteConfirmId={deleteConfirmId}
+                        deleteGoal={deleteGoal}
+                        setDeleteConfirmId={setDeleteConfirmId}
                     />
                 ))
             ) : (
