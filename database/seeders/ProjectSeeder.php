@@ -90,9 +90,10 @@ class ProjectSeeder extends Seeder
         // Criar Goal Sketch
         DB::table('goal_sketches')->insert([
             'title' => 'Meta Principal',
-            'type' => 'Estratégica',
+            'type' => 'cg',
+            'priority' => 'urgent',
             'project_id' => $projectId,
-            'priority_id' => $priorityId,
+            // 'priority_id' => $priorityId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
