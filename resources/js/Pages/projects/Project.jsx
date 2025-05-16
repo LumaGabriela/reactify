@@ -10,25 +10,38 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 const ProjectView = ({ projectDB = [] }) => {
 
   const [project, setProject] = useState({ ...projectDB });
-  const [activeMenu, setActiveMenu] = useState('');
+  const [activeMenu, setActiveMenu] = useState('Goals');
   const [menuItems, setMenuItems] = useState([
-    { name: 'All', active: false },
-    { name: 'Stories', active: false },
-    { name: 'Personas', active: false },
-    { name: 'Goals', active: true },
-    { name: 'Journeys', active: false }
+    { All: true },
+    { Stories: false },
+    { Personas: false },
+    { Goals: false },
+    { Journeys: false }
   ]);
 
+//Altera o menu ativo
   useEffect(() => {
-    const activeItem = menuItems.find(item => item.active);
-    if (activeItem) {
-      setActiveMenu(activeItem.name);
-    }
-  }, [menuItems]);
+    const updatedMenuItems = menuItems.map((item, i) => {
+      if (Object.keys(item)[0] === activeMenu) {
+        return {
+          ...item,
+          [Object.keys(item)[0]]: true,
+        };
+      }
+      return {
+        ...item,
+        [Object.keys(item)[0]]: false,
+      };
+
+    })
+    setMenuItems(updatedMenuItems)
+
+  }, [activeMenu])
 
   useEffect(() => {
-    console.log(project)
-  }, [project])
+    // console.log(project?.goal_sketches)
+    console.log(menuItems, activeMenu)
+  }, [activeMenu])
 
   const renderContent = () => {
     switch (activeMenu) {
@@ -39,7 +52,7 @@ const ProjectView = ({ projectDB = [] }) => {
       case 'Personas':
         return <Personas project={project} setProject={setProject} />
       case 'Goals':
-        return <Goals project={project} setProject={setProject} />
+        return <Goals project={project} setProject={setProject} setActiveMenu={setActiveMenu} />
       case 'Journeys':
         return <Journeys project={project} setProject={setProject} />
       default:
@@ -50,16 +63,13 @@ const ProjectView = ({ projectDB = [] }) => {
   return (
     <div className="project-view flex flex-col items-center justify-start px-2 w-full max-w-6xl">
       <h2 className="text-white text-center w-full my-4 p-0">{project.title}</h2>
-      <NavMenu menuItems={menuItems} setMenuItems={setMenuItems} />
+      <NavMenu menuItems={menuItems} setActiveMenu={setActiveMenu} />
       {renderContent()}
     </div>
   );
 };
 const Project = ({ project }) => {
 
-  useEffect(() => {
-
-  }, [project])
   return (
     <>
       <Head title="Project" />
