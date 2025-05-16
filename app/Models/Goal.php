@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Story extends Model
+class Goal extends Model
 {
-    protected $fillable = ['title', 'type', 'project_id'];
+    protected $guarded = [
+        'id',
+    ];
+
+    protected $table = 'goal_sketches';
 
     public function project()
     {

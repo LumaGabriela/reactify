@@ -12,7 +12,7 @@ class Project extends Model
     protected $fillable = [
         'title',
         'description',
-        'status'
+        'status',
     ];
 
     // Relação: Um projeto pertence a um usuário
@@ -26,10 +26,10 @@ class Project extends Model
     //     return $this->hasMany(GoalSketch::class);
     // }
 
-    // public function journeys()
-    // {
-    //     return $this->hasMany(Journey::class);
-    // }
+    public function journeys()
+    {
+        return $this->hasMany(Journey::class);
+    }
 
     // public function productCanvas()
     // {
@@ -40,6 +40,10 @@ class Project extends Model
     // {
     //     return $this->hasMany(Persona::class);
     // }
+    public function goal_sketches()
+    {
+        return $this->hasMany(Goal::class);
+    }
     
     public function stories() 
     {
