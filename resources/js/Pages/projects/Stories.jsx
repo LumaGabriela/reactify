@@ -42,7 +42,12 @@ const Stories = ({ project, setProject }) => {
   };
   // Função para adicionar uma nova story
   const addNewStory = () => {
-    setProject({ ...project, stories: [...project.stories, { title: 'Nova Story', type: 'user' }] });
+    setProject({
+      ...project, stories: [...project.stories, {
+        title: 'Nova Story',
+        type: 'user'
+      }]
+    });
 
     router.post(route('story.store'), {
       title: 'Nova Story',
@@ -86,6 +91,7 @@ const Stories = ({ project, setProject }) => {
   // Função para alterar o tipo da story
   const changeStoryType = (storyId, newType) => {
     const story = project.stories.find(s => s.id === storyId);
+
     if (story.type !== newType) {
       const updatedStories = project.stories.map(s =>
         s.id === storyId ? {
@@ -94,7 +100,6 @@ const Stories = ({ project, setProject }) => {
           updated_at: new Date().toISOString()
         } : s
       );
-
 
       setProject({ ...project, stories: updatedStories });
 
