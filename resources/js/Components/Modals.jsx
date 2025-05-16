@@ -51,7 +51,7 @@ const ModalConfirmation = ({ onConfirm, onCancel, message }) => {
   );
 }
 
-const ModalSelect = ({ onClick, onCancel, types }) => {
+const ModalSelect = ({ onClick, onCancel, types, message }) => {
   const [animationStart, setAnimationStart] = useState(true);
   const closeModal = () => {
     setAnimationStart(false);
@@ -68,16 +68,16 @@ const ModalSelect = ({ onClick, onCancel, types }) => {
       {/* Popup de selecao  */}
       <ModalLayout animationStart={animationStart}>
         <h1 className="text-white text-sm font-medium">
-          Select type
+          {message || 'Select'}
         </h1>
         <div className="flex gap-2 w-full">
           {types && types.map((type, index) => (
             <div
               key={index}
-              className={`${type.color || 'bg-gray-400'} text-white text-sm font-medium py-1 px-3 rounded-full cursor-pointer shadow-md`}
+              className={`${type.color || 'bg-gray-400'} text-white text-xs font-medium py-1 px-4 rounded-full cursor-pointer shadow-md`}
               onClick={() => handleClick(type)}
             >
-              {type.title}
+              {type.title.toUpperCase()}
             </div>
           ))}
         </div>
@@ -99,7 +99,7 @@ const ModalNewProject = ({ onCancel, message }) => {
     setTimeout(() => onCancel(), 300);
   }
   const onConfirm = () => {
-    router.post(route('projects.store'), newProject)
+    router.post(route('project.store'), newProject)
   }
   return (
     // Fundo escuro
@@ -170,7 +170,7 @@ const ProjectMenu = ({ project }) => {
 
   const confirmToggleActive = () => {
     setShowToggleConfirmation(false);
-    router.put(route('projects.toggle-active', project.id));
+    router.put(route('project.toggle-active', project.id));
   };
 
   const deleteProject = () => {
@@ -180,7 +180,7 @@ const ProjectMenu = ({ project }) => {
 
   const confirmDelete = () => {
     setShowDeleteConfirmation(false);
-    router.delete(route('projects.destroy', project.id));
+    router.delete(route('project.destroy', project.id));
   };
 
   return (

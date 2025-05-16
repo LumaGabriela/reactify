@@ -17,7 +17,7 @@ const Stories = ({ project, setProject }) => {
   const addNewStory = () => {
     setProject({ ...project, stories: [...project.stories, { id: project?.stories.length + 1, title: 'Nova Story', type: 'user' }] });
 
-    router.post('/stories', {
+    router.post(route('story.store'), {
       title: 'Nova Story',
       type: 'user',
       project_id: project.id // ID do projeto atual

@@ -95,7 +95,7 @@ const Dashboard = ({projects = []}) => {
             <div key={index} className="bg-gray-800 p-4 rounded-xl cursor-pointer">
               <div className="flex justify-between items-center mb-3">
                 <Link 
-                  href={route('projects.show', project.id)}
+                  href={route('project.show', project.id)}
                   className="flex items-center flex-grow"
                 >
                   <div className={`h-2 w-2 ${color} rounded-full mr-2` }></div>
@@ -107,7 +107,7 @@ const Dashboard = ({projects = []}) => {
               </div>
               
               <Link 
-                href={route('projects.show', project.id)}
+                href={route('project.show', project.id)}
                 className="block"
               >
                 <p className="text-gray-400 text-sm mb-4">{project.description}</p>

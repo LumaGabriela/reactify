@@ -1,37 +1,53 @@
 <?php
+
 use App\Http\Controllers\StoryController;
+use App\Http\Controllers\GoalController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use SebastianBergmann\CodeCoverage\Report\Xml\Project;
 
-Route::get('/', function () {
-  return Inertia::render('Welcome', [
-    'canLogin' => Route::has('login'),
-    'canRegister' => Route::has('register'),
-    'laravelVersion' => Application::VERSION,
-    'phpVersion' => PHP_VERSION,
-  ]);
+// Route::get('/', function () {
+//   return Inertia::render('Welcome', [
+//     'canLogin' => Route::has('login'),
+//     'canRegister' => Route::has('register'),
+//     'laravelVersion' => Application::VERSION,
+//     'phpVersion' => PHP_VERSION,
+//   ]);
+// });
+
+Route::group(['middleware' => ['auth', 'verified']], function () {
+  Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
+
+  Route::prefix('project')->group(function () {
+    Route::post('/create', [ProjectController::class, 'store'])->name('project.store');
+    Route::get('/{id}', [ProjectController::class, 'show'])->name('project.show');
+    Route::put('/{id}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggle-active');
+    Route::delete('/{id}', [ProjectController::class, 'destroy'])->name('project.destroy');
+  });
+
+  // Rotas para stories
+  Route::prefix('story')->group(function () {
+    Route::post('/', [StoryController::class, 'store'])->name('story.store');
+    Route::patch('/{story}', [StoryController::class, 'update'])->name('story.update');
+    Route::delete('/{story}', [StoryController::class, 'destroy'])->name('story.delete');
+  });
+
+  //Rotas para goals
+  Route::prefix('goal')->group(function () {
+    Route::post('/', [GoalController::class, 'store'])->name('goal.store');
+    Route::patch('/{goal}', [GoalController::class, 'update'])->name('goal.update');
+    Route::delete('/{goal}', [GoalController::class, 'destroy'])->name('goal.delete');
+  });
+  //
+
 });
 
 
-Route::prefix('projects')->group(function () {
-  Route::get('/', [ProjectController::class, 'index'])
-  ->name('projects.index');
 
-  Route::post('create', [ProjectController::class, 'store'])
-  ->name('projects.store');
-  
-  Route::get('/{id}',[ProjectController::class, 'show'])->name('projects.show');
 
-  Route::put('/{id}/toggle-active', [ProjectController::class, 'toggleActive'])
-  ->name('projects.toggle-active');
-  
-  Route::delete('/{id}', [ProjectController::class, 'destroy'])
-    ->name('projects.destroy');
-})->middleware(['auth', 'verified']);
+
 
 
 Route::middleware('auth')->group(function () {
@@ -44,8 +60,6 @@ Route::get('/config', function () {
   return Inertia::render('Config');
 })->middleware(['auth', 'verified'])->name('config');
 
-Route::patch('/stories/{story}', [StoryController::class, 'update'])->name('story.update');
-Route::delete('/stories/{story}', [StoryController::class, 'destroy'])->name('story.delete');
-Route::post('/stories', [StoryController::class, 'store']);
+
 
 require __DIR__ . '/auth.php';

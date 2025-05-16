@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import NavMenu from '../../Components/NavMenu'
 import MainView from './MainView';
 import Stories from './Stories';
@@ -7,15 +7,15 @@ import Personas from './Personas';
 import Journeys from './Journeys';
 import Goals from './Goals';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-const ProjectView = ({projectDB = []}) => {
+const ProjectView = ({ projectDB = [] }) => {
 
-  const [project, setProject] = useState({...projectDB});
+  const [project, setProject] = useState({ ...projectDB });
   const [activeMenu, setActiveMenu] = useState('');
   const [menuItems, setMenuItems] = useState([
     { name: 'All', active: false },
-    { name: 'Stories', active: true },
+    { name: 'Stories', active: false },
     { name: 'Personas', active: false },
-    { name: 'Goals', active: false },
+    { name: 'Goals', active: true },
     { name: 'Journeys', active: false }
   ]);
 
@@ -27,7 +27,7 @@ const ProjectView = ({projectDB = []}) => {
   }, [menuItems]);
 
   useEffect(() => {
-    console.log()
+    console.log(project)
   }, [project])
 
   const renderContent = () => {
@@ -55,16 +55,16 @@ const ProjectView = ({projectDB = []}) => {
     </div>
   );
 };
-const Project = ({project}) => {
-  
+const Project = ({ project }) => {
+
   useEffect(() => {
 
-  },[project])
+  }, [project])
   return (
     <>
       <Head title="Project" />
       <AuthenticatedLayout >
-        <ProjectView projectDB={project}/>
+        <ProjectView projectDB={project} />
       </AuthenticatedLayout>
     </>
   )
