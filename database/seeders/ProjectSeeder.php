@@ -99,7 +99,7 @@ class ProjectSeeder extends Seeder
         ]);
 
         // Criar registros básicos para tabelas restantes
-        DB::table('personas')->insert(['created_at' => now(), 'updated_at' => now()]);
+        //DB::table('personas')->insert(['created_at' => now(), 'updated_at' => now()]);
         DB::table('journeys')->insert(['created_at' => now(), 'updated_at' => now()]);
         DB::table('stories')->insert([
             [

@@ -4,6 +4,7 @@ use App\Http\Controllers\StoryController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\PersonaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,7 +32,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{goal}', [GoalController::class, 'update'])->name('goal.update');
     Route::delete('/{goal}', [GoalController::class, 'destroy'])->name('goal.delete');
   });
-  //
+  
+  Route::prefix('persona')->group(function () {
+    Route::post('/', [PersonaController::class, 'store'])->name('persona.store');
+    Route::patch('/{persona}', [PersonaController::class, 'update'])->name('persona.update');
+    Route::delete('/{persona}', [PersonaController::class, 'destroy'])->name('persona.delete');
+  });
 
 });
 
