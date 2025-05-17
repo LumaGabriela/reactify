@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\GoalController;
+use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -31,14 +31,14 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{goal}', [GoalController::class, 'update'])->name('goal.update');
     Route::delete('/{goal}', [GoalController::class, 'destroy'])->name('goal.delete');
   });
-  //
+  //Rotas para journeys
+  Route::prefix('journey')->group(function () {
+    Route::post('/', [JourneyController::class, 'store'])->name('journey.store');
+    Route::patch('/{journey}', [JourneyController::class, 'update'])->name('journey.update');
+    Route::delete('/{journey}', [JourneyController::class, 'destroy'])->name('journey.delete');
+  });
 
 });
-
-
-
-
-
 
 
 Route::middleware('auth')->group(function () {
@@ -50,7 +50,6 @@ Route::middleware('auth')->group(function () {
 Route::get('/config', function () {
   return Inertia::render('Config');
 })->middleware(['auth', 'verified'])->name('config');
-
 
 
 require __DIR__ . '/auth.php';
