@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('personas', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->json('profile')->nullable();
-            $table->json('expectations')->nullable();
-            $table->json('restrictions')->nullable();
-            $table->json('goals')->nullable();
+            $table->json('profile');
+            $table->json('expectations');
+            $table->json('restrictions');
+            $table->json('goals');
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

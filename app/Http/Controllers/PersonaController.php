@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Persona;
 use App\Models\Project;
+use App\Http\Requests\PersonaRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -12,21 +13,15 @@ class PersonaController extends Controller
     /**
      * Store a newly created persona in storage.
      */
-    public function store(Request $request)
+    public function store(PersonaRequest $request)
     {
-        $validated = $request->validate([
-            'project_id' => 'required|exists:projects,id',
-            'name' => 'nullable|string|max:255',
-            'profile' => 'nullable|array',
-            'expectations' => 'nullable|array',
-            'restrictions' => 'nullable|array',
-            'goals' => 'nullable|array'
-        ]);
+        $validated = $request->validated();
 
-        // Garantir valor não-nulo para name
-        if (empty($validated['name'])) {
-            $validated['name'] = 'Nova Persona';
-        }
+        // Criar uma estrutura padrão para os campos json caso estejam vazios
+        $validated['profile'] = !empty($validated['profile']) ? $validated['profile'] : [];
+        $validated['expectations'] = !empty($validated['expectations']) ? $validated['expectations'] : [];
+        $validated['restrictions'] = !empty($validated['restrictions']) ? $validated['restrictions'] : [];
+        $validated['goals'] = !empty($validated['goals']) ? $validated['goals'] : [];
 
         Persona::create($validated);
 
@@ -37,15 +32,15 @@ class PersonaController extends Controller
     /**
      * Update the specified persona in storage.
      */
-    public function update(Request $request, Persona $persona)
+    public function update(PersonaRequest $request, Persona $persona)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'profile' => 'nullable|array',
-            'expectations' => 'nullable|array',
-            'restrictions' => 'nullable|array',
-            'goals' => 'nullable|array'
-        ]);
+        $validated = $request->validated();
+
+        // Garantir que os campos json tenham valores padrão caso estejam vazios
+        $validated['profile'] = !empty($validated['profile']) ? $validated['profile'] : [];
+        $validated['expectations'] = !empty($validated['expectations']) ? $validated['expectations'] : [];
+        $validated['restrictions'] = !empty($validated['restrictions']) ? $validated['restrictions'] : [];
+        $validated['goals'] = !empty($validated['goals']) ? $validated['goals'] : [];
 
         $persona->update($validated);
 
