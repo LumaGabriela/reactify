@@ -185,13 +185,13 @@ const ProjectMenu = ({ project }) => {
 
   return (
     <div ref={menuRef}>
-      <button 
-        onClick={() => setIsOpen(!isOpen)} 
+      <button
+        onClick={() => setIsOpen(!isOpen)}
         className="p-1 hover:bg-gray-700 rounded-full transition-colors"
       >
         <MoreVertical size={18} className="text-gray-400" />
       </button>
-      
+
       {isOpen && (
         <div className="absolute w-48 bg-gray-700 rounded-md shadow-lg z-50">
           <button
@@ -201,7 +201,7 @@ const ProjectMenu = ({ project }) => {
             <Power size={16} className={project.active ? "text-green-400" : "text-red-400"} />
             {project.active ? "Desativar projeto" : "Ativar projeto"}
           </button>
-          
+
           <button
             onClick={deleteProject}
             className="w-full h-1/2 rounded-b-md text-left px-4 py-2 text-sm text-white hover:bg-gray-600 flex items-center gap-2"
@@ -211,21 +211,21 @@ const ProjectMenu = ({ project }) => {
           </button>
         </div>
       )}
-      
+
       {/* Modal de confirmação para exclusão */}
       {showDeleteConfirmation && (
-        <ModalConfirmation 
+        <ModalConfirmation
           message={`Tem certeza que deseja excluir o projeto "${project.title}"?`}
           onConfirm={confirmDelete}
           onCancel={() => setShowDeleteConfirmation(false)}
         />
       )}
-      
+
       {/* Modal de confirmação para ativar/desativar */}
       {showToggleConfirmation && (
-        <ModalConfirmation 
-          message={project.active 
-            ? `Deseja desativar o projeto "${project.title}"? (Você poderá ativá-lo novamente)` 
+        <ModalConfirmation
+          message={project.active
+            ? `Deseja desativar o projeto "${project.title}"? (Você poderá ativá-lo novamente)`
             : `Deseja ativar o projeto "${project.title}"?`}
           onConfirm={confirmToggleActive}
           onCancel={() => setShowToggleConfirmation(false)}
