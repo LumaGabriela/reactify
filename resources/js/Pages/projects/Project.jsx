@@ -1,5 +1,5 @@
-import  { useEffect, useState } from 'react';
-import { Head, router } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import { Head, usePage } from '@inertiajs/react';
 import NavMenu from '../../Components/NavMenu'
 import MainView from './MainView';
 import Stories from './Stories';
@@ -8,11 +8,12 @@ import Journeys from './Journeys';
 import Goals from './Goals';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 const ProjectView = ({ projectDB = [] }) => {
-
+  const props = usePage().props
   const [project, setProject] = useState({ ...projectDB });
-  const [activeMenu, setActiveMenu] = useState( 
+
+  const [activeMenu, setActiveMenu] = useState(
     () => localStorage.getItem('activeMenu') || 'All'
-    );
+  );
   const [menuItems, setMenuItems] = useState([
     { All: true },
     { Stories: false },
@@ -21,7 +22,7 @@ const ProjectView = ({ projectDB = [] }) => {
     { Journeys: false }
   ]);
 
-//Altera o menu ativo
+  //Altera o menu ativo
   useEffect(() => {
     const updatedMenuItems = menuItems.map((item, i) => {
       if (Object.keys(item)[0] === activeMenu) {
@@ -41,9 +42,8 @@ const ProjectView = ({ projectDB = [] }) => {
   }, [activeMenu])
 
   useEffect(() => {
-    // console.log(project?.goal_sketches)
-    console.log(route().current(), activeMenu)
-  }, [activeMenu])
+    console.log(project?.journeys, props?.errors)
+  }, [project])
 
 
   const renderContent = () => {
@@ -55,7 +55,7 @@ const ProjectView = ({ projectDB = [] }) => {
       case 'Personas':
         return <Personas project={project} setProject={setProject} />
       case 'Goals':
-        return <Goals project={project} setProject={setProject} setActiveMenu={setActiveMenu} />
+        return <Goals project={project} setProject={setProject} />
       case 'Journeys':
         return <Journeys project={project} setProject={setProject} />
       default:

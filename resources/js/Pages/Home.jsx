@@ -4,7 +4,7 @@ import { Search, CheckCircle, MessageCircle, Users } from 'lucide-react';
 import { Link, usePage } from '@inertiajs/react';
 import { ModalNewProject, ProjectMenu } from '@/Components/Modals';
 
-const Dashboard = ({projects = []}) => {
+const Dashboard = ({ projects = [] }) => {
   const today = new Date();
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'short',
@@ -28,10 +28,10 @@ const Dashboard = ({projects = []}) => {
   return (
     <div className=" text-white p-6 rounded w-full mx-auto">
       {/* Header */}
-      {showModal && 
-      <ModalNewProject 
-      message={'Create a new project'}
-      onCancel={() => setShowModal(false)} />
+      {showModal &&
+        <ModalNewProject
+          message={'Create a new project'}
+          onCancel={() => setShowModal(false)} />
       }
       <div className="flex justify-between items-center mb-8">
         <div>
@@ -57,9 +57,9 @@ const Dashboard = ({projects = []}) => {
           </button>
         </div>
         {/* New Project Card */}
-        <button 
-        onClick={() => setShowModal(true)}
-        className="flex flex-col justify-center items-center bg-purple-2 hover:bg-indigo-700 transition-colors rounded p-2 w-1/2 max-w-2xl h-full cursor-pointer">
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex flex-col justify-center items-center bg-purple-2 hover:bg-indigo-700 transition-colors rounded p-2 w-1/2 max-w-2xl h-full cursor-pointer">
           <p className="font-bold text-lg">Create New Project</p>
         </button>
       </div>
@@ -87,52 +87,53 @@ const Dashboard = ({projects = []}) => {
 
             switch (project.status) {
               case 'In Progress': color = 'bg-orange-500'; break
-              case 'Done': color = 'bg-blue-500' ; break
+              case 'Done': color = 'bg-blue-500'; break
               case 'To do': color = 'bg-red-500'; break
               default: color = 'bg-gray-800'
             }
             if ((project.status === activeFilter?.name) || activeFilter?.name === 'All') return (
-            <div key={index} className="bg-gray-800 p-4 rounded-xl cursor-pointer">
-              <div className="flex justify-between items-center mb-3">
-                <Link 
-                  href={route('project.show', project.id)}
-                  className="flex items-center flex-grow"
-                >
-                  <div className={`h-2 w-2 ${color} rounded-full mr-2` }></div>
-                  <p>{project.title}</p>
-                </Link>
-                
-                {/* Substituindo o ícone MoreVertical pelo componente de menu */}
-                <ProjectMenu project={project} />
-              </div>
-              
-              <Link 
-                href={route('project.show', project.id)}
-                className="block"
-              >
-                <p className="text-gray-400 text-sm mb-4">{project.description}</p>
-                <div className="flex justify-between items-center mt-2">
-                  <div className={`${color} text-white text-xs font-medium py-1 px-4 rounded-full inline-block`}>
-                    {project.status}
-                  </div>
-                  <div className={`${project.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} text-xs font-medium py-1 px-2 rounded-md inline-block mb-2`}>
-                    {project.active ? 'Ativo' : 'Inativo'}
-                  </div>
+              <div key={index} className="bg-gray-800 p-4 rounded-xl cursor-pointer">
+                <div className="flex justify-between items-center mb-3">
+                  <Link
+                    href={route('project.show', project.id)}
+                    className="flex items-center flex-grow"
+                  >
+                    <div className={`h-2 w-2 ${color} rounded-full mr-2`}></div>
+                    <p>{project.title}</p>
+                  </Link>
+
+                  {/* Substituindo o ícone MoreVertical pelo componente de menu */}
+                  <ProjectMenu project={project} />
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-2">
-                    <MessageCircle size={16} className="text-gray-400" />
-                    <span className="text-gray-400 text-sm">50</span>
+                <Link
+                  href={route('project.show', project.id)}
+                  className="block"
+                >
+                  <p className="text-gray-400 text-sm mb-4">{project.description}</p>
+                  <div className="flex justify-between items-center mt-2">
+                    <div className={`${color} text-white text-xs font-medium py-1 px-4 rounded-full inline-block`}>
+                      {project.status}
+                    </div>
+                    <div className={`${project.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} text-xs font-medium py-1 px-2 rounded-md inline-block mb-2`}>
+                      {project.active ? 'Ativo' : 'Inativo'}
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Users size={16} className="text-gray-400" />
-                    <span className="text-gray-400 text-sm">{project.members}</span>
+
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                      <MessageCircle size={16} className="text-gray-400" />
+                      <span className="text-gray-400 text-sm">50</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Users size={16} className="text-gray-400" />
+                      <span className="text-gray-400 text-sm">{project.members}</span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </div>
-          )})}
+                </Link>
+              </div>
+            )
+          })}
         </div>
       </div>
 
@@ -197,11 +198,11 @@ const Dashboard = ({projects = []}) => {
   );
 }
 
-const Home = ({projects}) => {
+const Home = ({ projects }) => {
   return (
-    <AuthenticatedLayout > 
-      <Dashboard projects={projects}/>
-    </AuthenticatedLayout>  
+    <AuthenticatedLayout >
+      <Dashboard projects={projects} />
+    </AuthenticatedLayout>
   )
 }
 

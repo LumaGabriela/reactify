@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Goal extends Model
 {
-    protected $guarded = [
-        'id',
-    ];
+  protected $guarded = [
+    'id',
+  ];
 
-    protected $table = 'goal_sketches';
+  protected $table = 'goal_sketches';
 
-    public function project()
-    {
-        return $this->belongsTo(Project::class);
-    }
+  public function project()
+  {
+    return $this->belongsTo(Project::class);
+  }
 }

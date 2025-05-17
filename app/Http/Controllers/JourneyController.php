@@ -23,7 +23,7 @@ class JourneyController extends Controller
   {
 
     $validated = $request->validated();
-    Log::info($validated);
+
     $journey->update($validated);
 
     return back();
