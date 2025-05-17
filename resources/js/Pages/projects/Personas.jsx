@@ -1,11 +1,34 @@
 import React, { useState } from 'react';
 import { X, Plus } from 'lucide-react';
 import {ModalConfirmation} from '@/Components/Modals';
+import { router } from '@inertiajs/react';
 
 const Personas = ({ project, setProject }) => {
-  // Estado para controlar qual persona está com o diálogo de confirmação de exclusão aberto
+
+  // const [project1, setProject1] = useState(
+  //   {
+  //     id: 1,
+  //     personas: [{
+  //       id: '1',
+  //       name: "Identificação da Persona",
+  //       profile: ['Detalhar o perfil e os comportamentos dessa persona',[]], 
+  //       expectations: ['Detalhar as expectativas dessa persona enquanto usuária do produto/solução',[]],
+  //       restrictions: ['',],
+  //       goals: ['Identificar objetivos e metas dessa com o usdo da solucao/produto', []]
+  //     },
+  //     {
+  //       id: '2',
+  //       name: "João - Usuário do sistema",
+  //       profile: ['', ''],
+  //       expectations: [],
+  //       restrictions: [],
+  //       goals: ['', '']
+  //     }
+  //     ]
+  //   }
+  // )
+  // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-  
   const updatePersonaName = (index, newName) => {
     const updatedProject = { ...project };
     updatedProject.personas[index].name = newName;
@@ -14,22 +37,35 @@ const Personas = ({ project, setProject }) => {
 
   // Função para adicionar uma nova persona
   const addNewPersona = () => {
-    setProject({
-      ...project,
-      personas: [
-        ...project.personas,
-        {
-          id: (project.personas.length + 1).toString(),
-          name: '',
-          profile: [''],
-          expectations: [''],
-          restrictions: [''],
-          goals: ['']
-        }
-      ]
+    router.post('/persona', {
+      project_id: project.id,
+      name: 'Nova Persona',
+      profile: [''],
+      expectations: [''],
+      restrictions: [''],
+      goals: ['']
+    }, {
+      preserveScroll: true,
+      onSuccess: () => {
+        // Código para executar após sucesso, se necessário
+        // router.reload({ only: ['personas'] });
+      }
     });
+    // setProject({
+    //   ...project,
+    //   personas: [
+    //     ...project.personas,
+    //     {
+    //       id: (project.personas.length + 1).toString(),
+    //       name: 'Nova Persona',
+    //       profile: [''],
+    //       expectations: [''],
+    //       restrictions: [''],
+    //       goals: ['']
+    //     }
+    //   ]
+    // });
   };
-  
   const deletePersona = (personaId) => {
     const updatedPersonas = project.personas.filter(p => p.id !== personaId);
     setProject({ ...project, personas: updatedPersonas });
@@ -38,37 +74,25 @@ const Personas = ({ project, setProject }) => {
 
   const addArrayItem = (personaIndex, arrayType) => {
     const updatedProject = { ...project };
-    // Garantir que é um array antes de adicionar
-    if (!Array.isArray(updatedProject.personas[personaIndex][arrayType])) {
-      updatedProject.personas[personaIndex][arrayType] = [];
-    }
     updatedProject.personas[personaIndex][arrayType].push('');
     setProject(updatedProject);
   };
 
+  // Adicione esta nova função junto com as outras funções
   const removeArrayItem = (personaIndex, arrayType, itemIndex) => {
     const updatedProject = { ...project };
-    // Garantir que é um array antes de manipular
-    if (!Array.isArray(updatedProject.personas[personaIndex][arrayType])) {
-      updatedProject.personas[personaIndex][arrayType] = [];
-    } else {
-      updatedProject.personas[personaIndex][arrayType].splice(itemIndex, 1);
-      
-      // Se a lista ficou vazia, adiciona um item vazio para manter consistência
-      if (updatedProject.personas[personaIndex][arrayType].length === 0) {
-        updatedProject.personas[personaIndex][arrayType].push('');
-      }
-    }
-    
+    updatedProject.personas[personaIndex][arrayType].splice(itemIndex, 1);
+
+    // Se a lista ficou vazia, adiciona um item vazio
+    // if (updatedProject.personas[personaIndex][arrayType].length === 0) {
+    //   updatedProject.personas[personaIndex][arrayType].push('');
+    // }
+
     setProject(updatedProject);
   };
 
   const updateArrayItem = (personaIndex, arrayType, itemIndex, newValue) => {
     const updatedProject = { ...project };
-    // Garantir que é um array antes de atualizar
-    if (!Array.isArray(updatedProject.personas[personaIndex][arrayType])) {
-      updatedProject.personas[personaIndex][arrayType] = [''];
-    }
     updatedProject.personas[personaIndex][arrayType][itemIndex] = newValue;
     setProject(updatedProject);
   };
@@ -87,84 +111,78 @@ const Personas = ({ project, setProject }) => {
         return '';
     }
   }
-  
-  // Função para garantir que o campo é um array
-  const ensureArray = (value) => {
-    if (!value) return [];
-    if (Array.isArray(value)) return value;
-    return [value.toString()]; // Converte para string caso seja outro tipo e coloca em um array
-  };
-  
   return (
-    <div className="grid md:grid-cols-2 grid-flow-dense gap-2 w-full p-4">
-      {project.personas.map((persona, personaIndex) => (
-        <div
-          key={personaIndex}
-          className="flex flex-col mb-2 p-4 rounded bg-gray-2 w-full">
-          <div className='flex flex-row justify-between '>
-            <h5 className='text-white mb-1'>Name</h5>
-            <X
-              onClick={() => setDeleteConfirmId(persona.id)}
-              className='text-red-hover rounded-full p-1 cursor-pointer transition-colors	w-8 h-8' />
-          </div>
+    // <div className="grid md:grid-cols-2 grid-flow-dense gap-2 w-full p-4">
+    //   {project.personas.map((persona, personaIndex) => (
+    //     <div
+    //       key={personaIndex}
+    //       className="flex flex-col mb-2 p-4 rounded bg-gray-2 w-full">
+    //       <div className='flex flex-row justify-between '>
+    //         <h5 className='text-white mb-1'>Name</h5>
+    //         <X
+    //           onClick={() => setDeleteConfirmId(persona.id)}
+    //           className='text-red-hover rounded-full p-1 cursor-pointer transition-colors	w-8 h-8' />
+    //       </div>
 
-          {/* Diálogo de confirmação de exclusão */}
-          {deleteConfirmId === persona.id && (
-            <ModalConfirmation
-              onConfirm={() => deletePersona(persona.id)}
-              onCancel={() => setDeleteConfirmId(null)}
-              message="Deseja remover esta persona?"
-            />
-          )}
+    //       {/* Diálogo de confirmação de exclusão */}
+    //       {deleteConfirmId === persona.id && (
+    //         <ModalConfirmation
+    //           onConfirm={() => deletePersona(persona.id)}
+    //           onCancel={() => setDeleteConfirmId(null)}
+    //           message="Deseja remover esta persona?"
+    //         />
+    //       )}
 
-          <input
-            type="text"
-            value={persona.name}
-            placeholder='Name'
-            onChange={(e) => updatePersonaName(personaIndex, e.target.value)}
-            className="w-full mb-4 p-2 bg-gray-1 text-white rounded"
-          />
+    //       <input
+    //         type="text"
+    //         value={persona.name}
+    //         placeholder='Name'
+    //         onChange={(e) => updatePersonaName(personaIndex, e.target.value)}
+    //         className="w-full mb-4 p-2 bg-gray-1 text-white rounded"
+    //       />
 
-          {['profile', 'expectations', 'restrictions', 'goals'].map((arrayType) => (
-            <div key={arrayType} className="mb-4">
-              <h5 className="text-white capitalize mb-1">{arrayType}</h5>
-              {ensureArray(persona[arrayType]).map((item, itemIndex) => (
-                <div
-                  className='flex flex-row justify-between'
-                  key={itemIndex}>
-                  <input
-                    value={item || ''}
-                    placeholder={placeholderSelect(arrayType)}
-                    onChange={(e) =>
-                      updateArrayItem(personaIndex, arrayType, itemIndex, e.target.value)
-                    }
-                    className="w-full mb-2 p-2 bg-gray-1 text-white rounded shadow-md resize-y min-h-[40px]"
-                  />
-                  <X
-                    onClick={() => removeArrayItem(personaIndex, arrayType, itemIndex)}
-                    className='text-red-hover rounded-full p-1 cursor-pointer transition-colors	w-8 h-8' />
-                </div>
-              ))}
-              <button
-                onClick={() => addArrayItem(personaIndex, arrayType)}
-                className="flex items-center justify-center w-full py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md"
-              >
-                {arrayType === 'profile' && <>Add Profile</>}
-                {arrayType !== 'profile' && <>Add {arrayType.slice(0, -1)}</>}
-              </button>
-            </div>
-          ))}
-        </div>
-      ))}
-      {/* Botão "Nova Persona" */}
-      <button
-        className="col-span-2 flex items-center justify-center py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md"
-        onClick={addNewPersona}
-      >
-        <Plus size={18} className="mr-2" />
-        <span>Nova Persona</span>
-      </button>
-    </div>
+    //       {['profile', 'expectations', 'restrictions', 'goals'].map((arrayType) => (
+    //         <div key={arrayType} className="mb-4">
+    //           <h5 className="text-white capitalize mb-1">{arrayType}</h5>
+    //           {persona[arrayType].map((item, itemIndex) => (
+    //             <div
+    //               className='flex flex-row justify-between'
+    //               key={itemIndex}>
+    //               <input
+    //                 value={item}
+    //                 placeholder={placeholderSelect(arrayType)}
+    //                 onChange={(e) =>
+    //                   updateArrayItem(personaIndex, arrayType, itemIndex, e.target.value)
+    //                 }
+    //                 className="w-full mb-2 p-2 bg-gray-1 text-white rounded shadow-md resize-y min-h-[40px]"
+    //               />
+    //               <X
+    //                 onClick={() => removeArrayItem(personaIndex, arrayType, itemIndex)}
+    //                 className='text-red-hover rounded-full p-1 cursor-pointer transition-colors	w-8 h-8' />
+    //             </div>
+
+    //           ))}
+    //           <button
+    //             onClick={() => addArrayItem(personaIndex, arrayType)}
+    //             className="flex items-center justify-center w-full py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md"
+    //           >
+    //             {arrayType === 'profile' && <>Add Profile</>}
+    //             {arrayType !== 'profile' && <>Add {arrayType.slice(0, -1)}</>}
+    //           </button>
+    //         </div>
+    //       ))}
+    //     </div>
+    //   ))}
+    //   {/* Botão "Nova Persona" */}
+    //   <button
+    //     className="col-span-2 flex items-center justify-center py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md"
+    //     onClick={addNewPersona}
+    //   >
+    //     <Plus size={18} className="mr-2" />
+    //     <span>Nova Persona</span>
+    //   </button>
+    // </div>
+    console.log(project)
   );
 };
 

@@ -24,10 +24,10 @@ class PersonaSeeder extends Seeder
             DB::table('personas')->insert([
                 'name' => 'Usuário Regular',
                 'profile' => json_encode([
-                    '25-35 anos',
-                    'Profissional em tempo integral',
-                    'Intermediária',
-                    'Utiliza aplicativos diariamente para tarefas pessoais e profissionais'
+                    'idade' => '25-35 anos',
+                    'ocupacao' => 'Profissional em tempo integral',
+                    'habilidade_tecnologica' => 'Intermediária',
+                    'comportamento' => 'Utiliza aplicativos diariamente para tarefas pessoais e profissionais'
                 ]),
                 'expectations' => json_encode([
                     'Interface intuitiva e fácil de usar',
@@ -56,10 +56,10 @@ class PersonaSeeder extends Seeder
             DB::table('personas')->insert([
                 'name' => 'Administrador de Sistema',
                 'profile' => json_encode([
-                    '30-45 anos',
-                    'Gerente de TI / Administrador de Sistemas',
-                    'Avançada',
-                    'Responsável pela implementação e manutenção de sistemas'
+                    'idade' => '30-45 anos',
+                    'ocupacao' => 'Gerente de TI / Administrador de Sistemas',
+                    'habilidade_tecnologica' => 'Avançada',
+                    'comportamento' => 'Responsável pela implementação e manutenção de sistemas'
                 ]),
                 'expectations' => json_encode([
                     'Ferramentas robustas de administração',
@@ -78,6 +78,38 @@ class PersonaSeeder extends Seeder
                     'Facilitar o gerenciamento de usuários',
                     'Reduzir tempo de inatividade do sistema',
                     'Implementar soluções escaláveis'
+                ]),
+                'project_id' => $project->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+                
+            // Persona 3: Novato Digital
+            DB::table('personas')->insert([
+                'name' => 'Novato Digital',
+                'profile' => json_encode([
+                    'idade' => '45-65 anos',
+                    'ocupacao' => 'Diversos (aposentados, profissionais não-técnicos)',
+                    'habilidade_tecnologica' => 'Básica',
+                    'comportamento' => 'Utiliza tecnologia com cautela e precisa de orientação clara'
+                ]),
+                'expectations' => json_encode([
+                    'Interface extremamente simples',
+                    'Instruções passo a passo',
+                    'Suporte facilmente acessível',
+                    'Tolerância a erros'
+                ]),
+                'restrictions' => json_encode([
+                    'Pouca familiaridade com termos técnicos',
+                    'Resistência a mudanças frequentes',
+                    'Dificuldade com múltiplas etapas',
+                    'Preocupação com privacidade'
+                ]),
+                'goals' => json_encode([
+                    'Realizar tarefas básicas sem frustrações',
+                    'Acompanhar avanços tecnológicos',
+                    'Conectar-se com familiares e amigos',
+                    'Proteger informações pessoais'
                 ]),
                 'project_id' => $project->id,
                 'created_at' => now(),

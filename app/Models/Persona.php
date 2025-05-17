@@ -25,14 +25,6 @@ class Persona extends Model
         'goals' => 'array'
     ];
 
-    // Garantir que os atributos não sejam nulos
-    protected $attributes = [
-        'profile' => '[]',
-        'expectations' => '[]',
-        'restrictions' => '[]',
-        'goals' => '[]'
-    ];
-
     public function project()
     {
         return $this->belongsTo(Project::class);
