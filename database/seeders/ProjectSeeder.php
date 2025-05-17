@@ -93,14 +93,19 @@ class ProjectSeeder extends Seeder
             'type' => 'cg',
             'priority' => 'urgent',
             'project_id' => $projectId,
-            // 'priority_id' => $priorityId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         // Criar registros básicos para tabelas restantes
         DB::table('personas')->insert(['created_at' => now(), 'updated_at' => now()]);
-        DB::table('journeys')->insert(['created_at' => now(), 'updated_at' => now()]);
+        DB::table('journeys')->insert([
+          'title' => 'Jornada Principal',
+          'steps' => json_encode([]),
+          'project_id' => $projectId,
+          'created_at' => now(), 
+          'updated_at' => now()
+        ]);
         DB::table('stories')->insert([
             [
                 'title' => 'Como usuário, quero criar uma conta para acessar o aplicativo',
