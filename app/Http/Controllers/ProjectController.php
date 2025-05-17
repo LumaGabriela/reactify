@@ -9,98 +9,86 @@ use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $projects = Project::all();
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    $projects = Project::all();
 
-        return Inertia::render('Home', [
-            'projects' => $projects,
-        ]);
-    }
-    public function show(string $id)
-    {
-        $project = Project::with(['stories', 'goal_sketches'])->find($id);
+    return Inertia::render('Home', [
+      'projects' => $projects,
+    ]);
+  }
+  public function show(string $id)
+  {
+    $project = Project::with(['stories', 'goal_sketches', 'journeys'])->find($id);
 
-        return Inertia::render('projects/Project', ['project' => $project]);
-    }
+    return Inertia::render('projects/Project', ['project' => $project]);
+  }
 
+  public function store(ProjectRequest $request)
+  {
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    $validatedData = $request->validated();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(ProjectRequest $request)
-    {
+    $project = Project::create($validatedData);
 
-        $validatedData = $request->validated();
+    $project->active = true;
 
-        $project = Project::create($validatedData);
+    $project->save();
 
-        $project->active = true;
-        
-        $project->save();
-
-        return redirect()
-            ->route('project.show', $project->id)
-            ->with(
-                [
-                    'status' => 'success',
-                    'message' => 'Project created successfully. Project id: ' . $project->id,
-                ]
-            );
-    }
+    return redirect()
+      ->route('project.show', $project->id)
+      ->with(
+        [
+          'status' => 'success',
+          'message' => 'Project created successfully. Project id: ' . $project->id,
+        ]
+      );
+  }
 
 
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+  public function update(Request $request, string $id)
+  {
+    //
+  }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $project = Project::findOrFail($id);
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(string $id)
+  {
+    $project = Project::findOrFail($id);
 
-        // Excluir registros relacionados
-        $project->stories()->delete();
-        // $project->goalSketches()->delete();
-        // $project->journeys()->delete();
-        // $project->productCanvas()->delete();
-        // $project->personas()->delete();
+    // Excluir registros relacionados
+    $project->stories()->delete();
+    // $project->goalSketches()->delete();
+    // $project->journeys()->delete();
+    // $project->productCanvas()->delete();
+    // $project->personas()->delete();
 
-        // Excluir o projeto
-        $project->delete();
+    // Excluir o projeto
+    $project->delete();
 
-        return redirect()->route('projects.index')->with([
-            'status' => 'success',
-            'message' => 'Projeto excluído com sucesso.'
-        ]);
-    }
+    return redirect()->route('projects.index')->with([
+      'status' => 'success',
+      'message' => 'Projeto excluído com sucesso.'
+    ]);
+  }
 
-    public function toggleActive(string $id)
-    {
-        $project = Project::findOrFail($id);
+  public function toggleActive(string $id)
+  {
+    $project = Project::findOrFail($id);
 
-        $project->active = !$project->active;
-        $project->save();
+    $project->active = !$project->active;
+    $project->save();
 
-        $statusMessage = $project->active ? 'Projeto ativado com sucesso.' : 'Projeto desativado com sucesso.';
+    $statusMessage = $project->active ? 'Projeto ativado com sucesso.' : 'Projeto desativado com sucesso.';
 
-        return redirect()->back()->with([
-            'status' => 'success',
-            'message' => $statusMessage
-        ]);
-    }
+    return redirect()->back()->with([
+      'status' => 'success',
+      'message' => $statusMessage
+    ]);
+  }
 }
