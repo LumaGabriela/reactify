@@ -5,11 +5,8 @@ use App\Http\Controllers\GoalController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
-<<<<<<< HEAD
-=======
 use App\Http\Controllers\PersonaController;
 use Illuminate\Foundation\Application;
->>>>>>> b5633fd448351ef0719bca3a3532f194b9ea750f
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -42,6 +39,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{journey}', [JourneyController::class, 'update'])->name('journey.update');
     Route::delete('/{journey}', [JourneyController::class, 'destroy'])->name('journey.delete');
   
+  });
   Route::prefix('persona')->group(function () {
     Route::post('/', [PersonaController::class, 'store'])->name('persona.store');
     Route::patch('/{persona}', [PersonaController::class, 'update'])->name('persona.update');
