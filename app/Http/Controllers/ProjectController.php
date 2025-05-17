@@ -22,7 +22,7 @@ class ProjectController extends Controller
   }
   public function show(string $id)
   {
-    $project = Project::with(['stories', 'goal_sketches', 'journeys'])->find($id);
+    $project = Project::with(['stories', 'goal_sketches', 'journeys', 'personas'])->find($id);
 
     return Inertia::render('projects/Project', ['project' => $project]);
   }
