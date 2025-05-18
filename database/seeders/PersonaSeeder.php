@@ -24,10 +24,10 @@ class PersonaSeeder extends Seeder
             DB::table('personas')->insert([
                 'name' => 'Usuário Regular',
                 'profile' => json_encode([
-                    'idade' => '25-35 anos',
-                    'ocupacao' => 'Profissional em tempo integral',
-                    'habilidade_tecnologica' => 'Intermediária',
-                    'comportamento' => 'Utiliza aplicativos diariamente para tarefas pessoais e profissionais'
+                    '25-35 anos',
+                    'Profissional em tempo integral',
+                    'habilidade_tecnologica: Intermediária',
+                    'Utiliza aplicativos diariamente para tarefas pessoais e profissionais'
                 ]),
                 'expectations' => json_encode([
                     'Interface intuitiva e fácil de usar',
@@ -56,10 +56,10 @@ class PersonaSeeder extends Seeder
             DB::table('personas')->insert([
                 'name' => 'Administrador de Sistema',
                 'profile' => json_encode([
-                    'idade' => '30-45 anos',
-                    'ocupacao' => 'Gerente de TI / Administrador de Sistemas',
-                    'habilidade_tecnologica' => 'Avançada',
-                    'comportamento' => 'Responsável pela implementação e manutenção de sistemas'
+                    '30-45 anos',
+                    'Gerente de TI / Administrador de Sistemas',
+                    'habilidade_tecnologica: Avançada',
+                    'Responsável pela implementação e manutenção de sistemas'
                 ]),
                 'expectations' => json_encode([
                     'Ferramentas robustas de administração',
@@ -88,10 +88,10 @@ class PersonaSeeder extends Seeder
             DB::table('personas')->insert([
                 'name' => 'Novato Digital',
                 'profile' => json_encode([
-                    'idade' => '45-65 anos',
-                    'ocupacao' => 'Diversos (aposentados, profissionais não-técnicos)',
-                    'habilidade_tecnologica' => 'Básica',
-                    'comportamento' => 'Utiliza tecnologia com cautela e precisa de orientação clara'
+                    '45-65 anos',
+                    'Diversos (aposentados, profissionais não-técnicos)',
+                    'habilidade_tecnologica: Básica',
+                    'Utiliza tecnologia com cautela e precisa de orientação clara'
                 ]),
                 'expectations' => json_encode([
                     'Interface extremamente simples',
