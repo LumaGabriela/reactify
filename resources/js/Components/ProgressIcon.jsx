@@ -25,7 +25,7 @@ const ProgressIcon = ({
   
   return (
     <div 
-      className={`flex flex-col items-center mx-2 w-32 h-min cursor-pointer transition-all duration-200 ${isHovered ? 'scale-105' : 'scale-100'}`}
+      className={`flex flex-col mx-auto items-center mx-2 w-32 h-min cursor-pointer transition-all duration-200 ${isHovered ? 'scale-105' : 'scale-100'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => window.location.href = link}

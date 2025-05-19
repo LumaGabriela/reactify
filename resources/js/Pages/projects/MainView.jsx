@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
-import { 
-  Calendar, Clock, CheckCircle, AlertTriangle, 
-  Users, Target, GitBranch, List, TrendingUp, 
+import {
+  Calendar, Clock, CheckCircle, AlertTriangle,
+  Users, Target, GitBranch, List, TrendingUp,
   ArrowRight, ChevronDown, ChevronUp, Maximize, Minimize
 } from 'lucide-react';
 import ProgressIcon from '../../Components/ProgressIcon'
@@ -13,7 +13,7 @@ import ProgressIcon from '../../Components/ProgressIcon'
 // Card com capacidade de expansão e contração
 const ExpandableCard = ({ title, content, color = "#6366f1", icon: IconComponent = CheckCircle }) => {
   const [expanded, setExpanded] = useState(false);
-  
+
   return (
     <div className={`bg-gray-800 rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl ${expanded ? 'row-span-2' : ''}`} style={{ borderColor: color }}>
       <div className="p-4">
@@ -22,8 +22,8 @@ const ExpandableCard = ({ title, content, color = "#6366f1", icon: IconComponent
             <IconComponent size={20} color={color} className="mr-2" />
             <h3 className="text-white font-bold text-lg">{title}</h3>
           </div>
-          <button 
-            onClick={() => setExpanded(!expanded)} 
+          <button
+            onClick={() => setExpanded(!expanded)}
             className="text-gray-400 hover:text-white transition-colors"
           >
             {expanded ? <Minimize size={18} /> : <Maximize size={18} />}
@@ -34,7 +34,7 @@ const ExpandableCard = ({ title, content, color = "#6366f1", icon: IconComponent
         </div>
         {!expanded && content.length > 150 && (
           <div className="text-right mt-2">
-            <button 
+            <button
               onClick={() => setExpanded(true)}
               className="text-xs text-gray-400 hover:text-gray-200 flex items-center justify-end w-full"
             >
@@ -44,7 +44,7 @@ const ExpandableCard = ({ title, content, color = "#6366f1", icon: IconComponent
         )}
         {expanded && (
           <div className="text-right mt-2">
-            <button 
+            <button
               onClick={() => setExpanded(false)}
               className="text-xs text-gray-400 hover:text-gray-200 flex items-center justify-end w-full"
             >
@@ -58,6 +58,9 @@ const ExpandableCard = ({ title, content, color = "#6366f1", icon: IconComponent
 };
 
 const MainView = ({ project = {} }) => {
+
+
+  const [toggleEdit, setToggleEdit] = useState(true);
 
   // Conteúdo dos cards
   const cardContents = [
@@ -106,73 +109,68 @@ const MainView = ({ project = {} }) => {
               <div className="text-gray-400 text-sm mb-1">Conclusão</div>
               <div className="flex items-center">
                 <div className="w-32 h-2 bg-gray-700 rounded-full mr-2">
-                  <div 
-                    className="h-2 bg-green-500 rounded-full" 
-                    style={{ width: 68 }} 
+                  <div
+                    className="h-2 bg-green-500 rounded-full"
+                    style={{ width: 68 }}
                   />
                 </div>
                 <span className="text-sm font-medium">68%</span>
               </div>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
-              <div className="bg-gray-800 px-3 py-2 rounded-lg border border-gray-700">
-                <div className="text-xs text-gray-400 mb-1">Prazo</div>
-                <div className="text-lg font-bold">48 dias</div>
-              </div>
+          <div className="flex items-center space-x-3 cursor-pointer select-none">
+            <div className="bg-gray-800 px-3 py-2 rounded-lg border-2 border-gray-700">
+              <div className="text-xs text-gray-400 mb-1">Prazo</div>
+              <div className="text-lg font-bold">48 dias</div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Indicadores de progresso */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
-  <div className="lg:col-span-4 flex flex-wrap justify-center lg:justify-between items-center p-4 bg-gray-800 rounded-lg shadow-lg gap-3">
-    <ProgressIcon 
-      value={project?.stories?.length || 0} 
-      max={20}
-      color="#6366f1" 
-      label="Stories" 
-      icon={List}
-    />
-    <ProgressIcon 
-      value={project?.personas?.length || 0} 
-      max={10}
-      color="#f43f5e" 
-      label="Personas" 
-      icon={Users}
-    />
-    <ProgressIcon 
-      value={project?.goalSketches?.length || 0} 
-      max={15}
-      color="#06b6d4" 
-      label="Goals" 
-      icon={Target}
-    />
-    <ProgressIcon 
-      value={project?.journeys?.length || 0} 
-      max={10}
-      color="#14b8a6" 
-      label="Journeys" 
-      icon={GitBranch}
-    />
-  </div>
-</div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4 items-center justify-center bg-gray-800 p-4 rounded-lg">
+        <ProgressIcon
+          value={project?.stories?.length || 0}
+          max={20}
+          color="#6366f1"
+          label="Stories"
+          icon={List}
+        />
+        <ProgressIcon
+          value={project?.personas?.length || 0}
+          max={10}
+          color="#f43f5e"
+          label="Personas"
+          icon={Users}
+        />
+        <ProgressIcon
+          value={project?.goalSketches?.length || 0}
+          max={15}
+          color="#06b6d4"
+          label="Goals"
+          icon={Target}
+        />
+        <ProgressIcon
+          value={project?.journeys?.length || 0}
+          max={10}
+          color="#14b8a6"
+          label="Journeys"
+          icon={GitBranch}
+        />
+      </div>
 
       {/* Dashboard principal - Layout de grid responsivo */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         {/* Cards de informação */}
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {cardContents.map((card, index) => (
-            <ExpandableCard 
-              key={index} 
-              title={card.title}
-              content={card.content}
-              color={card.color}
-              icon={card.icon}
-            />
-          ))}
-        </div>
-
+        {cardContents.map((card, index) => (
+          <ExpandableCard
+            key={index}
+            title={card.title}
+            content={card.content}
+            color={card.color}
+            icon={card.icon}
+          />
+        ))}
       </div>
     </div>
   );

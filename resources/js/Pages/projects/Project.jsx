@@ -42,14 +42,14 @@ const ProjectView = ({ projectDB = [] }) => {
   }, [activeMenu])
 
   useEffect(() => {
-    console.log(project?.journeys, props?.errors)
-  }, [project])
+    console.log(props.flash)
+  }, [props])
 
 
   const renderContent = () => {
     switch (activeMenu) {
       case 'All':
-        return <MainView project={project} />;
+        return <MainView project={project} setProject={setProject} />;
       case 'Stories':
         return <Stories project={project} setProject={setProject} />
       case 'Personas':

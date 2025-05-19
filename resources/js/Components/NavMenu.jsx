@@ -7,14 +7,18 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
   const handleItemClick = (menuItem) => {
     setActiveMenu(Object.keys(menuItem)[0]);
   };
-
+console.log(menuItems)
   return (
-    <div className="flex flex-col w-full">
+    <>
       <div className="flex w-full min-w-full">
         {menuItems.map((menuItem, index) => (
           <div
             key={index}
-            className={`flex-1 py-2 text-center text-white font-medium text-lg cursor-pointer ${menuItem ? "bg-purple-2" : "bg-gray-800"
+            className={`flex-1 py-2 text-center text-white font-medium text-lg cursor-pointer  
+              border-purple-2 border-b-4 slide-in
+              ${index === 0 ? "rounded-tl-md rounded-bl-md" : ""}
+              ${index === menuItems.length - 1 ? "rounded-tr-md rounded-br-md" : ""}
+              ${Object.values(menuItem)[0] ? "bg-purple-2" : "bg-gray-800"
               }`}
             onClick={() => handleItemClick(menuItem)}
           >
@@ -23,7 +27,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
         ))}
       </div>
 
-      <div className="relative h-6 w-full border-t border-purple-2">
+      <div className="relative h-6 w-full">
         {menuItems.map((menuItem, index) => (
           Object.values(menuItem)[0] && (
             <div
@@ -36,7 +40,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
           )
         ))}
       </div>
-    </div>
+    </>
   );
 };
 
