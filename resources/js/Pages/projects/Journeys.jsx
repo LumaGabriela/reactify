@@ -4,7 +4,6 @@ import { ModalConfirmation } from '@/Components/Modals';
 import TextArea from '@/Components/TextArea';
 import { router } from '@inertiajs/react';
 const Journeys = ({ project, setProject }) => {
-  const textareaRef = useRef(null);
   // Estado para controlar qual journey está expandida
   const [expandedJourney, setExpandedJourney] = useState(0);
   // Estado para controlar qual step está sendo editado
@@ -29,20 +28,6 @@ const Journeys = ({ project, setProject }) => {
     { text: 'text-cyan-500', border: 'border-cyan-500', bg: 'bg-cyan-500' },
     { text: 'text-teal-500', border: 'border-teal-500', bg: 'bg-teal-500' },
   ]
-  //Funcao para ajustar a altura do textarea
-  const adjustTextAreaHeight = () => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.resize = 'none';
-      textarea.style.webkitAppearence = 'none';
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }
-  //Aciona a funcao sempre que o texto do textarea mudar
-  useEffect(() => {
-    adjustTextAreaHeight();
-  }, [editValue, editingStep]);
 
   // Função para expandir/recolher uma journey
   const toggleJourney = (JourneyId) => {
@@ -55,9 +40,9 @@ const Journeys = ({ project, setProject }) => {
 
   // Função para iniciar a edição de um step
   const startEditStep = (JourneyId, stepIndex) => {
-    const journey = project.journeys.find((j) => j.id === JourneyId);
+    const step = project.journeys.find(j => j.id === JourneyId)?.steps?.[stepIndex] ?? null;
     setEditingStep({ JourneyId, stepIndex });
-    setEditValue(journey.description);
+    setEditValue(step.description);
   };
 
 
@@ -340,13 +325,10 @@ const Journeys = ({ project, setProject }) => {
                                 </div>
                                 {editingStep.JourneyId === journey.id && editingStep.stepIndex === stepIndex ? (
                                   <div className="h-full w-full p-2 text-sm bg-gray-700 rounded" onClick={(e) => e.stopPropagation()}>
-                                    <textarea
-                                      ref={textareaRef}
+                                    <TextArea
                                       value={editValue}
                                       onChange={(e) => setEditValue(e.target.value)}
-                                      className="resize-none overflow-hidden scroll-height-10 text-white bg-transparent rounded text-sm pt-2 w-full min-h-content focus:outline-none border-none focus:ring-0"
-                                      rows={4}
-                                      autoFocus
+                                      onEnter={() => saveEditStep()}
                                     />
                                     <div className="flex justify-between mt-1">
                                       <button
