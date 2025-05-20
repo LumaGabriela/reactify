@@ -22,7 +22,7 @@ const TextArea = ({ value, onChange, onEnter }) => {
       value={value}
       onKeyUp={(e) => { if (e.key === 'Enter') onEnter() }}
       onChange={onChange}
-      className="text-white text-xs bg-transparent p-0 border-none w-full h-max rounded outline-none focus:ring-0 focus:outline-none"
+      className="text-white text-sm bg-transparent p-0 border-none w-full h-max rounded outline-none focus:ring-0 focus:outline-none"
       autoFocus
     />
   )

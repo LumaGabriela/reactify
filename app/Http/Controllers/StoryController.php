@@ -23,12 +23,8 @@ class StoryController extends Controller
     $validated = $request->validated();
 
     $story->update($validated);
-    
-    return back()
-      ->with([
-        'message' => 'Story atualizada!! ',
-        'status' => 'success'
-      ]);
+
+    return back();
   }
 
   public function destroy(Story $story)

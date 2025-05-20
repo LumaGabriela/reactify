@@ -1,38 +1,133 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
 import {
   Calendar, Clock, CheckCircle, AlertTriangle,
-  Users, Target, GitBranch, List, TrendingUp,
-  ArrowRight, ChevronDown, ChevronUp, Maximize, Minimize
+  Users, Target, GitBranch, List, TrendingUp
+  , ChevronDown, ChevronUp, Maximize, Minimize, PenLine as EditIcon, Save, X
 } from 'lucide-react';
+import TextArea from '@/Components/TextArea';
 import ProgressIcon from '../../Components/ProgressIcon'
 
-// Card com capacidade de expansão e contração
-const ExpandableCard = ({ title, content, color = "#6366f1", icon: IconComponent = CheckCircle }) => {
-  const [expanded, setExpanded] = useState(false);
+// Componente TextArea editável
+const EditableTextArea = ({ value, onChange, onEnter, onCancel }) => {
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && e.ctrlKey) {
+      onEnter();
+    } else if (e.key === 'Escape') {
+      onCancel();
+    }
+  };
 
   return (
-    <div className={`bg-gray-800 rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl ${expanded ? 'row-span-2' : ''}`} style={{ borderColor: color }}>
+    <div className="relative">
+      <textarea
+        className="w-full bg-gray-700 text-gray-200 p-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={handleKeyDown}
+        rows={5}
+        autoFocus
+      />
+      <div className="absolute bottom-2 right-2 flex space-x-2">
+        <button
+          onClick={onCancel}
+          className="p-1 rounded bg-gray-600 hover:bg-gray-500 transition-colors"
+          title="Cancelar (ESC)"
+        >
+          <X size={16} className="text-gray-200" />
+        </button>
+        <button
+          onClick={onEnter}
+          className="p-1 rounded bg-blue-600 hover:bg-blue-500 transition-colors"
+          title="Salvar (Ctrl+Enter)"
+        >
+          <Save size={16} className="text-white" />
+        </button>
+      </div>
+      <div className="text-xs text-gray-400 mt-1">
+        Use Ctrl+Enter para salvar ou ESC para cancelar
+      </div>
+    </div>
+  );
+};
+
+// Card com capacidade de expansão e contração
+const ExpandableCard = ({
+  title,
+  content,
+  color = "#6366f1",
+  icon: IconComponent = CheckCircle,
+  onContentUpdate
+}) => {
+  const [expanded, setExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableContent, setEditableContent] = useState(content);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleSave = () => {
+    onContentUpdate(editableContent);
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditableContent(content);
+    setIsEditing(false);
+  };
+
+  useEffect(() => {
+    console.log(isEditing, isHovered)
+  }, [isEditing]);
+
+  return (
+    <div
+      className={`bg-gray-800 rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl ${expanded ? 'row-span-2' : ''}`}
+      style={{ borderColor: color }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="p-4">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center">
             <IconComponent size={20} color={color} className="mr-2" />
             <h3 className="text-white font-bold text-lg">{title}</h3>
           </div>
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            {expanded ? <Minimize size={18} /> : <Maximize size={18} />}
-          </button>
+          { !isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="text-gray-400 hover:text-white transition-colors"
+              title="Editar conteúdo"
+            >
+              <EditIcon size={20} />
+            </button>
+          )}{
+            (isEditing && (
+              <button
+                onClick={handleCancel}
+                className="text-gray-400 hover:text-white transition-colors"
+                title="Cancelar edição"
+              >
+                <X size={20} />
+              </button>
+            ))
+          }
         </div>
+
         <div className={`text-gray-300 text-sm overflow-hidden transition-all duration-300 ${expanded ? 'max-h-96' : 'max-h-24'}`}>
-          {content}
+          {isEditing ? (
+            <TextArea
+              value={editableContent}
+              onChange={(e) => setEditableContent(e.target.value)}
+              onEnter={handleSave}
+            />
+          ) : (
+            content
+          )}
         </div>
-        {!expanded && content.length > 150 && (
+
+        {!isEditing && !expanded && content.length > 150 && (
           <div className="text-right mt-2">
             <button
               onClick={() => setExpanded(true)}
@@ -42,7 +137,8 @@ const ExpandableCard = ({ title, content, color = "#6366f1", icon: IconComponent
             </button>
           </div>
         )}
-        {expanded && (
+
+        {!isEditing && expanded && (
           <div className="text-right mt-2">
             <button
               onClick={() => setExpanded(false)}
@@ -58,15 +154,11 @@ const ExpandableCard = ({ title, content, color = "#6366f1", icon: IconComponent
 };
 
 const MainView = ({ project = {} }) => {
-
-
-  const [toggleEdit, setToggleEdit] = useState(true);
-
-  // Conteúdo dos cards
-  const cardContents = [
+  // Estado para armazenar o conteúdo dos cards que pode ser editado
+  const [cardContents, setCardContents] = useState([
     {
       title: project.title || "Nome do Projeto",
-      content: project.description,
+      content: project.description || "Descrição do projeto exemplo.",
       color: "#6366f1",
       icon: Calendar
     },
@@ -88,7 +180,17 @@ const MainView = ({ project = {} }) => {
       color: "#14b8a6",
       icon: AlertTriangle
     }
-  ];
+  ]);
+
+  // Função para atualizar o conteúdo de um card específico
+  const updateCardContent = (index, newContent) => {
+    const updatedCards = [...cardContents];
+    updatedCards[index].content = newContent;
+    setCardContents(updatedCards);
+
+    // Aqui você poderia adicionar uma chamada para salvar no backend
+    console.log(`Card ${index} atualizado:`, newContent);
+  };
 
   return (
     <div className="min-h-screen text-white p-6">
@@ -96,7 +198,6 @@ const MainView = ({ project = {} }) => {
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
           <div>
-
             <div className="flex items-center text-gray-400">
               <Clock size={16} className="mr-1" />
               <span>Atualizado: {new Date().toLocaleDateString()}</span>
@@ -111,7 +212,7 @@ const MainView = ({ project = {} }) => {
                 <div className="w-32 h-2 bg-gray-700 rounded-full mr-2">
                   <div
                     className="h-2 bg-green-500 rounded-full"
-                    style={{ width: 68 }}
+                    style={{ width: '68%' }}
                   />
                 </div>
                 <span className="text-sm font-medium">68%</span>
@@ -169,6 +270,7 @@ const MainView = ({ project = {} }) => {
             content={card.content}
             color={card.color}
             icon={card.icon}
+            onContentUpdate={(newContent) => updateCardContent(index, newContent)}
           />
         ))}
       </div>
