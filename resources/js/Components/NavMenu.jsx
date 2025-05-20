@@ -7,7 +7,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
   const handleItemClick = (menuItem) => {
     setActiveMenu(Object.keys(menuItem)[0]);
   };
-console.log(menuItems)
+
   return (
     <>
       <div className="flex w-full min-w-full">
