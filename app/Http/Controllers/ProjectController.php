@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProjectUpdated;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -22,7 +23,12 @@ class ProjectController extends Controller
   }
   public function show(string $id)
   {
-    $project = Project::with(['stories', 'goal_sketches', 'journeys', 'personas'])->find($id);
+    $project = Project::with([
+      'stories',
+      'goal_sketches',
+      'journeys',
+      'personas'
+    ])->find($id);
 
     return Inertia::render('projects/Project', ['project' => $project]);
   }
@@ -38,6 +44,9 @@ class ProjectController extends Controller
 
     $project->save();
 
+
+    broadcast(new ProjectUpdated($project));
+
     return redirect()
       ->route('project.show', $project->id)
       ->with(
@@ -49,9 +58,16 @@ class ProjectController extends Controller
   }
 
 
-  public function update(Request $request, string $id)
+  public function update(Request $request, Project $project)
   {
-    //
+
+    broadcast(new ProjectUpdated($project));
+
+    return back()
+      ->with([
+        'status' => 'success',
+        'message' => 'Project updated successfully.'
+      ]);
   }
 
   /**
@@ -70,6 +86,8 @@ class ProjectController extends Controller
 
     // Excluir o projeto
     $project->delete();
+
+    broadcast(new ProjectUpdated($project));
 
     return redirect()->route('projects.index')->with([
       'status' => 'success',

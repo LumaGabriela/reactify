@@ -75,9 +75,6 @@ const Goals = ({ project, setProject }) => {
       type: 'bg',
       priority: 'high',
       project_id: project.id
-    }, {
-      preserveScroll: true,
-      preserveState: false
     })
   };
 

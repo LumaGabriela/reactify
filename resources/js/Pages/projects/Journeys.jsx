@@ -77,7 +77,7 @@ const Journeys = ({ project, setProject }) => {
       title: newJourney.title,
       steps: [],
       project_id: project.id
-    }, { preserveState: false });
+    },);
 
     // Expandir a journey recém-criada (último índice)
     setExpandedJourney(updatedJourneys.length - 1);

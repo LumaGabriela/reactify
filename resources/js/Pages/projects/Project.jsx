@@ -7,6 +7,7 @@ import Personas from './Personas';
 import Journeys from './Journeys';
 import Goals from './Goals';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+
 const ProjectView = ({ projectDB = [] }) => {
   const props = usePage().props
   const [project, setProject] = useState({ ...projectDB });
@@ -22,6 +23,25 @@ const ProjectView = ({ projectDB = [] }) => {
     { Journeys: false }
   ]);
 
+  //
+  useEffect(() => {
+    //
+    if (!window.Echo) {
+      console.error('window.Echo is undefined')
+      return;
+    }
+
+    const channel = window.Echo.private(`project.${project.id}`)
+
+
+    channel.listen('ProjectUpdated', (e) => {
+      console.log('project updated: ', e.project)
+
+
+      return () => channel.stopListening('ProjectUpdated')
+    })
+
+  }, [project.id])
   //Altera o menu ativo
   useEffect(() => {
     const updatedMenuItems = menuItems.map((item, i) => {
@@ -42,8 +62,8 @@ const ProjectView = ({ projectDB = [] }) => {
   }, [activeMenu])
 
   useEffect(() => {
-    console.log(props.flash)
-  }, [props])
+    console.log(project)
+  }, [project])
 
 
   const renderContent = () => {

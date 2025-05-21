@@ -11,49 +11,6 @@ import {
 import TextArea from '@/Components/TextArea';
 import ProgressIcon from '../../Components/ProgressIcon'
 
-// Componente TextArea editável
-const EditableTextArea = ({ value, onChange, onEnter, onCancel }) => {
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
-      onEnter();
-    } else if (e.key === 'Escape') {
-      onCancel();
-    }
-  };
-
-  return (
-    <div className="relative">
-      <textarea
-        className="w-full bg-gray-700 text-gray-200 p-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        rows={5}
-        autoFocus
-      />
-      <div className="absolute bottom-2 right-2 flex space-x-2">
-        <button
-          onClick={onCancel}
-          className="p-1 rounded bg-gray-600 hover:bg-gray-500 transition-colors"
-          title="Cancelar (ESC)"
-        >
-          <X size={16} className="text-gray-200" />
-        </button>
-        <button
-          onClick={onEnter}
-          className="p-1 rounded bg-blue-600 hover:bg-blue-500 transition-colors"
-          title="Salvar (Ctrl+Enter)"
-        >
-          <Save size={16} className="text-white" />
-        </button>
-      </div>
-      <div className="text-xs text-gray-400 mt-1">
-        Use Ctrl+Enter para salvar ou ESC para cancelar
-      </div>
-    </div>
-  );
-};
-
 // Card com capacidade de expansão e contração
 const ExpandableCard = ({
   title,

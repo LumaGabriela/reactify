@@ -53,9 +53,6 @@ const Stories = ({ project, setProject }) => {
       title: 'Nova Story',
       type: 'user',
       project_id: project.id // ID do projeto atual
-    }, {
-      preserveState: false,
-      preserveScroll: true
     });
   };
 
