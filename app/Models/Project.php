@@ -15,16 +15,14 @@ class Project extends Model
     'status',
   ];
 
+  protected $casts = [
+    'active' => 'boolean',
+  ];
   // Relação: Um projeto pertence a um usuário
   public function user()
   {
     return $this->belongsTo(User::class);
   }
-
-  // public function goalSketches()
-  // {
-  //     return $this->hasMany(GoalSketch::class);
-  // }
 
   public function journeys()
   {
@@ -49,8 +47,4 @@ class Project extends Model
   {
     return $this->hasMany(Story::class);
   }
-
-  protected $casts = [
-    'active' => 'boolean',
-  ];
 }

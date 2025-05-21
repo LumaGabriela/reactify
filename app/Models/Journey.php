@@ -6,15 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Journey extends Model
 {
-    protected $guarded = [];
+  protected $fillable = [
+    'title',
+    'steps',
+    'project_id'
+  ];
 
-    protected $casts = [
-      'steps'=> 'array'
-    ];
+  protected $casts = [
+    'steps' => 'array'
+  ];
 
-    public function project() 
-    {
-        return $this->belongsTo(Project::class);
-    }
+  public function project()
+  {
+    return $this->belongsTo(Project::class);
+  }
 }
-
