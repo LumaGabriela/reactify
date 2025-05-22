@@ -15,6 +15,9 @@ class ProductCanvas extends Model
     'product_is_not',
     'project_id'
   ];
+
+  protected $table = 'product_canvas';
+  
   public function project()
   {
     return $this->belongsTo(Project::class);

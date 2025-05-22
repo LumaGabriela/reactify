@@ -29,7 +29,7 @@ class Project extends Model
     return $this->hasMany(Journey::class);
   }
 
-  public function productCanvas()
+  public function product_canvas()
   {
     return $this->hasOne(ProductCanvas::class);
   }

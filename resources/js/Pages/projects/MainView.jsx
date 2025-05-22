@@ -17,6 +17,7 @@ const ExpandableCard = ({
   content,
   color = "#6366f1",
   icon: IconComponent = CheckCircle,
+  col = 1,
   onContentUpdate
 }) => {
   const [expanded, setExpanded] = useState(false);
@@ -27,6 +28,7 @@ const ExpandableCard = ({
   const handleSave = () => {
     onContentUpdate(editableContent);
     setIsEditing(false);
+    console.log()
   };
 
   const handleCancel = () => {
@@ -36,7 +38,7 @@ const ExpandableCard = ({
 
   return (
     <div
-      className={`bg-gray-800 rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl ${expanded ? 'row-span-2' : ''}`}
+      className={`bg-gray-800 rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl ${col === 2 ? 'col-span-2' : ''} ${expanded ? 'row-span-2' : ''}`}
       style={{ borderColor: color }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -47,7 +49,7 @@ const ExpandableCard = ({
             <IconComponent size={20} color={color} className="mr-2" />
             <h3 className="text-white font-bold text-lg">{title}</h3>
           </div>
-          { !isEditing && (
+          {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
               className="text-gray-400 hover:text-white transition-colors"
@@ -106,45 +108,34 @@ const ExpandableCard = ({
   );
 };
 
-const MainView = ({ project = {} }) => {
+const MainView = ({ project = {}, setProject }) => {
   // Estado para armazenar o conteúdo dos cards que pode ser editado
-  const [cardContents, setCardContents] = useState([
-    {
-      title: project.title || "Nome do Projeto",
-      content: project.description || "Descrição do projeto exemplo.",
-      color: "#6366f1",
-      icon: Calendar
-    },
-    {
-      title: "Solução para demanda",
-      content: "Este card descreve como o projeto resolve uma demanda específica. Aqui são detalhadas as necessidades que o projeto atende e como ele propõe solucioná-las de forma eficiente. O projeto implementa um sistema integrado que centraliza o gerenciamento de recursos, otimiza a alocação de tarefas e fornece métricas em tempo real do progresso das atividades.",
-      color: "#f43f5e",
-      icon: TrendingUp
-    },
-    {
-      title: "É",
-      content: "Este card define o que o projeto é. Aqui são listadas as características, funcionalidades e aspectos positivos que fazem parte do escopo e da identidade do projeto. O sistema é uma plataforma colaborativa que permite acompanhamento de progresso em tempo real, visualização de métricas de desempenho, integração com ferramentas externas, e geração de relatórios personalizados para diferentes níveis gerenciais.",
-      color: "#06b6d4",
-      icon: CheckCircle
-    },
-    {
-      title: "Não é",
-      content: "Este card esclarece o que o projeto não é. Aqui são definidos os limites do projeto, evitando expectativas equivocadas e garantindo um alinhamento claro sobre o que está fora do escopo. O projeto não é um substituto para ferramentas específicas de áreas como contabilidade ou recursos humanos, não é uma solução para gestão financeira completa, e não inclui integrações com sistemas legados sem APIs disponíveis.",
-      color: "#14b8a6",
-      icon: AlertTriangle
-    }
-  ]);
+  const [productCanvas, setProductCanvas] = useState(project?.product_canvas || {});
 
   // Função para atualizar o conteúdo de um card específico
-  const updateCardContent = (index, newContent) => {
-    const updatedCards = [...cardContents];
-    updatedCards[index].content = newContent;
-    setCardContents(updatedCards);
+  const updateProductCanvas = (prop, newContent) => {
+    const updatedProductCanvas = { ...productCanvas };
+    updatedProductCanvas[prop] = newContent;
+    setProductCanvas(updatedProductCanvas);
 
+    setProject({ ...project, product_canvas: updatedProductCanvas });
     // Aqui você poderia adicionar uma chamada para salvar no backend
-    console.log(`Card ${index} atualizado:`, newContent);
+    console.log(`Product Canvas ${prop} atualizado:`, newContent);
   };
 
+const updateProject = (prop, content) => {
+  if (!project) {
+    console.error('Project object is not defined');
+    return;
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(project, prop)) {
+    console.error(`Property '${prop}' does not exist on project object`);
+    return;
+  }
+
+  setProject({ ...project, [prop]: content });
+};
   return (
     <div className="min-h-screen text-white p-6">
       {/* Cabeçalho do dashboard */}
@@ -216,16 +207,56 @@ const MainView = ({ project = {} }) => {
       {/* Dashboard principal - Layout de grid responsivo */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         {/* Cards de informação */}
-        {cardContents.map((card, index) => (
-          <ExpandableCard
-            key={index}
-            title={card.title}
-            content={card.content}
-            color={card.color}
-            icon={card.icon}
-            onContentUpdate={(newContent) => updateCardContent(index, newContent)}
-          />
-        ))}
+        <ExpandableCard
+          title={project?.title || 'Projeto'}
+          content={project?.description || 'Descrição do projeto'}
+          col={2}
+          color='#6366f1'
+          icon={List}
+          onContentUpdate={(content) =>  updateProject('description', content)}
+        />
+        <ExpandableCard
+          title='Problemas'
+          content={productCanvas.issues}
+          color='#f43f5e'
+          icon={Target}
+          onContentUpdate={(content) => updateProductCanvas('issues', content)}
+        />
+        <ExpandableCard
+          title='Soluções'
+          content={productCanvas.solutions}
+          color='#06b6d4'
+          icon={Target}
+          onContentUpdate={(content) => updateProductCanvas('solutions', content)}
+        />
+        <ExpandableCard
+          title='Personas envolvidas'
+          content={productCanvas.personas}
+          color='#14b8a6'
+          icon={Target}
+          onContentUpdate={(content) => updateProductCanvas('personas', content)}
+        />
+        <ExpandableCard
+          title='Restrições'
+          content={productCanvas.restrictions}
+          color='#f43f5e'
+          icon={Target}
+          onContentUpdate={(content) => updateProductCanvas('restrictions', content)}
+        />
+        <ExpandableCard
+          title='É'
+          content={productCanvas.product_is}
+          color='#06b6d4'
+          icon={Target}
+          onContentUpdate={(content) => updateProductCanvas('product_is', content)}
+        />
+        <ExpandableCard
+          title='Não É'
+          content={productCanvas.product_is_not}
+          color='#14b8a6'
+          icon={Target}
+          onContentUpdate={(content) => updateProductCanvas('product_is_not', content)}
+        />
       </div>
     </div>
   );

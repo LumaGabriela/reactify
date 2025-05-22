@@ -7,6 +7,7 @@ use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
@@ -27,7 +28,8 @@ class ProjectController extends Controller
       'stories',
       'goal_sketches',
       'journeys',
-      'personas'
+      'personas',
+      'product_canvas',
     ])->find($id);
 
     broadcast(new ProjectUpdated($project));
@@ -46,7 +48,7 @@ class ProjectController extends Controller
 
     $project->save();
 
-
+    Log::info('Project created successfully: ' . $project->id . ' - ' . $project->title);
     broadcast(new ProjectUpdated($project));
 
     return redirect()

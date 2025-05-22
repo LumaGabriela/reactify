@@ -41,7 +41,8 @@ class ProjectUpdated implements ShouldBroadcast
         'stories',
         'goal_sketches',
         'journeys',
-        'personas'
+        'personas',
+        'product_canvas',
       ]),
     ];
   }
