@@ -49,7 +49,7 @@ class ProjectController extends Controller
     $productCanvas = ProductCanvas::create([
       'project_id' => $project->id
     ]);
-  
+
     $project->active = true;
 
     $project->save();

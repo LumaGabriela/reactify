@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
 import {
-  Calendar, Clock, CheckCircle, AlertTriangle,
-  Users, Target, GitBranch, List, TrendingUp
-  , ChevronDown, ChevronUp, Maximize, Minimize, PenLine as EditIcon, Save, X
+  AlertCircle,
+  Users,
+  Slash,
+  Check,
+  Clock,
+  CheckCircle,
+  Target,
+  GitBranch, List,
+  ChevronDown,
+  ChevronUp,
+  PenLine as EditIcon, X
 } from 'lucide-react';
 import TextArea from '@/Components/TextArea';
 import ProgressIcon from '../../Components/ProgressIcon'
@@ -38,16 +46,16 @@ const ExpandableCard = ({
 
   return (
     <div
-      className={`bg-gray-800 rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl ${col === 2 ? 'col-span-2' : ''} ${expanded ? 'row-span-2' : ''}`}
+      className={` bg-gray-800 rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl cursor-default ${col === 2 ? 'col-span-2' : ''} ${expanded ? 'row-span-2' : ''}`}
       style={{ borderColor: color }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="p-4">
+      <div className="p-4 justify-between !h-full">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center">
             <IconComponent size={20} color={color} className="mr-2" />
-            <h3 className="text-white font-bold text-lg">{title}</h3>
+            <h3 className="text-white font-bold text-lg m-0">{title}</h3>
           </div>
           {!isEditing && (
             <button
@@ -70,7 +78,7 @@ const ExpandableCard = ({
           }
         </div>
 
-        <div className={`text-gray-300 text-sm overflow-hidden transition-all duration-300 ${expanded ? 'max-h-96' : 'max-h-24'}`}>
+        <div className={` text-gray-300 text-sm overflow-hidden transition-all duration-300 ${expanded ? 'max-h-96' : 'max-h-24'}`}>
           {isEditing ? (
             <TextArea
               value={editableContent}
@@ -78,7 +86,8 @@ const ExpandableCard = ({
               onEnter={handleSave}
             />
           ) : (
-            content
+            <p className=''>{content}</p>
+           
           )}
         </div>
 
@@ -111,7 +120,16 @@ const ExpandableCard = ({
 const MainView = ({ project = {}, setProject }) => {
   // Estado para armazenar o conteúdo dos cards que pode ser editado
   const [productCanvas, setProductCanvas] = useState(project?.product_canvas || {});
-
+  const [colors] = useState({
+    red: "#f43f5e",
+    blue: "#6366f1",
+    cyan: "#06b6d4",
+    green: "#22c55e",
+    yellow: "#f59e0b",
+    gray: "#6b7280",
+    purple: "#8b5cf6",
+    turquoise: "#14b8a6",
+  })
   // Função para atualizar o conteúdo de um card específico
   const updateProductCanvas = (prop, newContent) => {
     const updatedProductCanvas = { ...productCanvas };
@@ -142,7 +160,7 @@ const MainView = ({ project = {}, setProject }) => {
     router.patch(route('project.update', project.id), { [prop]: content });
   };
   return (
-    <div className="min-h-screen text-white p-6">
+    <div className="min-h-screen w-full text-white p-6">
       {/* Cabeçalho do dashboard */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
@@ -182,28 +200,28 @@ const MainView = ({ project = {}, setProject }) => {
         <ProgressIcon
           value={project?.stories?.length || 0}
           max={20}
-          color="#6366f1"
+          color={colors.blue}
           label="Stories"
           icon={List}
         />
         <ProgressIcon
           value={project?.personas?.length || 0}
           max={10}
-          color="#f43f5e"
+          color={colors.red}
           label="Personas"
           icon={Users}
         />
         <ProgressIcon
           value={project?.goalSketches?.length || 0}
           max={15}
-          color="#06b6d4"
+          color={colors.cyan}
           label="Goals"
           icon={Target}
         />
         <ProgressIcon
           value={project?.journeys?.length || 0}
           max={10}
-          color="#14b8a6"
+          color={colors.turquoise}
           label="Journeys"
           icon={GitBranch}
         />
@@ -216,50 +234,50 @@ const MainView = ({ project = {}, setProject }) => {
           title={project?.title || 'Projeto'}
           content={project?.description || 'Descrição do projeto'}
           col={2}
-          color='#6366f1'
+          color={colors.blue}
           icon={List}
           onContentUpdate={(content) => updateProject('description', content)}
         />
         <ExpandableCard
           title='Problemas'
           content={productCanvas.issues}
-          color='#f43f5e'
-          icon={Target}
+          color={colors.red}
+          icon={AlertCircle}
           onContentUpdate={(content) => updateProductCanvas('issues', content)}
         />
         <ExpandableCard
           title='Soluções'
           content={productCanvas.solutions}
-          color='#06b6d4'
-          icon={Target}
+          color={colors.red}
+          icon={CheckCircle}
           onContentUpdate={(content) => updateProductCanvas('solutions', content)}
         />
         <ExpandableCard
           title='Personas envolvidas'
           content={productCanvas.personas}
-          color='#14b8a6'
-          icon={Target}
+          color={colors.cyan}
+          icon={Users}
           onContentUpdate={(content) => updateProductCanvas('personas', content)}
         />
         <ExpandableCard
           title='Restrições'
           content={productCanvas.restrictions}
-          color='#f43f5e'
-          icon={Target}
+          color={colors.cyan}
+          icon={Slash}
           onContentUpdate={(content) => updateProductCanvas('restrictions', content)}
         />
         <ExpandableCard
           title='É'
           content={productCanvas.product_is}
-          color='#06b6d4'
-          icon={Target}
+          color={colors.turquoise}
+          icon={Check}
           onContentUpdate={(content) => updateProductCanvas('product_is', content)}
         />
         <ExpandableCard
           title='Não É'
           content={productCanvas.product_is_not}
-          color='#14b8a6'
-          icon={Target}
+          color={colors.turquoise}
+          icon={X}
           onContentUpdate={(content) => updateProductCanvas('product_is_not', content)}
         />
       </div>

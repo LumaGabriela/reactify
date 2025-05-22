@@ -19,7 +19,7 @@ const TextArea = ({ value, onChange, onEnter }) => {
   return (
     <textarea
       ref={textareaRef}
-      value={value}
+      value={value || ''}
       onKeyUp={(e) => { if (e.key === 'Enter') onEnter() }}
       onChange={onChange}
       className="text-white text-sm bg-transparent p-0 border-none w-full h-max rounded outline-none focus:ring-0 focus:outline-none"
