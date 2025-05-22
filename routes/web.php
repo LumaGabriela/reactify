@@ -16,9 +16,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
   Route::prefix('project')->group(function () {
     Route::post('/create', [ProjectController::class, 'store'])->name('project.store');
-    Route::get('/{id}', [ProjectController::class, 'show'])->name('project.show');
-    Route::put('/{id}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggle-active');
-    Route::delete('/{id}', [ProjectController::class, 'destroy'])->name('project.destroy');
+    Route::get('/{project}', [ProjectController::class, 'show'])->name('project.show');
+    Route::patch('/{project}', [ProjectController::class, 'update'])->name('project.update');
+    Route::put('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggle-active');
+    Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
   });
 
   // Rotas para stories
