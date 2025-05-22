@@ -104,7 +104,6 @@ const Journeys = ({ project, setProject }) => {
     })
 
     setProject({ ...project, journeys: updatedJourneys });
-    console.log([...currentSteps, newStep])
     router.patch(route('journey.update', JourneyId), {
       steps: [...currentSteps, newStep]
     })
@@ -113,7 +112,7 @@ const Journeys = ({ project, setProject }) => {
   const saveEditJourney = () => {
     const journeyId = editingJourney;
     if (journeyId === null || !project.journeys) return;
-    console.log(journeyId)
+
     const updatedJourneys = project.journeys.map(journey =>
       journey.id === journeyId
         ? { ...journey, title: editJourneyName }
@@ -131,13 +130,12 @@ const Journeys = ({ project, setProject }) => {
   // Função para salvar a edição de um step
   const saveEditStep = () => {
     const { JourneyId, stepIndex } = editingStep;
-    console.log(editingStep,)
+
     if (!JourneyId || stepIndex === null) return;
 
     // Encontra a jornada específica
     const journey = project.journeys.find(j => j.id === JourneyId);
-    // if (!journey?.steps) return;
-    console.log(journey)
+
     // Cria uma nova versão dos steps com a edição aplicada
     const updatedSteps = journey.steps.map((s, i) =>
       i === stepIndex ? { ...s, description: editValue } : s
@@ -151,8 +149,6 @@ const Journeys = ({ project, setProject }) => {
     // Atualiza o estado
     setProject({ ...project, journeys: updatedJourneys });
     setEditingStep({ JourneyId: null, stepIndex: null });
-
-    console.log(updatedSteps);
 
     router.patch(route('journey.update', JourneyId), {
       steps: updatedSteps
@@ -197,7 +193,6 @@ const Journeys = ({ project, setProject }) => {
 
   // Função para excluir uma journey inteira
   const handleDeleteJourney = () => {
-    console.log(deleteConfirmJourney)
     if (deleteConfirmJourney === null || !project.journeys) return;
 
     const updatedJourneys = project.journeys.filter((journey) => journey.id !== deleteConfirmJourney);

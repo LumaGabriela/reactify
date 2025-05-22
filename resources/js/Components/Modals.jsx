@@ -95,7 +95,6 @@ const ModalNewProject = ({ onCancel, message }) => {
   });
   const handleClick = () => {
     setAnimationStart(false);
-    console.log(newProject)
     setTimeout(() => onCancel(), 300);
   }
   const onConfirm = () => {

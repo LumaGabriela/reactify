@@ -82,7 +82,6 @@ const Stories = ({ project, setProject }) => {
       setEditingId(story.id);
       setEditValue(story.title); // Inicializa o campo com o valor atual
     }
-    console.log(editValue)
   };
 
   // Função para alterar o tipo da story

@@ -80,7 +80,6 @@ const Goals = ({ project, setProject }) => {
 
   // Função para alternar entre modo de edição e visualização
   const editGoal = (goal) => {
-    console.log([goal.title, editValue, goal.id, editingId])
 
     if (editingId === goal.id) {
 

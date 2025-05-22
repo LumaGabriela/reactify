@@ -29,7 +29,6 @@ const ExpandableCard = ({
   const handleSave = () => {
     onContentUpdate(editableContent);
     setIsEditing(false);
-    console.log()
   };
 
   const handleCancel = () => {
@@ -83,7 +82,7 @@ const ExpandableCard = ({
           )}
         </div>
 
-        {!isEditing && !expanded && content.length > 150 && (
+        {!isEditing && !expanded && content?.length > 150 && (
           <div className="text-right mt-2">
             <button
               onClick={() => setExpanded(true)}
@@ -117,15 +116,14 @@ const MainView = ({ project = {}, setProject }) => {
   const updateProductCanvas = (prop, newContent) => {
     const updatedProductCanvas = { ...productCanvas };
     updatedProductCanvas[prop] = newContent;
+
     setProductCanvas(updatedProductCanvas);
 
     setProject({ ...project, product_canvas: updatedProductCanvas });
 
-    router.patch(route('product-canvas.update', productCanvas.id, {
-      [prop]: newContent
-    }))
-    // Aqui você poderia adicionar uma chamada para salvar no backend
-    console.log(`Product Canvas ${prop} atualizado:`, newContent);
+    router.patch(route('product-canvas.update', productCanvas.id), {
+      [prop]: newContent,
+    })
   };
 
   const updateProject = (prop, content) => {
@@ -140,7 +138,8 @@ const MainView = ({ project = {}, setProject }) => {
     }
 
     setProject({ ...project, [prop]: content });
-    router.patch(route('projects.update', project.id), { [prop]: content });
+
+    router.patch(route('project.update', project.id), { [prop]: content });
   };
   return (
     <div className="min-h-screen text-white p-6">
