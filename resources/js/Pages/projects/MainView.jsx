@@ -34,10 +34,6 @@ const ExpandableCard = ({
     setIsEditing(false);
   };
 
-  useEffect(() => {
-    console.log(isEditing, isHovered)
-  }, [isEditing]);
-
   return (
     <div
       className={`bg-gray-800 rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl ${expanded ? 'row-span-2' : ''}`}

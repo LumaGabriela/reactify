@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useEcho } from '@laravel/echo-react';
 import { Head, usePage } from '@inertiajs/react';
 import NavMenu from '../../Components/NavMenu'
 import MainView from './MainView';
@@ -23,25 +24,10 @@ const ProjectView = ({ projectDB = [] }) => {
     { Journeys: false }
   ]);
 
-  //
-  useEffect(() => {
-    //
-    if (!window.Echo) {
-      console.error('window.Echo is undefined')
-      return;
-    }
-
-    const channel = window.Echo.private(`project.${project.id}`)
-
-
-    channel.listen('ProjectUpdated', (e) => {
-      console.log('project updated: ', e.project)
-
-
-      return () => channel.stopListening('ProjectUpdated')
-    })
-
-  }, [project.id])
+  //Usa o websocket para obter o valor mais recente do projeto
+  useEcho(`project.${project.id}`, 'ProjectUpdated', (e) => {
+    setProject(e.project)
+  })
   //Altera o menu ativo
   useEffect(() => {
     const updatedMenuItems = menuItems.map((item, i) => {

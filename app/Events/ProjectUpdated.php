@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ProjectUpdated
+class ProjectUpdated implements ShouldBroadcast
 {
   use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -37,7 +37,12 @@ class ProjectUpdated
   public function broadcastWith()
   {
     return [
-      'project' => $this->project->fresh(),
+      'project' => $this->project->fresh([
+        'stories',
+        'goal_sketches',
+        'journeys',
+        'personas'
+      ]),
     ];
   }
 }
