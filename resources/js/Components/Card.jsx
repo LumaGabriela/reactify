@@ -49,7 +49,7 @@ const StoryCard = ({
             {editingId === story.id ? (
               <TextArea
                 value={editValue}
-                onEnter={(e) => { if (e.key === 'Enter') { editStory(story) } }}
+                onEnter={() => { editStory(story) } }
                 onChange={handleInputChange}
               />
             ) : (
