@@ -2,9 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\ProductCanvasRequest;
+use App\Models\ProductCanvas;
+use Illuminate\Support\Facades\Log;
 
 class ProductCanvasController extends Controller
 {
-    //
+  public function update(ProductCanvasRequest $request, ProductCanvas $productCanvas)
+  {
+    $validated = $request->validated();
+
+    $productCanvas->update($validated);
+    Log::info($productCanvas);
+    return back();
+  }
 }

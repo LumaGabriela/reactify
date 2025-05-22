@@ -44,7 +44,7 @@ class StoryObserver
   {
     // Verifica se a história está relacionada a um projeto
     if ($story->project) {
-      
+
       broadcast(new ProjectUpdated($story->project));
     }
   }

@@ -6,6 +6,7 @@ use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PersonaController;
+use App\Http\Controllers\ProductCanvasController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -45,6 +46,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{persona}', [PersonaController::class, 'update'])->name('persona.update');
     Route::delete('/{persona}', [PersonaController::class, 'destroy'])->name('persona.delete');
   });
+
+  Route::prefix('product-canvas')->group(function () {
+    Route::post('/', [ProductCanvasController::class, 'store'])->name('product-canvas.store');
+    Route::patch('/{productCanvas}', [ProductCanvasController::class, 'update'])->name('product-canvas.update');
+    Route::delete('/{productCanvas}', [ProductCanvasController::class, 'destroy'])->name('product-canvas.delete');
+  }); 
 
 });
 

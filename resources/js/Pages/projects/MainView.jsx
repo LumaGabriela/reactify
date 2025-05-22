@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import TextArea from '@/Components/TextArea';
 import ProgressIcon from '../../Components/ProgressIcon'
+import { router } from '@inertiajs/react';
 
 // Card com capacidade de expansão e contração
 const ExpandableCard = ({
@@ -119,23 +120,28 @@ const MainView = ({ project = {}, setProject }) => {
     setProductCanvas(updatedProductCanvas);
 
     setProject({ ...project, product_canvas: updatedProductCanvas });
+
+    router.patch(route('product-canvas.update', productCanvas.id, {
+      [prop]: newContent
+    }))
     // Aqui você poderia adicionar uma chamada para salvar no backend
     console.log(`Product Canvas ${prop} atualizado:`, newContent);
   };
 
-const updateProject = (prop, content) => {
-  if (!project) {
-    console.error('Project object is not defined');
-    return;
-  }
+  const updateProject = (prop, content) => {
+    if (!project) {
+      console.error('Project object is not defined');
+      return;
+    }
 
-  if (!Object.prototype.hasOwnProperty.call(project, prop)) {
-    console.error(`Property '${prop}' does not exist on project object`);
-    return;
-  }
+    if (!Object.prototype.hasOwnProperty.call(project, prop)) {
+      console.error(`Property '${prop}' does not exist on project object`);
+      return;
+    }
 
-  setProject({ ...project, [prop]: content });
-};
+    setProject({ ...project, [prop]: content });
+    router.patch(route('projects.update', project.id), { [prop]: content });
+  };
   return (
     <div className="min-h-screen text-white p-6">
       {/* Cabeçalho do dashboard */}
@@ -213,7 +219,7 @@ const updateProject = (prop, content) => {
           col={2}
           color='#6366f1'
           icon={List}
-          onContentUpdate={(content) =>  updateProject('description', content)}
+          onContentUpdate={(content) => updateProject('description', content)}
         />
         <ExpandableCard
           title='Problemas'
