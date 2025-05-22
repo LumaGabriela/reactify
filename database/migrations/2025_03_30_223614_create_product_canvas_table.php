@@ -13,12 +13,12 @@ return new class extends Migration
   {
     Schema::create('product_canvas', function (Blueprint $table) {
       $table->id();
-      $table->string('issues');
-      $table->string('solutions');
-      $table->string('personas');
-      $table->string('restrictions');
-      $table->string('product_is');
-      $table->string('product_is_not');
+      $table->string('issues')->nullable();
+      $table->string('solutions')->nullable();
+      $table->string('personas')->nullable();
+      $table->string('restrictions')->nullable();
+      $table->string('product_is')->nullable();
+      $table->string('product_is_not')->nullable();
       $table->foreignId('project_id')->constrained('projects');
       $table->timestamps();
     });

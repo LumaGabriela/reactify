@@ -13,7 +13,7 @@ class ProductCanvasController extends Controller
     $validated = $request->validated();
 
     $productCanvas->update($validated);
-    Log::info($productCanvas);
+
     return back();
   }
 }
