@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class ProductCanvas extends Model
 {
   protected $fillable = [
-    'description',
-    'solution',
-    'project_is',
-    'project_is_not',
+    'issues',
+    'solutions',
+    'personas',
+    'restrictions',
+    'product_is',
+    'product_is_not',
     'project_id'
   ];
   public function project()

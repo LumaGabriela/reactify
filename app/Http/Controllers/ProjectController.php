@@ -30,6 +30,8 @@ class ProjectController extends Controller
       'personas'
     ])->find($id);
 
+    broadcast(new ProjectUpdated($project));
+
     return Inertia::render('projects/Project', ['project' => $project]);
   }
 
