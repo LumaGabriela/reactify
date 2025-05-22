@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Events\ProjectUpdated;
 use App\Http\Requests\ProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
+use App\Models\ProductCanvas;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -44,11 +46,16 @@ class ProjectController extends Controller
 
     $project = Project::create($validatedData);
 
+    $productCanvas = ProductCanvas::create([
+      'project_id' => $project->id
+    ]);
+  
     $project->active = true;
 
     $project->save();
 
     Log::info('Project created successfully: ' . $project->id . ' - ' . $project->title);
+
     broadcast(new ProjectUpdated($project));
 
     return redirect()
@@ -62,10 +69,12 @@ class ProjectController extends Controller
   }
 
 
-  public function update(Request $request, Project $project)
+  public function update(UpdateProjectRequest $request, Project $project)
   {
 
-    broadcast(new ProjectUpdated($project));
+    $validated = $request->validated();
+
+    $project->update($validated);
 
     return back()
       ->with([

@@ -15,6 +15,8 @@ class Project extends Model
     'status',
   ];
 
+  protected $table = 'projects';
+
   protected $casts = [
     'active' => 'boolean',
   ];
