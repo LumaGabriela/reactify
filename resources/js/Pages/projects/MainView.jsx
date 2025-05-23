@@ -44,14 +44,17 @@ const ExpandableCard = ({
     setIsEditing(false);
   };
 
+  // Verifica se o conteúdo é longo o suficiente para precisar de expansão
+  const needsExpansion = typeof content === 'string' && content.length > 150;
+
   return (
     <div
-      className={` bg-gray-800 rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl cursor-default ${col === 2 ? 'col-span-2' : ''} ${expanded ? 'row-span-2' : ''}`}
+      className={`bg-gray-800 rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl cursor-default ${col === 2 ? 'col-span-2' : ''} ${expanded ? 'row-span-2' : ''}`}
       style={{ borderColor: color }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="p-4 justify-between !h-full">
+      <div className="p-4 h-full flex flex-col">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center">
             <IconComponent size={20} color={color} className="mr-2" />
@@ -65,53 +68,68 @@ const ExpandableCard = ({
             >
               <EditIcon size={20} />
             </button>
-          )}{
-            (isEditing && (
-              <button
-                onClick={handleCancel}
-                className="text-gray-400 hover:text-white transition-colors"
-                title="Cancelar edição"
-              >
-                <X size={20} />
-              </button>
-            ))
-          }
-        </div>
-
-        <div className={` text-gray-300 text-sm overflow-hidden transition-all duration-300 ${expanded ? 'max-h-96' : 'max-h-24'}`}>
-          {isEditing ? (
-            <TextArea
-              value={editableContent}
-              onChange={(e) => setEditableContent(e.target.value)}
-              onEnter={handleSave}
-            />
-          ) : (
-            <p className=''>{content}</p>
-           
+          )}
+          {isEditing && (
+            <button
+              onClick={handleCancel}
+              className="text-gray-400 hover:text-white transition-colors"
+              title="Cancelar edição"
+            >
+              <X size={20} />
+            </button>
           )}
         </div>
 
-        {!isEditing && !expanded && content?.length > 150 && (
-          <div className="text-right mt-2">
-            <button
-              onClick={() => setExpanded(true)}
-              className="text-xs text-gray-400 hover:text-gray-200 flex items-center justify-end w-full"
-            >
-              Mostrar mais <ChevronDown size={14} className="ml-1" />
-            </button>
+        <div className="flex-1 flex flex-col">
+          <div className="text-gray-300 text-sm transition-all duration-300 flex-1">
+            {isEditing ? (
+              <div className="h-32">
+                <TextArea
+                  value={editableContent}
+                  onChange={(e) => setEditableContent(e.target.value)}
+                  onEnter={handleSave}
+                  className="w-full h-full resize-none"
+                />
+              </div>
+            ) : (
+              <div 
+                className={`whitespace-pre-wrap break-words ${
+                  !expanded && needsExpansion 
+                    ? 'overflow-hidden' 
+                    : ''
+                }`}
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: !expanded && needsExpansion ? 3 : 'none',
+                  WebkitBoxOrient: 'vertical',
+                  overflow: !expanded && needsExpansion ? 'hidden' : 'visible'
+                }}
+              >
+                {content || 'Conteúdo do card'}
+              </div>
+            )}
           </div>
-        )}
 
-        {!isEditing && expanded && (
-          <div className="text-right mt-2">
-            <button
-              onClick={() => setExpanded(false)}
-              className="text-xs text-gray-400 hover:text-gray-200 flex items-center justify-end w-full"
-            >
-              Mostrar menos <ChevronUp size={14} className="ml-1" />
-            </button>
-          </div>
-        )}
+          {!isEditing && needsExpansion && (
+            <div className="mt-3 pt-2 ">
+              {!expanded ? (
+                <button
+                  onClick={() => setExpanded(true)}
+                  className="text-xs text-gray-400 hover:text-gray-200 flex items-center justify-end w-full transition-colors"
+                >
+                  Mostrar mais <ChevronDown size={14} className="ml-1" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setExpanded(false)}
+                  className="text-xs text-gray-400 hover:text-gray-200 flex items-center justify-end w-full transition-colors"
+                >
+                  Mostrar menos <ChevronUp size={14} className="ml-1" />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -130,6 +148,7 @@ const MainView = ({ project = {}, setProject }) => {
     purple: "#8b5cf6",
     turquoise: "#14b8a6",
   })
+  
   // Função para atualizar o conteúdo de um card específico
   const updateProductCanvas = (prop, newContent) => {
     const updatedProductCanvas = { ...productCanvas };
@@ -159,6 +178,7 @@ const MainView = ({ project = {}, setProject }) => {
 
     router.patch(route('project.update', project.id), { [prop]: content });
   };
+  
   return (
     <div className="min-h-screen w-full text-white p-6">
       {/* Cabeçalho do dashboard */}
