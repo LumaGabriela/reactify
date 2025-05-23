@@ -225,22 +225,22 @@ const Personas = ({ project, setProject }) => {
   // Função para adicionar um novo item a um campo
   const addNewItem = (personaId, field) => {
     if (!project.personas) return;
-    
+
     // Encontra a persona pelo ID
     const persona = project.personas.find(p => p.id === personaId);
     if (!persona) return;
-    
+
     // Adiciona um novo item vazio ao campo
     const updatedArray = [...persona[field], ''];
-    
+
     // Cria uma nova lista de personas com a persona atualizada
     const updatedPersonas = project.personas.map(p =>
       p.id === personaId ? { ...p, [field]: updatedArray } : p
     );
-    
+
     // Atualiza o estado do projeto
     setProject({ ...project, personas: updatedPersonas });
-    
+
     // Envia a atualização para o servidor
     router.patch(`/persona/${personaId}`, {
       ...persona,
@@ -266,16 +266,16 @@ const Personas = ({ project, setProject }) => {
   };
 
   return (
-          <div className="grid md:grid-cols-2 grid-flow-dense gap-4 w-full p-4">
+    <div className="grid md:grid-cols-2 grid-flow-dense gap-4 w-full p-4">
       {project.personas && project.personas.length > 0 ? (
         project.personas
           .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
           .map((persona) => (
             <div
               key={persona.id}
-              className="bg-gray-3 rounded-lg shadow-md overflow-hidden">
+              className="persona bg-gray-3 rounded-lg shadow-md overflow-hidden">
               {/* Cabeçalho da Persona */}
-                              <div
+              <div
                 className="flex items-center justify-between py-2 px-3 cursor-pointer bg-gray-700 rounded-lg hover:bg-gray-1 transition-colors"
                 onClick={() => togglePersona(persona.id)}
               >
@@ -405,7 +405,7 @@ const Personas = ({ project, setProject }) => {
                                     Sim
                                   </button>
                                   <button
-                                                                          className="bg-gray-3 hover:bg-gray-1 text-white text-xs py-1 px-2 rounded flex-1"
+                                    className="bg-gray-3 hover:bg-gray-1 text-white text-xs py-1 px-2 rounded flex-1"
                                     onClick={() => setDeleteConfirmItem({ personaId: null, field: null, itemIndex: null })}
                                   >
                                     Não
@@ -433,8 +433,8 @@ const Personas = ({ project, setProject }) => {
             </div>
           ))
       ) : (
-        <div className="flex flex-col items-center justify-center p-6 bg-gray-3 rounded-lg text-gray-400">
-          <UserCircle2 size={40} className="mb-4 text-purple-2" />
+        <div className="flex flex-col col-span-2 items-center justify-center p-6 bg-gray-3 rounded-lg text-gray-400">
+          <UserCircle2 size={40} className="mb-4 text-purple-2 col-span-2" />
           <p className="mb-2">Nenhuma persona definida ainda.</p>
           <p className="mb-4 text-sm">Crie uma nova persona para mapear os usuários do seu projeto.</p>
         </div>
