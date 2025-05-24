@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { StoryCard } from '@/Components/Card';
 import { router } from '@inertiajs/react';
-
+import axios from 'axios';
 
 const Stories = ({ project, setProject }) => {
   // Estado para controlar qual story está sendo editada
@@ -13,7 +13,41 @@ const Stories = ({ project, setProject }) => {
   const [typeSelectId, setTypeSelectId] = useState(null);
   // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  // Estados para IA
+  const [aiInput, setAiInput] = useState('');
+  const [aiGeneratedStories, setAiGeneratedStories] = useState([]);
 
+  // Função para gerar stories via IA
+  const generateStories = async () => {
+    try {
+      const response = await axios.post('/api/ai/generate', {
+        message: aiInput
+      });
+      
+      console.log('Resposta completa:', response.data);
+      
+      // Atualiza o estado com as stories geradas
+      setAiGeneratedStories(response.data.message.stories);
+    } catch (error) {
+      console.error('Erro ao gerar stories:', error);
+      console.error('Detalhes do erro:', error.response?.data);
+    }
+  };
+
+  // Função para adicionar uma story da IA ao projeto
+  const addAiStory = (story) => {
+    setProject({
+      ...project,
+      stories: [...project.stories, { title: story.title, type: story.type }]
+    });
+    
+    // Opcional: Enviar para o backend
+    router.post(route('story.store'), {
+      title: story.title,
+      type: story.type,
+      project_id: project.id
+    });
+  };
 
   // Função para lidar com mudanças no input
   const handleInputChange = (e) => {
@@ -118,6 +152,40 @@ const Stories = ({ project, setProject }) => {
 
   return (
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
+      {/* Seção de Input para IA */}
+      <div className="col-span-2 space-y-2 mb-4">
+        <textarea
+          placeholder="Descreva o contexto para a IA gerar stories..."
+          className="w-full bg-gray-800 rounded-lg p-2 text-white"
+          value={aiInput}
+          onChange={(e) => setAiInput(e.target.value)}
+        />
+        <button
+          onClick={generateStories}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        >
+          Gerar Stories com IA
+        </button>
+      </div>
+
+      {/* Listagem de Stories Geradas pela IA */}
+      {aiGeneratedStories.length > 0 && (
+        <div className="col-span-2 space-y-2 mb-4">
+          <h3 className="text-white">Stories Geradas:</h3>
+          {aiGeneratedStories.map((story, index) => (
+            <div key={index} className="bg-gray-800 p-2 rounded flex justify-between items-center">
+              <span className="text-white">{story.title}</span>
+              <button
+                onClick={() => addAiStory(story)}
+                className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+              >
+                Adicionar
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className='flex flex-col gap-2 '>
         {/* User stories */}
         {project?.stories?.length > 0 ? (
