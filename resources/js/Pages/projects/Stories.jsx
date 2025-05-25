@@ -17,6 +17,7 @@ const Stories = ({ project, setProject }) => {
   const [aiInput, setAiInput] = useState('');
   const [aiGeneratedStories, setAiGeneratedStories] = useState([]);
   const [showAiInput, setShowAiInput] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   // Função para gerar stories via IA
   const generateStories = async () => {
@@ -26,7 +27,8 @@ const Stories = ({ project, setProject }) => {
     }
 
     if (!aiInput.trim()) {
-      alert('Por favor, descreva o contexto para gerar as stories.');
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // Remove após 3 segundos
       return;
     }
 
@@ -174,6 +176,9 @@ const Stories = ({ project, setProject }) => {
             value={aiInput}
             onChange={(e) => setAiInput(e.target.value)}
           />
+          {showAlert && (
+            <p className="text-red-400 text-sm">Por favor, insira a entrevista para gerar as stories.</p>
+          )}
           <div className="flex gap-2">
             <button
               onClick={generateStories}
@@ -203,7 +208,7 @@ const Stories = ({ project, setProject }) => {
               <span className="text-white">{story.title}</span>
               <button
                 onClick={() => addAiStory(story)}
-                className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+                className="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700"
               >
                 Adicionar
               </button>
