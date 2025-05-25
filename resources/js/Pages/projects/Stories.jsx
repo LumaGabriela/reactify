@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Sparkles } from 'lucide-react';
 import { StoryCard } from '@/Components/Card';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
@@ -16,9 +16,20 @@ const Stories = ({ project, setProject }) => {
   // Estados para IA
   const [aiInput, setAiInput] = useState('');
   const [aiGeneratedStories, setAiGeneratedStories] = useState([]);
+  const [showAiInput, setShowAiInput] = useState(false);
 
   // Função para gerar stories via IA
   const generateStories = async () => {
+    if (!showAiInput) {
+      setShowAiInput(true);
+      return;
+    }
+
+    if (!aiInput.trim()) {
+      alert('Por favor, descreva o contexto para gerar as stories.');
+      return;
+    }
+
     try {
       const response = await axios.post('/api/ai/generate', {
         message: aiInput
@@ -28,6 +39,8 @@ const Stories = ({ project, setProject }) => {
       
       // Atualiza o estado com as stories geradas
       setAiGeneratedStories(response.data.message.stories);
+      setShowAiInput(false);
+      setAiInput('');
     } catch (error) {
       console.error('Erro ao gerar stories:', error);
       console.error('Detalhes do erro:', error.response?.data);
@@ -152,21 +165,34 @@ const Stories = ({ project, setProject }) => {
 
   return (
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
-      {/* Seção de Input para IA */}
-      <div className="col-span-2 space-y-2 mb-4">
-        <textarea
-          placeholder="Descreva o contexto para a IA gerar stories..."
-          className="w-full bg-gray-800 rounded-lg p-2 text-white"
-          value={aiInput}
-          onChange={(e) => setAiInput(e.target.value)}
-        />
-        <button
-          onClick={generateStories}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          Gerar Stories com IA
-        </button>
-      </div>
+      {/* Seção de Input para IA - aparece apenas quando showAiInput for true */}
+      {showAiInput && (
+        <div className="col-span-2 space-y-2 mb-4">
+          <textarea
+            placeholder="Descreva o contexto para a IA gerar stories..."
+            className="w-full bg-gray-800 rounded-lg p-2 text-white"
+            value={aiInput}
+            onChange={(e) => setAiInput(e.target.value)}
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={generateStories}
+              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Gerar Stories
+            </button>
+            <button
+              onClick={() => {
+                setShowAiInput(false);
+                setAiInput('');
+              }}
+              className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Listagem de Stories Geradas pela IA */}
       {aiGeneratedStories.length > 0 && (
@@ -263,14 +289,31 @@ const Stories = ({ project, setProject }) => {
           )}
       </div>
 
-      {/* Botão "Nova story" */}
-      <button
-        className="col-span-2 flex items-center justify-center w-full py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md"
-        onClick={addNewStory}
-      >
-        <Plus size={18} className="mr-2" />
-        <span>Nova story</span>
-      </button>
+      {/* Botões "Nova story" e "Gerar com IA" */}
+      <div className="col-span-2 flex gap-2">
+        <button
+          className="flex items-center justify-center flex-1 py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md"
+          onClick={addNewStory}
+        >
+          <Plus size={18} className="mr-2" />
+          <span>Nova story</span>
+        </button>
+        
+        <button
+          onClick={() => {
+            if (showAiInput) {
+              setShowAiInput(false);
+              setAiInput('');
+            } else {
+              generateStories();
+            }
+          }}
+          className="flex items-center justify-center flex-1 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors rounded shadow-md"
+        >
+          <Sparkles size={18} className="mr-2" />
+          <span>{showAiInput ? 'Cancelar' : 'Gerar com IA'}</span>
+        </button>
+      </div>
     </div>
   );
 }
