@@ -18,6 +18,7 @@ const Stories = ({ project, setProject }) => {
   const [aiGeneratedStories, setAiGeneratedStories] = useState([]);
   const [showAiInput, setShowAiInput] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Função para gerar stories via IA
   const generateStories = async () => {
@@ -31,6 +32,8 @@ const Stories = ({ project, setProject }) => {
       setTimeout(() => setShowAlert(false), 3000); // Remove após 3 segundos
       return;
     }
+
+    setIsGenerating(true);
 
     try {
       const response = await axios.post('/api/ai/generate', {
@@ -46,6 +49,8 @@ const Stories = ({ project, setProject }) => {
     } catch (error) {
       console.error('Erro ao gerar stories:', error);
       console.error('Detalhes do erro:', error.response?.data);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -272,7 +277,7 @@ const Stories = ({ project, setProject }) => {
 
       {/* Seção de Input para IA - aparece apenas quando showAiInput for true */}
       {showAiInput && (
-        <div className="col-span-2 space-y-2 mb-4">
+        <div className="col-span-2 space-y-2 mt-4">
           <textarea
             placeholder="Descreva o contexto para a IA gerar stories..."
             className="w-full bg-gray-800 rounded-lg p-2 text-white"
@@ -285,9 +290,21 @@ const Stories = ({ project, setProject }) => {
           <div className="flex gap-2">
             <button
               onClick={generateStories}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+              disabled={isGenerating}
+              className={`px-4 py-2 rounded-lg transition-colors flex items-center ${
+                isGenerating 
+                  ? 'bg-purple-400 cursor-not-allowed' 
+                  : 'bg-purple-600 hover:bg-purple-700'
+              } text-white`}
             >
-              Gerar Stories
+              {isGenerating ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                  Gerando...
+                </>
+              ) : (
+                'Gerar Stories'
+              )}
             </button>
             <button
               onClick={() => {
