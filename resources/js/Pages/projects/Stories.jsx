@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Sparkles } from 'lucide-react';
+import { Plus, Sparkles, FileText, X, Eye } from 'lucide-react';
 import { StoryCard } from '@/Components/Card';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
@@ -19,6 +19,9 @@ const Stories = ({ project, setProject }) => {
   const [showAiInput, setShowAiInput] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  // Estados para visualização da entrevista
+  const [showInterview, setShowInterview] = useState(false);
+  const [savedInterview, setSavedInterview] = useState('');
 
   // Função para gerar stories via IA
   const generateStories = async () => {
@@ -47,6 +50,8 @@ const Stories = ({ project, setProject }) => {
       
       // Atualiza o estado com as stories geradas
       setAiGeneratedStories(response.data.message.stories);
+      // Salva a entrevista para visualização posterior
+      setSavedInterview(aiInput);
       setShowAiInput(false);
       setAiInput('');
     } catch (error) {
@@ -59,6 +64,8 @@ const Stories = ({ project, setProject }) => {
 
   const discardAllStories = () => {
     setAiGeneratedStories([]);
+    // Opcionalmente, também pode limpar a entrevista salva
+    // setSavedInterview('');
   };
 
   // Função para adicionar uma story da IA ao projeto
@@ -336,13 +343,48 @@ const Stories = ({ project, setProject }) => {
         <div className="col-span-2 space-y-2 mt-4">
           <div className="flex justify-between items-center">
             <h5 className="text-white">Stories Geradas</h5>
-            <button
-              onClick={discardAllStories}
-              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors text-sm"
-            >
-              Descartar Todas
-            </button>
+            <div className="flex gap-2">
+              {/* Botão para ver a entrevista - versão compacta */}
+              {savedInterview && (
+                <button
+                  onClick={() => setShowInterview(!showInterview)}
+                  className="bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white px-2 py-1 rounded transition-colors text-xs flex items-center gap-1"
+                >
+                  <FileText size={12} />
+                  {showInterview ? 'Ocultar' : 'Entrevista'}
+                </button>
+              )}
+              <button
+                onClick={discardAllStories}
+                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors text-sm"
+              >
+                Descartar Todas
+              </button>
+            </div>
           </div>
+
+          {/* Painel colapsável da entrevista */}
+          {showInterview && savedInterview && (
+            <div className="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden">
+              <div className="bg-gray-800 px-3 py-2 border-b border-gray-700">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300 text-sm font-medium">Entrevista Original</span>
+                  <button
+                    onClick={() => setShowInterview(false)}
+                    className="text-gray-400 hover:text-gray-200 transition-colors"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+              <div className="max-h-40 overflow-y-auto p-3">
+                <pre className="text-gray-400 text-xs whitespace-pre-wrap leading-relaxed">
+                  {savedInterview}
+                </pre>
+              </div>
+            </div>
+          )}
+
           {aiGeneratedStories.map((story, index) => (
             <div key={index} className="bg-gray-800 p-2 rounded flex justify-between items-center gap-1">
               <div className={`${story.type === 'user' ? 'bg-violet-600' : 'bg-teal-600'} text-white text-xs font-medium py-0.5 px-2 rounded-full whitespace-nowrap`}>
