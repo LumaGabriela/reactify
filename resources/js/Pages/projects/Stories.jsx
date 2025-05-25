@@ -64,8 +64,13 @@ const Stories = ({ project, setProject }) => {
       ...project,
       stories: [...project.stories, { title: story.title, type: story.type }]
     });
+
+    setAiGeneratedStories(prev => prev.filter(s => s !== story)); 
+
+    // setAiGeneratedStories(prev => prev.filter(s => 
+    //   s.title !== story.title || s.type !== story.type
+    // ));
     
-    // Opcional: Enviar para o backend
     router.post(route('story.store'), {
       title: story.title,
       type: story.type,
@@ -272,7 +277,7 @@ const Stories = ({ project, setProject }) => {
               generateStories();
             }
           }}
-          className="flex items-center justify-center flex-1 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors rounded shadow-md"
+          className="flex items-center justify-center flex-1 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition-colors shadow-md"
         >
           <Sparkles size={18} className="mr-2" />
           <span>{showAiInput ? 'Cancelar' : 'Gerar com IA'}</span>
@@ -295,7 +300,7 @@ const Stories = ({ project, setProject }) => {
             <button
               onClick={generateStories}
               disabled={isGenerating}
-              className={`px-4 py-2 rounded-lg transition-colors flex items-center ${
+              className={`px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700  transition-colors flex items-center ${
                 isGenerating 
                   ? 'bg-purple-400 cursor-not-allowed' 
                   : 'bg-purple-600 hover:bg-purple-700'
