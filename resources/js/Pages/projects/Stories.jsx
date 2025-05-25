@@ -32,6 +32,9 @@ const Stories = ({ project, setProject }) => {
       setTimeout(() => setShowAlert(false), 3000); // Remove após 3 segundos
       return;
     }
+    if (aiGeneratedStories != null){
+        discardAllStories()
+    }
 
     setIsGenerating(true);
 
