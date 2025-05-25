@@ -54,6 +54,10 @@ const Stories = ({ project, setProject }) => {
     }
   };
 
+  const discardAllStories = () => {
+    setAiGeneratedStories([]);
+  };
+
   // Função para adicionar uma story da IA ao projeto
   const addAiStory = (story) => {
     setProject({
@@ -321,8 +325,16 @@ const Stories = ({ project, setProject }) => {
 
       {/* Listagem de Stories Geradas pela IA */}
       {aiGeneratedStories.length > 0 && (
-        <div className="col-span-2 space-y-2 mb-4">
-          <h5 className="text-white mt-4">Stories Geradas</h5>
+        <div className="col-span-2 space-y-2 mt-4">
+          <div className="flex justify-between items-center">
+            <h5 className="text-white">Stories Geradas</h5>
+            <button
+              onClick={discardAllStories}
+              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors text-sm"
+            >
+              Descartar Todas
+            </button>
+          </div>
           {aiGeneratedStories.map((story, index) => (
             <div key={index} className="bg-gray-800 p-2 rounded flex justify-between items-center gap-1">
               <div className={`${story.type === 'user' ? 'bg-violet-600' : 'bg-teal-600'} text-white text-xs font-medium py-0.5 px-2 rounded-full whitespace-nowrap`}>
