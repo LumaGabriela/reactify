@@ -167,56 +167,6 @@ const Stories = ({ project, setProject }) => {
 
   return (
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
-      {/* Seção de Input para IA - aparece apenas quando showAiInput for true */}
-      {showAiInput && (
-        <div className="col-span-2 space-y-2 mb-4">
-          <textarea
-            placeholder="Descreva o contexto para a IA gerar stories..."
-            className="w-full bg-gray-800 rounded-lg p-2 text-white"
-            value={aiInput}
-            onChange={(e) => setAiInput(e.target.value)}
-          />
-          {showAlert && (
-            <p className="text-red-400 text-sm">Por favor, insira a entrevista para gerar as stories.</p>
-          )}
-          <div className="flex gap-2">
-            <button
-              onClick={generateStories}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Gerar Stories
-            </button>
-            <button
-              onClick={() => {
-                setShowAiInput(false);
-                setAiInput('');
-              }}
-              className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Listagem de Stories Geradas pela IA */}
-      {aiGeneratedStories.length > 0 && (
-        <div className="col-span-2 space-y-2 mb-4">
-          <h3 className="text-white">Stories Geradas:</h3>
-          {aiGeneratedStories.map((story, index) => (
-            <div key={index} className="bg-gray-800 p-2 rounded flex justify-between items-center">
-              <span className="text-white">{story.title}</span>
-              <button
-                onClick={() => addAiStory(story)}
-                className="bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700"
-              >
-                Adicionar
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
       <div className='flex flex-col gap-2 '>
         {/* User stories */}
         {project?.stories?.length > 0 ? (
@@ -319,6 +269,61 @@ const Stories = ({ project, setProject }) => {
           <span>{showAiInput ? 'Cancelar' : 'Gerar com IA'}</span>
         </button>
       </div>
+
+      {/* Seção de Input para IA - aparece apenas quando showAiInput for true */}
+      {showAiInput && (
+        <div className="col-span-2 space-y-2 mb-4">
+          <textarea
+            placeholder="Descreva o contexto para a IA gerar stories..."
+            className="w-full bg-gray-800 rounded-lg p-2 text-white"
+            value={aiInput}
+            onChange={(e) => setAiInput(e.target.value)}
+          />
+          {showAlert && (
+            <p className="text-red-400 text-sm">Por favor, insira a entrevista para gerar as stories.</p>
+          )}
+          <div className="flex gap-2">
+            <button
+              onClick={generateStories}
+              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Gerar Stories
+            </button>
+            <button
+              onClick={() => {
+                setShowAiInput(false);
+                setAiInput('');
+              }}
+              className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Listagem de Stories Geradas pela IA */}
+      {aiGeneratedStories.length > 0 && (
+        <div className="col-span-2 space-y-2 mb-4">
+          <h5 className="text-white mt-4">Stories Geradas</h5>
+          {aiGeneratedStories.map((story, index) => (
+            <div key={index} className="bg-gray-800 p-2 rounded flex justify-between items-center gap-1">
+              <div className={`${story.type === 'user' ? 'bg-violet-600' : 'bg-teal-600'} text-white text-xs font-medium py-0.5 px-2 rounded-full whitespace-nowrap`}>
+                {story.type}
+              </div>
+              <span className="text-white text-xs px-2 flex-1 min-w-0 break-words">
+                {story.title}
+              </span>
+              <button
+                onClick={() => addAiStory(story)}
+                className="bg-pink-400 hover:bg-pink-500 text-white text-xs font-medium px-2 py-0.5 rounded transition-colors whitespace-nowrap"
+              >
+                Adicionar
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
