@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   // Rotas para stories
   Route::prefix('story')->group(function () {
     Route::post('/', [StoryController::class, 'store'])->name('story.store');
+    Route::post('/bulk-store', [StoryController::class, 'bulk'])->name('story.bulk-store');
     Route::patch('/{story}', [StoryController::class, 'update'])->name('story.update');
     Route::delete('/{story}', [StoryController::class, 'destroy'])->name('story.delete');
   });

@@ -49,7 +49,8 @@ const ProjectView = ({ projectDB = [] }) => {
   }, [activeMenu])
 
   useEffect(() => {
-    console.log(project?.stories)
+    // console.log(project?.stories)
+    console.log(props?.errors)
   }, [project, props])
 
 

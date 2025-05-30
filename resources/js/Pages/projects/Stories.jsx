@@ -16,7 +16,21 @@ const Stories = ({ project, setProject }) => {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
   // Estados para IA
   const [aiInput, setAiInput] = useState("")
-  const [aiGeneratedStories, setAiGeneratedStories] = useState([])
+  const [aiGeneratedStories, setAiGeneratedStories] = useState([
+    {
+      title:
+        "O sistema deve facilitar a integração do aplicativo com dispositivos externos como caixas de som e sistemas de som de carros.",
+      type: "system",
+      project_id: project.id,
+    },
+    {
+      title:
+        "O sistema deve permitir que o usuário personalize as configurações de áudio, como equalização e volume.",
+      type: "system",
+      project_id: project.id,
+    },
+  ])
+  const [selectedAiStories, setSelectedAiStories] = useState([])
   const [showAiInput, setShowAiInput] = useState(false)
   const [showAlert, setShowAlert] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -70,31 +84,31 @@ const Stories = ({ project, setProject }) => {
   }
 
   // Função para adicionar uma story da IA ao projeto
-  const addAiStory = (story) => {
-    const newId = uuid()
+  const addAiStory = () => {
+    const selectedStories = aiGeneratedStories.filter((story) => story.selected)
+    const otherStories = aiGeneratedStories
+      .filter((story) => !story.selected)
+      .map(({ selected, ...rest }) => rest)
+
     setProject({
       ...project,
       stories: [
         ...project.stories,
-        { id: newId, title: story.title, type: story.type },
+        { id: `temp-${Date.now()}`, title: story.title, type: story.type },
       ],
     })
-
-    setAiGeneratedStories((prev) => prev.filter((s) => s !== story))
 
     // setAiGeneratedStories(prev => prev.filter(s =>
     //   s.title !== story.title || s.type !== story.type
     // ));
 
     router.post(
-      route("story.store"),
+      route("story.bulk-store"),
+      { stories: aiGeneratedStories },
       {
-        id: newId, // Gera um ID único para a nova story
-        title: story.title,
-        type: story.type,
-        project_id: project.id,
-      },
-      { preserveState: true, preserveScroll: true }
+        preserveState: true,
+        preserveScroll: true,
+      }
     )
   }
 
@@ -388,6 +402,12 @@ const Stories = ({ project, setProject }) => {
               >
                 Descartar Todas
               </button>
+              <button
+                onClick={addAiStory}
+                className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors text-sm"
+              >
+                Adicionar Selecionadas
+              </button>
             </div>
           </div>
 
@@ -417,7 +437,7 @@ const Stories = ({ project, setProject }) => {
 
           {aiGeneratedStories.map((story, index) => (
             <div
-              key={story.id}
+              key={index}
               className="bg-gray-800 p-2 rounded flex justify-between items-center gap-1"
             >
               <div
@@ -430,12 +450,18 @@ const Stories = ({ project, setProject }) => {
               <span className="text-white text-xs px-2 flex-1 min-w-0 break-words">
                 {story.title}
               </span>
-              <button
-                onClick={() => addAiStory(story)}
-                className="bg-pink-400 hover:bg-pink-500 text-white text-xs font-medium px-2 py-0.5 rounded transition-colors whitespace-nowrap"
-              >
-                Adicionar
-              </button>
+              <input
+                defaultChecked={false}
+                type="checkbox"
+                className="w-6 h-6"
+                onChange={(e) =>
+                  setAiGeneratedStories((prev) => {
+                    const updatedStories = [...prev]
+                    updatedStories[index].selected = e.target.checked
+                    return updatedStories
+                  })
+                }
+              />
             </div>
           ))}
         </div>

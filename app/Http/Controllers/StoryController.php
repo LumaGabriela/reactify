@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Log;
-use App\Http\Requests\StoreStoryRequest;
-use App\Http\Requests\UpdateStoryRequest;
 use App\Models\Story;
+use App\Http\Requests\StoreStoryRequest;
+use App\Http\Requests\BulkStoreStoryRequest;
+use App\Http\Requests\UpdateStoryRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Http\FormRequest;
 
 class StoryController extends Controller
 {
@@ -15,18 +18,27 @@ class StoryController extends Controller
 
     Story::create($validated);
 
+    Log::warning('Story created', $validated);
+
     return back();
   }
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * Update the specified story in storage.
- *
- * @param UpdateStoryRequest $request
- * @param Story $story
- * @return \Illuminate\Http\RedirectResponse
- */
 
-/*******  64557e27-133f-4a79-8d47-f3105c82a289  *******/  public function update(UpdateStoryRequest $request, Story $story)
+  public function bulk(BulkStoreStoryRequest $request)
+  {
+    $validated = $request->validated();
+
+    Log::warning('Bulk Story created', $validated['stories']);
+
+    DB::transaction(function () use ($validated) {
+      foreach ($validated['stories'] as $story) {
+        Story::create($story);
+      }
+    });
+
+    return back();
+  }
+
+  public function update(UpdateStoryRequest $request, Story $story)
   {
 
     $validated = $request->validated();
