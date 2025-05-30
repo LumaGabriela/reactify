@@ -1,206 +1,227 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Sparkles, FileText, X, Eye } from 'lucide-react';
-import { StoryCard } from '@/Components/Card';
-import { router } from '@inertiajs/react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react"
+import { Plus, Sparkles, FileText, X, Eye } from "lucide-react"
+import { StoryCard } from "@/Components/Card"
+import { router } from "@inertiajs/react"
+import { v4 as uuid } from "uuid"
+import axios from "axios"
 
 const Stories = ({ project, setProject }) => {
   // Estado para controlar qual story está sendo editada
-  const [editingId, setEditingId] = useState(null);
+  const [editingId, setEditingId] = useState(null)
   // Estado para armazenar o valor temporário durante a edição
-  const [editValue, setEditValue] = useState('');
+  const [editValue, setEditValue] = useState("")
   // Estado para controlar qual story está com o seletor de tipo aberto
-  const [typeSelectId, setTypeSelectId] = useState(null);
+  const [typeSelectId, setTypeSelectId] = useState(null)
   // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
   // Estados para IA
-  const [aiInput, setAiInput] = useState('');
-  const [aiGeneratedStories, setAiGeneratedStories] = useState([]);
-  const [showAiInput, setShowAiInput] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiInput, setAiInput] = useState("")
+  const [aiGeneratedStories, setAiGeneratedStories] = useState([])
+  const [showAiInput, setShowAiInput] = useState(false)
+  const [showAlert, setShowAlert] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
   // Estados para visualização da entrevista
-  const [showInterview, setShowInterview] = useState(false);
-  const [savedInterview, setSavedInterview] = useState('');
+  const [showInterview, setShowInterview] = useState(false)
+  const [savedInterview, setSavedInterview] = useState("")
 
   // Função para gerar stories via IA
   const generateStories = async () => {
     if (!showAiInput) {
-      setShowAiInput(true);
-      return;
+      setShowAiInput(true)
+      return
     }
 
     if (!aiInput.trim()) {
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 3000); // Remove após 3 segundos
-      return;
+      setShowAlert(true)
+      setTimeout(() => setShowAlert(false), 3000) // Remove após 3 segundos
+      return
     }
-    if (aiGeneratedStories != null){
-        discardAllStories()
+    if (aiGeneratedStories != null) {
+      discardAllStories()
     }
 
-    setIsGenerating(true);
+    setIsGenerating(true)
 
     try {
-      const response = await axios.post('/api/ai/generate', {
-        message: aiInput
-      });
-      
-      console.log('Resposta completa:', response.data);
-      
+      const response = await axios.post("/api/ai/generate", {
+        message: aiInput,
+      })
+
+      console.log("Resposta completa:", response.data)
+
       // Atualiza o estado com as stories geradas
-      setAiGeneratedStories(response.data.message.stories);
+      setAiGeneratedStories(response.data.message.stories)
       // Salva a entrevista para visualização posterior
-      setSavedInterview(aiInput);
-      setShowAiInput(false);
-      setAiInput('');
+      setSavedInterview(aiInput)
+      setShowAiInput(false)
+      setAiInput("")
     } catch (error) {
-      console.error('Erro ao gerar stories:', error);
-      console.error('Detalhes do erro:', error.response?.data);
+      console.error("Erro ao gerar stories:", error)
+      console.error("Detalhes do erro:", error.response?.data)
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false)
     }
-  };
+  }
 
   const discardAllStories = () => {
-    setAiGeneratedStories([]);
+    setAiGeneratedStories([])
     // Opcionalmente, também pode limpar a entrevista salva
     // setSavedInterview('');
-  };
+  }
 
   // Função para adicionar uma story da IA ao projeto
   const addAiStory = (story) => {
+    const newId = uuid()
     setProject({
       ...project,
-      stories: [...project.stories, { title: story.title, type: story.type }]
-    });
+      stories: [
+        ...project.stories,
+        { id: newId, title: story.title, type: story.type },
+      ],
+    })
 
-    setAiGeneratedStories(prev => prev.filter(s => s !== story)); 
+    setAiGeneratedStories((prev) => prev.filter((s) => s !== story))
 
-    // setAiGeneratedStories(prev => prev.filter(s => 
+    // setAiGeneratedStories(prev => prev.filter(s =>
     //   s.title !== story.title || s.type !== story.type
     // ));
-    
-    router.post(route('story.store'), {
-      title: story.title,
-      type: story.type,
-      project_id: project.id
-    });
-  };
+
+    router.post(
+      route("story.store"),
+      {
+        id: newId, // Gera um ID único para a nova story
+        title: story.title,
+        type: story.type,
+        project_id: project.id,
+      },
+      { preserveState: true, preserveScroll: true }
+    )
+  }
 
   // Função para lidar com mudanças no input
   const handleInputChange = (e) => {
-    setEditValue(e.target.value);
-  };
+    setEditValue(e.target.value)
+  }
 
   // Função para alternar a exibição do seletor de tipo
   const toggleTypeSelect = (storyId) => {
     if (typeSelectId === storyId) {
-      setTypeSelectId(null);
+      setTypeSelectId(null)
     } else {
-      setTypeSelectId(storyId);
-      setDeleteConfirmId(null); // Fecha o diálogo de exclusão caso esteja aberto
+      setTypeSelectId(storyId)
+      setDeleteConfirmId(null) // Fecha o diálogo de exclusão caso esteja aberto
     }
-  };
+  }
 
   // Função para alternar a exibição do diálogo de confirmação de exclusão
   const toggleDeleteConfirm = (storyId) => {
     if (deleteConfirmId === storyId) {
-      setDeleteConfirmId(null);
+      setDeleteConfirmId(null)
     } else {
-      setDeleteConfirmId(storyId);
-      setTypeSelectId(null); // Fecha o seletor de tipo caso esteja aberto
-      setEditingId(null); // Fecha a edição caso esteja aberta
+      setDeleteConfirmId(storyId)
+      setTypeSelectId(null) // Fecha o seletor de tipo caso esteja aberto
+      setEditingId(null) // Fecha a edição caso esteja aberta
     }
-  };
+  }
   // Função para adicionar uma nova story
   const addNewStory = () => {
     setProject({
-      ...project, stories: [...project.stories, {
-        title: 'Nova Story',
-        type: 'user'
-      }]
-    });
+      ...project,
+      stories: [
+        ...project.stories,
+        {
+          id: `temp-${Date.now()}`,
+          title: "Nova Story",
+          type: "user",
+        },
+      ],
+    })
 
-    router.post(route('story.store'), {
-      title: 'Nova Story',
-      type: 'user',
-      project_id: project.id // ID do projeto atual
-    });
-  };
+    router.post(
+      route("story.store"),
+      {
+        title: "Nova Story",
+        type: "user",
+        project_id: project.id, // ID do projeto atual
+      },
+      { preserveState: true, preserveScroll: true }
+    )
+  }
 
   // Função para alternar entre modo de edição e visualização
   const editStory = (story) => {
     if (editingId === story.id) {
       // Se já estiver editando esta story, salve as alterações
       if (story.title !== editValue) {
-        const updatedStories = project.stories.map(s =>
-          s.id === story.id ? {
-            ...s,
-            title: editValue,
-            updated_at: new Date().toISOString()
-          } : s
-        );
+        const updatedStories = project.stories.map((s) =>
+          s.id === story.id
+            ? {
+                ...s,
+                title: editValue,
+                updated_at: new Date().toISOString(),
+              }
+            : s
+        )
 
-        setProject({ ...project, stories: updatedStories });
+        setProject({ ...project, stories: updatedStories })
 
-        router.patch(route('story.update', story.id), {
+        router.patch(route("story.update", story.id), {
           title: editValue,
-        });
-
+        })
       }
       setEditingId(null)
     } else {
       // Entra no modo de edição para esta story
-      setEditingId(story.id);
-      setEditValue(story.title); // Inicializa o campo com o valor atual
+      setEditingId(story.id)
+      setEditValue(story.title) // Inicializa o campo com o valor atual
     }
-  };
+  }
 
   // Função para alterar o tipo da story
   const changeStoryType = (storyId, newType) => {
-    const story = project.stories.find(s => s.id === storyId);
+    const story = project.stories.find((s) => s.id === storyId)
 
     if (story.type !== newType) {
-      const updatedStories = project.stories.map(s =>
-        s.id === storyId ? {
-          ...s,
-          type: newType,
-          updated_at: new Date().toISOString()
-        } : s
-      );
+      const updatedStories = project.stories.map((s) =>
+        s.id === storyId
+          ? {
+              ...s,
+              type: newType,
+              updated_at: new Date().toISOString(),
+            }
+          : s
+      )
 
-      setProject({ ...project, stories: updatedStories });
+      setProject({ ...project, stories: updatedStories })
 
-      router.patch(route('story.update', storyId), {
+      router.patch(route("story.update", storyId), {
         type: newType,
       })
     }
 
-    setTypeSelectId(null); // Fecha o seletor de tipo
-  };
-
+    setTypeSelectId(null) // Fecha o seletor de tipo
+  }
 
   // Função para excluir a story
   const deleteStory = (storyId) => {
-    const updatedStories = project?.stories.filter(s => s.id !== storyId);
-    setProject({ ...project, stories: updatedStories });
-    setDeleteConfirmId(null); // Fecha o diálogo de confirmação
-    router.delete(route('story.delete', storyId));
-  };
+    const updatedStories = project?.stories.filter((s) => s.id !== storyId)
+    setProject({ ...project, stories: updatedStories })
+    setDeleteConfirmId(null) // Fecha o diálogo de confirmação
+    router.delete(route("story.delete", storyId))
+  }
 
   return (
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
-      <div className='flex flex-col gap-2 '>
+      <div className="flex flex-col gap-2 ">
         {/* User stories */}
         {project?.stories?.length > 0 ? (
           project?.stories
-            .filter((story) => story.type === 'user')
-            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+            .filter((story) => story.type === "user")
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
             .map((story, i) => {
               return (
                 <StoryCard
-                  key={i}
+                  key={story.id}
                   story={story}
                   toggleTypeSelect={toggleTypeSelect}
                   changeStoryType={changeStoryType}
@@ -215,7 +236,6 @@ const Stories = ({ project, setProject }) => {
                   deleteStory={deleteStory}
                   setDeleteConfirmId={setDeleteConfirmId}
                 />
-
               )
             })
         ) : (
@@ -241,31 +261,31 @@ const Stories = ({ project, setProject }) => {
         )}
       </div>
       {/* System stories */}
-      <div className='flex flex-col gap-2 '>
-        {project?.stories?.length > 0 && project?.stories
-          .filter((story) => story.type === 'system')
-          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-          .map((story, i) => {
-            return (
-              <StoryCard
-                key={i}
-                story={story}
-                toggleTypeSelect={toggleTypeSelect}
-                changeStoryType={changeStoryType}
-                setTypeSelectId={setTypeSelectId}
-                typeSelectId={typeSelectId}
-                editingId={editingId}
-                editValue={editValue}
-                handleInputChange={handleInputChange}
-                editStory={editStory}
-                deleteConfirmId={deleteConfirmId}
-                toggleDeleteConfirm={toggleDeleteConfirm}
-                deleteStory={deleteStory}
-                setDeleteConfirmId={setDeleteConfirmId}
-              />
-            )
-          }
-          )}
+      <div className="flex flex-col gap-2 ">
+        {project?.stories?.length > 0 &&
+          project?.stories
+            .filter((story) => story.type === "system")
+            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+            .map((story, i) => {
+              return (
+                <StoryCard
+                  key={story.id}
+                  story={story}
+                  toggleTypeSelect={toggleTypeSelect}
+                  changeStoryType={changeStoryType}
+                  setTypeSelectId={setTypeSelectId}
+                  typeSelectId={typeSelectId}
+                  editingId={editingId}
+                  editValue={editValue}
+                  handleInputChange={handleInputChange}
+                  editStory={editStory}
+                  deleteConfirmId={deleteConfirmId}
+                  toggleDeleteConfirm={toggleDeleteConfirm}
+                  deleteStory={deleteStory}
+                  setDeleteConfirmId={setDeleteConfirmId}
+                />
+              )
+            })}
       </div>
 
       {/* Botões "Nova story" e "Gerar com IA" */}
@@ -274,23 +294,29 @@ const Stories = ({ project, setProject }) => {
           className="flex items-center justify-center flex-1 py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md"
           onClick={addNewStory}
         >
-          <Plus size={18} className="mr-2" />
+          <Plus
+            size={18}
+            className="mr-2"
+          />
           <span>Nova story</span>
         </button>
-        
+
         <button
           onClick={() => {
             if (showAiInput) {
-              setShowAiInput(false);
-              setAiInput('');
+              setShowAiInput(false)
+              setAiInput("")
             } else {
-              generateStories();
+              generateStories()
             }
           }}
           className="flex items-center justify-center flex-1 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition-colors shadow-md"
         >
-          <Sparkles size={18} className="mr-2" />
-          <span>{showAiInput ? 'Cancelar' : 'Gerar com IA'}</span>
+          <Sparkles
+            size={18}
+            className="mr-2"
+          />
+          <span>{showAiInput ? "Cancelar" : "Gerar com IA"}</span>
         </button>
       </div>
 
@@ -304,16 +330,18 @@ const Stories = ({ project, setProject }) => {
             onChange={(e) => setAiInput(e.target.value)}
           />
           {showAlert && (
-            <p className="text-red-400 text-sm">Por favor, insira a entrevista para gerar as stories.</p>
+            <p className="text-red-400 text-sm">
+              Por favor, insira a entrevista para gerar as stories.
+            </p>
           )}
           <div className="flex gap-2">
             <button
               onClick={generateStories}
               disabled={isGenerating}
               className={`px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700  transition-colors flex items-center ${
-                isGenerating 
-                  ? 'bg-purple-400 cursor-not-allowed' 
-                  : 'bg-purple-600 hover:bg-purple-700'
+                isGenerating
+                  ? "bg-purple-400 cursor-not-allowed"
+                  : "bg-purple-600 hover:bg-purple-700"
               } text-white`}
             >
               {isGenerating ? (
@@ -322,13 +350,13 @@ const Stories = ({ project, setProject }) => {
                   Gerando...
                 </>
               ) : (
-                'Gerar Stories'
+                "Gerar Stories"
               )}
             </button>
             <button
               onClick={() => {
-                setShowAiInput(false);
-                setAiInput('');
+                setShowAiInput(false)
+                setAiInput("")
               }}
               className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
             >
@@ -351,7 +379,7 @@ const Stories = ({ project, setProject }) => {
                   className="bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white px-2 py-1 rounded transition-colors text-xs flex items-center gap-1"
                 >
                   <FileText size={12} />
-                  {showInterview ? 'Ocultar' : 'Entrevista'}
+                  {showInterview ? "Ocultar" : "Entrevista"}
                 </button>
               )}
               <button
@@ -368,7 +396,9 @@ const Stories = ({ project, setProject }) => {
             <div className="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden">
               <div className="bg-gray-800 px-3 py-2 border-b border-gray-700">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-300 text-sm font-medium">Entrevista Original</span>
+                  <span className="text-gray-300 text-sm font-medium">
+                    Entrevista Original
+                  </span>
                   <button
                     onClick={() => setShowInterview(false)}
                     className="text-gray-400 hover:text-gray-200 transition-colors"
@@ -386,8 +416,15 @@ const Stories = ({ project, setProject }) => {
           )}
 
           {aiGeneratedStories.map((story, index) => (
-            <div key={index} className="bg-gray-800 p-2 rounded flex justify-between items-center gap-1">
-              <div className={`${story.type === 'user' ? 'bg-violet-600' : 'bg-teal-600'} text-white text-xs font-medium py-0.5 px-2 rounded-full whitespace-nowrap`}>
+            <div
+              key={story.id}
+              className="bg-gray-800 p-2 rounded flex justify-between items-center gap-1"
+            >
+              <div
+                className={`${
+                  story.type === "user" ? "bg-violet-600" : "bg-teal-600"
+                } text-white text-xs font-medium py-0.5 px-2 rounded-full whitespace-nowrap`}
+              >
                 {story.type}
               </div>
               <span className="text-white text-xs px-2 flex-1 min-w-0 break-words">
@@ -404,7 +441,7 @@ const Stories = ({ project, setProject }) => {
         </div>
       )}
     </div>
-  );
+  )
 }
 
 export default Stories

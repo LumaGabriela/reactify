@@ -17,7 +17,16 @@ class StoryController extends Controller
 
     return back();
   }
-  public function update(UpdateStoryRequest $request, Story $story)
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Update the specified story in storage.
+ *
+ * @param UpdateStoryRequest $request
+ * @param Story $story
+ * @return \Illuminate\Http\RedirectResponse
+ */
+
+/*******  64557e27-133f-4a79-8d47-f3105c82a289  *******/  public function update(UpdateStoryRequest $request, Story $story)
   {
 
     $validated = $request->validated();

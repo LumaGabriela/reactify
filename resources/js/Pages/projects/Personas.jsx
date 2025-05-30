@@ -129,6 +129,7 @@ const Personas = ({ project, setProject }) => {
 
     router.post("/persona", newPersona, {
       preserveState: true,
+      preserveScroll: true,
       onSuccess: (page) => {
         // Atualiza o estado local apenas após confirmação do servidor
         const createdPersona = page.props.project.personas.find(
@@ -491,8 +492,7 @@ const Personas = ({ project, setProject }) => {
                                           message="Deseja remover este item?"
                                         />,
                                         document.body
-                                      )
-                                      }
+                                      )}
                                   </div>
                                 ) : (
                                   <p className="p-2 text-white text-sm">
