@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react"
 import { Plus, Sparkles, FileText, X, Eye } from "lucide-react"
 import { StoryCard } from "@/Components/Card"
 import { router } from "@inertiajs/react"
-import { v4 as uuid } from "uuid"
 import axios from "axios"
 
 const Stories = ({ project, setProject }) => {
@@ -16,21 +15,7 @@ const Stories = ({ project, setProject }) => {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
   // Estados para IA
   const [aiInput, setAiInput] = useState("")
-  const [aiGeneratedStories, setAiGeneratedStories] = useState([
-    {
-      title:
-        "O sistema deve facilitar a integração do aplicativo com dispositivos externos como caixas de som e sistemas de som de carros.",
-      type: "system",
-      project_id: project.id,
-    },
-    {
-      title:
-        "O sistema deve permitir que o usuário personalize as configurações de áudio, como equalização e volume.",
-      type: "system",
-      project_id: project.id,
-    },
-  ])
-  const [selectedAiStories, setSelectedAiStories] = useState([])
+  const [aiGeneratedStories, setAiGeneratedStories] = useState([])
   const [showAiInput, setShowAiInput] = useState(false)
   const [showAlert, setShowAlert] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -85,26 +70,29 @@ const Stories = ({ project, setProject }) => {
 
   // Função para adicionar uma story da IA ao projeto
   const addAiStory = () => {
-    const selectedStories = aiGeneratedStories.filter((story) => story.selected)
-    const otherStories = aiGeneratedStories
-      .filter((story) => !story.selected)
-      .map(({ selected, ...rest }) => rest)
+    const selectedStories = aiGeneratedStories
+      .filter((story) => story.selected === true)
+      .map((story) => {
+        const { selected, ...rest } = story
+        return {
+          id: Date.now() + Math.random(),
+          created_at: new Date().toISOString(),
+          ...rest,
+        }
+      })
 
     setProject({
       ...project,
-      stories: [
-        ...project.stories,
-        { id: `temp-${Date.now()}`, title: story.title, type: story.type },
-      ],
+      stories: [...project.stories, ...selectedStories],
     })
 
-    // setAiGeneratedStories(prev => prev.filter(s =>
-    //   s.title !== story.title || s.type !== story.type
-    // ));
+    const storiesWithoutId = selectedStories.map(
+      ({ id, created_at, ...rest }) => rest
+    )
 
     router.post(
       route("story.bulk-store"),
-      { stories: aiGeneratedStories },
+      { stories: storiesWithoutId },
       {
         preserveState: true,
         preserveScroll: true,
@@ -223,6 +211,10 @@ const Stories = ({ project, setProject }) => {
     setDeleteConfirmId(null) // Fecha o diálogo de confirmação
     router.delete(route("story.delete", storyId))
   }
+
+  useEffect(() => {
+    console.log(aiGeneratedStories)
+  }, [aiGeneratedStories])
 
   return (
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
@@ -398,13 +390,13 @@ const Stories = ({ project, setProject }) => {
               )}
               <button
                 onClick={discardAllStories}
-                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors text-sm"
+                className="flex items-center justify-center flex-1 p-2 bg-gradient-to-r from-rose-400 to-rose-700 hover:from-purple-700 hover:to-blue-700 text-white text-nowrap rounded-lg transition-colors duration-300 shadow-md"
               >
                 Descartar Todas
               </button>
               <button
                 onClick={addAiStory}
-                className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors text-sm"
+                className="flex items-center justify-center flex-1 p-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white text-nowrap rounded-lg transition-colors duration-300 shadow-md"
               >
                 Adicionar Selecionadas
               </button>
@@ -450,18 +442,48 @@ const Stories = ({ project, setProject }) => {
               <span className="text-white text-xs px-2 flex-1 min-w-0 break-words">
                 {story.title}
               </span>
-              <input
-                defaultChecked={false}
-                type="checkbox"
-                className="w-6 h-6"
-                onChange={(e) =>
-                  setAiGeneratedStories((prev) => {
-                    const updatedStories = [...prev]
-                    updatedStories[index].selected = e.target.checked
-                    return updatedStories
-                  })
-                }
-              />
+              <label className="p-2 cursor-pointer">
+                <input
+                  defaultChecked={false}
+                  type="checkbox"
+                  className="hidden"
+                  onChange={(e) =>
+                    setAiGeneratedStories((prev) => {
+                      const updatedStories = [...prev]
+                      updatedStories[index].selected = e.target.checked
+                      return updatedStories
+                    })
+                  }
+                />
+                <div
+                  className={`w-6 h-6 rounded-md flex items-center justify-center transition-all duration-300 ease-in-out ${
+                    aiGeneratedStories[index]?.selected
+                      ? "bg-gradient-to-r from-purple-500 to-blue-500"
+                      : "bg-gray-600"
+                  } border-2 ${
+                    aiGeneratedStories[index]?.selected
+                      ? "border-purple-400"
+                      : "border-gray-500"
+                  }`}
+                >
+                  {aiGeneratedStories[index]?.selected && (
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="3"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </div>
+              </label>
             </div>
           ))}
         </div>
