@@ -29,7 +29,7 @@ const StoryCard = ({
           className={`${story.type === 'user' ? 'bg-violet-600' : 'bg-teal-600'} text-white text-xs font-medium py-1 px-3 rounded-full cursor-pointer`}
           onClick={() => toggleTypeSelect(story.id)}
         >
-          {story.type}
+          {story.type?.toUpperCase()}
         </div>
 
         {/* Seletor de tipo */}

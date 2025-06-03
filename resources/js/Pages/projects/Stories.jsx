@@ -77,6 +77,7 @@ const Stories = ({ project, setProject }) => {
         return {
           id: Date.now() + Math.random(),
           created_at: new Date().toISOString(),
+          project_id: project.id,
           ...rest,
         }
       })

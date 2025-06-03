@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-const TextArea = ({ value, onChange, onEnter }) => {
+const TextArea = ({ value, onChange, onEnter, color }) => {
   const textareaRef = useRef(null);
   //Aciona a funcao sempre que o texto do textarea mudar
   useEffect(() => {
@@ -22,7 +22,7 @@ const TextArea = ({ value, onChange, onEnter }) => {
       value={value || ''}
       onKeyUp={(e) => { if (e.key === 'Enter') onEnter() }}
       onChange={onChange}
-      className="text-white text-sm bg-transparent p-0 border-none w-full h-max rounded outline-none focus:ring-0 focus:outline-none"
+      className={`${color || 'bg-transparent '} text-white text-sm p-0 border-none w-full h-max rounded outline-none focus:ring-0 focus:outline-none`}
       autoFocus
     />
   )

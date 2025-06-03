@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
 import {
-  User,
+  X,
   Plus,
   ChevronDown,
   ChevronRight,
   Edit,
   Trash,
   UserCircle2,
+  Check,
 } from "lucide-react"
 import { router } from "@inertiajs/react"
 import { ModalConfirmation } from "@/Components/Modals"
@@ -64,21 +65,6 @@ const Personas = ({ project, setProject }) => {
     },
   }
 
-  // Função para ajustar a altura do textarea
-  const adjustTextAreaHeight = () => {
-    const textarea = textareaRef.current
-    if (textarea) {
-      textarea.style.resize = "none"
-      textarea.style.webkitAppearence = "none"
-      textarea.style.height = "auto"
-      textarea.style.height = `${textarea.scrollHeight}px`
-    }
-  }
-
-  // Aciona a função sempre que o texto do textarea mudar
-  useEffect(() => {
-    adjustTextAreaHeight()
-  }, [editValue, editingField])
 
   // Função para expandir/recolher uma persona
   const togglePersona = (personaId) => {
@@ -307,7 +293,7 @@ const Personas = ({ project, setProject }) => {
           .map((persona) => (
             <div
               key={persona.id}
-              className="persona bg-gray-3 rounded-lg shadow-md overflow-hidden"
+              className="persona bg-gray-3 col-span-2 rounded-lg shadow-md overflow-hidden"
             >
               {/* Cabeçalho da Persona */}
               <div
@@ -331,9 +317,9 @@ const Personas = ({ project, setProject }) => {
                       autoFocus
                     />
                   ) : (
-                    <h4 className="text-white font-medium m-0">
+                    <p className="text-white font-medium m-0">
                       {persona.name}
-                    </h4>
+                    </p>
                   )}
                 </div>
 
@@ -421,12 +407,25 @@ const Personas = ({ project, setProject }) => {
                         key={field}
                         className="mb-4"
                       >
-                        <h5
-                          className={`${colors[field].text} font-medium mb-2`}
-                        >
-                          {getFieldTitle(field)}
-                        </h5>
-                        <div className="grid gap-4 md:grid-cols-2">
+                        <div className="flex items-center justify-between">
+                          <p
+                            className={`${colors[field].text} font-medium mb-2`}
+                          >
+                            {getFieldTitle(field)}
+                          </p>
+                          {/* Botão para adicionar novo item */}
+
+                          <button
+                            className="h-full rounded bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-blue-400 transition-colors"
+                            onClick={() => addNewItem(persona.id, field)}
+                          >
+                            <Plus
+                              className={`${colors[field].text} `}
+                              size={30}
+                            />
+                          </button>
+                        </div>
+                        <div className="grid gap-4 md:grid-cols-4">
                           {persona[field].map((item, itemIndex) => (
                             <div
                               key={itemIndex}
@@ -436,7 +435,7 @@ const Personas = ({ project, setProject }) => {
                                 onClick={() =>
                                   startEditField(persona.id, field, itemIndex)
                                 }
-                                className={`rounded-lg border-l-4 ${colors[field].border} min-h-full shadow-sm bg-gray-3`}
+                                className={`rounded-lg border-l-4 ${colors[field].border} min-h-full shadow-md bg-gray-900/40`}
                               >
                                 {editingField.personaId === persona.id &&
                                 editingField.field === field &&
@@ -454,13 +453,13 @@ const Personas = ({ project, setProject }) => {
                                     />
                                     <div className="flex gap-2 justify-between mt-1">
                                       <button
-                                        className="bg-purple-2 hover:bg-purple-1 text-white text-xs p-1 rounded"
+                                        className="h-5 w-5 flex items-center justify-center bg-purple-2 hover:bg-purple-1 text-white text-xs rounded"
                                         onClick={saveEditField}
                                       >
-                                        Salvar
+                                         <Check size={18}/>
                                       </button>
                                       <button
-                                        className="bg-red-400 hover:bg-red-500 text-white text-xs p-1 rounded"
+                                        className="h-5 w-5 flex items-center justify-center bg-red-400 hover:bg-red-500 transition-colors text-white text-xs rounded"
                                         onClick={() =>
                                           confirmDeleteItem(
                                             persona.id,
@@ -469,7 +468,7 @@ const Personas = ({ project, setProject }) => {
                                           )
                                         }
                                       >
-                                        Excluir
+                                        <X size={18} />
                                       </button>
                                     </div>
 
@@ -495,29 +494,13 @@ const Personas = ({ project, setProject }) => {
                                       )}
                                   </div>
                                 ) : (
-                                  <p className="p-2 text-white text-sm">
+                                  <p className="p-2 text-white text-sm ">
                                     {item || "Clique para editar"}
                                   </p>
                                 )}
                               </div>
                             </div>
                           ))}
-
-                          {/* Botão para adicionar novo item */}
-                          <div className="flex items-center justify-center">
-                            <button
-                              className="w-full h-10 rounded bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-blue-400"
-                              onClick={() => addNewItem(persona.id, field)}
-                            >
-                              <Plus
-                                size={18}
-                                className="mr-1"
-                              />
-                              <span className="text-sm">
-                                Adicionar {getFieldTitle(field).slice(0, -1)}
-                              </span>
-                            </button>
-                          </div>
                         </div>
                       </div>
                     )
