@@ -293,7 +293,7 @@ const Personas = ({ project, setProject }) => {
           .map((persona) => (
             <div
               key={persona.id}
-              className="persona bg-gray-3 col-span-2 rounded-lg shadow-md overflow-hidden"
+              className="persona bg-gray-3 col-span-1 rounded-lg shadow-md overflow-hidden"
             >
               {/* Cabeçalho da Persona */}
               <div
@@ -405,11 +405,11 @@ const Personas = ({ project, setProject }) => {
                     (field) => (
                       <div
                         key={field}
-                        className="mb-4"
+                        className="mb-2"
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between mb-2">
                           <p
-                            className={`${colors[field].text} font-medium mb-2`}
+                            className={`${colors[field].text} font-medium m-0`}
                           >
                             {getFieldTitle(field)}
                           </p>
@@ -425,11 +425,11 @@ const Personas = ({ project, setProject }) => {
                             />
                           </button>
                         </div>
-                        <div className="grid gap-4 md:grid-cols-4">
+                        <div className="grid gap-2 md:grid-cols-2">
                           {persona[field].map((item, itemIndex) => (
                             <div
                               key={itemIndex}
-                              className=" cursor-pointer rounded hover:bg-gray-2 transition-colors popup-animation"
+                              className="col-span-1 cursor-pointer rounded hover:bg-gray-2 transition-colors popup-animation"
                             >
                               <div
                                 onClick={() =>
