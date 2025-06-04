@@ -30,7 +30,17 @@ import {
 import TextArea from "@/Components/TextArea"
 import ProgressIcon from "../../Components/ProgressIcon"
 import { router } from "@inertiajs/react"
+import { format } from "date-fns"
+import { Calendar as CalendarIcon } from "lucide-react"
 
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 // Card com capacidade de expansão e contração
 const ExpandableCard = ({
   title,
@@ -174,6 +184,8 @@ const MainView = ({ project = {}, setProject }) => {
     turquoise: "#14b8a6",
   })
 
+  const [date, setDate] = useState()
+
   // Função para atualizar o conteúdo de um card específico
   const updateProductCanvas = (prop, newContent) => {
     const updatedProductCanvas = { ...productCanvas }
@@ -242,11 +254,56 @@ const MainView = ({ project = {}, setProject }) => {
               </div>
             </div>
           </div>
-          <div className="flex items-center space-x-3 cursor-pointer select-none">
-            <div className="bg-gray-800 px-3 py-2 rounded-lg border-2 border-gray-700">
-              <div className="text-xs text-gray-400 mb-1">Prazo</div>
-              <div className="text-lg font-bold">48 dias</div>
-            </div>
+          <div className="flex flex-col items-center gap-2 cursor-pointer select-none">
+            <p className="text-gray-400 text-md m-0">Data de entrega:</p>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-44 justify-start text-left font-normal bg-gray-800 text-white hover:bg-gray-700",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>Prazo</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  animate
+                  mode="single"
+                  captionLayout="dropdown"
+                  fromYear={2021}
+                  toYear={2030}
+                  selected={date}
+                  onSelect={setDate}
+                  initialFocus
+                  classNames={{
+                    root: "bg-gray-800 text-white hover:bg-gray-700 transition-colors duration-300",
+                    caption_dropdowns: "flex gap-2 justify-center items-center",
+                    caption_label: "hidden",
+                    dropdown: cn(
+                      "bg-gray-900 text-white border-gray-600 rounded-md p-1",
+                      "focus:outline-none focus:ring-2 focus:ring-gray-600",
+                      "hover:bg-gray-700"
+                    ),
+                    dropdown_month: "",
+                    dropdown_year: "",
+                    cell: cn(),
+                    day: cn(
+                      "h-9 w-9 p-0 font-normal rounded-xl",
+                      "text-white hover:bg-gray-800",
+                      "aria-selected:bg-blue-800 aria-selected:text-white transition-colors duration-300 "
+                    ),
+                    day_today: "bg-gray-600 text-white",
+                    day_selected:
+                      "border-2 border-sky-700 text-white rounded-xl",
+                    day_disabled: "text-gray-400 opacity-50",
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
