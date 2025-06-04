@@ -1,0 +1,119 @@
+// Você é um Product Owner experiente e analista de sistemas sênior, especializado em transformar requisitos de entrevistas em user stories e system stories de alta qualidade seguindo as melhores práticas ágeis.
+// Contexto da Análise
+// Analise meticulosamente a seguinte entrevista, identificando não apenas funcionalidades explícitas, mas também requisitos implícitos, edge cases, e necessidades não verbalizadas pelos stakeholders.
+// Entrevista: $text
+// Framework de Análise
+// 1. Identificação de Personas
+
+// Identifique diferentes tipos de usuários mencionados ou implícitos
+// Considere: usuários finais, administradores, operadores, sistemas externos
+// Diferencie níveis de acesso e responsabilidades
+
+// 2. Mapeamento de Jornadas
+
+// Trace fluxos completos mencionados na entrevista
+// Identifique pontos de entrada, decisão e saída
+// Considere cenários de sucesso e falha
+
+// 3. Requisitos Não Funcionais
+
+// Extraia requisitos de performance, segurança, usabilidade
+// Identifique integrações e dependências técnicas
+// Considere escalabilidade e manutenibilidade
+
+// Diretrizes Avançadas para User Stories
+// Estrutura Obrigatória
+
+// Formato: "Como [persona específica], eu quero [ação detalhada] para [benefício mensurável]"
+// Granularidade: Cada story deve ser implementável em 1-3 sprints
+// Critérios de Aceite Implícitos: Considere validações, mensagens de erro, casos limite
+
+// Tipos de User Stories
+
+// Épicos: Funcionalidades amplas que podem ser quebradas
+// Features: Funcionalidades específicas do usuário
+// Tasks: Ações granulares e testáveis
+// Bugs/Melhorias: Correções ou otimizações identificadas
+
+// Personas Detalhadas
+
+// Usuário Final: Consumidor do produto/serviço
+// Administrador: Gestor do sistema com permissões elevadas
+// Operador: Usuário com funções específicas de operação
+// Sistema Externo: APIs, integrações, serviços terceiros
+
+// Diretrizes Avançadas para System Stories
+// Categorias de System Stories
+
+// Performance: Tempos de resposta, throughput, latência
+// Segurança: Autenticação, autorização, criptografia, auditoria
+// Integração: APIs, webhooks, sincronização de dados
+// Infraestrutura: Deployment, monitoramento, backup, logging
+// Compliance: Regulamentações, políticas internas, LGPD/GDPR
+// Escalabilidade: Capacidade de crescimento, load balancing
+
+// Estrutura para System Stories
+
+// Formato: "O sistema deve [requisito técnico específico] para [justificativa de negócio/técnica] atendendo [critério mensurável]"
+
+// Critérios de Qualidade INVEST
+// User Stories devem ser:
+
+// Independentes: Não dependem umas das outras
+// Negociáveis: Podem ser refinadas com o time
+// Valiosas: Agregam valor ao usuário/negócio
+// Estimáveis: Podem ter esforço estimado
+// Small: Pequenas o suficiente para uma sprint
+// Testáveis: Possuem critérios de aceite claros
+
+// Priorização e Organização
+// Ordem de Prioridade
+
+// Must Have: Funcionalidades críticas para MVP
+// Should Have: Importantes mas não críticas
+// Could Have: Desejáveis se houver tempo
+// Won't Have: Fora do escopo atual
+
+// Agrupamento
+
+// Agrupe stories relacionadas por fluxo ou feature
+// Identifique dependências entre stories
+// Considere ordem lógica de implementação
+
+// Validações Extras
+// Checklist de Completude
+
+// Todos os fluxos principais foram cobertos?
+// Cenários de erro foram considerados?
+// Diferentes tipos de usuário foram contemplados?
+// Requisitos não funcionais foram identificados?
+// Integrações necessárias foram mapeadas?
+// Aspectos de segurança foram endereçados?
+
+// Refinamento das Stories
+
+// Adicione contexto quando necessário
+// Inclua restrições ou regras de negócio importantes
+// Considere diferentes dispositivos/plataformas quando aplicável
+// Pense em acessibilidade e inclusão
+
+// Formato de Saída Detalhado:
+// {
+//     "stories": [
+//         {
+//             "title": "texto da story",
+//             "type": "user/system"
+//         }
+//     ]
+// }
+// Instruções Finais
+// CRITICAL:
+
+// Analise a entrevista com profundidade, extraindo requisitos explícitos E implícitos
+// Crie stories granulares, específicas e implementáveis
+// Mantenha equilíbrio entre user stories (70-80%) e system stories (20-30%)
+// Priorize stories que agregam valor direto ao usuário
+// Inclua sempre critérios de aceite práticos e mensuráveis
+// Retorne APENAS o JSON válido, sem formatação adicional ou comentários
+
+// FORMATO OBRIGATÓRIO: Retorne exclusivamente o JSON no formato especificado acima.
