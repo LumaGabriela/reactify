@@ -6,32 +6,36 @@ import {
   Map,
   ArrowRight,
   CornerUpRight,
+  Sparkles,
+  Check,
+  X,
+  Loader2,
 } from "lucide-react"
 import { ModalConfirmation } from "@/Components/Modals"
 import TextArea from "@/Components/TextArea"
 import { router } from "@inertiajs/react"
+
 const Journeys = ({ project, setProject }) => {
-  // Estado para controlar qual journey está expandida
+  // Estados existentes
   const [expandedJourney, setExpandedJourney] = useState(0)
-  // Estado para controlar qual step está sendo editado
   const [editingStep, setEditingStep] = useState({
     JourneyId: null,
     stepIndex: null,
   })
-  // Estado para armazenar o valor temporário durante a edição
   const [editValue, setEditValue] = useState("")
-  // Estado para controlar qual step está com o diálogo de confirmação de exclusão aberto
   const [deleteConfirmStep, setDeleteConfirmStep] = useState({
     JourneyId: null,
     stepIndex: null,
   })
-  // Estado para controlar qual journey está sendo editada
   const [editingJourney, setEditingJourney] = useState(null)
-  // Estado para o nome da journey em edição
   const [editJourneyName, setEditJourneyTitle] = useState("")
-  // Estado para confirmação de exclusão de journey
   const [deleteConfirmJourney, setDeleteConfirmJourney] = useState(null)
-  //Cores usadas nos steps
+
+  // Novos estados para geração de IA
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false)
+  const [generatedJourneys, setGeneratedJourneys] = useState([])
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+
   const colors = [
     {
       text: "text-orange-500",
@@ -54,7 +58,75 @@ const Journeys = ({ project, setProject }) => {
     { text: "text-teal-500", border: "border-teal-500", bg: "bg-teal-500" },
   ]
 
-  // Função para expandir/recolher uma journey
+  // Função para gerar journeys com IA
+  const generateJourneysWithAI = async () => {
+    setIsGeneratingAI(true)
+    
+    try {
+      const response = await fetch('/api/journeys/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+        body: JSON.stringify({
+          project_id: project.id
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.status === 'sucesso') {
+        setGeneratedJourneys(data.journeys)
+        setShowConfirmModal(true)
+      } else {
+        alert('Erro ao gerar journeys: ' + data.message)
+      }
+    } catch (error) {
+      console.error('Erro ao gerar journeys:', error)
+      alert('Erro ao comunicar com o servidor')
+    } finally {
+      setIsGeneratingAI(false)
+    }
+  }
+
+  // Função para confirmar e adicionar as journeys geradas
+  const confirmGeneratedJourneys = () => {
+    const updatedJourneys = project.journeys 
+      ? [...project.journeys, ...generatedJourneys]
+      : [...generatedJourneys]
+    
+    setProject({ ...project, journeys: updatedJourneys })
+    
+    // Salvar no backend
+    // generatedJourneys.forEach(journey => {
+    //   router.post(
+    //     route("journey.store"),
+    //     {
+    //       title: journey.title,
+    //       steps: journey.steps.map((step, index) => ({
+    //         step: index + 1,
+    //         description: step.action,
+    //         is_touchpoint: step.is_touchpoint || false
+    //       })),
+    //       project_id: project.id,
+    //     },
+    //     { preserveState: true, preserveScroll: true }
+    //   )
+    // })
+
+    setShowConfirmModal(false)
+    setGeneratedJourneys([])
+  }
+
+  // Função para cancelar as journeys geradas
+  const cancelGeneratedJourneys = () => {
+    setShowConfirmModal(false)
+    setGeneratedJourneys([])
+  }
+
+  // Todas as funções existentes permanecem inalteradas
   const toggleJourney = (JourneyId) => {
     if (expandedJourney === JourneyId) {
       setExpandedJourney(null)
@@ -245,6 +317,65 @@ const Journeys = ({ project, setProject }) => {
 
   return (
     <div className="flex flex-col gap-4 p-4 w-full">
+      {/* Modal de confirmação das journeys geradas */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 max-w-4xl max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white flex items-center">
+                <Sparkles className="mr-2 text-yellow-400" size={24} />
+                Journeys Geradas pela IA
+              </h3>
+              <button
+                onClick={cancelGeneratedJourneys}
+                className="text-gray-400 hover:text-white"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="space-y-4 mb-6">
+              {generatedJourneys.map((journey, index) => (
+                <div key={index} className="bg-gray-700 rounded-lg p-4">
+                  <h4 className="text-white font-medium mb-2">{journey.title}</h4>
+                  <div className="space-y-2">
+                    {journey.steps.map((step, stepIndex) => (
+                      <div key={stepIndex} className="flex items-center text-sm text-gray-300">
+                        <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">
+                          {stepIndex + 1}
+                        </span>
+                        <span className="flex-1">{step.action}</span>
+                        {step.is_touchpoint && (
+                          <span className="bg-green-500 text-white text-xs px-2 py-1 rounded ml-2">
+                            Touchpoint
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelGeneratedJourneys}
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmGeneratedJourneys}
+                className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
+              >
+                <Check className="mr-2" size={16} />
+                Confirmar e Adicionar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {project.journeys && project.journeys.length > 0 ? (
         project.journeys
           .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
@@ -529,17 +660,36 @@ const Journeys = ({ project, setProject }) => {
         </div>
       )}
 
-      {/* Botão "Nova Journey" */}
-      <button
-        className="flex items-center justify-center py-2 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors shadow-md"
-        onClick={addNewJourney}
-      >
-        <Plus
-          size={18}
-          className="mr-2"
-        />
-        <span>Nova Journey</span>
-      </button>
+      {/* Container dos botões */}
+      <div className="flex gap-3 w-full">
+        {/* Botão "Nova Journey" */}
+        <button
+          className="flex-1 flex items-center justify-center py-2 px-4 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors shadow-md"
+          onClick={addNewJourney}
+        >
+          <Plus
+            size={18}
+            className="mr-2"
+          />
+          <span>Nova Journey</span>
+        </button>
+
+        {/* Botão "Gerar com IA" */}
+        <button
+          className="flex-1 flex items-center justify-center py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={generateJourneysWithAI}
+          disabled={isGeneratingAI}
+        >
+          {isGeneratingAI ? (
+            <Loader2 className="animate-spin mr-2" size={18} />
+          ) : (
+            <Sparkles className="mr-2" size={18} />
+          )}
+          <span>
+            {isGeneratingAI ? "Gerando..." : "Gerar com IA"}
+          </span>
+        </button>
+      </div>
     </div>
   )
 }
