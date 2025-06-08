@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\AIController;
+use App\Http\Controllers\StoryGeneratorController;
 use App\Http\Controllers\JourneyGeneratorController;
 
-Route::post('/ai/generate', [AIController::class, 'generateStory'])->name('story.generate');
+Route::post('/stories/generate', [StoryGeneratorController::class, 'generateStories'])->name('story.generate');
 
-Route::post('/journeys/generate', [JourneyGeneratorController::class, 'generateJourneys']);
+Route::post('/journeys/generate', [JourneyGeneratorController::class, 'generateJourneys'])->name('journey.generate');

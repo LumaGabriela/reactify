@@ -14,7 +14,7 @@ use App\Services\StoryService;
 class AIController extends Controller
 {
     
-    public function generateStory(Request $request): JsonResponse
+    public function generateStories(Request $request): JsonResponse
     {
         try {
             // Validar se a entrevista(message) foi enviada PRIMEIRO

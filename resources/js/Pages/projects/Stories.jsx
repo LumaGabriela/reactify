@@ -42,7 +42,7 @@ const Stories = ({ project, setProject }) => {
     setIsGenerating(true)
 
     try {
-      const response = await axios.post("/api/ai/generate", {
+      const response = await axios.post("/api/stories/generate", {
         message: aiInput,
       })
 
