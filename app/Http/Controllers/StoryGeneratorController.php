@@ -11,7 +11,7 @@ use App\Http\Requests\StoreStoryRequest;
 use App\Services\StoryService;
 
 
-class AIController extends Controller
+class StoryGeneratorController extends Controller
 {
     
     public function generateStories(Request $request): JsonResponse
