@@ -13,7 +13,12 @@ class JourneyGeneratorController extends Controller
     {
         $request->validate(['project_id' => 'required|integer']);
         
-        $personas = Persona::where('project_id', $request->project_id)->get();
+        $personas = Persona::where('project_id', $request->project_id)->select(
+            //'id', 
+            //'name', 
+            'goals', 
+            //'project_id'
+            )->get();
         
         if ($personas->isEmpty()) {
             return response()->json(['error' => 'Nenhuma persona encontrada'], 404);
@@ -36,7 +41,7 @@ class JourneyGeneratorController extends Controller
         Você ajuda a elaborar um fluxo de atividades de negócio que evidencie uma jornada de interação de Personas(usuários) com o uso de um produto pretendido.
         A atividade que tenha contato entre a Persona e o Produto pretendido deve ser classificada como um touchpoint, ou seja, um ponto de contato que representa uma possível e futura funcionalidade do produto pretendido.
                 
-        Crie journeys para a persona: {$persona->name}
+        Crie journeys para as goals a seguir:
         
         Goals: " . json_encode($persona->goals) . "
         
@@ -67,11 +72,11 @@ class JourneyGeneratorController extends Controller
         foreach ($data['journeys'] ?? [] as $journey) {
             $journeys[] = [
                 'title' => $journey['title'],
-                'persona_name' => $persona->name,
-                'persona_id' => $persona->id,
-                'project_id' => $persona->project_id,
-                'goal' => $journey['goal'],
-                'steps' => $journey['steps']
+                //'persona_name' => $persona->name,
+                //'persona_id' => $persona->id,
+                //'goal' => $journey['goal'],
+                'steps' => $journey['steps'],
+                //'project_id' => $persona->project_id,
             ];
         }
 

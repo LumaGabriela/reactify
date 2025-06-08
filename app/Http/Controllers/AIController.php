@@ -17,7 +17,7 @@ class AIController extends Controller
     public function generateStory(Request $request): JsonResponse
     {
         try {
-            // Validar se a mensagem foi enviada PRIMEIRO
+            // Validar se a entrevista(message) foi enviada PRIMEIRO
             $request->validate([
                 'message' => 'required|string|min:10'
             ]);
