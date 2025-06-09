@@ -20,4 +20,11 @@ class Journey extends Model
   {
     return $this->belongsTo(Project::class);
   }
+  
+  // Método para adicionar steps
+  public function addSteps(array $steps)
+  {
+    $this->steps = $steps;
+    $this->save();
+  }
 }

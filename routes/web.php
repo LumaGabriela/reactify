@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/', [JourneyController::class, 'store'])->name('journey.store');
     Route::patch('/{journey}', [JourneyController::class, 'update'])->name('journey.update');
     Route::delete('/{journey}', [JourneyController::class, 'destroy'])->name('journey.delete');
-  
+    Route::post('/bulk-store', [JourneyController::class, 'bulk'])->name('journey.bulk-store');
   });
   Route::prefix('persona')->group(function () {
     Route::post('/', [PersonaController::class, 'store'])->name('persona.store');
