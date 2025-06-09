@@ -127,9 +127,8 @@ class JourneyGeneratorController extends Controller
             "journeys": [
                 {
                     "title": "Journey title",
-                    "goal": "meta específica",
                     "steps": [
-                        {"action": "ação", "is_touchpoint": true}
+                        {"description": "ação", "is_touchpoint": true}
                     ]
                 }
             ]
@@ -176,11 +175,7 @@ class JourneyGeneratorController extends Controller
 
             $formattedJourneys[] = [
                 'title' => $journey['title'],
-                //'persona_name' => $persona->name,
-                //'persona_id' => $persona->id,
-                //'goal' => $journey['goal'] ?? null,
                 'steps' => $this->validateSteps($journey['steps']),
-                //'project_id' => $persona->project_id,
             ];
         }
 
@@ -192,9 +187,9 @@ class JourneyGeneratorController extends Controller
         $validatedSteps = [];
 
         foreach ($steps as $step) {
-            if (isset($step['action'])) {
+            if (isset($step['description'])) {
                 $validatedSteps[] = [
-                    'action' => $step['action'],
+                    'description' => $step['description'],
                     'is_touchpoint' => isset($step['is_touchpoint']) ? (bool)$step['is_touchpoint'] : false
                 ];
             }
