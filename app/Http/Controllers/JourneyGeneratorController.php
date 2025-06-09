@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Models\Persona;
 
-class JourneyGeneratorController extends Controller
+class JourneyGeneratorController extends Controller 
 {
     public function generateJourneys(Request $request): JsonResponse
     {

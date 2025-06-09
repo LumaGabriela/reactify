@@ -13,78 +13,73 @@ use App\Services\StoryService;
 
 class StoryGeneratorController extends Controller
 {
-    
-    public function generateStories(Request $request): JsonResponse
-    {
-        try {
-            // Validar se a entrevista(message) foi enviada PRIMEIRO
-            $request->validate([
-                'message' => 'required|string|min:10'
-            ]);
 
-            // Só depois criar o prompt
-            $prompt = $this->createPrompt($request->input('message'));
+  public function generateStories(Request $request): JsonResponse
+  {
+    try {
+      // Validar se a entrevista(message) foi enviada PRIMEIRO
+      $request->validate([
+        'message' => 'required|string|min:10'
+      ]);
 
-            $result = OpenAI::chat()->create([
-                'model' => 'gpt-4o-mini',
-                'messages' => [
-                    ['role' => 'system', 'content' => 'Você é um especialista em engenharia de software'],
-                    ['role' => 'user', 'content' => $prompt], 
-                ],
-                    
-            ]);
+      // Só depois criar o prompt
+      $prompt = $this->createPrompt($request->input('message'));
 
-            try {
-                return response()->json([
-                    'status' => 'sucesso',
-                    'message' => $this->parseResponse($result->choices[0]->message->content),
-                ]);
-                                
-                
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $e->getMessage()
-                ], 500);
-            }
+      $result = OpenAI::chat()->create([
+        'model' => 'gpt-4o-mini',
+        'messages' => [
+          ['role' => 'system', 'content' => 'Você é um especialista em engenharia de software'],
+          ['role' => 'user', 'content' => $prompt],
+        ],
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Mensagem é obrigatória',
-                'errors' => $e->errors()
-            ], 422);
+      ]);
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Erro ao processar solicitação: ' . $e->getMessage()
-            ], 500);
-        }
-    }   
-
-    private function parseResponse(string $content): array
-    {
-        try {
-            // Remove os blocos de markdown ```json e ``` antes do parsing
-            $cleanedContent = preg_replace('/```json\n([\s\S]*?)\n```/', '$1', $content);
-            $data = json_decode($cleanedContent, true, 512, JSON_THROW_ON_ERROR);
-
-            // Extrai apenas o array de stories do JSON
-            if (!isset($data['stories'])) {
-                throw new \Exception("Resposta da IA não contém 'stories'.");
-            }
-
-            return $data;
-
-        } catch (\Exception $e) {
-            throw new \Exception('Erro ao fazer o PARSER: ' . $e->getMessage());
-        }
+      try {
+        return response()->json([
+          'status' => 'sucesso',
+          'message' => $this->parseResponse($result->choices[0]->message->content),
+        ]);
+      } catch (\Exception $e) {
+        return response()->json([
+          'status' => 'error',
+          'message' => $e->getMessage()
+        ], 500);
+      }
+    } catch (\Illuminate\Validation\ValidationException $e) {
+      return response()->json([
+        'status' => 'error',
+        'message' => 'Mensagem é obrigatória',
+        'errors' => $e->errors()
+      ], 422);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 'error',
+        'message' => 'Erro ao processar solicitação: ' . $e->getMessage()
+      ], 500);
     }
+  }
 
-    private function createPrompt(string $text): string
-    {
-        return <<<PROMPT
+  private function parseResponse(string $content): array
+  {
+    try {
+      // Remove os blocos de markdown ```json e ``` antes do parsing
+      $cleanedContent = preg_replace('/```json\n([\s\S]*?)\n```/', '$1', $content);
+      $data = json_decode($cleanedContent, true, 512, JSON_THROW_ON_ERROR);
+
+      // Extrai apenas o array de stories do JSON
+      if (!isset($data['stories'])) {
+        throw new \Exception("Resposta da IA não contém 'stories'.");
+      }
+
+      return $data;
+    } catch (\Exception $e) {
+      throw new \Exception('Erro ao fazer o PARSER: ' . $e->getMessage());
+    }
+  }
+
+  private function createPrompt(string $text): string
+  {
+    return <<<PROMPT
         Com base na seguinte entrevista, gere user stories e system stories no formato especificado abaixo:
 
         Entrevista: $text
@@ -103,6 +98,5 @@ class StoryGeneratorController extends Controller
         Fim do formato requerido
         Retorne apenas o JSON e não use \ para escapar caracteres especiais .
         PROMPT;
-       
-    }
+  }
 }
