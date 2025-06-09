@@ -27,7 +27,7 @@ const ProjectView = ({ projectDB = [] }) => {
   //Usa o websocket para obter o valor mais recente do projeto
   useEcho(`project.${project.id}`, 'ProjectUpdated', (e) => {
     setProject(e.project)
-    console.log(e?.project?.stories)
+    console.log(e?.project?.journeys)
   })
   //Altera o menu ativo
   useEffect(() => {
@@ -50,7 +50,7 @@ const ProjectView = ({ projectDB = [] }) => {
 
   useEffect(() => {
     // console.log(project?.stories)
-    console.log(props?.errors)
+    // console.log(props?.errors)
   }, [project, props])
 
 

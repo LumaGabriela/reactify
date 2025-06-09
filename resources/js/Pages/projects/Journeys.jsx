@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef } from "react"
+import React, { useState } from "react"
 import {
   Plus,
   ChevronDown,
   ChevronRight,
   Map,
-  ArrowRight,
+  Circle,
+  Dot,
   CornerUpRight,
   Sparkles,
   Check,
@@ -61,36 +62,39 @@ const Journeys = ({ project, setProject }) => {
   // Função para gerar journeys com IA
   const generateJourneysWithAI = async () => {
     setIsGeneratingAI(true)
-    
+
     try {
-      const response = await fetch('/api/journeys/generate', {
-        method: 'POST',
+      const response = await fetch("/api/journeys/generate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRF-TOKEN":
+            document
+              .querySelector('meta[name="csrf-token"]')
+              ?.getAttribute("content") || "",
         },
         body: JSON.stringify({
-          project_id: project.id
-        })
+          project_id: project.id,
+        }),
       })
 
       const data = await response.json()
 
-      if (data.status === 'sucesso') {
+      if (data.status === "sucesso") {
         // Adicionar propriedade 'selected' para cada journey gerada
-        const journeysWithSelection = data.journeys.map(journey => ({
+        const journeysWithSelection = data.journeys.map((journey) => ({
           ...journey,
-          selected: true // Por padrão, todas vêm selecionadas
+          selected: true, // Por padrão, todas vêm selecionadas
         }))
         setGeneratedJourneys(journeysWithSelection)
         setShowConfirmModal(true)
       } else {
-        alert('Erro ao gerar journeys: ' + data.message)
+        alert("Erro ao gerar journeys: " + data.message)
       }
     } catch (error) {
-      console.error('Erro ao gerar journeys:', error)
-      alert('Erro ao comunicar com o servidor')
+      console.error("Erro ao gerar journeys:", error)
+      alert("Erro ao comunicar com o servidor")
     } finally {
       setIsGeneratingAI(false)
     }
@@ -98,8 +102,8 @@ const Journeys = ({ project, setProject }) => {
 
   // Função para alternar seleção de uma journey
   const toggleJourneySelection = (index) => {
-    setGeneratedJourneys(prev => 
-      prev.map((journey, i) => 
+    setGeneratedJourneys((prev) =>
+      prev.map((journey, i) =>
         i === index ? { ...journey, selected: !journey.selected } : journey
       )
     )
@@ -107,9 +111,9 @@ const Journeys = ({ project, setProject }) => {
 
   // Função para selecionar/deselecionar todas as journeys
   const toggleAllJourneys = () => {
-    const allSelected = generatedJourneys.every(journey => journey.selected)
-    setGeneratedJourneys(prev => 
-      prev.map(journey => ({ ...journey, selected: !allSelected }))
+    const allSelected = generatedJourneys.every((journey) => journey.selected)
+    setGeneratedJourneys((prev) =>
+      prev.map((journey) => ({ ...journey, selected: !allSelected }))
     )
   }
 
@@ -126,31 +130,31 @@ const Journeys = ({ project, setProject }) => {
           ...rest,
         }
       })
-    
-    console.log('selec', selectedJourneys)
+
+    console.log("selec", selectedJourneys)
 
     if (selectedJourneys.length === 0) {
-      alert('Selecione pelo menos uma journey para adicionar.')
+      alert("Selecione pelo menos uma journey para adicionar.")
       return
     }
 
     // Adicionar ao estado antes de persistir
-    const updatedJourneys = project.journeys 
+    const updatedJourneys = project.journeys
       ? [...project.journeys, ...selectedJourneys]
       : [...selectedJourneys]
 
-    console.log('up', updatedJourneys)
-    
+    console.log("up", updatedJourneys)
+
     setProject({ ...project, journeys: updatedJourneys })
 
     // Preparar dados para envio (remover id e created_at que são gerados localmente)
     const journeysForBackend = selectedJourneys.map(
       ({ id, created_at, project_id, ...rest }) => ({
         ...rest,
-        steps: rest.steps.map(step => ({
+        steps: rest.steps.map((step) => ({
           description: step.description,
-          is_touchpoint: step.is_touchpoint || false
-        }))
+          is_touchpoint: step.is_touchpoint || false,
+        })),
       })
     )
 
@@ -159,13 +163,13 @@ const Journeys = ({ project, setProject }) => {
     // Persistir no backend
     router.post(
       route("journey.bulk-store"),
-      { 
+      {
         project_id: project.id,
-        journeys: journeysForBackend 
+        journeys: journeysForBackend,
       },
-      { 
-        preserveState: true, 
-        preserveScroll: true 
+      {
+        preserveState: true,
+        preserveScroll: true,
       }
     )
 
@@ -249,6 +253,7 @@ const Journeys = ({ project, setProject }) => {
     const newStep = {
       step: currentSteps.length + 1,
       description: "Novo passo",
+      touchpoint: false,
     }
 
     const updatedJourneys = project.journeys.map((journey) => {
@@ -286,7 +291,7 @@ const Journeys = ({ project, setProject }) => {
   }
 
   // Função para salvar a edição de um step
-  const saveEditStep = () => {
+  const saveEditStep = (touchpoint = false) => {
     const { JourneyId, stepIndex } = editingStep
 
     if (!JourneyId || stepIndex === null) return
@@ -294,10 +299,23 @@ const Journeys = ({ project, setProject }) => {
     // Encontra a jornada específica
     const journey = project.journeys.find((j) => j.id === JourneyId)
 
+    let updatedSteps
     // Cria uma nova versão dos steps com a edição aplicada
-    const updatedSteps = journey.steps.map((s, i) =>
-      i === stepIndex ? { ...s, description: editValue } : s
-    )
+    if (touchpoint) {
+      updatedSteps = journey.steps.map((s, i) =>
+        i === stepIndex
+          ? {
+              ...s,
+              description: editValue,
+              touchpoint: s.touchpoint ? false : true,
+            }
+          : s
+      )
+    } else {
+      updatedSteps = journey.steps.map((s, i) =>
+        i === stepIndex ? { ...s, description: editValue } : s
+      )
+    }
 
     // Cria uma nova lista de journeys com a jornada editada
     const updatedJourneys = project.journeys.map((j) =>
@@ -376,7 +394,10 @@ const Journeys = ({ project, setProject }) => {
           <div className="bg-gray-800 rounded-lg p-6 max-w-4xl max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-white flex items-center">
-                <Sparkles className="mr-2 text-yellow-400" size={24} />
+                <Sparkles
+                  className="mr-2 text-yellow-400"
+                  size={24}
+                />
                 Journeys Geradas pela IA
               </h3>
               <button
@@ -386,27 +407,33 @@ const Journeys = ({ project, setProject }) => {
                 <X size={24} />
               </button>
             </div>
-            
+
             {/* Controle para selecionar/deselecionar todos */}
             <div className="flex items-center justify-between mb-4 p-3 bg-gray-700 rounded-lg">
               <span className="text-white font-medium">
-                {generatedJourneys.filter(j => j.selected).length} de {generatedJourneys.length} selecionadas
+                {generatedJourneys.filter((j) => j.selected).length} de{" "}
+                {generatedJourneys.length} selecionadas
               </span>
               <button
                 onClick={toggleAllJourneys}
                 className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors"
               >
-                {generatedJourneys.every(journey => journey.selected) ? 'Deselecionar Todas' : 'Selecionar Todas'}
+                {generatedJourneys.every((journey) => journey.selected)
+                  ? "Deselecionar Todas"
+                  : "Selecionar Todas"}
               </button>
             </div>
-            
+
             <div className="space-y-4 mb-6">
               {generatedJourneys.map((journey, index) => (
-                <div key={index} className={`rounded-lg p-4 border-2 transition-colors ${
-                  journey.selected 
-                    ? 'bg-gray-700 border-blue-500' 
-                    : 'bg-gray-600 border-gray-500'
-                }`}>
+                <div
+                  key={index}
+                  className={`rounded-lg p-4 border-2 transition-colors ${
+                    journey.selected
+                      ? "bg-gray-700 border-blue-500"
+                      : "bg-gray-600 border-gray-500"
+                  }`}
+                >
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-white font-medium">{journey.title}</h4>
                     <label className="flex items-center cursor-pointer">
@@ -421,7 +448,10 @@ const Journeys = ({ project, setProject }) => {
                   </div>
                   <div className="space-y-2">
                     {journey.steps.map((step, stepIndex) => (
-                      <div key={stepIndex} className="flex items-center text-sm text-gray-300">
+                      <div
+                        key={stepIndex}
+                        className="flex items-center text-sm text-gray-300"
+                      >
                         <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">
                           {stepIndex + 1}
                         </span>
@@ -437,7 +467,7 @@ const Journeys = ({ project, setProject }) => {
                 </div>
               ))}
             </div>
-            
+
             <div className="flex justify-end space-x-3">
               <button
                 onClick={cancelGeneratedJourneys}
@@ -448,10 +478,16 @@ const Journeys = ({ project, setProject }) => {
               <button
                 onClick={confirmGeneratedJourneys}
                 className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
-                disabled={generatedJourneys.filter(j => j.selected).length === 0}
+                disabled={
+                  generatedJourneys.filter((j) => j.selected).length === 0
+                }
               >
-                <Check className="mr-2" size={16} />
-                Confirmar e Adicionar ({generatedJourneys.filter(j => j.selected).length})
+                <Check
+                  className="mr-2"
+                  size={16}
+                />
+                Confirmar e Adicionar (
+                {generatedJourneys.filter((j) => j.selected).length})
               </button>
             </div>
           </div>
@@ -649,6 +685,21 @@ const Journeys = ({ project, setProject }) => {
                                       >
                                         Excluir
                                       </button>
+                                      <button
+                                        onClick={() => saveEditStep(true)}
+                                      >
+                                        {step.touchpoint ? (
+                                          <Circle
+                                            size={20}
+                                            color="red"
+                                          />
+                                        ) : (
+                                          <Circle
+                                            size={20}
+                                            color='black'
+                                          />
+                                        )}
+                                      </button>
                                     </div>
                                   </div>
                                 ) : (
@@ -763,13 +814,17 @@ const Journeys = ({ project, setProject }) => {
           disabled={isGeneratingAI}
         >
           {isGeneratingAI ? (
-            <Loader2 className="animate-spin mr-2" size={18} />
+            <Loader2
+              className="animate-spin mr-2"
+              size={18}
+            />
           ) : (
-            <Sparkles className="mr-2" size={18} />
+            <Sparkles
+              className="mr-2"
+              size={18}
+            />
           )}
-          <span>
-            {isGeneratingAI ? "Gerando..." : "Gerar com IA"}
-          </span>
+          <span>{isGeneratingAI ? "Gerando..." : "Gerar com IA"}</span>
         </button>
       </div>
     </div>
