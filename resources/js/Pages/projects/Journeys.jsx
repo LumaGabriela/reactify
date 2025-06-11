@@ -14,6 +14,11 @@ import {
 } from "lucide-react"
 import { ModalConfirmation } from "@/Components/Modals"
 import TextArea from "@/Components/TextArea"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { router } from "@inertiajs/react"
 
 const Journeys = ({ project, setProject }) => {
@@ -388,103 +393,123 @@ const Journeys = ({ project, setProject }) => {
 
   return (
     <div className="flex flex-col gap-4 p-4 w-full">
-    {/* Modal de confirmação das journeys geradas */}
-    {showConfirmModal && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-gray-800 rounded-lg max-w-4xl max-h-[80vh] flex flex-col">
-          {/* Cabeçalho fixo */}
-          <div className="flex items-center justify-between p-6 pb-4 flex-shrink-0">
-            <h3 className="text-xl font-bold text-white flex items-center">
-              <Sparkles className="mr-2 text-yellow-400" size={24} />
-              Journeys Geradas pela IA
-            </h3>
-            <button
-              onClick={cancelGeneratedJourneys}
-              className="text-gray-400 hover:text-white"
-            >
-              <X size={24} />
-            </button>
-          </div>
-          
-          {/* Controle para selecionar/deselecionar todos - fixo */}
-          <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-gray-700 rounded-lg flex-shrink-0">
-            <span className="text-white font-medium">
-              {generatedJourneys.filter(j => j.selected).length} de {generatedJourneys.length} selecionadas
-            </span>
-            <button
-              onClick={toggleAllJourneys}
-              className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors"
-            >
-              {generatedJourneys.every(journey => journey.selected) ? 'Desmarcar Todas' : 'Selecionar Todas'}
-            </button>
-          </div>
-          
-          {/* Área rolável das journeys */}
-          <div className="flex-1 overflow-y-auto px-6 min-h-0">
-            <div className="space-y-4 pb-4">
-              {generatedJourneys.map((journey, index) => (
-                <div
-                  key={index}
-                  className={`rounded-lg p-4 border-2 transition-colors ${
-                    journey.selected
-                      ? "bg-gray-700 border-blue-500"
-                      : "bg-gray-600 border-gray-500"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-white font-medium">{journey.title}</h4>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={journey.selected}
-                        onChange={() => toggleJourneySelection(index)}
-                        className="mr-2 w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
-                      />
-                    </label>
-                  </div>
-                  <div className="space-y-2">
-                    {journey.steps.map((step, stepIndex) => (
-                      <div
-                        key={stepIndex}
-                        className="flex items-center text-sm text-gray-300"
-                      >
-                        <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">
-                          {stepIndex + 1}
-                        </span>
-                        <span className="flex-1">{step.description}</span>
-                        {step.is_touchpoint && (
-                          <span className="bg-green-500 text-white text-xs px-2 py-1 rounded ml-2">
-                            Touchpoint
+        <Tooltip>
+          <TooltipTrigger>Journeys</TooltipTrigger>
+          <TooltipContent>
+            <p>Aqui serão visíveis...</p>
+          </TooltipContent>
+        </Tooltip>
+      {/* Modal de confirmação das journeys geradas */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg max-w-4xl max-h-[80vh] flex flex-col">
+            {/* Cabeçalho fixo */}
+            <div className="flex items-center justify-between p-6 pb-4 flex-shrink-0">
+              <h3 className="text-xl font-bold text-white flex items-center">
+                <Sparkles
+                  className="mr-2 text-yellow-400"
+                  size={24}
+                />
+                Journeys Geradas pela IA
+              </h3>
+              <button
+                onClick={cancelGeneratedJourneys}
+                className="text-gray-400 hover:text-white"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Controle para selecionar/deselecionar todos - fixo */}
+            <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-gray-700 rounded-lg flex-shrink-0">
+              <span className="text-white font-medium">
+                {generatedJourneys.filter((j) => j.selected).length} de{" "}
+                {generatedJourneys.length} selecionadas
+              </span>
+              <button
+                onClick={toggleAllJourneys}
+                className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors"
+              >
+                {generatedJourneys.every((journey) => journey.selected)
+                  ? "Desmarcar Todas"
+                  : "Selecionar Todas"}
+              </button>
+            </div>
+
+            {/* Área rolável das journeys */}
+            <div className="flex-1 overflow-y-auto px-6 min-h-0">
+              <div className="space-y-4 pb-4">
+                {generatedJourneys.map((journey, index) => (
+                  <div
+                    key={index}
+                    className={`rounded-lg p-4 border-2 transition-colors ${
+                      journey.selected
+                        ? "bg-gray-700 border-blue-500"
+                        : "bg-gray-600 border-gray-500"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-white font-medium">
+                        {journey.title}
+                      </h4>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={journey.selected}
+                          onChange={() => toggleJourneySelection(index)}
+                          className="mr-2 w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                      </label>
+                    </div>
+                    <div className="space-y-2">
+                      {journey.steps.map((step, stepIndex) => (
+                        <div
+                          key={stepIndex}
+                          className="flex items-center text-sm text-gray-300"
+                        >
+                          <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">
+                            {stepIndex + 1}
                           </span>
-                        )}
-                      </div>
-                    ))}
+                          <span className="flex-1">{step.description}</span>
+                          {step.is_touchpoint && (
+                            <span className="bg-green-500 text-white text-xs px-2 py-1 rounded ml-2">
+                              Touchpoint
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Botões fixos na parte inferior */}
+            <div className="flex justify-end space-x-3 p-6 pt-4 border-t border-gray-700 flex-shrink-0">
+              <button
+                onClick={cancelGeneratedJourneys}
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmGeneratedJourneys}
+                className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
+                disabled={
+                  generatedJourneys.filter((j) => j.selected).length === 0
+                }
+              >
+                <Check
+                  className="mr-2"
+                  size={16}
+                />
+                Confirmar e Adicionar (
+                {generatedJourneys.filter((j) => j.selected).length})
+              </button>
             </div>
           </div>
-
-          {/* Botões fixos na parte inferior */}
-          <div className="flex justify-end space-x-3 p-6 pt-4 border-t border-gray-700 flex-shrink-0">
-            <button
-              onClick={cancelGeneratedJourneys}
-              className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={confirmGeneratedJourneys}
-              className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
-              disabled={generatedJourneys.filter(j => j.selected).length === 0}
-            >
-              <Check className="mr-2" size={16} />
-              Confirmar e Adicionar ({generatedJourneys.filter(j => j.selected).length})
-            </button>
-          </div>
         </div>
-      </div>
-    )}
+      )}
 
       {project.journeys && project.journeys.length > 0 ? (
         project.journeys
@@ -684,11 +709,12 @@ const Journeys = ({ project, setProject }) => {
                                           <Circle
                                             size={20}
                                             color="red"
+                                            fill="red"
                                           />
                                         ) : (
                                           <Circle
                                             size={20}
-                                            color='black'
+                                            color="black"
                                           />
                                         )}
                                       </button>
