@@ -5,7 +5,6 @@ import {
   ChevronRight,
   Map,
   Circle,
-  Dot,
   CornerUpRight,
   Sparkles,
   Check,
@@ -14,11 +13,6 @@ import {
 } from "lucide-react"
 import { ModalConfirmation } from "@/Components/Modals"
 import TextArea from "@/Components/TextArea"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { router } from "@inertiajs/react"
 
 const Journeys = ({ project, setProject }) => {
@@ -393,12 +387,6 @@ const Journeys = ({ project, setProject }) => {
 
   return (
     <div className="flex flex-col gap-4 p-4 w-full">
-        <Tooltip>
-          <TooltipTrigger>Journeys</TooltipTrigger>
-          <TooltipContent>
-            <p>Aqui serão visíveis...</p>
-          </TooltipContent>
-        </Tooltip>
       {/* Modal de confirmação das journeys geradas */}
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

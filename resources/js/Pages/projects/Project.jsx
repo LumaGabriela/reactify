@@ -16,13 +16,13 @@ const ProjectView = ({ projectDB = [] }) => {
   const [activeMenu, setActiveMenu] = useState(
     () => localStorage.getItem("activeMenu") || "All"
   )
-  
+
   const [menuItems, setMenuItems] = useState([
     { label: "All", value: true, tooltip: "Tudo " },
     { label: "Stories", value: false, tooltip: "Histórias" },
     { label: "Personas", value: false, tooltip: "Personas" },
     { label: "Goals", value: false, tooltip: "Objetivos" },
-    { label: "Journeys", value: false, tooltip: "Jornadas" },
+    { label: "Journeys", value: false, tooltip: "Aqui serão visíveis as Jornadas, que constituem o processo para se alcançar o objetivo" },
   ])
   //Usa o websocket para obter o valor mais recente do projeto
   useEcho(`project.${project.id}`, "ProjectUpdated", (e) => {

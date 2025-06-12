@@ -1,5 +1,15 @@
 import React from "react"
+import { Info } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
+import { createPortal } from "react-dom"
 const NavMenu = ({ menuItems, setActiveMenu }) => {
   // Calcula o número total de itens para distribuição do indicador
   const totalItems = menuItems.length
@@ -14,7 +24,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
         {menuItems.map((menuItem, index) => (
           <div
             key={index}
-            className={`flex-1 py-2 text-center text-white font-medium text-lg cursor-pointer  
+            className={`flex-1 h-12 flex items-center justify-center text-center text-white font-medium text-lg cursor-pointer  
               border-purple-2 border-b-4 slide-in
               ${index === 0 ? "rounded-tl-md rounded-bl-md" : ""}
               ${
@@ -26,6 +36,18 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
             onClick={() => handleItemClick(menuItem)}
           >
             {menuItem.label}
+            {(document.getElementById("left-nav") && menuItem.value) &&
+              createPortal(
+                <Card className = "w-full h-content bg-indigo-800 text-white border-0 text-sm">
+                  <CardHeader>
+                    <CardTitle>Sobre</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>{menuItem.tooltip}</p>
+                  </CardContent>
+                </Card>,
+                document.getElementById("left-nav")
+              )}
           </div>
         ))}
       </div>
