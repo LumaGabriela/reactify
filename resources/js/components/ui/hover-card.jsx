@@ -5,7 +5,20 @@ import { cn } from "@/lib/utils"
 
 const HoverCard = HoverCardPrimitive.Root
 
-const HoverCardTrigger = HoverCardPrimitive.Trigger
+// const HoverCardTrigger = HoverCardPrimitive.Trigger
+const HoverCardTrigger = React.forwardRef(({ className, ...props }, ref) => (
+  <HoverCardPrimitive.Trigger
+    ref={ref}
+    className={cn(className)}
+    // Desabilita os eventos de hover
+    onPointerEnter={undefined}
+    onPointerLeave={undefined}
+    onFocus={undefined}
+    onBlur={undefined}
+    {...props}
+  />
+))
+HoverCardTrigger.displayName = HoverCardPrimitive.Trigger.displayName
 
 const HoverCardArrow = HoverCardPrimitive.Arrow
 
