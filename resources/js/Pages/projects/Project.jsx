@@ -17,13 +17,14 @@ const ProjectView = ({ projectDB = [] }) => {
     () => localStorage.getItem("activeMenu") || "All"
   )
 
-  const [menuItems, setMenuItems] = useState([
-    { label: "All", value: true, tooltip: "Tudo " },
-    { label: "Stories", value: false, tooltip: "Histórias" },
-    { label: "Personas", value: false, tooltip: "Personas" },
-    { label: "Goals", value: false, tooltip: "Objetivos" },
-    { label: "Journeys", value: false, tooltip: "Aqui serão visíveis as Jornadas, que constituem o processo para se alcançar o objetivo" },
-  ])
+const [menuItems, setMenuItems] = useState([
+  { label: "All", value: true, tooltip: "Visualize todos os itens do projeto, incluindo histórias, personas, objetivos e jornadas." },
+  { label: "Stories", value: false, tooltip: "Histórias de usuários e requisitos do sistema que detalham funcionalidades e necessidades do projeto." },
+  { label: "Personas", value: false, tooltip: "Perfis representativos dos usuários do sistema, com expectativas, restrições e objetivos." },
+  { label: "Goals", value: false, tooltip: "Objetivos principais do projeto, indicando metas e resultados esperados." },
+  { label: "Journeys", value: false, tooltip: "Sequências de etapas (jornadas) que descrevem o caminho do usuário ou do administrador para atingir um objetivo no sistema." },
+])
+
   //Usa o websocket para obter o valor mais recente do projeto
   useEcho(`project.${project.id}`, "ProjectUpdated", (e) => {
     setProject(e.project)
@@ -48,8 +49,7 @@ const ProjectView = ({ projectDB = [] }) => {
   }, [activeMenu])
 
   useEffect(() => {
-    // console.log(project?.stories)
-    // console.log(props?.errors)
+    console.log(project)
   }, [project, props])
 
   const renderContent = () => {
@@ -95,7 +95,7 @@ const ProjectView = ({ projectDB = [] }) => {
   }
 
   return (
-    <div className="project-view flex flex-col items-center justify-start px-2 w-full max-w-6xl">
+    <div className="project-view flex flex-col items-center justify-start px-1 w-full max-w-6xl">
       <h2 className="text-white text-center w-full my-4 p-0">
         {project.title}
       </h2>

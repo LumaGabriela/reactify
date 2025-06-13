@@ -204,15 +204,15 @@ const MainView = ({ project = {}, setProject }) => {
   }
 
   return (
-    <div className="min-h-screen w-full text-white p-6">
+    <div className=" w-full text-white p-4">
       {/* Botão de edição de titulo */}
-      <button
+      {/* <button
         // onClick={() => setIsEditing(true)}
         className="fixed top-8 right-[19rem] text-gray-400 hover:text-white transition-colors"
         title="Editar conteúdo"
       >
         <EditIcon size={20} />
-      </button>
+      </button> */}
       {/* Cabeçalho do dashboard */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">

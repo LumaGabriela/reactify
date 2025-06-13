@@ -46,7 +46,7 @@ const FlashModal = ({ duration = 5000 }) => {
     <div
       className={`${color} text-white bg-gray-800 border-[3px] slide-down fixed top-8 left-1/2 px-4 py-2 
       rounded-lg shadow-lg flex items-center justify-between animate-disapear
-      w-[300px] cursor-pointer select-none`}
+      w-[300px] cursor-pointer select-none z-50`}
     >
       <span className="text-md font-semibold w-full text-center">
         {message}
