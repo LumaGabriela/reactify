@@ -135,6 +135,7 @@ class JourneyGeneratorController extends Controller
         }
         Fim do formato requerido
         Retorne apenas o JSON e não use \ para escapar caracteres especiais.
+        IMPORTANTE: Caso não haja goal para a persona da vez, não gere ou invente uma journey(title, steps)
         PROMPT;
     }
 
