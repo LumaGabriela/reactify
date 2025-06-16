@@ -115,7 +115,10 @@ class JourneyGeneratorController extends Controller
         
         return <<<PROMPT
         Você ajuda a elaborar um fluxo de atividades de negócio que evidencie uma jornada de interação de Personas(usuários) com o uso de um produto pretendido.
-        A atividade que tenha contato entre a Persona e o Produto pretendido deve ser classificada como um touchpoint, ou seja, um ponto de contato que representa uma possível e futura funcionalidade do produto pretendido.
+        A atividade que tenha contato entre a Persona e o Produto pretendido deve ser classificada como um touchpoint, ou seja, 
+        um ponto de contato que representa uma possível e futura funcionalidade do produto pretendido.
+        Use o exemplo abaixo como base para classificar os passos com touchpoint.
+        Esse passo a passo deve incluir também as respostas do produto e não apenas as ações da persona.
                 
         Crie journeys para as goals da persona "{$persona->name}":
         
@@ -126,14 +129,40 @@ class JourneyGeneratorController extends Controller
         {
             "journeys": [
                 {
-                    "title": "Journey title",
+                    "title": "Título da Journey",
                     "steps": [
-                        {"description": "ação", "is_touchpoint": true}
+                        {"description": "ação", "is_touchpoint": true|false}
                     ]
                 }
             ]
         }
         Fim do formato requerido
+
+        Exemplo de journey:
+        {
+            "journeys": [
+                {
+                    "title": "Assistir um filme",
+                    "steps": [
+                        {"description": "Acessar a plataforma", "is_touchpoint": false},
+                        {"description": "Abrir a página", "is_touchpoint": false},
+                        {"description": "Logar na plataforma", "is_touchpoint": true},
+                        {"description": "Abrir tela inicial de usuário", "is_touchpoint": false},
+                        {"description": "Exibir opções “exibir catálogo” e “comunidade”", "is_touchpoint": false}
+                        {"description": "Exibir média de notas dadas por outros usuários", "is_touchpoint": false},
+                        {"description": "Exibir sinopse e ficha técnica", "is_touchpoint": false},
+                        {"description": "Selecionar um filme", "is_touchpoint": true},
+                        {"description": "Mostrar categorias de filmes", "is_touchpoint": false},
+                        {"description": "Selecionar opção “exibir catálogo”", "is_touchpoint": true}
+                        {"description": "Exibir opção “iniciar filme”, assistir depois e “escolher comentário”", "is_touchpoint": false},
+                        {"description": "Selecionar “iniciar filme”", "is_touchpoint": true},
+                        {"description": "Abrir player de vídeo", "is_touchpoint": false},
+                        {"description": "Iniciar exibição do filme", "is_touchpoint": false}
+                    ]
+                }
+            ]
+        }
+        Fim do exemplo
         Retorne apenas o JSON e não use \ para escapar caracteres especiais.
         IMPORTANTE: Caso não haja goal para a persona da vez, não gere ou invente uma journey(title, steps)
         PROMPT;
