@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react"
-import { Plus, Sparkles, FileText, X, Eye } from "lucide-react"
+import { Plus, Sparkles, FileText, X, Info } from "lucide-react"
 import { StoryCard } from "@/Components/Card"
 import { router } from "@inertiajs/react"
+import {
+  Popover,
+  PopoverArrow,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import axios from "axios"
 
 const Stories = ({ project, setProject }) => {
@@ -220,6 +226,31 @@ const Stories = ({ project, setProject }) => {
   return (
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
       <div className="flex flex-col gap-2 ">
+        <Popover>
+          <PopoverTrigger
+            asChild
+            className=""
+          >
+            <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
+              {
+                project?.stories?.filter((story) => story.type === "user")
+                  .length
+              }{" "}
+              User Stories
+              <Info
+                className="text-violet-600"
+                size={18}
+              />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="bg-gray-800 text-white ">
+            As histórias de usuário focam nas necessidades dos usuários do
+            aplicativo, como a criação de contas para acessar o sistema, a
+            gestão de playlists para organizar músicas e outras funcionalidades
+            voltadas para a experiência do usuário.
+            <PopoverArrow className="fill-gray-800" />
+          </PopoverContent>
+        </Popover>
         {/* User stories */}
         {project?.stories?.length > 0 ? (
           project?.stories
@@ -269,6 +300,31 @@ const Stories = ({ project, setProject }) => {
       </div>
       {/* System stories */}
       <div className="flex flex-col gap-2 ">
+        <Popover>
+          <PopoverTrigger
+            asChild
+            className=""
+          >
+            <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
+              {
+                project?.stories?.filter((story) => story.type === "system")
+                  .length
+              }{" "}
+              System Stories
+              <Info
+                className="text-teal-600"
+                size={18}
+              />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="bg-gray-800 text-white ">
+            As histórias de sistema abordam funcionalidades administrativas e
+            técnicas, como o gerenciamento de usuários para controle de acesso e
+            outras tarefas que garantem o funcionamento e a manutenção do
+            sistema.
+            <PopoverArrow className="fill-gray-800" />
+          </PopoverContent>
+        </Popover>
         {project?.stories?.length > 0 &&
           project?.stories
             .filter((story) => story.type === "system")

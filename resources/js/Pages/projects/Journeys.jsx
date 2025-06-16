@@ -851,7 +851,7 @@ const Journeys = ({ project, setProject }) => {
               />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="bg-gray-800 text-white font-semibold text-sm border-0 shadow-lg">
+          <PopoverContent className="bg-gray-800 text-white ">
             Esta função utiliza IA para gerar jornadas personalizadas baseadas nas Goals definidas nas Personas.
             <PopoverArrow className="fill-gray-800" />
           </PopoverContent>

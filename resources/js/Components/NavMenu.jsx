@@ -40,7 +40,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
                   size={15}
                 />
               </PopoverTrigger>
-              <PopoverContent className="bg-gray-800 text-white font-semibold text-sm border-0 shadow-lg">
+              <PopoverContent className="bg-gray-800 text-white ">
                 {menuItem.tooltip}
                 <PopoverArrow className="fill-gray-800" />
               </PopoverContent>
