@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import { Search, CheckCircle, Users } from "lucide-react"
-import { Link, usePage } from "@inertiajs/react"
+import { Link, router, usePage } from "@inertiajs/react"
 import { ModalNewProject, ProjectMenu } from "@/Components/Modals"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command"
+
 const Dashboard = ({ projects = [] }) => {
   const today = new Date()
   const formattedDate = new Intl.DateTimeFormat("en-US", {
@@ -25,6 +37,7 @@ const Dashboard = ({ projects = [] }) => {
   ])
 
   const [filteredProjects, setFilteredProjects] = useState(projects)
+  const [open, setOpen] = useState(true)
 
   const filterProjects = (filter) => {
     if (filter) {
@@ -58,6 +71,17 @@ const Dashboard = ({ projects = [] }) => {
     console.log(props)
   }, [props])
 
+  useEffect(() => {
+    const down = (e) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setOpen((open) => !open)
+      }
+    }
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
+
   return (
     <div className=" text-white p-6 rounded w-full mx-auto">
       {/* Header */}
@@ -72,16 +96,37 @@ const Dashboard = ({ projects = [] }) => {
           <p className="text-gray-400 text-sm">Today</p>
           <p className="font-medium">{formattedDate}</p>
         </div>
-        <div className="relative w-1/2">
-          <Search
-            className="absolute left-3 top-3 text-gray-400"
-            size={18}
-          />
-          <input
-            type="text"
-            placeholder="Buscar Projetos.."
-            className="bg-gray-800 rounded-lg pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        <div className="relative w-1/2 dark">
+          <Command className="relative overflow-hidden rounded-lg border border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-lg md:min-w-[450px]">
+            <CommandInput
+              placeholder="Buscar Projetos..."
+              className="flex h-12 w-full rounded-md border-none bg-transparent px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+            />
+            <CommandList className="max-h-[300px] overflow-y-auto overflow-x-hidden">
+              <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
+                Nenhum projeto encontrado.
+              </CommandEmpty>
+              <div className="p-1">
+                {filteredProjects.map((project) => (
+                  <CommandItem
+                    key={project.id}
+                    value={project.title}
+                    onSelect={() => {
+                      setOpen(false)
+                      router.visit(route("project.show", project.id))
+                    }}
+                    className="relative flex cursor-default select-none items-center rounded-sm px-3 py-2.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+                  >
+                    <CheckCircle className="mr-3 h-4 w-4 text-muted-foreground" />
+                    <span className="truncate">{project.title}</span>
+                    <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                      <span className="text-xs">↵</span>
+                    </kbd>
+                  </CommandItem>
+                ))}
+              </div>
+            </CommandList>
+          </Command>
         </div>
       </div>
 

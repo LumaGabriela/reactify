@@ -17,7 +17,7 @@ import {
 import TextArea from "@/Components/TextArea"
 import ProgressIcon from "../../Components/ProgressIcon"
 import { router } from "@inertiajs/react"
-import { format } from "date-fns"
+import { format, set } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -156,7 +156,6 @@ const ExpandableCard = ({
 }
 
 const MainView = ({ project = {}, setProject }) => {
-  // Estado para armazenar o conteúdo dos cards que pode ser editado
   const [productCanvas, setProductCanvas] = useState(
     project?.product_canvas || {}
   )
@@ -172,7 +171,6 @@ const MainView = ({ project = {}, setProject }) => {
   })
 
   const [date, setDate] = useState()
-
   // Função para atualizar o conteúdo de um card específico
   const updateProductCanvas = (prop, newContent) => {
     const updatedProductCanvas = { ...productCanvas }
@@ -197,22 +195,13 @@ const MainView = ({ project = {}, setProject }) => {
       console.error(`Property '${prop}' does not exist on project object`)
       return
     }
-
+    console.log(prop, content)
     setProject({ ...project, [prop]: content })
 
     router.patch(route("project.update", project.id), { [prop]: content })
   }
-
   return (
     <div className=" w-full text-white p-4">
-      {/* Botão de edição de titulo */}
-      {/* <button
-        // onClick={() => setIsEditing(true)}
-        className="fixed top-8 right-[19rem] text-gray-400 hover:text-white transition-colors"
-        title="Editar conteúdo"
-      >
-        <EditIcon size={20} />
-      </button> */}
       {/* Cabeçalho do dashboard */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
