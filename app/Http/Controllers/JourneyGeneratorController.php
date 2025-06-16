@@ -29,8 +29,18 @@ class JourneyGeneratorController extends Controller
                 ], 404);
             }
 
-            // Gerar journeys para todas as personas
-            $allJourneys = $this->generateJourneysForPersonas($personas);
+            // Verificar se existem personas com goals válidos
+            $personasWithGoals = $this->filterPersonasWithValidGoals($personas);
+
+            if ($personasWithGoals->isEmpty()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Nenhuma persona com goals válidos encontrada para este projeto'
+                ], 404);
+            }
+
+            // Gerar journeys para personas que possuem goals
+            $allJourneys = $this->generateJourneysForPersonas($personasWithGoals);
 
             return response()->json([
                 'status' => 'sucesso',
@@ -65,12 +75,68 @@ class JourneyGeneratorController extends Controller
         }
     }
 
+    /**
+     * Filtra personas que possuem goals válidos (não nulos e não vazios)
+     */
+    private function filterPersonasWithValidGoals($personas)
+    {
+        return $personas->filter(function ($persona) {
+            return $this->hasValidGoals($persona);
+        });
+    }
+
+    /**
+     * Verifica se a persona possui goals válidos
+     */
+    private function hasValidGoals(Persona $persona): bool
+    {
+        // Verifica se goals não é null
+        if (is_null($persona->goals)) {
+            Log::info("Persona {$persona->id} ({$persona->name}) não possui goals (null)");
+            return false;
+        }
+
+        // Se goals for string JSON, decodifica
+        $goals = is_string($persona->goals) ? json_decode($persona->goals, true) : $persona->goals;
+
+        // Verifica se a decodificação foi bem-sucedida
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Log::warning("Persona {$persona->id} ({$persona->name}) possui JSON inválido em goals");
+            return false;
+        }
+
+        // Verifica se goals é um array e não está vazio
+        if (!is_array($goals) || empty($goals)) {
+            Log::info("Persona {$persona->id} ({$persona->name}) possui goals vazio ou inválido");
+            return false;
+        }
+
+        // Verifica se há pelo menos um goal com conteúdo válido
+        foreach ($goals as $goal) {
+            if (is_string($goal) && !empty(trim($goal))) {
+                return true;
+            }
+            if (is_array($goal) && !empty($goal)) {
+                return true;
+            }
+        }
+
+        Log::info("Persona {$persona->id} ({$persona->name}) não possui goals com conteúdo válido");
+        return false;
+    }
+
     private function generateJourneysForPersonas($personas): array
     {
         $allJourneys = [];
 
         foreach ($personas as $persona) {
             try {
+                // Dupla verificação antes de processar
+                if (!$this->hasValidGoals($persona)) {
+                    Log::warning("Pulando persona {$persona->id} - goals inválidos");
+                    continue;
+                }
+
                 $journeys = $this->generateJourneyForPersona($persona);
                 $allJourneys = array_merge($allJourneys, $journeys);
             } catch (\Exception $e) {
@@ -111,7 +177,9 @@ class JourneyGeneratorController extends Controller
 
     private function createPrompt(Persona $persona): string
     {
-        $goalsJson = json_encode($persona->goals);
+        // Garantir que goals seja um array válido para o JSON
+        $goals = is_string($persona->goals) ? json_decode($persona->goals, true) : $persona->goals;
+        $goalsJson = json_encode($goals, JSON_UNESCAPED_UNICODE);
         
         return <<<PROMPT
         Você ajuda a elaborar um fluxo de atividades de negócio que evidencie uma jornada de interação de Personas(usuários) com o uso de um produto pretendido.
@@ -165,6 +233,7 @@ class JourneyGeneratorController extends Controller
         Fim do exemplo
         Retorne apenas o JSON e não use \ para escapar caracteres especiais.
         IMPORTANTE: Caso não haja goal para a persona da vez, não gere ou invente uma journey(title, steps)
+        IMPORTANTE: Caso o texto da goal não faça sentido, não gere ou invente uma journey(title, steps)
         PROMPT;
     }
 
