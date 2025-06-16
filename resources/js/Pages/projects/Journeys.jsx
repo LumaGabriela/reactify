@@ -10,10 +10,17 @@ import {
   Check,
   X,
   Loader2,
+  Info
 } from "lucide-react"
 import { ModalConfirmation } from "@/Components/Modals"
 import TextArea from "@/Components/TextArea"
 import { router } from "@inertiajs/react"
+import {
+  Popover,
+  PopoverArrow,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 const Journeys = ({ project, setProject }) => {
   // Estados existentes
@@ -81,6 +88,7 @@ const Journeys = ({ project, setProject }) => {
       const data = await response.json()
 
       if (data.status === "sucesso") {
+        console.log(data.journeys)
         // Adicionar propriedade 'selected' para cada journey gerada
         const journeysWithSelection = data.journeys.map((journey) => ({
           ...journey,
@@ -800,7 +808,7 @@ const Journeys = ({ project, setProject }) => {
       )}
 
       {/* Container dos botões */}
-      <div className="flex gap-2 w-full">
+      <div className="flex gap-2 w-full items-center">
         {/* Botão "Nova Journey" */}
         <button
           className="flex-1 flex items-center justify-center py-2 px-4 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors shadow-md"
@@ -832,6 +840,22 @@ const Journeys = ({ project, setProject }) => {
           )}
           <span>{isGeneratingAI ? "Gerando..." : "Gerar com IA"}</span>
         </button>
+
+        {/* Botão de Info centralizado */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="p-2 rounded-lg hover:bg-gray-700 transition-colors">
+              <Info
+                className="text-gray-400 hover:text-white cursor-pointer"
+                size={18}
+              />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="bg-gray-800 text-white font-semibold text-sm border-0 shadow-lg">
+            Esta função utiliza IA para gerar jornadas personalizadas baseadas nas Goals definidas nas Personas.
+            <PopoverArrow className="fill-gray-800" />
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   )
