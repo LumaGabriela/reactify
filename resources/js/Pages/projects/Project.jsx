@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useEcho } from "@laravel/echo-react"
-import { Head, usePage } from "@inertiajs/react"
+import { Head, router } from "@inertiajs/react"
 import NavMenu from "../../Components/NavMenu"
 import MainView from "./MainView"
 import Stories from "./Stories"

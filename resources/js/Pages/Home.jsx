@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
-import { Search, CheckCircle, Users } from "lucide-react"
+import { CheckCircle, Users, CornerDownLeft } from "lucide-react"
 import { Link, router, usePage } from "@inertiajs/react"
 import { ModalNewProject, ProjectMenu } from "@/Components/Modals"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
   Command,
-  CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command"
 
 const Dashboard = ({ projects = [] }) => {
+  const commandInputRef = React.useRef(null)
   const today = new Date()
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     weekday: "short",
@@ -33,11 +32,9 @@ const Dashboard = ({ projects = [] }) => {
     { name: "Todos", active: true },
     { name: "Ativos", active: false },
     { name: "Inativos", active: false },
-    // { name: "Finalizados", active: false },
   ])
 
   const [filteredProjects, setFilteredProjects] = useState(projects)
-  const [open, setOpen] = useState(true)
 
   const filterProjects = (filter) => {
     if (filter) {
@@ -67,20 +64,6 @@ const Dashboard = ({ projects = [] }) => {
         break
     }
   }
-  useEffect(() => {
-    console.log(props)
-  }, [props])
-
-  useEffect(() => {
-    const down = (e) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((open) => !open)
-      }
-    }
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
 
   return (
     <div className=" text-white p-6 rounded w-full mx-auto">
@@ -91,23 +74,34 @@ const Dashboard = ({ projects = [] }) => {
           onCancel={() => setShowModal(false)}
         />
       )}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <p className="text-gray-400 text-sm">Today</p>
-          <p className="font-medium">{formattedDate}</p>
+      <div className="flex min-h-[15rem] justify-between items-center mb-2 gap-2">
+        <div className=" flex flex-col size-full relative">
+          <p className="text-gray-400 text-sm mb-2">Today</p>
+          <p className="font-medium text-nowrap">{formattedDate}</p>
+          <Button
+            onClick={() => setShowModal(true)}
+            variant="default"
+            asChild
+            className="flex flex-col justify-center items-center bg-purple-1 h-[28rem] hover:bg-indigo-500/80 transition-colors rounded p-4 w-full max-w-3xl h-full cursor-pointer"
+          >
+            <p className="font-bold text-lg">New Project</p>
+          </Button>
         </div>
-        <div className="relative w-1/2 dark">
-          <Command className="relative overflow-hidden rounded-lg border border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-lg md:min-w-[450px]">
+
+        <div className="w-1/2 dark">
+          <Command className=" relative overflow-hidden rounded-lg border-1 border-zinc-700/50 bg-zinc-900/80 backdrop-blur-md shadow-lg md:min-w-[450px]">
             <CommandInput
+              shortcut
+              ref={commandInputRef}
               placeholder="Buscar Projetos..."
-              className="flex h-12 w-full rounded-md border-none bg-transparent px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-12 w-full rounded-md border-none bg-transparent px-4 py-3 text-sm text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
             />
             <CommandList className="max-h-[300px] overflow-y-auto overflow-x-hidden">
-              <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
+              <CommandEmpty className="py-6 text-center text-sm text-zinc-500">
                 Nenhum projeto encontrado.
               </CommandEmpty>
-              <div className="p-1">
-                {filteredProjects.map((project) => (
+              <CommandGroup>
+                {filteredProjects?.map((project) => (
                   <CommandItem
                     key={project.id}
                     value={project.title}
@@ -115,32 +109,17 @@ const Dashboard = ({ projects = [] }) => {
                       setOpen(false)
                       router.visit(route("project.show", project.id))
                     }}
-                    className="relative flex cursor-default select-none items-center rounded-sm px-3 py-2.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
+                    className="relative flex cursor-default select-none items-center justify-between rounded-lg px-3 py-2.5 text-sm text-zinc-300 outline-none transition-colors hover:bg-zinc-800 hover:text-white data-[selected=true]:bg-zinc-800 data-[selected=true]:text-white"
                   >
-                    <CheckCircle className="mr-3 h-4 w-4 text-muted-foreground" />
-                    <span className="truncate">{project.title}</span>
-                    <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-                      <span className="text-xs">↵</span>
-                    </kbd>
+                    <CheckCircle className="mr-3 size-4 text-zinc-500" />
+                    <span className="truncate w-full">{project.title}</span>
+                    <CornerDownLeft className="mr-3 size-4 text-zinc-500" />
                   </CommandItem>
                 ))}
-              </div>
+              </CommandGroup>
             </CommandList>
           </Command>
         </div>
-      </div>
-
-      {/* Task Status Summary */}
-      <div className="flex items-center justify-center gap-2 mb-8 w-full h-32">
-        {/* New Project Card */}
-        <Button
-          onClick={() => setShowModal(true)}
-          variant="default"
-          asChild
-          className="flex flex-col justify-center items-center bg-purple-1  hover:bg-indigo-500/80 transition-colors rounded p-2 w-[20rem] max-w-3xl h-full cursor-pointer"
-        >
-          <p className="font-bold text-lg">New Project</p>
-        </Button>
       </div>
 
       {/* Task Overview */}
