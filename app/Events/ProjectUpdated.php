@@ -31,6 +31,7 @@ class ProjectUpdated implements ShouldBroadcast
   {
     return [
       new PrivateChannel("project.{$this->project->id}"),
+      new Channel('projects'),
     ];
   }
 

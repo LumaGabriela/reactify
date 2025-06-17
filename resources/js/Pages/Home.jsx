@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { useEcho } from "@laravel/echo-react"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import { CheckCircle, Users, CornerDownLeft } from "lucide-react"
 import { Link, router, usePage } from "@inertiajs/react"
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/command"
 
 const Dashboard = ({ projects = [] }) => {
+  const [currentProjects, setCurrentProjects] = useState(...projects)
   const commandInputRef = React.useRef(null)
   const today = new Date()
   const formattedDate = new Intl.DateTimeFormat("en-US", {
@@ -64,6 +66,10 @@ const Dashboard = ({ projects = [] }) => {
         break
     }
   }
+
+    useEcho(`projects`, "ProjectUpdated", (e) => {
+      console.log(e)
+    })
 
   return (
     <div className=" text-white p-6 rounded w-full mx-auto">

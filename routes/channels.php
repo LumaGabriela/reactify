@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
-use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
@@ -10,7 +9,10 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 Broadcast::channel('project.{id}', function ($user, $id) {
 
-  $project = Project::find($id);
-
   return Auth::check();
 });
+
+// Broadcast::channel('projects', function ($user, $id) {
+
+//   return Auth::check();
+// });
