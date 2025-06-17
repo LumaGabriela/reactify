@@ -56,7 +56,7 @@ class ProjectController extends Controller
 
     Log::info('Project created successfully: ' . $project->id . ' - ' . $project->title);
 
-    broadcast(new ProjectUpdated($project));
+    broadcast(new ProjectUpdated($project))->toOthers();
 
     return redirect()
       ->route('project.show', $project->id)
@@ -90,17 +90,10 @@ class ProjectController extends Controller
   {
     $project = Project::findOrFail($id);
 
-    // Excluir registros relacionados
-    $project->stories()->delete();
-    // $project->goalSketches()->delete();
-    // $project->journeys()->delete();
-    // $project->productCanvas()->delete();
-    // $project->personas()->delete();
-
     // Excluir o projeto
     $project->delete();
 
-    broadcast(new ProjectUpdated($project));
+    broadcast(new ProjectUpdated($project))->toOthers();
 
     return redirect()->route('projects.index')->with([
       'status' => 'success',

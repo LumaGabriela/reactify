@@ -15,7 +15,7 @@ return new class extends Migration
             $table->jsonb('expectations');    
             $table->jsonb('restrictions');   
             $table->jsonb('goals');      
-            $table->foreignId('project_id')->constrained('projects');
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->timestamps();
         });
     }

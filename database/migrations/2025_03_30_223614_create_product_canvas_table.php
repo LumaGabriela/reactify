@@ -19,7 +19,7 @@ return new class extends Migration
       $table->string('restrictions')->nullable();
       $table->string('product_is')->nullable();
       $table->string('product_is_not')->nullable();
-      $table->foreignId('project_id')->constrained('projects');
+      $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
       $table->timestamps();
     });
   }

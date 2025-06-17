@@ -21,8 +21,7 @@ return new class extends Migration
             $table->string(column: 'title');
             $table->enum( 'type', ['bg', 'cg']);
             $table->enum( 'priority', ['low', 'med', 'high', 'urgent']);
-            $table->foreignId('project_id')->constrained('projects');
-            // $table->foreignId('priority_id')->constrained('priorities');
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->timestamps();
         });
     }
