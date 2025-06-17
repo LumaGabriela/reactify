@@ -23,10 +23,5 @@ class AppServiceProvider extends ServiceProvider
   public function boot(): void
   {
     Vite::prefetch(concurrency: 3);
-    // Registrando os observers para as entidades relacionadas
-    Story::observe(StoryObserver::class);
-    // GoalSketch::observe(GoalSketchObserver::class);
-    // Journey::observe(JourneyObserver::class);
-    // Persona::observe(PersonaObserver::class);
   }
 }
