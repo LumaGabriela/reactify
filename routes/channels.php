@@ -12,7 +12,6 @@ Broadcast::channel('project.{id}', function ($user, $id) {
   return Auth::check();
 });
 
-// Broadcast::channel('projects', function ($user, $id) {
-
-//   return Auth::check();
-// });
+Broadcast::channel('projects', function ($user) {
+  return Auth::check();
+});

@@ -10,16 +10,17 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class ProjectUpdated implements ShouldBroadcast
+class ProjectDeleted implements ShouldBroadcast
 {
   use Dispatchable, InteractsWithSockets, SerializesModels;
 
-  public $project;
+  public $projectId;
 
   public function __construct(Project $project)
   {
-    $this->project = $project;
+    $this->projectId = $project->id;
   }
 
   /**
@@ -30,22 +31,15 @@ class ProjectUpdated implements ShouldBroadcast
   public function broadcastOn(): array
   {
     return [
-      new PrivateChannel("project.{$this->project->id}"),
-
       new PrivateChannel('projects'),
     ];
   }
+  
 
   public function broadcastWith()
   {
     return [
-      'project' => $this->project->fresh([
-        'stories',
-        'goal_sketches',
-        'journeys',
-        'personas',
-        'product_canvas',
-      ]),
+      'projectId' => $this->projectId
     ];
   }
 }

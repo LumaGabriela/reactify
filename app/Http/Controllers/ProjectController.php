@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProjectDeleted;
 use App\Events\ProjectUpdated;
 use App\Http\Requests\ProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
@@ -34,8 +35,6 @@ class ProjectController extends Controller
       'product_canvas',
     ])->find($id);
 
-    broadcast(new ProjectUpdated($project));
-
     return Inertia::render('projects/Project', ['project' => $project]);
   }
 
@@ -56,7 +55,7 @@ class ProjectController extends Controller
 
     Log::info('Project created successfully: ' . $project->id . ' - ' . $project->title);
 
-    broadcast(new ProjectUpdated($project))->toOthers();
+    broadcast(new ProjectUpdated($project));
 
     return redirect()
       ->route('project.show', $project->id)
@@ -76,6 +75,8 @@ class ProjectController extends Controller
 
     $project->update($validated);
 
+    broadcast(new ProjectUpdated($project));
+
     return back()
       ->with([
         'status' => 'success',
@@ -90,10 +91,12 @@ class ProjectController extends Controller
   {
     $project = Project::findOrFail($id);
 
+    broadcast(new ProjectDeleted($project));
+
     // Excluir o projeto
     $project->delete();
 
-    broadcast(new ProjectUpdated($project))->toOthers();
+
 
     return redirect()->route('projects.index')->with([
       'status' => 'success',
@@ -109,6 +112,8 @@ class ProjectController extends Controller
     $project->save();
 
     $statusMessage = $project->active ? 'Projeto ativado com sucesso.' : 'Projeto desativado com sucesso.';
+
+    broadcast(new ProjectUpdated($project));
 
     return redirect()->back()->with([
       'status' => 'success',

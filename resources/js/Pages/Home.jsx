@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useEcho } from "@laravel/echo-react"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import { CheckCircle, Users, CornerDownLeft } from "lucide-react"
@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/command"
 
 const Dashboard = ({ projects = [] }) => {
-  const [currentProjects, setCurrentProjects] = useState(...projects)
+  const [currentProjects, setCurrentProjects] = useState(projects)
+  const [filteredProjects, setFilteredProjects] = useState(currentProjects)
   const commandInputRef = React.useRef(null)
   const today = new Date()
   const formattedDate = new Intl.DateTimeFormat("en-US", {
@@ -36,8 +37,6 @@ const Dashboard = ({ projects = [] }) => {
     { name: "Inativos", active: false },
   ])
 
-  const [filteredProjects, setFilteredProjects] = useState(projects)
-
   const filterProjects = (filter) => {
     if (filter) {
       const filters = taskFilters.map((f, i) =>
@@ -50,26 +49,44 @@ const Dashboard = ({ projects = [] }) => {
 
     switch (filter.name) {
       case "Todos":
-        setFilteredProjects(projects)
+        setFilteredProjects(currentProjects)
         break
       case "Ativos":
-        setFilteredProjects(projects.filter((p) => p.active))
+        setFilteredProjects(currentProjects.filter((p) => p.active))
         break
       case "Inativos":
-        setFilteredProjects(projects.filter((p) => !p.active))
+        setFilteredProjects(currentProjects.filter((p) => !p.active))
         break
       case "Finalizados":
-        // setFilteredProjects(projects.filter((p) => p.status === "finalizado"))
+        // setFilteredProjects(currentProjects.filter((p) => p.status === "finalizado"))
         break
       default:
-        setFilteredProjects(projects)
+        setFilteredProjects(currentProjects)
         break
     }
   }
 
-    useEcho(`projects`, "ProjectUpdated", (e) => {
-      console.log(e)
-    })
+  useEcho(`projects`, "ProjectUpdated", (e) => {
+    console.log(e)
+    setCurrentProjects((prevProjects) =>
+      prevProjects.map((project) =>
+        project.id === e.project.id ? e.project : project
+      )
+    )
+  })
+
+  useEcho("projects", "ProjectDeleted", (e) => {
+    console.log(e)
+    setCurrentProjects((prev) =>
+      prev.filter((project) => project.id !== e.projectId)
+    )
+  })
+
+  useEffect(() => {
+    console.log(currentProjects)
+    const filter = taskFilters.find((f) => f.active)
+    filterProjects(filter)
+  }, [currentProjects])
 
   return (
     <div className=" text-white p-6 rounded w-full mx-auto">
