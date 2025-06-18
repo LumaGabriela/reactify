@@ -6,7 +6,7 @@ import { createInertiaApp } from "@inertiajs/react"
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers"
 import { createRoot } from "react-dom/client"
 import { configureEcho } from "@laravel/echo-react"
-import { TooltipProvider } from "@radix-ui/react-tooltip"
+import { Toaster } from "@/components/ui/sonner"
 configureEcho({
   broadcaster: "reverb",
 })
@@ -22,9 +22,14 @@ createInertiaApp({
   setup({ el, App, props }) {
     const root = createRoot(el)
     root.render(
-      <TooltipProvider>
+      <>
+        <Toaster
+          expand
+          richColors
+          position="top-center"
+        />
         <App {...props} />
-      </TooltipProvider>
+      </>
     )
   },
   progress: {

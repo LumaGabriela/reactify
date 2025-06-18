@@ -30,6 +30,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { toast } from "sonner"
 
 const Dashboard = ({ projects = [] }) => {
   const [currentProjects, setCurrentProjects] = useState(projects)
@@ -88,6 +89,7 @@ const Dashboard = ({ projects = [] }) => {
     setCurrentProjects(updatedProjects)
 
     router.put(route("project.toggle-active", projectId))
+
   }
 
   const deleteProject = (projectId) => {
