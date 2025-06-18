@@ -15,7 +15,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
 
   return (
     <>
-      <div className="flex w-full min-w-2xl">
+      <div className="flex w-full">
         {menuItems.map((menuItem, index) => (
           <div
             key={index}

@@ -151,8 +151,8 @@ const ModalNewProject = ({ onCancel, message }) => {
 }
 
 const ProjectMenu = ({ project }) => {
-  const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef(null)
+  const [isOpen, setIsOpen] = useState(false)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [showToggleConfirmation, setShowToggleConfirmation] = useState(false)
 

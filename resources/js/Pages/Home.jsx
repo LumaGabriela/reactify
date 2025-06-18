@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react"
 import { useEcho } from "@laravel/echo-react"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
-import { CheckCircle, Users, CornerDownLeft } from "lucide-react"
+import {
+  CheckCircle,
+  Users,
+  CornerDownLeft,
+  Power,
+  Trash2,
+  EllipsisVertical,
+} from "lucide-react"
 import { Link, router, usePage } from "@inertiajs/react"
-import { ModalNewProject, ProjectMenu } from "@/Components/Modals"
+import { ModalNewProject } from "@/Components/Modals"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -15,6 +22,14 @@ import {
   CommandList,
   CommandShortcut,
 } from "@/components/ui/command"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const Dashboard = ({ projects = [] }) => {
   const [currentProjects, setCurrentProjects] = useState(projects)
@@ -66,6 +81,28 @@ const Dashboard = ({ projects = [] }) => {
     }
   }
 
+  const toggleActiveProject = (projectId) => {
+    const updatedProjects = currentProjects.map((p) =>
+      p.id === projectId ? { ...p, active: !p.active } : p
+    )
+    setCurrentProjects(updatedProjects)
+
+    router.put(route("project.toggle-active", projectId))
+  }
+
+  const deleteProject = (projectId) => {
+    const updatedProjects = currentProjects.filter((p) => p.id !== projectId)
+
+    setCurrentProjects(updatedProjects)
+
+    router.delete(route("project.destroy", projectId))
+  }
+  useEffect(() => {
+    console.log(currentProjects)
+    const filter = taskFilters.find((f) => f.active)
+    filterProjects(filter)
+  }, [currentProjects])
+
   useEcho(`projects`, "ProjectUpdated", (e) => {
     console.log(e)
     setCurrentProjects((prevProjects) =>
@@ -81,12 +118,6 @@ const Dashboard = ({ projects = [] }) => {
       prev.filter((project) => project.id !== e.projectId)
     )
   })
-
-  useEffect(() => {
-    console.log(currentProjects)
-    const filter = taskFilters.find((f) => f.active)
-    filterProjects(filter)
-  }, [currentProjects])
 
   return (
     <div className=" text-white p-6 rounded w-full mx-auto">
@@ -195,11 +226,47 @@ const Dashboard = ({ projects = [] }) => {
                       <div
                         className={`h-2 w-2 ${color} rounded-full mr-2`}
                       ></div>
-                      <p>{project.title}</p>
+                      <p className="m-0">{project.title}</p>
                     </Link>
 
                     {/* Substituindo o ícone MoreVertical pelo componente de menu */}
-                    <ProjectMenu project={project} />
+                    {/* <ProjectMenu project={project}  /> */}
+                    <DropdownMenu className="bg-zinc-800 ">
+                      <DropdownMenuTrigger className="outline-0">
+                        <EllipsisVertical
+                          size={22}
+                          className="text-gray-400"
+                        />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-48 text-white rounded-lg border-1 border-zinc-700/50 bg-zinc-900/80 backdrop-blur-md shadow-lg">
+                        <DropdownMenuItem
+                          onSelect={() => toggleActiveProject(project.id)}
+                          className="transition-colors cursor-pointer select-none outline-none rounded-sm px-2 py-1.5 text-sm data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white"
+                        >
+                          {" "}
+                          <Power
+                            size={16}
+                            className={
+                              project.active ? "text-green-400" : "text-red-400"
+                            }
+                          />{" "}
+                          {project.active
+                            ? "Desativar projeto"
+                            : "Ativar projeto"}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-zinc-800" />
+                        <DropdownMenuItem
+                          className="transition-colors cursor-pointer select-none outline-none rounded-sm px-2 py-1.5 text-sm data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white"
+                          onSelect={() => deleteProject(project.id)}
+                        >
+                          <Trash2
+                            size={16}
+                            className="text-red-400"
+                          />
+                          Excluir projeto
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
 
                   <Link
