@@ -30,7 +30,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { toast } from "sonner"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Alert } from "bootstrap"
 
 const Dashboard = ({ projects = [] }) => {
   const [currentProjects, setCurrentProjects] = useState(projects)
@@ -89,7 +100,6 @@ const Dashboard = ({ projects = [] }) => {
     setCurrentProjects(updatedProjects)
 
     router.put(route("project.toggle-active", projectId))
-
   }
 
   const deleteProject = (projectId) => {
@@ -99,6 +109,21 @@ const Dashboard = ({ projects = [] }) => {
 
     router.delete(route("project.destroy", projectId))
   }
+
+  useEffect(() => {
+    const focusCommandInput = (e) => {
+      if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        if (commandInputRef.current) commandInputRef.current.focus()
+      }
+    }
+
+    document.addEventListener("keydown", focusCommandInput)
+    return () => {
+      document.removeEventListener("keydown", focusCommandInput)
+    }
+  }, [])
+
   useEffect(() => {
     console.log(currentProjects)
     const filter = taskFilters.find((f) => f.active)
@@ -140,7 +165,7 @@ const Dashboard = ({ projects = [] }) => {
             asChild
             className="flex flex-col justify-center items-center bg-purple-1 h-[28rem] hover:bg-indigo-500/80 transition-colors rounded p-4 w-full max-w-3xl h-full cursor-pointer"
           >
-            <p className="font-bold text-lg">New Project</p>
+            <p className="font-bold text-lg dark:text-white">Criar Projeto</p>
           </Button>
         </div>
 
@@ -162,7 +187,6 @@ const Dashboard = ({ projects = [] }) => {
                     key={project.id}
                     value={project.title}
                     onSelect={() => {
-                      setOpen(false)
                       router.visit(route("project.show", project.id))
                     }}
                     className="relative flex cursor-default select-none items-center justify-between rounded-lg px-3 py-2.5 text-sm text-zinc-300 outline-none transition-colors hover:bg-zinc-800 hover:text-white data-[selected=true]:bg-zinc-800 data-[selected=true]:text-white"
@@ -230,45 +254,66 @@ const Dashboard = ({ projects = [] }) => {
                       ></div>
                       <p className="m-0">{project.title}</p>
                     </Link>
-
-                    {/* Substituindo o ícone MoreVertical pelo componente de menu */}
-                    {/* <ProjectMenu project={project}  /> */}
-                    <DropdownMenu className="bg-zinc-800 ">
-                      <DropdownMenuTrigger className="outline-0">
-                        <EllipsisVertical
-                          size={22}
-                          className="text-gray-400"
-                        />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-48 text-white rounded-lg border-1 border-zinc-700/50 bg-zinc-900/80 backdrop-blur-md shadow-lg">
-                        <DropdownMenuItem
-                          onSelect={() => toggleActiveProject(project.id)}
-                          className="transition-colors cursor-pointer select-none outline-none rounded-sm px-2 py-1.5 text-sm data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white"
-                        >
-                          {" "}
-                          <Power
-                            size={16}
-                            className={
-                              project.active ? "text-green-400" : "text-red-400"
-                            }
-                          />{" "}
-                          {project.active
-                            ? "Desativar projeto"
-                            : "Ativar projeto"}
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-zinc-800" />
-                        <DropdownMenuItem
-                          className="transition-colors cursor-pointer select-none outline-none rounded-sm px-2 py-1.5 text-sm data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white"
-                          onSelect={() => deleteProject(project.id)}
-                        >
-                          <Trash2
-                            size={16}
-                            className="text-red-400"
+                    {/* Dialogo de confirmacao de exclusao de projeto */}
+                    <AlertDialog>
+                      <AlertDialogContent className="">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Tem certeza que deseja excluir o projeto?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Essa decisão nao pode ser desfeita.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteProject(project.id)}
+                          >
+                            Excluir
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                      {/* menu com opcoes sobre o projeto */}
+                      <DropdownMenu className="bg-zinc-800 ">
+                        <DropdownMenuTrigger className="">
+                          <EllipsisVertical
+                            size={22}
+                            className="text-gray-400"
                           />
-                          Excluir projeto
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-48 text-white rounded-lg border-1 border-zinc-700/50 bg-zinc-900/80 backdrop-blur-md shadow-lg">
+                          <DropdownMenuItem
+                            onSelect={() => toggleActiveProject(project.id)}
+                            className="transition-colors cursor-pointer select-none outline-none rounded-sm px-2 py-1.5 text-sm data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white"
+                          >
+                            {" "}
+                            <Power
+                              size={16}
+                              className={
+                                project.active
+                                  ? "text-green-400"
+                                  : "text-red-400"
+                              }
+                            />{" "}
+                            {project.active
+                              ? "Desativar projeto"
+                              : "Ativar projeto"}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator className="bg-zinc-800" />
+
+                          <DropdownMenuItem className="transition-colors cursor-pointer select-none outline-none rounded-sm px-2 py-1.5 text-sm data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white">
+                            <AlertDialogTrigger className="m-0 flex gap-2">
+                              <Trash2
+                                size={16}
+                                className="text-red-400"
+                              />
+                              Excluir projeto{" "}
+                            </AlertDialogTrigger>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </AlertDialog>
                   </div>
 
                   <Link
@@ -286,7 +331,7 @@ const Dashboard = ({ projects = [] }) => {
                       </div>
                       <Badge
                         className={`${
-                          project.active ? "bg-green-600" : "bg-red-600"
+                          project.active ? "!bg-green-600" : "!bg-red-600"
                         } text-xs font-medium py-1 px-4 rounded-full inline-block`}
                       >
                         {project.active ? "Ativo" : "Inativo"}

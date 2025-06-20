@@ -7,6 +7,7 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers"
 import { createRoot } from "react-dom/client"
 import { configureEcho } from "@laravel/echo-react"
 import { Toaster } from "@/components/ui/sonner"
+
 configureEcho({
   broadcaster: "reverb",
 })
