@@ -50,8 +50,9 @@ const DropdownMenuContent = React.forwardRef(({ className, sideOffset = 4, ...pr
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border border-neutral-200 bg-white p-1 text-neutral-950 shadow-md dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50",
+        "z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-lg border-1 bg-white p-1 shadow-md dark:text-neutral-50",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
+        " text-neutral-950 dark:text-white text-white rounded-lg  dark:!border-zinc-700/50 dark:!bg-zinc-900/80 backdrop-blur-md shadow-lg",
         className
       )}
       {...props} />
@@ -64,6 +65,7 @@ const DropdownMenuItem = React.forwardRef(({ className, inset, ...props }, ref) 
     ref={ref}
     className={cn(
       "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-neutral-100 focus:text-neutral-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0 dark:focus:bg-neutral-800 dark:focus:text-neutral-50",
+      "transition-colors cursor-pointer select-none outline-none rounded-sm px-2 py-1.5 text-sm data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white",
       inset && "pl-8",
       className
     )}

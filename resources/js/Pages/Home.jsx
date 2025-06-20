@@ -170,7 +170,7 @@ const Dashboard = ({ projects = [] }) => {
         </div>
 
         <div className="w-1/2 dark">
-          <Command className=" relative overflow-hidden rounded-lg border-1 border-zinc-700/50 bg-zinc-900/80 backdrop-blur-md shadow-lg md:min-w-[450px]">
+          <Command className=" relative md:min-w-[450px]">
             <CommandInput
               shortcut
               ref={commandInputRef}
@@ -275,17 +275,16 @@ const Dashboard = ({ projects = [] }) => {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                       {/* menu com opcoes sobre o projeto */}
-                      <DropdownMenu className="bg-zinc-800 ">
+                      <DropdownMenu>
                         <DropdownMenuTrigger className="">
                           <EllipsisVertical
                             size={22}
                             className="text-gray-400"
                           />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-48 text-white rounded-lg border-1 border-zinc-700/50 bg-zinc-900/80 backdrop-blur-md shadow-lg">
+                        <DropdownMenuContent className="w-48 ">
                           <DropdownMenuItem
                             onSelect={() => toggleActiveProject(project.id)}
-                            className="transition-colors cursor-pointer select-none outline-none rounded-sm px-2 py-1.5 text-sm data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white"
                           >
                             {" "}
                             <Power
@@ -302,7 +301,7 @@ const Dashboard = ({ projects = [] }) => {
                           </DropdownMenuItem>
                           <DropdownMenuSeparator className="bg-zinc-800" />
 
-                          <DropdownMenuItem className="transition-colors cursor-pointer select-none outline-none rounded-sm px-2 py-1.5 text-sm data-[highlighted]:bg-zinc-800 data-[highlighted]:text-white">
+                          <DropdownMenuItem >
                             <AlertDialogTrigger className="m-0 flex gap-2">
                               <Trash2
                                 size={16}
