@@ -22,17 +22,44 @@ createInertiaApp({
   eager: true,
   setup({ el, App, props }) {
     const root = createRoot(el)
-    root.render(
-      <>
-        <Toaster
-          expand
-          richColors={true}
-          theme="dark"
-          position="top-center"
-        />
-        <App {...props} />
-      </>
-    )
+
+    // 1. Create a function that renders our app with a given theme
+    const renderAppWithTheme = (currentTheme) => {
+      root.render(
+        <>
+          <Toaster
+            theme={currentTheme} // <-- The theme is now a dynamic variable
+            expand
+            className="toaster"
+            richColors={true}
+            position="top-center"
+            duration={5000} // I noticed you had 50000, adjusted to 5s
+          />
+          <App {...props} />
+        </>
+      )
+    }
+
+    // 2. Determine the initial theme from the <html> tag and render for the first time
+    const initialTheme = document.documentElement.classList.contains("dark")
+      ? "dark"
+      : "light"
+    renderAppWithTheme(initialTheme)
+
+    // 3. Set up an observer to watch for class changes on the <html> element
+    const observer = new MutationObserver(() => {
+      const newTheme = document.documentElement.classList.contains("dark")
+        ? "dark"
+        : "light"
+      // 4. When the class changes, re-render the app with the new theme
+      renderAppWithTheme(newTheme)
+    })
+
+    // Start observing
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    })
   },
   progress: {
     color: "transparent",
