@@ -141,13 +141,11 @@ const Dashboard = ({ projects = [] }) => {
   }, [])
 
   useEffect(() => {
-    console.log(currentProjects)
     const filter = taskFilters.find((f) => f.active)
     filterProjects(filter)
   }, [currentProjects])
 
   useEcho(`projects`, "ProjectUpdated", (e) => {
-    console.log(e)
     setCurrentProjects((prevProjects) =>
       prevProjects.map((project) =>
         project.id === e.project.id ? e.project : project

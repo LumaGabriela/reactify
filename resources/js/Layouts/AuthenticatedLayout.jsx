@@ -8,7 +8,6 @@ const AuthenticatedLayout = ({ children }) => {
   const { message, status, flash_key } = usePage().props.flash
 
   useEffect(() => {
-    console.log(message, status)
 
     if (!message || !status) return
 

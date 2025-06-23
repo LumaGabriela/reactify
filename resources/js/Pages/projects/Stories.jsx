@@ -220,6 +220,8 @@ const Stories = ({ project, setProject }) => {
     router.delete(route("story.delete", storyId))
   }
 
+
+
   useEffect(() => {
     console.log(aiGeneratedStories)
   }, [aiGeneratedStories])
@@ -233,7 +235,7 @@ const Stories = ({ project, setProject }) => {
             className=""
           >
             <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
-              <Badge className="bg-violet-600 border-0">
+              <Badge className="!bg-violet-600 border-0">
                 {
                   project?.stories?.filter((story) => story.type === "user")
                     .length
@@ -309,7 +311,7 @@ const Stories = ({ project, setProject }) => {
             className=""
           >
             <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
-             <Badge className="bg-teal-600 border-0">{
+             <Badge className="!bg-teal-600 border-0">{
                 project?.stories?.filter((story) => story.type === "system")
                   .length
               }

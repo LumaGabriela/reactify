@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {  CircleX, Pencil, Check, ChevronDown } from 'lucide-react';
+import {  CircleX, Pencil, Check, ChevronDown, LoaderCircle } from 'lucide-react';
 import { ModalConfirmation, ModalSelect } from '@/Components/Modals';
 import TextArea from '@/Components/TextArea';
 
@@ -16,12 +16,14 @@ const StoryCard = ({
   deleteConfirmId,
   toggleDeleteConfirm,
   deleteStory,
-  setDeleteConfirmId
+  setDeleteConfirmId,
 }) => {
   const [storyTypes] = useState([
     { color: 'bg-violet-600', title: 'user' },
     { color: 'bg-teal-600', title: 'system' },
   ])
+
+     const isTemporary = typeof story.id === 'string' && story.id.startsWith('temp-');
   return (
     <div className={`story bg-gray-800 rounded-lg p-2 shadow-md col-span-1`}>
       <div className="flex items-center mb-2 relative">
@@ -58,7 +60,9 @@ const StoryCard = ({
           </div>
         </div>
         <div className="flex gap-1">
+          {isTemporary && <LoaderCircle className='text-indigo-400 animate-spin'/>}
           <button
+          disabled={isTemporary}
             className={`edit flex p-1 hover:bg-gray-700 rounded transition-colors ${editingId === story.id ? 'bg-green-700 hover:bg-green-800' : ''}`}
             onClick={() => editStory(story)}
           >
@@ -71,6 +75,7 @@ const StoryCard = ({
             )}
           </button>
           <button
+            disabled={isTemporary}
             className="p-1 flex hover:bg-gray-700 rounded"
             onClick={() => toggleDeleteConfirm(story.id)}
           >
