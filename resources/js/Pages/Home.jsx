@@ -99,7 +99,7 @@ const Dashboard = ({ projects = [] }) => {
     )
     setCurrentProjects(updatedProjects)
 
-    router.put(route("project.toggle-active", projectId))
+    router.patch(route("project.toggle-active", projectId))
   }
 
   const deleteProject = (projectId) => {
@@ -119,9 +119,7 @@ const Dashboard = ({ projects = [] }) => {
     }
 
     document.addEventListener("keydown", focusCommandInput)
-    return () => {
-      document.removeEventListener("keydown", focusCommandInput)
-    }
+    return () => document.removeEventListener("keydown", focusCommandInput)
   }, [])
 
   useEffect(() => {
@@ -331,7 +329,7 @@ const Dashboard = ({ projects = [] }) => {
                       <Badge
                         className={`${
                           project.active ? "!bg-green-600" : "!bg-red-600"
-                        } text-xs font-medium py-1 px-4 rounded-full inline-block`}
+                        } text-xs text-white font-semibold py-1 px-4 rounded-full inline-block`}
                       >
                         {project.active ? "Ativo" : "Inativo"}
                       </Badge>

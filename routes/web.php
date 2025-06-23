@@ -18,7 +18,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/create', [ProjectController::class, 'store'])->name('project.store');
     Route::get('/{project}', [ProjectController::class, 'show'])->name('project.show');
     Route::patch('/{project}', [ProjectController::class, 'update'])->name('project.update');
-    Route::put('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggle-active');
+    Route::patch('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggle-active');
     Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
   });
 
