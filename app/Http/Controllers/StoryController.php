@@ -8,7 +8,6 @@ use App\Http\Requests\BulkStoreStoryRequest;
 use App\Http\Requests\UpdateStoryRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Foundation\Http\FormRequest;
 
 class StoryController extends Controller
 {
