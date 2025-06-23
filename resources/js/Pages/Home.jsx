@@ -41,13 +41,28 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Alert } from "bootstrap"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+  DialogClose,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 const Dashboard = ({ projects = [] }) => {
   const [currentProjects, setCurrentProjects] = useState(projects)
   const [filteredProjects, setFilteredProjects] = useState(currentProjects)
   const commandInputRef = React.useRef(null)
   const today = new Date()
+  const [newProject, setNewProject] = useState({
+    title: "",
+    description: "",
+  })
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     weekday: "short",
     month: "short",
@@ -56,7 +71,6 @@ const Dashboard = ({ projects = [] }) => {
   }).format(today)
 
   const props = usePage().props
-  const [showModal, setShowModal] = useState(false)
 
   const [taskFilters, setTaskFilters] = useState([
     { name: "Todos", active: true },
@@ -93,6 +107,11 @@ const Dashboard = ({ projects = [] }) => {
     }
   }
 
+  const createProject = (e) => {
+    e.preventDefault()
+    console.log(e)
+    router.post(route("project.store"), newProject)
+  }
   const toggleActiveProject = (projectId) => {
     const updatedProjects = currentProjects.map((p) =>
       p.id === projectId ? { ...p, active: !p.active } : p
@@ -117,7 +136,6 @@ const Dashboard = ({ projects = [] }) => {
         if (commandInputRef.current) commandInputRef.current.focus()
       }
     }
-
     document.addEventListener("keydown", focusCommandInput)
     return () => document.removeEventListener("keydown", focusCommandInput)
   }, [])
@@ -147,24 +165,79 @@ const Dashboard = ({ projects = [] }) => {
   return (
     <div className=" text-white p-6 rounded w-full mx-auto">
       {/* Header */}
-      {showModal && (
-        <ModalNewProject
-          message={"Create a new project"}
-          onCancel={() => setShowModal(false)}
-        />
-      )}
       <div className="flex min-h-[15rem] justify-between items-center mb-2 gap-2">
         <div className=" flex flex-col size-full relative">
           <p className="text-gray-400 text-sm mb-2">Today</p>
           <p className="font-medium text-nowrap">{formattedDate}</p>
-          <Button
-            onClick={() => setShowModal(true)}
-            variant="default"
-            asChild
-            className="flex flex-col justify-center items-center bg-purple-1 h-[28rem] hover:bg-indigo-500/80 transition-colors rounded p-4 w-full max-w-3xl h-full cursor-pointer"
-          >
-            <p className="font-bold text-lg dark:text-white">Criar Projeto</p>
-          </Button>
+
+          {/* dialog para criar projeto  */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="default"
+                asChild
+                className="flex flex-col justify-center items-center bg-purple-1 h-[28rem] hover:bg-indigo-500/80 transition-colors rounded p-4 w-full max-w-3xl h-full cursor-pointer"
+              >
+                <p className="font-bold text-lg dark:text-white">
+                  Criar Projeto
+                </p>
+              </Button>
+            </DialogTrigger>{" "}
+            <DialogContent className="sm:max-w-[425px]">
+              <form
+                className="space-y-4"
+                onSubmit={createProject}
+              >
+                <DialogHeader>
+                  <DialogTitle>Criar Novo Projeto</DialogTitle>
+                  <DialogDescription>
+                    Preencha os campos abaixo para criar um novo projeto.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="grid gap-4">
+                  <div className="grid gap-3">
+                    <Label htmlFor="title-1">Nome</Label>
+                    <Input
+                      placeholder="Nome do Projeto"
+                      id="title-1"
+                      name="title"
+                      value={newProject.title}
+                      onChange={(e) =>
+                        setNewProject({ ...newProject, title: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="grid gap-3">
+                    <Label htmlFor="description">Descrição</Label>
+                    <Input
+                      placeholder="Descrição do Projeto"
+                      id="description-1"
+                      name="description"
+                      value={newProject.description}
+                      onChange={(e) =>
+                        setNewProject({
+                          ...newProject,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                    >
+                      Cancelar
+                    </Button>
+                  </DialogClose>
+                  <Button type="submit">Criar Projeto</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="w-1/2 dark">
@@ -299,7 +372,7 @@ const Dashboard = ({ projects = [] }) => {
                           </DropdownMenuItem>
                           <DropdownMenuSeparator className="bg-zinc-800" />
 
-                          <DropdownMenuItem >
+                          <DropdownMenuItem>
                             <AlertDialogTrigger className="m-0 flex gap-2">
                               <Trash2
                                 size={16}
