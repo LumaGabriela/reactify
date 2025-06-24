@@ -1,21 +1,40 @@
-import React, { useState, useEffect } from "react"
-import { Plus, Sparkles, FileText, X, Info } from "lucide-react"
-import { StoryCard } from "@/Components/Card"
+import React, { useState, useEffect, useRef } from "react"
+import {
+  Plus,
+  Sparkles,
+  FileText,
+  X,
+  Pencil,
+  Info,
+  Check,
+  LoaderCircle,
+} from "lucide-react"
 import { router } from "@inertiajs/react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import TextareaAutosize from "react-textarea-autosize"
 import {
   Popover,
   PopoverArrow,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Card, CardContent } from "@/components/ui/card"
 import axios from "axios"
 
 const Stories = ({ project, setProject }) => {
+  const [storyTypes] = useState([
+    { color: "bg-violet-600", title: "user" },
+    { color: "bg-teal-600", title: "system" },
+  ])
+  const [isEditing, setIsEditing] = useState(false)
   // Estado para controlar qual story está sendo editada
   const [editingId, setEditingId] = useState(null)
   // Estado para armazenar o valor temporário durante a edição
   const [editValue, setEditValue] = useState("")
+  const [currentTitle, setCurrentTitle] = useState("")
+
+  const textareaRef = useRef(null)
   // Estado para controlar qual story está com o seletor de tipo aberto
   const [typeSelectId, setTypeSelectId] = useState(null)
   // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
@@ -30,6 +49,9 @@ const Stories = ({ project, setProject }) => {
   const [showInterview, setShowInterview] = useState(false)
   const [savedInterview, setSavedInterview] = useState("")
 
+  //
+  const isTemporary = (story) =>
+    typeof story.id === "string" && story.id.startsWith("temp-")
   // Função para gerar stories via IA
   const generateStories = async () => {
     if (!showAiInput) {
@@ -133,6 +155,15 @@ const Stories = ({ project, setProject }) => {
       setEditingId(null) // Fecha a edição caso esteja aberta
     }
   }
+
+  const handleEditClick = () => {
+    if (isEditing) {
+      // Se já estiver editando, chama a função onSave passada pelo componente pai
+      onSave(story.id, currentTitle)
+    }
+    // Inverte o estado de edição
+    setIsEditing(!isEditing)
+  }
   // Função para adicionar uma nova story
   const addNewStory = () => {
     setProject({
@@ -219,8 +250,12 @@ const Stories = ({ project, setProject }) => {
     setDeleteConfirmId(null) // Fecha o diálogo de confirmação
     router.delete(route("story.delete", storyId))
   }
-
-
+  useEffect(() => {
+    if (isEditing) {
+      textareaRef.current?.focus()
+      textareaRef.current?.select()
+    }
+  }, [isEditing])
 
   useEffect(() => {
     console.log(aiGeneratedStories)
@@ -263,22 +298,124 @@ const Stories = ({ project, setProject }) => {
             .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
             .map((story, i) => {
               return (
-                <StoryCard
+                <Card
                   key={story.id}
-                  story={story}
-                  toggleTypeSelect={toggleTypeSelect}
-                  changeStoryType={changeStoryType}
-                  setTypeSelectId={setTypeSelectId}
-                  typeSelectId={typeSelectId}
-                  editingId={editingId}
-                  editValue={editValue}
-                  handleInputChange={handleInputChange}
-                  editStory={editStory}
-                  deleteConfirmId={deleteConfirmId}
-                  toggleDeleteConfirm={toggleDeleteConfirm}
-                  deleteStory={deleteStory}
-                  setDeleteConfirmId={setDeleteConfirmId}
-                />
+                  className="dark:!bg-gray-800 border-0"
+                >
+                  <CardContent className="p-2 flex items-center justify-between gap-2">
+                    <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
+                      {/* Badge com Popover para Mudar o Tipo */}
+                      <Popover
+                        open={typeSelectId === story.id}
+                        onOpenChange={() => toggleTypeSelect(story.id)}
+                      >
+                        <PopoverTrigger>
+                          <Badge
+                            className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer ${
+                              story.type === "system"
+                                ? "!bg-teal-600"
+                                : "!bg-violet-600"
+                            }`}
+                          >
+                            {`US${story.id}`}
+                          </Badge>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
+                          <div className="flex flex-col gap-1">
+                            <Button
+                              variant="ghost"
+                              className="h-auto p-2 justify-start"
+                              onClick={() => changeStoryType(story.id, "user")}
+                            >
+                              <Badge
+                                className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer !bg-violet-600`}
+                              >
+                                {`US${story.id}`}
+                              </Badge>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              className="h-auto p-2 justify-start"
+                              onClick={() =>
+                                changeStoryType(story.id, "system")
+                              }
+                            >
+                              <Badge
+                                className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer !bg-teal-600`}
+                              >
+                                {`SS${story.id}`}
+                              </Badge>
+                            </Button>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+
+                      {/* Lógica de Edição Corrigida */}
+                      {editingId === story.id ? (
+                        <TextareaAutosize
+                          ref={editingId === story.id ? textareaRef : null} // Associa o ref apenas ao textarea ativo
+                          value={editValue}
+                          onChange={handleInputChange}
+                          className="w-full border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-semibold dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
+                        />
+                      ) : (
+                        <p className="m-0 font-semibold dark:text-slate-200 break-words w-full">
+                          {story.title}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center">
+                      {isTemporary(story) && (
+                        <LoaderCircle className="text-indigo-400 animate-spin" />
+                      )}
+                      {/* Botão de Editar/Salvar */}
+                      <Button
+                        disabled={isTemporary(story)}
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => editStory(story)}
+                        aria-label={
+                          editingId === story.id ? "Salvar" : "Editar"
+                        }
+                      >
+                        {editingId === story.id ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Pencil className="h-4 w-4 dark:text-slate-400" />
+                        )}
+                      </Button>
+                      {/* Botão de Excluir com Popover de Confirmação */}
+                      <Popover
+                        open={deleteConfirmId === story.id}
+                        onOpenChange={() => toggleDeleteConfirm(story.id)}
+                      >
+                        <PopoverTrigger asChild>
+                          <Button
+                            disabled={isTemporary(story)}
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleDeleteConfirm(story.id)}
+                            aria-label="Excluir"
+                          >
+                            <X className="h-4 w-4 dark:text-slate-400" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto bg-red-950/50 backdrop-blur border-red-500 text-white p-2">
+                          <p className="text-sm">Confirmar exclusão?</p>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="w-full mt-2"
+                            onClick={() => deleteStory(story.id)}
+                          >
+                            Sim, excluir
+                          </Button>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  </CardContent>
+                </Card>
               )
             })
         ) : (
@@ -311,10 +448,11 @@ const Stories = ({ project, setProject }) => {
             className=""
           >
             <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
-             <Badge className="!bg-teal-600 border-0">{
-                project?.stories?.filter((story) => story.type === "system")
-                  .length
-              }
+              <Badge className="!bg-teal-600 border-0">
+                {
+                  project?.stories?.filter((story) => story.type === "system")
+                    .length
+                }
               </Badge>{" "}
               System Stories
               <Info
@@ -337,22 +475,124 @@ const Stories = ({ project, setProject }) => {
             .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
             .map((story, i) => {
               return (
-                <StoryCard
+                <Card
                   key={story.id}
-                  story={story}
-                  toggleTypeSelect={toggleTypeSelect}
-                  changeStoryType={changeStoryType}
-                  setTypeSelectId={setTypeSelectId}
-                  typeSelectId={typeSelectId}
-                  editingId={editingId}
-                  editValue={editValue}
-                  handleInputChange={handleInputChange}
-                  editStory={editStory}
-                  deleteConfirmId={deleteConfirmId}
-                  toggleDeleteConfirm={toggleDeleteConfirm}
-                  deleteStory={deleteStory}
-                  setDeleteConfirmId={setDeleteConfirmId}
-                />
+                  className="dark:!bg-gray-800 border-0"
+                >
+                  <CardContent className="p-2 flex items-center justify-between gap-2">
+                    <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
+                      {/* Badge com Popover para Mudar o Tipo */}
+                      <Popover
+                        open={typeSelectId === story.id}
+                        onOpenChange={() => toggleTypeSelect(story.id)}
+                      >
+                        <PopoverTrigger>
+                          <Badge
+                            className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer ${
+                              story.type === "system"
+                                ? "!bg-teal-600"
+                                : "!bg-violet-600"
+                            }`}
+                          >
+                            {`SS${story.id}`}
+                          </Badge>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
+                          <div className="flex flex-col gap-1">
+                            <Button
+                              variant="ghost"
+                              className="h-auto p-2 justify-start"
+                              onClick={() => changeStoryType(story.id, "user")}
+                            >
+                              <Badge
+                                className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer !bg-violet-600`}
+                              >
+                                {`US${story.id}`}
+                              </Badge>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              className="h-auto p-2 justify-start"
+                              onClick={() =>
+                                changeStoryType(story.id, "system")
+                              }
+                            >
+                              <Badge
+                                className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer !bg-teal-600`}
+                              >
+                                {`SS${story.id}`}
+                              </Badge>
+                            </Button>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+
+                      {/* Lógica de Edição Corrigida */}
+                      {editingId === story.id ? (
+                        <TextareaAutosize
+                          ref={editingId === story.id ? textareaRef : null} // Associa o ref apenas ao textarea ativo
+                          value={editValue}
+                          onChange={handleInputChange}
+                          className="w-full border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-semibold dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
+                        />
+                      ) : (
+                        <p className="m-0 font-semibold dark:text-slate-200 break-words w-full">
+                          {story.title}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center">
+                      {isTemporary(story) && (
+                        <LoaderCircle className="text-indigo-400 animate-spin" />
+                      )}
+                      {/* Botão de Editar/Salvar */}
+                      <Button
+                        disabled={isTemporary(story)}
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => editStory(story)}
+                        aria-label={
+                          editingId === story.id ? "Salvar" : "Editar"
+                        }
+                      >
+                        {editingId === story.id ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Pencil className="h-4 w-4 dark:text-slate-400" />
+                        )}
+                      </Button>
+                      {/* Botão de Excluir com Popover de Confirmação */}
+                      <Popover
+                        open={deleteConfirmId === story.id}
+                        onOpenChange={() => toggleDeleteConfirm(story.id)}
+                      >
+                        <PopoverTrigger asChild>
+                          <Button
+                            disabled={isTemporary(story)}
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleDeleteConfirm(story.id)}
+                            aria-label="Excluir"
+                          >
+                            <X className="h-4 w-4 dark:text-slate-400" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto bg-red-950/50 backdrop-blur border-red-500 text-white p-2">
+                          <p className="text-sm">Confirmar exclusão?</p>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="w-full mt-2"
+                            onClick={() => deleteStory(story.id)}
+                          >
+                            Sim, excluir
+                          </Button>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  </CardContent>
+                </Card>
               )
             })}
       </div>

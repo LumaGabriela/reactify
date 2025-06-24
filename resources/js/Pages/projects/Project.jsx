@@ -9,7 +9,6 @@ import Journeys from "./Journeys"
 import Goals from "./Goals"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import { PenLine, X } from "lucide-react"
-import { set } from "date-fns"
 
 const ProjectView = ({ projectDB = [] }) => {
   const [project, setProject] = useState({ ...projectDB })
@@ -87,7 +86,7 @@ const ProjectView = ({ projectDB = [] }) => {
   }, [activeMenu])
 
   useEffect(() => {
-    console.log(project?.stories)
+    console.log(project?.goal_sketches)
   }, [project])
 
   const renderContent = () => {
