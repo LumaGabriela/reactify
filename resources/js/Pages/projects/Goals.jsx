@@ -206,6 +206,34 @@ const Goals = ({ project, setProject }) => {
   return (
     <div className="goalSketches  rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
       <div className="flex flex-col gap-2 ">
+                {/* tooltip sobre as goals */}
+                <Popover>
+                  <PopoverTrigger
+                    asChild
+                    className=""
+                  >
+                    <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
+                      <Badge className={`border-0 ${typeColors[1].color}`}>
+                        {
+                          project?.goal_sketches?.filter((goal) => goal.type === "bg")
+                            .length
+                        }
+                      </Badge>{" "}
+                      Constraint Goals
+                      <Info
+                        className="text-gray-400"
+                        size={18}
+                      />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="bg-gray-800 text-white ">
+                    As histórias de usuário focam nas necessidades dos usuários do
+                    aplicativo, como a criação de contas para acessar o sistema, a
+                    gestão de playlists para organizar músicas e outras funcionalidades
+                    voltadas para a experiência do usuário.
+                    <PopoverArrow className="fill-gray-800" />
+                  </PopoverContent>
+                </Popover>
         {project.goal_sketches && project.goal_sketches.length > 0 ? (
           project?.goal_sketches
             .filter((goal) => goal.type === "cg")
@@ -225,7 +253,7 @@ const Goals = ({ project, setProject }) => {
                       >
                         <PopoverTrigger>
                           <Badge
-                            className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer 
+                            className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer 
                               ${
                                 typeColors.find(
                                   (color) => color.title === goal.type
@@ -248,7 +276,7 @@ const Goals = ({ project, setProject }) => {
                                 }
                               >
                                 <Badge
-                                  className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer ${type.color}`}
+                                  className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${type.color}`}
                                 >
                                   {`${type.title.toUpperCase()}${goal.id}`}
                                 </Badge>
@@ -288,7 +316,7 @@ const Goals = ({ project, setProject }) => {
                                 }
                               >
                                 <Badge
-                                  className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer ${type.color}`}
+                                  className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${type.color}`}
                                 >
                                   {type.title.toUpperCase()}
                                 </Badge>
@@ -383,6 +411,35 @@ const Goals = ({ project, setProject }) => {
         )}
       </div>
       <div className="flex flex-col gap-2 ">
+        {/* tooltip sobre as goals */}
+                <Popover>
+                  <PopoverTrigger
+                    asChild
+                    className=""
+                  >
+                    <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
+                       <Badge className={`border-0 ${typeColors[0].color}`}>
+                        {
+                          project?.goal_sketches?.filter((goal) => goal.type === "bg")
+                            .length
+                        }
+                      </Badge>{" "}
+                      Business Goals
+                      <Info
+                        className="text-gray-400"
+                        size={18}
+                      />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="bg-gray-800 text-white ">
+                    As histórias de usuário focam nas necessidades dos usuários do
+                    aplicativo, como a criação de contas para acessar o sistema, a
+                    gestão de playlists para organizar músicas e outras funcionalidades
+                    voltadas para a experiência do usuário.
+                    <PopoverArrow className="fill-gray-800" />
+                  </PopoverContent>
+                </Popover>
+                {/* cards de goals */}
         {project?.goal_sketches
           .filter((goal) => goal.type === "bg")
           .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
@@ -409,7 +466,7 @@ const Goals = ({ project, setProject }) => {
                               }
                               `}
                           >
-                            {`CG${goal.id}`}
+                            {`BG${goal.id}`}
                           </Badge>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
@@ -424,7 +481,7 @@ const Goals = ({ project, setProject }) => {
                                 }
                               >
                                 <Badge
-                                  className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer ${type.color}`}
+                                  className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${type.color}`}
                                 >
                                   {`${type.title.toUpperCase()}${goal.id}`}
                                 </Badge>
@@ -464,7 +521,7 @@ const Goals = ({ project, setProject }) => {
                                 }
                               >
                                 <Badge
-                                  className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer ${type.color}`}
+                                  className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${type.color}`}
                                 >
                                   {type.title.toUpperCase()}
                                 </Badge>
