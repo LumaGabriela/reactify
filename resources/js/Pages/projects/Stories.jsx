@@ -23,16 +23,15 @@ import { Card, CardContent } from "@/components/ui/card"
 import axios from "axios"
 
 const Stories = ({ project, setProject }) => {
-  const [storyTypes] = useState([
+  const colors = [
     { color: "bg-violet-600", title: "user" },
     { color: "bg-teal-600", title: "system" },
-  ])
+  ]
   const [isEditing, setIsEditing] = useState(false)
   // Estado para controlar qual story está sendo editada
   const [editingId, setEditingId] = useState(null)
   // Estado para armazenar o valor temporário durante a edição
   const [editValue, setEditValue] = useState("")
-  const [currentTitle, setCurrentTitle] = useState("")
 
   const textareaRef = useRef(null)
   // Estado para controlar qual story está com o seletor de tipo aberto
@@ -156,14 +155,6 @@ const Stories = ({ project, setProject }) => {
     }
   }
 
-  const handleEditClick = () => {
-    if (isEditing) {
-      // Se já estiver editando, chama a função onSave passada pelo componente pai
-      onSave(story.id, currentTitle)
-    }
-    // Inverte o estado de edição
-    setIsEditing(!isEditing)
-  }
   // Função para adicionar uma nova story
   const addNewStory = () => {
     setProject({
