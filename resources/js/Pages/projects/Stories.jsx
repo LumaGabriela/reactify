@@ -604,6 +604,24 @@ const Stories = ({ project, setProject }) => {
             className="mr-2"
           />
           <span>{showAiInput ? "Cancelar" : "Gerar com IA"}</span>
+          {/* Botão de Info centralizado */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button 
+                className="p-2 rounded-lg transition-colors"
+                onClick={(e) => e.stopPropagation()} // Previne a propagação do evento
+              >
+                <Info
+                  className="text-gray-400 cursor-pointer"
+                  size={15}
+                />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="bg-gray-800 text-white ">
+              Esta função utiliza IA para gerar Users Stories baseadas nas Persona's Goals e System Stories baseadas nas Restrições do produto e Constraint Goals.
+              <PopoverArrow className="fill-gray-800" />
+            </PopoverContent>
+          </Popover>
         </button>
       </div>
 

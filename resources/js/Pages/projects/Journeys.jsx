@@ -839,23 +839,25 @@ const Journeys = ({ project, setProject }) => {
             />
           )}
           <span>{isGeneratingAI ? "Gerando..." : "Gerar com IA"}</span>
+          {/* Botão de Info centralizado */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button 
+                className="p-2 rounded-lg transition-colors"
+                onClick={(e) => e.stopPropagation()} // Previne a propagação do evento
+              >
+                <Info
+                  className="text-gray-400 cursor-pointer"
+                  size={15}
+                />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="bg-gray-800 text-white ">
+              Esta função utiliza IA para gerar jornadas personalizadas baseadas nas Goals definidas nas Personas.
+              <PopoverArrow className="fill-gray-800" />
+            </PopoverContent>
+          </Popover>
         </button>
-
-        {/* Botão de Info centralizado */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <button className="p-2 rounded-lg hover:bg-gray-700 transition-colors">
-              <Info
-                className="text-gray-400 hover:text-white cursor-pointer"
-                size={18}
-              />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="bg-gray-800 text-white ">
-            Esta função utiliza IA para gerar jornadas personalizadas baseadas nas Goals definidas nas Personas.
-            <PopoverArrow className="fill-gray-800" />
-          </PopoverContent>
-        </Popover>
       </div>
     </div>
   )
