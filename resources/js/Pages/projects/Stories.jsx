@@ -24,8 +24,8 @@ import axios from "axios"
 
 const Stories = ({ project, setProject }) => {
   const colors = [
-    { color: "bg-violet-600", title: "user" },
-    { color: "bg-teal-600", title: "system" },
+    { color: "!bg-violet-600", title: "user" },
+    { color: "!bg-teal-600", title: "system" },
   ]
   // Estado para controlar qual story está sendo editada
   const [editingId, setEditingId] = useState(null)
@@ -307,30 +307,24 @@ const Stories = ({ project, setProject }) => {
                         </PopoverTrigger>
                         <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
                           <div className="flex flex-col gap-1">
-                            <Button
-                              variant="ghost"
-                              className="h-auto p-2 justify-start hover:bg-gray-700/80"
-                              onClick={() => changeStoryType(story.id, "user")}
-                            >
-                              <Badge
-                                className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer !bg-violet-600`}
+                            {colors.map((item, i) => (
+                              <Button
+                                key={i}
+                                variant="ghost"
+                                className="h-auto p-2 justify-start hover:bg-gray-700/80"
+                                onClick={() =>
+                                  changeStoryType(story.id, item.title)
+                                }
                               >
-                                {`US${story.id}`}
-                              </Badge>
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              className="h-auto p-2 justify-start hover:bg-gray-700/80"
-                              onClick={() =>
-                                changeStoryType(story.id, "system")
-                              }
-                            >
-                              <Badge
-                                className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer !bg-teal-600`}
-                              >
-                                {`SS${story.id}`}
-                              </Badge>
-                            </Button>
+                                <Badge
+                                  className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${item.color}`}
+                                >
+                                  {`${
+                                    item.title === "system" ? "ss" : "us"
+                                  }`.toUpperCase()}
+                                </Badge>
+                              </Button>
+                            ))}
                           </div>
                         </PopoverContent>
                       </Popover>
@@ -462,6 +456,7 @@ const Stories = ({ project, setProject }) => {
             .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
             .map((story, i) => {
               return (
+                // Card para system story
                 <Card
                   key={story.id}
                   className="dark:!bg-gray-800 bg-gray-300 border-0"
@@ -486,30 +481,24 @@ const Stories = ({ project, setProject }) => {
                         </PopoverTrigger>
                         <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
                           <div className="flex flex-col gap-1">
-                            <Button
-                              variant="ghost"
-                              className="h-auto p-2 justify-start hover:bg-gray-700/80"
-                              onClick={() => changeStoryType(story.id, "user")}
-                            >
-                              <Badge
-                                className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer !bg-violet-600`}
+                            {colors.map((item, i) => (
+                              <Button
+                                key={i}
+                                variant="ghost"
+                                className="h-auto p-2 justify-start hover:bg-gray-700/80"
+                                onClick={() =>
+                                  changeStoryType(story.id, item.title)
+                                }
                               >
-                                {`US${story.id}`}
-                              </Badge>
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              className="h-auto p-2 justify-start hover:bg-gray-700/80"
-                              onClick={() =>
-                                changeStoryType(story.id, "system")
-                              }
-                            >
-                              <Badge
-                                className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer !bg-teal-600`}
-                              >
-                                {`SS${story.id}`}
-                              </Badge>
-                            </Button>
+                                <Badge
+                                  className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${item.color}`}
+                                >
+                                  {`${
+                                    item.title === "system" ? "ss" : "us"
+                                  }`.toUpperCase()}
+                                </Badge>
+                              </Button>
+                            ))}
                           </div>
                         </PopoverContent>
                       </Popover>
@@ -568,7 +557,7 @@ const Stories = ({ project, setProject }) => {
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto bg-stone-950/50 backdrop-blur  text-white p-2">
-                          <p className="text-sm">Excluir {`SS${story.id}`}?</p>
+                          <p className="text-sm">Excluir {`US${story.id}`}?</p>
                           <Button
                             variant="destructive"
                             size="sm"

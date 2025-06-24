@@ -260,7 +260,7 @@ const Goals = ({ project, setProject }) => {
                               }
                               `}
                           >
-                            {`CG${isTemporary(goal) ? "" : goal.id}`}
+                            {`${goal.type.toUpperCase()}${isTemporary(goal) ? "" : goal.id}`}
                           </Badge>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
@@ -277,7 +277,7 @@ const Goals = ({ project, setProject }) => {
                                 <Badge
                                   className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${type.color}`}
                                 >
-                                  {`${type.title.toUpperCase()}${goal.id}`}
+                                  {`${type.title.toUpperCase()}`}
                                 </Badge>
                               </Button>
                             ))}
@@ -443,159 +443,159 @@ const Goals = ({ project, setProject }) => {
           .filter((goal) => goal.type === "bg")
           .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
           .map((goal, i) => (
-            <Card
-              key={goal.id}
-              className="dark:!bg-gray-800 bg-gray-300 border-0"
-            >
-              <CardContent className="p-2 flex items-center justify-between gap-2">
-                <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
-                  {/* Badge com Popover para Mudar o Tipo */}
-                  <div className="flex items-center gap-2">
-                    <Popover
-                      open={typeSelectId === goal.id}
-                      onOpenChange={() => toggleTypeSelect(goal.id)}
-                    >
-                      <PopoverTrigger>
-                        <Badge
-                          className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer 
+              <Card
+                key={goal.id}
+                className="dark:!bg-gray-800 bg-gray-300 border-0"
+              >
+                <CardContent className="p-2 flex items-center justify-between gap-2">
+                  <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
+                    {/* Badge com Popover para Mudar o Tipo */}
+                    <div className="flex items-center gap-2">
+                      <Popover
+                        open={typeSelectId === goal.id}
+                        onOpenChange={() => toggleTypeSelect(goal.id)}
+                      >
+                        <PopoverTrigger>
+                          <Badge
+                            className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer 
                               ${
                                 typeColors.find(
                                   (color) => color.title === goal.type
                                 )?.color
                               }
                               `}
-                        >
-                          {`BG${isTemporary(goal) ? "" : goal.id}`}
-                        </Badge>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
-                        <div className="flex flex-col gap-1">
-                          {typeColors.map((type, i) => (
-                            <Button
-                              key={i}
-                              variant="ghost"
-                              className="h-auto p-2 justify-start hover:bg-gray-700/80"
-                              onClick={() =>
-                                changeGoalType(goal.id, type.title)
-                              }
-                            >
-                              <Badge
-                                className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${type.color}`}
+                          >
+                            {`${goal.type.toUpperCase()}${isTemporary(goal) ? "" : goal.id}`}
+                          </Badge>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
+                          <div className="flex flex-col gap-1">
+                            {typeColors.map((type, i) => (
+                              <Button
+                                key={i}
+                                variant="ghost"
+                                className="h-auto p-2 justify-start hover:bg-gray-700/80"
+                                onClick={() =>
+                                  changeGoalType(goal.id, type.title)
+                                }
                               >
-                                {`${type.title.toUpperCase()}${goal.id}`}
-                              </Badge>
-                            </Button>
-                          ))}
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                                <Badge
+                                  className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${type.color}`}
+                                >
+                                  {`${type.title.toUpperCase()}`}
+                                </Badge>
+                              </Button>
+                            ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
 
-                    {/* popover com badge para mudar a prioridade  */}
-                    <Popover
-                      open={prioritySelectId === goal.id}
-                      onOpenChange={() => togglePrioritySelect(goal.id)}
-                    >
-                      <PopoverTrigger>
-                        <Badge
-                          className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer 
+                      {/* popover com badge para mudar a prioridade  */}
+                      <Popover
+                        open={prioritySelectId === goal.id}
+                        onOpenChange={() => togglePrioritySelect(goal.id)}
+                      >
+                        <PopoverTrigger>
+                          <Badge
+                            className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer 
                               ${
                                 priorityColors.find(
                                   (color) => color.title === goal.priority
                                 )?.color
                               }
                               `}
-                        >
-                          {goal.priority.toUpperCase()}
-                        </Badge>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
-                        <div className="flex flex-col gap-1">
-                          {priorityColors.map((type, i) => (
-                            <Button
-                              key={i}
-                              variant="ghost"
-                              className="h-auto p-2 justify-start hover:bg-gray-700/80"
-                              onClick={() =>
-                                changeGoalPriority(goal.id, type.title)
-                              }
-                            >
-                              <Badge
-                                className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${type.color}`}
+                          >
+                            {goal.priority.toUpperCase()}
+                          </Badge>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
+                          <div className="flex flex-col gap-1">
+                            {priorityColors.map((type, i) => (
+                              <Button
+                                key={i}
+                                variant="ghost"
+                                className="h-auto p-2 justify-start hover:bg-gray-700/80"
+                                onClick={() =>
+                                  changeGoalPriority(goal.id, type.title)
+                                }
                               >
-                                {type.title.toUpperCase()}
-                              </Badge>
-                            </Button>
-                          ))}
-                        </div>
+                                <Badge
+                                  className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${type.color}`}
+                                >
+                                  {type.title.toUpperCase()}
+                                </Badge>
+                              </Button>
+                            ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    {/* Lógica de Edição Corrigida */}
+                    {editingId === goal.id ? (
+                      <TextareaAutosize
+                        ref={editingId === goal.id ? textareaRef : null} // Associa o ref apenas ao textarea ativo
+                        value={editValue}
+                        onChange={handleInputChange}
+                        className="w-full border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-semibold dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
+                      />
+                    ) : (
+                      <p className="m-0 font-semibold dark:text-slate-200 break-words w-full">
+                        {goal.title}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    {isTemporary(goal) && (
+                      <LoaderCircle className="text-indigo-400 animate-spin" />
+                    )}
+                    {/* Botão de Editar/Salvar */}
+                    <Button
+                      disabled={isTemporary(goal)}
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => editGoal(goal)}
+                      className="hover:bg-slate-500/60"
+                      aria-label={editingId === goal.id ? "Salvar" : "Editar"}
+                    >
+                      {editingId === goal.id ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <Pencil className="h-4 w-4 dark:text-slate-400" />
+                      )}
+                    </Button>
+                    {/* Botão de Excluir com Popover de Confirmação */}
+                    <Popover
+                      open={deleteConfirmId === goal.id}
+                      onOpenChange={() => toggleDeleteConfirm(goal.id)}
+                    >
+                      <PopoverTrigger asChild>
+                        <Button
+                          disabled={isTemporary(goal)}
+                          variant="ghost"
+                          size="icon"
+                          className="hover:bg-slate-500/60"
+                          onClick={() => toggleDeleteConfirm(goal.id)}
+                          aria-label="Excluir"
+                        >
+                          <X className="h-4 w-4 dark:text-slate-400" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto bg-stone-950/50 backdrop-blur  text-white p-2">
+                        <p className="text-sm">Excluir {`US${goal.id}`}?</p>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="w-full mt-2"
+                          onClick={() => deleteGoal(goal.id)}
+                        >
+                          Excluir
+                        </Button>
                       </PopoverContent>
                     </Popover>
                   </div>
-                  {/* Lógica de Edição Corrigida */}
-                  {editingId === goal.id ? (
-                    <TextareaAutosize
-                      ref={editingId === goal.id ? textareaRef : null} // Associa o ref apenas ao textarea ativo
-                      value={editValue}
-                      onChange={handleInputChange}
-                      className="w-full border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-semibold dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
-                    />
-                  ) : (
-                    <p className="m-0 font-semibold dark:text-slate-200 break-words w-full">
-                      {goal.title}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-1">
-                  {isTemporary(goal) && (
-                    <LoaderCircle className="text-indigo-400 animate-spin" />
-                  )}
-                  {/* Botão de Editar/Salvar */}
-                  <Button
-                    disabled={isTemporary(goal)}
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => editGoal(goal)}
-                    className="hover:bg-slate-500/60"
-                    aria-label={editingId === goal.id ? "Salvar" : "Editar"}
-                  >
-                    {editingId === goal.id ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <Pencil className="h-4 w-4 dark:text-slate-400" />
-                    )}
-                  </Button>
-                  {/* Botão de Excluir com Popover de Confirmação */}
-                  <Popover
-                    open={deleteConfirmId === goal.id}
-                    onOpenChange={() => toggleDeleteConfirm(goal.id)}
-                  >
-                    <PopoverTrigger asChild>
-                      <Button
-                        disabled={isTemporary(goal)}
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-slate-500/60"
-                        onClick={() => toggleDeleteConfirm(goal.id)}
-                        aria-label="Excluir"
-                      >
-                        <X className="h-4 w-4 dark:text-slate-400" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto bg-stone-950/50 backdrop-blur  text-white p-2">
-                      <p className="text-sm">Excluir {`US${goal.id}`}?</p>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        className="w-full mt-2"
-                        onClick={() => deleteGoal(goal.id)}
-                      >
-                        Excluir
-                      </Button>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
           ))}
       </div>
       {/* Botão "Nova goal" */}
