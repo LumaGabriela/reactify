@@ -295,12 +295,13 @@ const Stories = ({ project, setProject }) => {
         {project?.stories?.length > 0 ? (
           project?.stories
             .filter((story) => story.type === "user")
-            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .sort((b, a) => new Date(b.created_at) - new Date(a.created_at))
             .map((story, i) => {
               return (
+                // card das user stories
                 <Card
                   key={story.id}
-                  className="dark:!bg-gray-800 border-0"
+                  className="dark:!bg-gray-800 bg-gray-300 border-0"
                 >
                   <CardContent className="p-2 flex items-center justify-between gap-2">
                     <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
@@ -324,7 +325,7 @@ const Stories = ({ project, setProject }) => {
                           <div className="flex flex-col gap-1">
                             <Button
                               variant="ghost"
-                              className="h-auto p-2 justify-start"
+                              className="h-auto p-2 justify-start hover:bg-gray-700/80"
                               onClick={() => changeStoryType(story.id, "user")}
                             >
                               <Badge
@@ -335,7 +336,7 @@ const Stories = ({ project, setProject }) => {
                             </Button>
                             <Button
                               variant="ghost"
-                              className="h-auto p-2 justify-start"
+                              className="h-auto p-2 justify-start hover:bg-gray-700/80"
                               onClick={() =>
                                 changeStoryType(story.id, "system")
                               }
@@ -365,7 +366,7 @@ const Stories = ({ project, setProject }) => {
                       )}
                     </div>
 
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       {isTemporary(story) && (
                         <LoaderCircle className="text-indigo-400 animate-spin" />
                       )}
@@ -375,6 +376,7 @@ const Stories = ({ project, setProject }) => {
                         variant="ghost"
                         size="icon"
                         onClick={() => editStory(story)}
+                        className="hover:bg-slate-500/60"
                         aria-label={
                           editingId === story.id ? "Salvar" : "Editar"
                         }
@@ -395,21 +397,22 @@ const Stories = ({ project, setProject }) => {
                             disabled={isTemporary(story)}
                             variant="ghost"
                             size="icon"
+                            className="hover:bg-slate-500/60"
                             onClick={() => toggleDeleteConfirm(story.id)}
                             aria-label="Excluir"
                           >
                             <X className="h-4 w-4 dark:text-slate-400" />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto bg-red-950/50 backdrop-blur border-red-500 text-white p-2">
-                          <p className="text-sm">Confirmar exclusão?</p>
+                        <PopoverContent className="w-auto bg-stone-950/50 backdrop-blur  text-white p-2">
+                          <p className="text-sm">Excluir {`US${story.id}`}?</p>
                           <Button
                             variant="destructive"
                             size="sm"
                             className="w-full mt-2"
                             onClick={() => deleteStory(story.id)}
                           >
-                            Sim, excluir
+                            Excluir
                           </Button>
                         </PopoverContent>
                       </Popover>
@@ -477,7 +480,7 @@ const Stories = ({ project, setProject }) => {
               return (
                 <Card
                   key={story.id}
-                  className="dark:!bg-gray-800 border-0"
+                  className="dark:!bg-gray-800 bg-gray-300 border-0"
                 >
                   <CardContent className="p-2 flex items-center justify-between gap-2">
                     <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
@@ -494,14 +497,14 @@ const Stories = ({ project, setProject }) => {
                                 : "!bg-violet-600"
                             }`}
                           >
-                            {`SS${story.id}`}
+                            {`US${story.id}`}
                           </Badge>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
                           <div className="flex flex-col gap-1">
                             <Button
                               variant="ghost"
-                              className="h-auto p-2 justify-start"
+                              className="h-auto p-2 justify-start hover:bg-gray-700/80"
                               onClick={() => changeStoryType(story.id, "user")}
                             >
                               <Badge
@@ -512,7 +515,7 @@ const Stories = ({ project, setProject }) => {
                             </Button>
                             <Button
                               variant="ghost"
-                              className="h-auto p-2 justify-start"
+                              className="h-auto p-2 justify-start hover:bg-gray-700/80"
                               onClick={() =>
                                 changeStoryType(story.id, "system")
                               }
@@ -542,7 +545,7 @@ const Stories = ({ project, setProject }) => {
                       )}
                     </div>
 
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       {isTemporary(story) && (
                         <LoaderCircle className="text-indigo-400 animate-spin" />
                       )}
@@ -552,6 +555,7 @@ const Stories = ({ project, setProject }) => {
                         variant="ghost"
                         size="icon"
                         onClick={() => editStory(story)}
+                        className="hover:bg-slate-500/60"
                         aria-label={
                           editingId === story.id ? "Salvar" : "Editar"
                         }
@@ -572,21 +576,22 @@ const Stories = ({ project, setProject }) => {
                             disabled={isTemporary(story)}
                             variant="ghost"
                             size="icon"
+                            className="hover:bg-slate-500/60"
                             onClick={() => toggleDeleteConfirm(story.id)}
                             aria-label="Excluir"
                           >
                             <X className="h-4 w-4 dark:text-slate-400" />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto bg-red-950/50 backdrop-blur border-red-500 text-white p-2">
-                          <p className="text-sm">Confirmar exclusão?</p>
+                        <PopoverContent className="w-auto bg-stone-950/50 backdrop-blur  text-white p-2">
+                          <p className="text-sm">Excluir {`SS${story.id}`}?</p>
                           <Button
                             variant="destructive"
                             size="sm"
                             className="w-full mt-2"
                             onClick={() => deleteStory(story.id)}
                           >
-                            Sim, excluir
+                            Excluir
                           </Button>
                         </PopoverContent>
                       </Popover>
