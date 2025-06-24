@@ -27,7 +27,6 @@ const Stories = ({ project, setProject }) => {
     { color: "bg-violet-600", title: "user" },
     { color: "bg-teal-600", title: "system" },
   ]
-  const [isEditing, setIsEditing] = useState(false)
   // Estado para controlar qual story está sendo editada
   const [editingId, setEditingId] = useState(null)
   // Estado para armazenar o valor temporário durante a edição
@@ -241,12 +240,7 @@ const Stories = ({ project, setProject }) => {
     setDeleteConfirmId(null) // Fecha o diálogo de confirmação
     router.delete(route("story.delete", storyId))
   }
-  useEffect(() => {
-    if (isEditing) {
-      textareaRef.current?.focus()
-      textareaRef.current?.select()
-    }
-  }, [isEditing])
+
 
   useEffect(() => {
     console.log(aiGeneratedStories)
