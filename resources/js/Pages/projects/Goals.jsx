@@ -107,7 +107,7 @@ const Goals = ({ project, setProject }) => {
       {
         title: "New Goal",
         type: "bg",
-        priority: "high",
+        priority: "med",
         project_id: project.id,
       },
       { preserveState: true, preserveScroll: true }
@@ -236,7 +236,7 @@ const Goals = ({ project, setProject }) => {
         {project.goal_sketches && project.goal_sketches.length > 0 ? (
           project?.goal_sketches
             .filter((goal) => goal.type === "cg")
-            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
             .map((goal, i) => (
               <Card
                 key={goal.id}
@@ -260,7 +260,6 @@ const Goals = ({ project, setProject }) => {
                               }
                               `}
                           >
-                            {`CG${goal.id}`}
                             {`CG${isTemporary(goal) ? "" : goal.id}`}
                           </Badge>
                         </PopoverTrigger>
@@ -442,7 +441,7 @@ const Goals = ({ project, setProject }) => {
         {/* cards de goals */}
         {project?.goal_sketches
           .filter((goal) => goal.type === "bg")
-          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
           .map((goal, i) => (
             <Card
               key={goal.id}
@@ -466,7 +465,6 @@ const Goals = ({ project, setProject }) => {
                               }
                               `}
                         >
-                          {`BG${goal.id}`}
                           {`BG${isTemporary(goal) ? "" : goal.id}`}
                         </Badge>
                       </PopoverTrigger>

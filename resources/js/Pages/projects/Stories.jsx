@@ -279,7 +279,7 @@ const Stories = ({ project, setProject }) => {
         {project?.stories?.length > 0 ? (
           project?.stories
             .filter((story) => story.type === "user")
-            .sort((b, a) => new Date(b.created_at) - new Date(a.created_at))
+            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
             .map((story, i) => {
               return (
                 // card das user stories
@@ -459,7 +459,7 @@ const Stories = ({ project, setProject }) => {
         {project?.stories?.length > 0 &&
           project?.stories
             .filter((story) => story.type === "system")
-            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
             .map((story, i) => {
               return (
                 <Card
