@@ -302,7 +302,7 @@ const Stories = ({ project, setProject }) => {
                                 : "!bg-violet-600"
                             }`}
                           >
-                            {`US${story.id}`}
+                            {`US${isTemporary(story) ? '' : story.id}`.toUpperCase()}
                           </Badge>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
@@ -476,7 +476,7 @@ const Stories = ({ project, setProject }) => {
                                 : "!bg-violet-600"
                             }`}
                           >
-                            {`US${story.id}`}
+                            {`SS${isTemporary(story) ? '' : story.id}`.toUpperCase()}
                           </Badge>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
