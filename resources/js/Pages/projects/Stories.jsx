@@ -241,7 +241,6 @@ const Stories = ({ project, setProject }) => {
     router.delete(route("story.delete", storyId))
   }
 
-
   useEffect(() => {
     console.log(aiGeneratedStories)
   }, [aiGeneratedStories])
