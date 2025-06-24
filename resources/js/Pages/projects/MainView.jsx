@@ -88,7 +88,7 @@ const ExpandableCard = ({
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {
       handleCancel()
-    } else if (e.key === "Enter") {
+    } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault()
       handleSave()
     }
