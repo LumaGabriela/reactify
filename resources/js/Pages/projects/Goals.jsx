@@ -94,6 +94,7 @@ const Goals = ({ project, setProject }) => {
       goal_sketches: [
         ...(project.goal_sketches || []),
         {
+          id: `temp-${Date.now()}`,
           title: "New Goal",
           type: "bg",
           priority: "med",
@@ -260,6 +261,7 @@ const Goals = ({ project, setProject }) => {
                               `}
                           >
                             {`CG${goal.id}`}
+                            {`CG${isTemporary(goal) ? "" : goal.id}`}
                           </Badge>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
@@ -465,6 +467,7 @@ const Goals = ({ project, setProject }) => {
                               `}
                         >
                           {`BG${goal.id}`}
+                          {`BG${isTemporary(goal) ? "" : goal.id}`}
                         </Badge>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
