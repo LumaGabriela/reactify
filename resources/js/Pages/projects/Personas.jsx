@@ -1,19 +1,140 @@
 import React, { useState, useEffect, useRef } from "react"
-import { createPortal } from "react-dom"
-import {
-  X,
-  Plus,
-  ChevronDown,
-  ChevronRight,
-  Edit,
-  Trash,
-  UserCircle2,
-  Check,
-} from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion" // Importando framer-motion
+import { X, Plus, Edit, Trash, UserCircle2, Check, Info } from "lucide-react"
 import { router } from "@inertiajs/react"
-import { ModalConfirmation } from "@/Components/Modals"
-import TextArea from "@/Components/TextArea"
 
+// Componentes Shadcn (permanecem os mesmos)
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Separator } from "@/components/ui/separator"
+import TextareaAutosize from "react-textarea-autosize"
+
+const PersonaItem = ({
+  item,
+  isEditing,
+  editValue,
+  onValueChange,
+  onEdit,
+  onSave,
+  onDelete,
+  textareaRef,
+}) => {
+  const [isHovered, setIsHovered] = useState(false)
+
+  // Função para salvar ao pressionar Enter e não Shift+Enter
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      onSave()
+    }
+  }
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative flex min-h-[40px] items-center justify-between rounded-md p-2 transition-colors hover:bg-gray-700/50 cursor-default"
+    >
+      {isEditing ? (
+        // --- NOVO MODO DE EDIÇÃO: Textarea com ícones ao lado ---
+        <div className="flex flex-col w-full items-center gap-2">
+          <TextareaAutosize
+            ref={textareaRef}
+            value={editValue || ""}
+            onChange={onValueChange}
+            onKeyDown={handleKeyDown}
+            className="flex-1 resize-none rounded-md border border-gray-700 bg-gray-900/50 p-2 text-sm transition-colors duration-200 focus-visible:border-indigo-500"
+            autoFocus
+          />
+          <div className="flex items-center gap-1">
+            {/* Botão de Salvar (agora como ícone 'Check') */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7 text-green-400 hover:bg-green-500/10 hover:text-green-400"
+              onClick={onSave}
+            >
+              <Check className="size-4" />
+            </Button>
+            {/* Botão de Cancelar (agora como ícone 'X') */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7 text-red-500/80 hover:bg-red-500/10 hover:text-red-500"
+              onClick={() => onEdit(null)}
+            >
+              <X className="size-4" />
+            </Button>
+          </div>
+        </div>
+      ) : (
+        // --- MODO DE VISUALIZAÇÃO ---
+        <p
+          className={`text-sm text-gray-300 pr-4 ${
+            // Padding para não sobrepor o texto
+            !item ? "italic text-gray-500" : ""
+          }`}
+        >
+          {item || "Clique em editar para adicionar"}
+        </p>
+      )}
+
+      {/* --- INTERAÇÃO DE HOVER RESTAURADA (versão original que você gostou) --- */}
+      <AnimatePresence>
+        {isHovered && !isEditing && (
+          <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute right-2 -translate-y-1/2 flex items-center rounded-md bg-gray-800 border border-gray-700 shadow-lg"
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              onClick={onEdit}
+            >
+              <Edit className="size-4" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-red-500/80 hover:text-red-500"
+              onClick={onDelete}
+            >
+              <Trash className="size-4" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 const Personas = ({ project, setProject }) => {
   const textareaRef = useRef(null)
   // Estado para controlar qual persona está expandida
@@ -63,16 +184,6 @@ const Personas = ({ project, setProject }) => {
       border: "border-green-400",
       bg: "bg-green-400",
     },
-  }
-
-
-  // Função para expandir/recolher uma persona
-  const togglePersona = (personaId) => {
-    if (expandedPersona === personaId) {
-      setExpandedPersona(null)
-    } else {
-      setExpandedPersona(personaId)
-    }
   }
 
   // Função para iniciar a edição de um item
@@ -285,257 +396,219 @@ const Personas = ({ project, setProject }) => {
     }
   }
 
+  useEffect(() => {
+    if (editingField.personaId && textareaRef.current) {
+      textareaRef.current.focus()
+    }
+  }, [editingField])
   return (
-    <div className="grid md:grid-cols-2 grid-flow-dense gap-4 w-full p-4">
+    // O TooltipProvider foi removido daqui, pois não há mais tooltips.
+    <div className="grid grid-cols-1 gap-2 w-full p-4">
+      {/* Cabeçalho da Seção */}
+      <div className="col-span-1 flex flex-col sm:flex-row gap-2">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button className="flex flex-1 items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
+              <UserCircle2 className="size-4 text-indigo-400" />
+              Personas
+              <Badge className="!bg-indigo-400 border-0">
+                {project?.personas?.length || 0}
+              </Badge>
+              <Info className="size-4 text-muted-foreground" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="bg-gray-800 text-white">
+            As personas representam os arquétipos de usuários do seu sistema...
+          </PopoverContent>
+        </Popover>
+        <Button
+          onClick={addNewPersona}
+          disabled={isSubmitting}
+          className="flex-1 sm:w-auto bg-indigo-400 hover:bg-indigo-500"
+        >
+          <Plus
+            size={18}
+            className="mr-2"
+          />
+          {isSubmitting ? "Criando..." : "Nova Persona"}
+        </Button>
+      </div>
+
+      {/* Grid de Personas */}
       {project.personas && project.personas.length > 0 ? (
         project.personas
           .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
           .map((persona) => (
-            <div
+            <Card
               key={persona.id}
-              className="persona bg-gray-3 col-span-1 rounded-lg shadow-md overflow-hidden"
+              className="col-span-1 dark:bg-gray-800 border-0 animate-fade-in"
             >
-              {/* Cabeçalho da Persona */}
-              <div
-                className="flex items-center justify-between py-2 px-3 cursor-pointer bg-gray-700 rounded-lg hover:bg-gray-1 transition-colors"
-                onClick={() => togglePersona(persona.id)}
-              >
-                <div className="flex items-center text-2xl">
-                  <UserCircle2
-                    className="text-purple-2 mr-2"
-                    size={20}
-                  />
+              <CardHeader className="flex-row items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <UserCircle2 className="h-8 w-8 text-indigo-400" />
                   {editingPersona === persona.id ? (
-                    <input
+                    <Input
                       type="text"
                       value={editPersonaName}
                       onChange={(e) => setEditPersonaName(e.target.value)}
                       onKeyUp={(e) => {
                         if (e.key === "Enter") saveEditPersona()
                       }}
-                      className="border-b-2 text-white p-0 bg-gray-800 border-none focus:ring-0 font-medium text-2xl rounded h-full focus:outline-none focus:border-purple-2"
+                      className="text-xl font-bold"
                       autoFocus
                     />
                   ) : (
-                    <p className="text-white font-medium m-0">
-                      {persona.name}
-                    </p>
+                    <CardTitle className="text-xl">{persona.name}</CardTitle>
                   )}
                 </div>
-
-                <div className="flex items-center">
+                <div className="flex items-center gap-1">
+                  {/* Botões de Salvar/Editar Nome sem Tooltip */}
                   {editingPersona === persona.id ? (
-                    <button
-                      className="p-1 bg-green-600 hover:bg-green-500 rounded-full mr-2"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        saveEditPersona()
-                      }}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={saveEditPersona}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-green-300"
-                      >
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    </button>
+                      <Check className="h-4 w-4 text-green-500" />
+                    </Button>
                   ) : (
-                    <button
-                      className="p-1 hover:bg-gray-1 rounded-full mr-2"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        startEditPersona(persona.id)
-                      }}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => startEditPersona(persona.id)}
                     >
-                      <Edit
-                        size={16}
-                        className="text-gray-300"
-                      />
-                    </button>
+                      <Edit className="h-4 w-4 text-muted-foreground" />
+                    </Button>
                   )}
-
-                  <button
-                    className="p-1 hover:bg-gray-1 rounded-full mr-2"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      confirmDeletePersona(persona.id)
-                    }}
+                  {/* Botão de Excluir Persona sem Tooltip */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-red-500/80 hover:text-red-500"
+                    onClick={() => confirmDeletePersona(persona.id)}
                   >
-                    <Trash
-                      size={16}
-                      className="text-red-400"
-                    />
-                  </button>
-
-                  {expandedPersona === persona.id ? (
-                    <ChevronRight
-                      className="text-white animate-rotate-90"
-                      size={20}
-                    />
-                  ) : (
-                    <ChevronDown
-                      className="text-white animate-rotate-90-reverse"
-                      size={20}
-                    />
-                  )}
+                    <Trash className="h-4 w-4" />
+                  </Button>
                 </div>
-              </div>
+              </CardHeader>
 
-              {/* Diálogo de confirmação de exclusão de persona */}
-              {deleteConfirmPersona === persona.id && (
-                <ModalConfirmation
-                  onConfirm={handleDeletePersona}
-                  onCancel={() => setDeleteConfirmPersona(null)}
-                  message="Deseja remover esta persona?"
-                />
-              )}
-
-              {/* Conteúdo da Persona */}
-              {expandedPersona === persona.id && (
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
-                  {["profile", "expectations", "goals"].map(
-                    (field) => (
-                      <div
-                        key={field}
-                        className="mb-2"
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+                {["profile", "expectations", "goals"].map((field) => (
+                  <div
+                    key={field}
+                    className="flex flex-col gap-2 p-3 rounded-lg bg-black/20 border border-gray-800"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h4
+                        className={`font-semibold text-sm ${colors[field].text}`}
                       >
-                        <div className="flex items-center justify-between mb-2">
-                          <p
-                            className={`${colors[field].text} font-medium m-0`}
-                          >
-                            {getFieldTitle(field)}
-                          </p>
-                          {/* Botão para adicionar novo item */}
-
-                          <button
-                            className="h-full rounded bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-blue-400 transition-colors"
-                            onClick={() => addNewItem(persona.id, field)}
-                          >
-                            <Plus
-                              className={`${colors[field].text} `}
-                              size={30}
-                            />
-                          </button>
-                        </div>
-                        <div className="grid gap-2 md:grid-cols-2">
-                          {persona[field].map((item, itemIndex) => (
-                            <div
-                              key={itemIndex}
-                              className="col-span-1 cursor-pointer rounded hover:bg-gray-2 transition-colors popup-animation"
-                            >
-                              <div
-                                onClick={() =>
-                                  startEditField(persona.id, field, itemIndex)
-                                }
-                                className={`rounded-lg border-l-4 ${colors[field].border} min-h-full shadow-md bg-gray-900/40`}
-                              >
-                                {editingField.personaId === persona.id &&
-                                editingField.field === field &&
-                                editingField.itemIndex === itemIndex ? (
-                                  <div
-                                    className="h-full w-full p-2 text-sm bg-gray-2 rounded"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <TextArea
-                                      value={editValue}
-                                      onEnter={saveEditField}
-                                      onChange={(e) =>
-                                        setEditValue(e.target.value)
-                                      }
-                                    />
-                                    <div className="flex gap-2 justify-between mt-1">
-                                      <button
-                                        className="h-5 w-5 flex items-center justify-center bg-purple-2 hover:bg-purple-1 text-white text-xs rounded"
-                                        onClick={saveEditField}
-                                      >
-                                         <Check size={18}/>
-                                      </button>
-                                      <button
-                                        className="h-5 w-5 flex items-center justify-center bg-red-400 hover:bg-red-500 transition-colors text-white text-xs rounded"
-                                        onClick={() =>
-                                          confirmDeleteItem(
-                                            persona.id,
-                                            field,
-                                            itemIndex
-                                          )
-                                        }
-                                      >
-                                        <X size={18} />
-                                      </button>
-                                    </div>
-
-                                    {/* Diálogo de confirmação de exclusão de item */}
-                                    {deleteConfirmItem.personaId ===
-                                      persona.id &&
-                                      deleteConfirmItem.field === field &&
-                                      deleteConfirmItem.itemIndex ===
-                                        itemIndex &&
-                                      createPortal(
-                                        <ModalConfirmation
-                                          onConfirm={deleteItem}
-                                          onCancel={() =>
-                                            setDeleteConfirmItem({
-                                              personaId: null,
-                                              field: null,
-                                              itemIndex: null,
-                                            })
-                                          }
-                                          message="Deseja remover este item?"
-                                        />,
-                                        document.body
-                                      )}
-                                  </div>
-                                ) : (
-                                  <p className="p-2 text-white text-sm ">
-                                    {item || "Clique para editar"}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-              )}
-            </div>
+                        {getFieldTitle(field)}
+                      </h4>
+                      {/* Botão de Adicionar Item sem Tooltip */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => addNewItem(persona.id, field)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <Separator className="bg-gray-700" />
+                    <div className="flex flex-col gap-2">
+                      {persona[field].map((item, itemIndex) => (
+                        <PersonaItem
+                          key={itemIndex}
+                          item={item}
+                          isEditing={
+                            editingField.personaId === persona.id &&
+                            editingField.field === field &&
+                            editingField.itemIndex === itemIndex
+                          }
+                          editValue={editValue}
+                          onValueChange={(e) => setEditValue(e.target.value)}
+                          onEdit={() =>
+                            startEditField(persona.id, field, itemIndex)
+                          }
+                          onSave={saveEditField}
+                          onDelete={() =>
+                            confirmDeleteItem(persona.id, field, itemIndex)
+                          }
+                          textareaRef={
+                            editingField.personaId === persona.id &&
+                            editingField.field === field &&
+                            editingField.itemIndex === itemIndex
+                              ? textareaRef
+                              : null
+                          }
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           ))
       ) : (
-        <div className="flex flex-col col-span-2 items-center justify-center p-6 bg-gray-3 rounded-lg text-gray-400">
+        <div className="col-span-1 flex flex-col items-center justify-center p-10 bg-gray-900/50 border border-dashed border-gray-800 rounded-lg text-center">
           <UserCircle2
             size={40}
-            className="mb-4 text-purple-2 col-span-2"
+            className="mb-4 text-indigo-400"
           />
-          <p className="mb-2">Nenhuma persona definida ainda.</p>
-          <p className="mb-4 text-sm">
-            Crie uma nova persona para mapear os usuários do seu projeto.
+          <h3 className="text-xl font-semibold">Nenhuma persona definida</h3>
+          <p className="text-muted-foreground mt-2">
+            Crie sua primeira persona para mapear os usuários do seu projeto.
           </p>
         </div>
       )}
 
-      {/* Botão "Nova Persona" */}
-      <button
-        className={`col-span-2 flex items-center justify-center py-2 bg-gray-800 hover:bg-gray-2 text-blue-400 rounded-lg transition-colors shadow-md ${
-          isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        onClick={addNewPersona}
-        disabled={isSubmitting}
+      {/* AlertDialogs para Exclusão (sem alterações) */}
+      <AlertDialog
+        open={deleteConfirmPersona !== null}
+        onOpenChange={() => setDeleteConfirmPersona(null)}
       >
-        <Plus
-          size={18}
-          className="mr-2"
-        />
-        <span>{isSubmitting ? "Criando..." : "Nova Persona"}</span>
-      </button>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente a
+              persona e todos os seus dados.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeletePersona}>
+              Sim, excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={deleteConfirmItem.personaId !== null}
+        onOpenChange={() =>
+          setDeleteConfirmItem({
+            personaId: null,
+            field: null,
+            itemIndex: null,
+          })
+        }
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir este item?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={deleteItem}>
+              Sim, excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
