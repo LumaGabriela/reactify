@@ -5,9 +5,12 @@ namespace App\Providers;
 use App\Observers\StoryObserver;
 use App\Observers\ProductCanvasObserver;
 use App\Observers\GoalSketchObserver;
+use App\Observers\PersonaObserver;
+use App\Observers\JourneyObserver;
 use App\Models\Story;
 use App\Models\ProductCanvas;
 use App\Models\Goal;
+use App\Models\Persona;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,5 +33,7 @@ class AppServiceProvider extends ServiceProvider
     Story::observe(StoryObserver::class);
     ProductCanvas::observe(ProductCanvasObserver::class);
     Goal::observe(GoalSketchObserver::class);
+    Persona::observe(PersonaObserver::class);
+    Persona::observe(JourneyObserver::class);
   }
 }
