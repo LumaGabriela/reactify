@@ -115,7 +115,7 @@ const PersonaItem = ({
             <Button
               variant="ghost"
               size="icon"
-              className="size-7"
+              className="size-7 hover:bg-gray-500/40"
               onClick={onEdit}
             >
               <Edit className="size-4" />
@@ -124,7 +124,7 @@ const PersonaItem = ({
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-red-500/80 hover:text-red-500"
+              className="h-7 w-7 text-red-500/80 hover:text-red-500 hover:bg-gray-500/40"
               onClick={onDelete}
             >
               <Trash className="size-4" />
@@ -137,8 +137,6 @@ const PersonaItem = ({
 }
 const Personas = ({ project, setProject }) => {
   const textareaRef = useRef(null)
-  // Estado para controlar qual persona está expandida
-  const [expandedPersona, setExpandedPersona] = useState(null)
   // Estado para controlar qual item está sendo editado
   const [editingField, setEditingField] = useState({
     personaId: null,
@@ -239,7 +237,6 @@ const Personas = ({ project, setProject }) => {
             personas: [...project.personas, createdPersona],
           })
           // Expandir a persona recém-criada
-          setExpandedPersona(createdPersona.id)
         }
         setIsSubmitting(false)
       },
@@ -342,7 +339,6 @@ const Personas = ({ project, setProject }) => {
       (persona) => persona.id !== deleteConfirmPersona
     )
 
-    setExpandedPersona(null)
     setDeleteConfirmPersona(null)
 
     setProject((prevProject) => ({
