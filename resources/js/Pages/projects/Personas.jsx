@@ -400,8 +400,8 @@ const Personas = ({ project, setProject }) => {
 
               {/* Conteúdo da Persona */}
               {expandedPersona === persona.id && (
-                <div className="flex flex-col bg-gray-800 rounded p-4">
-                  {["profile", "expectations", "restrictions", "goals"].map(
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+                  {["profile", "expectations", "goals"].map(
                     (field) => (
                       <div
                         key={field}

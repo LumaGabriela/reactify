@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('name');
             $table->jsonb('profile');        
             $table->jsonb('expectations');    
-            $table->jsonb('restrictions');   
             $table->jsonb('goals');      
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->timestamps();
