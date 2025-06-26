@@ -35,6 +35,10 @@ const StoryItem = ({
   onDeleteConfirm,
   isTemporary,
   textareaRef,
+  typeSelectId,
+  onToggleTypeSelect,
+  colors,
+  onChangeStoryType,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
 
@@ -54,17 +58,46 @@ const StoryItem = ({
       <Card className="dark:!bg-gray-800 bg-gray-300 border-0 transition-all duration-300 ease-in-out">
         <CardContent className="p-2 flex items-center justify-between gap-2">
           <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
-            <Badge
-              className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer ${
-                story.type === "system" ? "!bg-teal-600" : "!bg-violet-600"
-              }`}
+            {/* --- POPOVER RESTAURADO AQUI --- */}
+            <Popover
+              open={typeSelectId === story.id}
+              onOpenChange={onToggleTypeSelect}
             >
-              {`${story.type === "system" ? "SS" : "US"}${
-                isTemporary ? "" : story.id
-              }`.toUpperCase()}
-            </Badge>
+              <PopoverTrigger>
+                <Badge
+                  className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer ${
+                    story.type === "system" ? "!bg-teal-600" : "!bg-violet-600"
+                  }`}
+                >
+                  {`${story.type === "system" ? "SS" : "US"}${
+                    isTemporary ? "" : story.id
+                  }`.toUpperCase()}
+                </Badge>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
+                <div className="flex flex-col gap-1">
+                  {colors.map((item, i) => (
+                    <Button
+                      key={i}
+                      variant="ghost"
+                      className="h-auto p-2 justify-start hover:bg-gray-700/80"
+                      onClick={() => onChangeStoryType(story.id, item.title)}
+                    >
+                      <Badge
+                        className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${item.color}`}
+                      >
+                        {`${
+                          item.title === "system" ? "ss" : "us"
+                        }`.toUpperCase()}
+                      </Badge>
+                    </Button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
 
             {isEditing ? (
+              // ... (resto do modo de edição, sem alterações)
               <div className="flex w-full items-center gap-2">
                 <TextareaAutosize
                   ref={textareaRef}
@@ -88,7 +121,6 @@ const StoryItem = ({
             )}
 
             {isEditing ? (
-              // Botões no modo de edição
               <>
                 <Button
                   variant="ghost"
@@ -108,8 +140,7 @@ const StoryItem = ({
                 </Button>
               </>
             ) : (
-              // Botão de editar (placeholder, a ação real está no hover)
-              <div className="size-7" /> // Mantém o espaço para o layout não quebrar
+              <div className="size-7" />
             )}
           </div>
         </CardContent>
@@ -422,11 +453,15 @@ const Stories = ({ project, setProject }) => {
                   editValue={editValue}
                   onValueChange={handleInputChange}
                   onEdit={() => editStory(story)}
-                  onSave={() => editStory(story)} // A mesma função salva
-                  onCancel={() => setEditingId(null)} // Apenas fecha a edição
+                  onSave={() => editStory(story)}
+                  onCancel={() => setEditingId(null)}
                   onDeleteConfirm={() => toggleDeleteConfirm(story.id)}
                   isTemporary={isTemporary(story)}
                   textareaRef={editingId === story.id ? textareaRef : null}
+                  typeSelectId={typeSelectId}
+                  onToggleTypeSelect={() => toggleTypeSelect(story.id)}
+                  colors={colors}
+                  onChangeStoryType={changeStoryType}
                 />
               )
             })
@@ -487,7 +522,6 @@ const Stories = ({ project, setProject }) => {
             .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
             .map((story, i) => {
               return (
-                // Card para system story
                 <StoryItem
                   key={story.id}
                   story={story}
@@ -495,11 +529,15 @@ const Stories = ({ project, setProject }) => {
                   editValue={editValue}
                   onValueChange={handleInputChange}
                   onEdit={() => editStory(story)}
-                  onSave={() => editStory(story)} // A mesma função salva
-                  onCancel={() => setEditingId(null)} // Apenas fecha a edição
+                  onSave={() => editStory(story)}
+                  onCancel={() => setEditingId(null)}
                   onDeleteConfirm={() => toggleDeleteConfirm(story.id)}
                   isTemporary={isTemporary(story)}
                   textareaRef={editingId === story.id ? textareaRef : null}
+                  typeSelectId={typeSelectId}
+                  onToggleTypeSelect={() => toggleTypeSelect(story.id)}
+                  colors={colors}
+                  onChangeStoryType={changeStoryType}
                 />
               )
             })}
@@ -537,11 +575,11 @@ const Stories = ({ project, setProject }) => {
           {/* Botão de Info centralizado */}
           <Popover>
             <PopoverTrigger asChild>
-                <Info
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-gray-400 mx-2 cursor-pointer"
-                  size={15}
-                />
+              <Info
+                onClick={(e) => e.stopPropagation()}
+                className="text-gray-400 mx-2 cursor-pointer"
+                size={15}
+              />
             </PopoverTrigger>
             <PopoverContent className="bg-gray-800 text-white ">
               Esta função utiliza IA para gerar Users Stories baseadas nas
