@@ -109,7 +109,7 @@ const StoryItem = ({
               </>
             ) : (
               // Botão de editar (placeholder, a ação real está no hover)
-              <div className="w-7 h-7" /> // Mantém o espaço para o layout não quebrar
+              <div className="size-7" /> // Mantém o espaço para o layout não quebrar
             )}
           </div>
         </CardContent>
@@ -537,15 +537,11 @@ const Stories = ({ project, setProject }) => {
           {/* Botão de Info centralizado */}
           <Popover>
             <PopoverTrigger asChild>
-              <button
-                className="p-2 rounded-lg transition-colors"
-                onClick={(e) => e.stopPropagation()} // Previne a propagação do evento
-              >
                 <Info
-                  className="text-gray-400 cursor-pointer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-gray-400 mx-2 cursor-pointer"
                   size={15}
                 />
-              </button>
             </PopoverTrigger>
             <PopoverContent className="bg-gray-800 text-white ">
               Esta função utiliza IA para gerar Users Stories baseadas nas
