@@ -191,33 +191,17 @@ const Stories = ({ project, setProject }) => {
   const textareaRef = useRef(null)
   // Estado para controlar qual story está com o seletor de tipo aberto
   const [typeSelectId, setTypeSelectId] = useState(null)
-  // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
   // Estados para IA
-  const [aiInput, setAiInput] = useState("")
   const [aiGeneratedStories, setAiGeneratedStories] = useState([])
-  const [showAiInput, setShowAiInput] = useState(false)
-  const [showAlert, setShowAlert] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
-  // Estados para visualização da entrevista
-  const [showInterview, setShowInterview] = useState(false)
-  const [savedInterview, setSavedInterview] = useState("")
 
   //
   const isTemporary = (story) =>
     typeof story.id === "string" && story.id.startsWith("temp-")
-  // Função para gerar stories via IA
+  
+  // Função para gerar stories via IA - simplificada
   const generateStories = async () => {
-    if (!showAiInput) {
-      setShowAiInput(true)
-      return
-    }
-
-    if (!aiInput.trim()) {
-      setShowAlert(true)
-      setTimeout(() => setShowAlert(false), 3000) // Remove após 3 segundos
-      return
-    }
-    if (aiGeneratedStories != null) {
+    if (aiGeneratedStories.length > 0) {
       discardAllStories()
     }
 
@@ -225,17 +209,13 @@ const Stories = ({ project, setProject }) => {
 
     try {
       const response = await axios.post("/api/stories/generate", {
-        message: aiInput,
+        project_id: project.id,
       })
 
       console.log("Resposta completa:", response.data)
 
       // Atualiza o estado com as stories geradas
       setAiGeneratedStories(response.data.message.stories)
-      // Salva a entrevista para visualização posterior
-      setSavedInterview(aiInput)
-      setShowAiInput(false)
-      setAiInput("")
     } catch (error) {
       console.error("Erro ao gerar stories:", error)
       console.error("Detalhes do erro:", error.response?.data)
@@ -246,8 +226,6 @@ const Stories = ({ project, setProject }) => {
 
   const discardAllStories = () => {
     setAiGeneratedStories([])
-    // Opcionalmente, também pode limpar a entrevista salva
-    // setSavedInterview('');
   }
 
   // Função para adicionar uma story da IA ao projeto
@@ -378,7 +356,6 @@ const Stories = ({ project, setProject }) => {
 
   // Função para excluir a story
   const deleteStory = (storyId) => {
-
     const updatedStories = project?.stories.filter((s) => s.id !== storyId)
     setProject({ ...project, stories: updatedStories })
     router.delete(route("story.delete", storyId))
@@ -440,7 +417,7 @@ const Stories = ({ project, setProject }) => {
                   onValueChange={handleInputChange}
                   onEdit={() => editStory(story)}
                   onSave={() => editStory(story)}
-                                    onDelete={() => deleteStory(story.id)}
+                  onDelete={() => deleteStory(story.id)}
                   onCancel={() => setEditingId(null)}
                   isTemporary={isTemporary(story)}
                   textareaRef={editingId === story.id ? textareaRef : null}
@@ -543,21 +520,28 @@ const Stories = ({ project, setProject }) => {
         </button>
 
         <button
-          onClick={() => {
-            if (showAiInput) {
-              setShowAiInput(false)
-              setAiInput("")
-            } else {
-              generateStories()
-            }
-          }}
-          className="flex items-center justify-center flex-1 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition-colors shadow-md"
+          onClick={generateStories}
+          disabled={isGenerating}
+          className={`flex items-center justify-center flex-1 py-2 rounded-lg transition-colors shadow-md ${
+            isGenerating
+              ? "bg-gray-600 cursor-not-allowed text-gray-400"
+              : "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+          }`}
         >
-          <Sparkles
-            size={18}
-            className="mr-2"
-          />
-          <span>{showAiInput ? "Cancelar" : "Gerar com IA"}</span>
+          {isGenerating ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-400 border-t-transparent mr-2"></div>
+              Gerando...
+            </>
+          ) : (
+            <>
+              <Sparkles
+                size={18}
+                className="mr-2"
+              />
+              <span>Gerar com IA</span>
+            </>
+          )}
           {/* Botão de Info centralizado */}
           <Popover>
             <PopoverTrigger asChild>
@@ -577,68 +561,12 @@ const Stories = ({ project, setProject }) => {
         </button>
       </div>
 
-      {/* Seção de Input para IA - aparece apenas quando showAiInput for true */}
-      {showAiInput && (
-        <div className="col-span-2 space-y-2 mt-4">
-          <textarea
-            placeholder="Descreva o contexto para a IA gerar stories..."
-            className="w-full bg-gray-800 rounded-lg p-2 text-white"
-            value={aiInput}
-            onChange={(e) => setAiInput(e.target.value)}
-          />
-          {showAlert && (
-            <p className="text-red-400 text-sm">
-              Por favor, insira a entrevista para gerar as stories.
-            </p>
-          )}
-          <div className="flex gap-2">
-            <button
-              onClick={generateStories}
-              disabled={isGenerating}
-              className={`px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700  transition-colors flex items-center ${
-                isGenerating
-                  ? "bg-purple-400 cursor-not-allowed"
-                  : "bg-purple-600 hover:bg-purple-700"
-              } text-white`}
-            >
-              {isGenerating ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                  Gerando...
-                </>
-              ) : (
-                "Gerar Stories"
-              )}
-            </button>
-            <button
-              onClick={() => {
-                setShowAiInput(false)
-                setAiInput("")
-              }}
-              className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Listagem de Stories Geradas pela IA */}
       {aiGeneratedStories.length > 0 && (
         <div className="col-span-2 space-y-2 mt-4">
           <div className="flex justify-between items-center">
             <h5 className="text-white">Stories Geradas</h5>
             <div className="flex gap-2">
-              {/* Botão para ver a entrevista - versão compacta */}
-              {savedInterview && (
-                <button
-                  onClick={() => setShowInterview(!showInterview)}
-                  className="bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white px-2 py-1 rounded transition-colors text-xs flex items-center gap-1"
-                >
-                  <FileText size={12} />
-                  {showInterview ? "Ocultar" : "Entrevista"}
-                </button>
-              )}
               <button
                 onClick={discardAllStories}
                 className="flex items-center justify-center flex-1 p-2 bg-gradient-to-r from-rose-400 to-rose-700 hover:from-purple-700 hover:to-blue-700 text-white text-nowrap rounded-lg transition-colors duration-300 shadow-md"
@@ -653,30 +581,6 @@ const Stories = ({ project, setProject }) => {
               </button>
             </div>
           </div>
-
-          {/* Painel colapsável da entrevista */}
-          {showInterview && savedInterview && (
-            <div className="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden">
-              <div className="bg-gray-800 px-3 py-2 border-b border-gray-700">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-300 text-sm font-medium">
-                    Entrevista Original
-                  </span>
-                  <button
-                    onClick={() => setShowInterview(false)}
-                    className="text-gray-400 hover:text-gray-200 transition-colors"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              </div>
-              <div className="max-h-40 overflow-y-auto p-3">
-                <pre className="text-gray-400 text-xs whitespace-pre-wrap leading-relaxed">
-                  {savedInterview}
-                </pre>
-              </div>
-            </div>
-          )}
 
           {aiGeneratedStories.map((story, index) => (
             <div
