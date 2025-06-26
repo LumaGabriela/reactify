@@ -32,7 +32,7 @@ const StoryItem = ({
   onEdit,
   onSave,
   onCancel,
-  onDeleteConfirm,
+  onDelete,
   isTemporary,
   textareaRef,
   typeSelectId,
@@ -168,7 +168,7 @@ const StoryItem = ({
               variant="ghost"
               size="icon"
               className="size-8 text-red-500/80 hover:text-red-500 hover:bg-gray-500/40"
-              onClick={onDeleteConfirm}
+              onClick={onDelete}
             >
               <Trash className="size-4" />
             </Button>
@@ -193,7 +193,6 @@ const Stories = ({ project, setProject }) => {
   // Estado para controlar qual story está com o seletor de tipo aberto
   const [typeSelectId, setTypeSelectId] = useState(null)
   // Estado para controlar qual story está com o diálogo de confirmação de exclusão aberto
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
   // Estados para IA
   const [aiInput, setAiInput] = useState("")
   const [aiGeneratedStories, setAiGeneratedStories] = useState([])
@@ -296,18 +295,6 @@ const Stories = ({ project, setProject }) => {
       setTypeSelectId(null)
     } else {
       setTypeSelectId(storyId)
-      setDeleteConfirmId(null) // Fecha o diálogo de exclusão caso esteja aberto
-    }
-  }
-
-  // Função para alternar a exibição do diálogo de confirmação de exclusão
-  const toggleDeleteConfirm = (storyId) => {
-    if (deleteConfirmId === storyId) {
-      setDeleteConfirmId(null)
-    } else {
-      setDeleteConfirmId(storyId)
-      setTypeSelectId(null) // Fecha o seletor de tipo caso esteja aberto
-      setEditingId(null) // Fecha a edição caso esteja aberta
     }
   }
 
@@ -392,9 +379,9 @@ const Stories = ({ project, setProject }) => {
 
   // Função para excluir a story
   const deleteStory = (storyId) => {
+
     const updatedStories = project?.stories.filter((s) => s.id !== storyId)
     setProject({ ...project, stories: updatedStories })
-    setDeleteConfirmId(null) // Fecha o diálogo de confirmação
     router.delete(route("story.delete", storyId))
   }
 
@@ -454,8 +441,8 @@ const Stories = ({ project, setProject }) => {
                   onValueChange={handleInputChange}
                   onEdit={() => editStory(story)}
                   onSave={() => editStory(story)}
+                                    onDelete={() => deleteStory(story.id)}
                   onCancel={() => setEditingId(null)}
-                  onDeleteConfirm={() => toggleDeleteConfirm(story.id)}
                   isTemporary={isTemporary(story)}
                   textareaRef={editingId === story.id ? textareaRef : null}
                   typeSelectId={typeSelectId}
@@ -530,8 +517,8 @@ const Stories = ({ project, setProject }) => {
                   onValueChange={handleInputChange}
                   onEdit={() => editStory(story)}
                   onSave={() => editStory(story)}
+                  onDelete={() => deleteStory(story)}
                   onCancel={() => setEditingId(null)}
-                  onDeleteConfirm={() => toggleDeleteConfirm(story.id)}
                   isTemporary={isTemporary(story)}
                   textareaRef={editingId === story.id ? textareaRef : null}
                   typeSelectId={typeSelectId}
