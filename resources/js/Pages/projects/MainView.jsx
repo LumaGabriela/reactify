@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react"
 import {
   AlertCircle,
@@ -15,7 +16,6 @@ import {
   X,
   Save,
 } from "lucide-react"
-import TextArea from "@/Components/TextArea"
 import ProgressIcon from "../../Components/ProgressIcon"
 import { router } from "@inertiajs/react"
 import { format } from "date-fns"
@@ -29,6 +29,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import TextareaAutosize from "react-textarea-autosize";
 
 // Card com capacidade de expansão e contração melhorado
 const ExpandableCard = ({
@@ -160,14 +161,14 @@ const ExpandableCard = ({
         <div className="flex-1 flex flex-col min-h-0">
           <div className="text-gray-300 text-sm transition-all duration-300 flex-1">
             {isEditing ? (
-              <div className="h-full min-h-32">
-                <textarea
+              <div className="h-full">
+               <TextareaAutosize
                   ref={textareaRef}
                   value={editableContent}
                   onChange={(e) => setEditableContent(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder={placeholder}
-                  className="w-full h-full resize-none bg-gray-700 text-white rounded-md p-3 border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full resize-none bg-gray-700 text-white rounded-md p-3 bg-transparent border-0 border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                   disabled={isSaving}
                 />
                 <div className="text-xs text-gray-400 mt-2">
@@ -379,7 +380,7 @@ const MainView = ({ project = {}, setProject }) => {
           title={project?.title || "Projeto"}
           content={project?.description}
           col={2}
-          color={colors.blue}
+          color={colors.purple}
           icon={List}
           placeholder="Descreva o seu projeto..."
           onContentUpdate={(content) => updateProject("description", content)}
@@ -397,7 +398,7 @@ const MainView = ({ project = {}, setProject }) => {
         <ExpandableCard
           title="Soluções"
           content={productCanvas.solutions}
-          color={colors.green}
+          color={colors.yellow}
           icon={CheckCircle}
           placeholder="Como o projeto resolve os problemas?"
           onContentUpdate={(content) => updateProductCanvas("solutions", content)}
@@ -406,7 +407,7 @@ const MainView = ({ project = {}, setProject }) => {
         <ExpandableCard
           title="Personas Envolvidas"
           content={productCanvas.personas}
-          color={colors.cyan}
+          color={colors.green}
           icon={Users}
           placeholder="Quem são os usuários principais?"
           onContentUpdate={(content) => updateProductCanvas("personas", content)}
@@ -415,7 +416,7 @@ const MainView = ({ project = {}, setProject }) => {
         <ExpandableCard
           title="Restrições"
           content={productCanvas.restrictions}
-          color={colors.yellow}
+          color={colors.turquoise}
           icon={Slash}
           placeholder="Quais são as limitações do projeto?"
           onContentUpdate={(content) => updateProductCanvas("restrictions", content)}
@@ -424,7 +425,7 @@ const MainView = ({ project = {}, setProject }) => {
         <ExpandableCard
           title="É"
           content={productCanvas.product_is}
-          color={colors.turquoise}
+          color={colors.cyan}
           icon={Check}
           placeholder="O que este produto É..."
           onContentUpdate={(content) => updateProductCanvas("product_is", content)}
