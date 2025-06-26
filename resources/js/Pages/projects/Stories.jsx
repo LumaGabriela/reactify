@@ -97,7 +97,6 @@ const StoryItem = ({
             </Popover>
 
             {isEditing ? (
-              // ... (resto do modo de edição, sem alterações)
               <div className="flex w-full items-center gap-2">
                 <TextareaAutosize
                   ref={textareaRef}
