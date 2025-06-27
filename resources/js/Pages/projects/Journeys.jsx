@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   X,
-  Dot,
+  Save,
   Circle,
   Plus,
   Check,
@@ -243,7 +243,6 @@ const Journeys = ({ project, setProject }) => {
   const [editValue, setEditValue] = useState("")
   const [editingJourney, setEditingJourney] = useState(null)
   const [editJourneyName, setEditJourneyTitle] = useState("")
-  const [deleteConfirmJourney, setDeleteConfirmJourney] = useState(null)
   const [isGeneratingAI, setIsGeneratingAI] = useState(false)
   const [generatedJourneys, setGeneratedJourneys] = useState([])
   const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -417,7 +416,6 @@ const Journeys = ({ project, setProject }) => {
     setEditingJourney(JourneyId)
     setEditJourneyTitle(journey.title)
   }
-
 
   // Função para adicionar uma nova journey
   const addNewJourney = () => {
@@ -688,7 +686,7 @@ const Journeys = ({ project, setProject }) => {
           .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
           .map((journey, i) => (
             <div
-              key={i}
+              key={journey.id}
               className="bg-gray-800 rounded-lg shadow-md overflow-hidden"
             >
               {/* Cabeçalho da Journey */}
@@ -699,8 +697,7 @@ const Journeys = ({ project, setProject }) => {
                 <div className="flex items-center text-2xl">
                   <Map
                     className="text-purple-2 mr-2"
-                    size={20}
-                  />
+                    size={20} />
                   {editingJourney === journey.id ? (
                     <input
                       type="text"
@@ -708,10 +705,9 @@ const Journeys = ({ project, setProject }) => {
                       onChange={(e) => setEditJourneyTitle(e.target.value)}
                       onKeyUp={(e) => {
                         if (e.key === "Enter") saveEditJourney()
-                      }}
+                      } }
                       className=" text-white p-0 bg-transparent border-none focus:ring-0 font-medium text-2xl rounded h-full focus:outline-none"
-                      autoFocus
-                    />
+                      autoFocus />
                   ) : (
                     <h4 className="text-white font-medium m-0">
                       {journey.title}
@@ -726,22 +722,11 @@ const Journeys = ({ project, setProject }) => {
                       onClick={(e) => {
                         e.stopPropagation()
                         saveEditJourney()
-                      }}
+                      } }
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-green-300"
-                      >
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
+                      <Check
+                        size={20}
+                        color="green" />
                     </button>
                   ) : (
                     <button
@@ -749,47 +734,19 @@ const Journeys = ({ project, setProject }) => {
                       onClick={(e) => {
                         e.stopPropagation()
                         startEditJourney(journey.id)
-                      }}
+                      } }
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-gray-300"
-                      >
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                      </svg>
+                      <Save size={20} />
                     </button>
                   )}
                   {/* remover journey */}
-                  <Popover>
+                  <Popover >
                     <PopoverTrigger asChild>
                       <button
                         className="p-1 hover:bg-gray-500 rounded-full mr-2"
                         onClick={(e) => e.stopPropagation()} // Impede que o toggle da journey seja acionado
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="text-red-400"
-                        >
-                          <path d="M3 6h18"></path>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
+                        <Trash size={20} />
                       </button>
                     </PopoverTrigger>
                     <PopoverContent
@@ -805,14 +762,7 @@ const Journeys = ({ project, setProject }) => {
                           </p>
                         </div>
                         <div className="flex justify-end gap-2">
-                          {/* O Popover do Shadcn não tem um botão de fechar padrão, então criamos um ou usamos o PopoverClose */}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            asChild
-                          >
-                            <PopoverTrigger>Cancelar</PopoverTrigger>
-                          </Button>
+
                           <Button
                             variant="destructive"
                             size="sm"
@@ -828,13 +778,11 @@ const Journeys = ({ project, setProject }) => {
                   {expandedJourney === journey.id ? (
                     <ChevronRight
                       className="text-white animate-rotate-90"
-                      size={20}
-                    />
+                      size={20} />
                   ) : (
                     <ChevronDown
                       className="text-white animate-rotate-90-reverse"
-                      size={20}
-                    />
+                      size={20} />
                   )}
                 </div>
               </div>
@@ -851,41 +799,29 @@ const Journeys = ({ project, setProject }) => {
                           const colorIndex = stepIndex % colors.length
                           const currentColor = colors[colorIndex]
                           // Variável para verificar se este é o item em edição
-                          const isCurrentlyEditing =
-                            editingStep.journeyId === journey.id &&
+                          const isCurrentlyEditing = editingStep.journeyId === journey.id &&
                             editingStep.stepIndex === stepIndex
                           return (
                             <JourneyStepItem
                               key={stepIndex}
                               step={step}
                               stepIndex={stepIndex}
-                              isLastStep={
-                                stepIndex === journey.steps.length - 1
-                              }
+                              isLastStep={stepIndex === journey.steps.length - 1}
                               color={currentColor}
                               // A prop 'isEditing' continua a mesma
                               isEditing={isCurrentlyEditing}
-                              editValue={
-                                isCurrentlyEditing
-                                  ? editValue
-                                  : step.description
-                              }
-                              onValueChange={(e) =>
-                                setEditValue(e.target.value)
-                              }
-                              onEdit={() =>
-                                startEditStep(journey.id, stepIndex)
-                              }
+                              editValue={isCurrentlyEditing
+                                ? editValue
+                                : step.description}
+                              onValueChange={(e) => setEditValue(e.target.value)}
+                              onEdit={() => startEditStep(journey.id, stepIndex)}
                               onSave={saveEditStep} // Passa a nova função save
                               onCancel={cancelEditStep} // Passa a função de cancelar
                               onDelete={() => deleteStep(journey.id, stepIndex)}
-                              textareaRef={
-                                editingStep.journeyId === journey.id &&
+                              textareaRef={editingStep.journeyId === journey.id &&
                                 editingStep.stepIndex === stepIndex
-                                  ? textareaRef
-                                  : null
-                              }
-                            />
+                                ? textareaRef
+                                : null} />
                           )
                         })}
 
