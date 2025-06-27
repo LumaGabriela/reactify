@@ -15,7 +15,6 @@ class PersonaController extends Controller
             'name' => 'required|string|max:255',
             'profile' => 'nullable|array',
             'expectations' => 'nullable|array',
-            'restrictions' => 'nullable|array',
             'goals' => 'nullable|array',
             'project_id' => 'required|exists:projects,id',
 
@@ -32,7 +31,6 @@ class PersonaController extends Controller
             'name' => 'sometimes|string|max:255', // Opcional, se enviado, valida como string
             'profile' => 'nullable|array',
             'expectations' => 'nullable|array',
-            'restrictions' => 'nullable|array',
             'goals' => 'nullable|array',
             'project_id' => 'required|exists:projects,id',
 

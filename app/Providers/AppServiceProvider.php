@@ -10,6 +10,7 @@ use App\Observers\JourneyObserver;
 use App\Models\Story;
 use App\Models\ProductCanvas;
 use App\Models\Goal;
+use App\Models\Journey;
 use App\Models\Persona;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -34,6 +35,6 @@ class AppServiceProvider extends ServiceProvider
     ProductCanvas::observe(ProductCanvasObserver::class);
     Goal::observe(GoalSketchObserver::class);
     Persona::observe(PersonaObserver::class);
-    Persona::observe(JourneyObserver::class);
+    Journey::observe(JourneyObserver::class);
   }
 }

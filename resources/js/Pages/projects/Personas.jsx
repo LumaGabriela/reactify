@@ -209,10 +209,9 @@ const Personas = ({ project, setProject }) => {
 
     const newPersona = {
       name: "Nova Persona",
-      profile: [""],
-      expectations: [""],
-      restrictions: [""],
-      goals: [""],
+      profile: [],
+      expectations: [],
+      goals: [],
       project_id: project.id,
     }
 
