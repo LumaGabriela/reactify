@@ -58,7 +58,6 @@ const StoryItem = ({
       <Card className="dark:!bg-gray-800 bg-gray-300 border-0 transition-all duration-300 ease-in-out">
         <CardContent className="p-2 flex items-center justify-between gap-2">
           <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
-            {/* --- POPOVER RESTAURADO AQUI --- */}
             <Popover
               open={typeSelectId === story.id}
               onOpenChange={onToggleTypeSelect}

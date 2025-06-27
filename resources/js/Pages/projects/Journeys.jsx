@@ -1,48 +1,253 @@
-import React, { useState } from "react"
+import React, { useState, useEffect, useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
+  X,
+  Dot,
+  Circle,
   Plus,
+  Check,
+  Edit,
+  Trash,
+  Map,
+  CornerUpRight,
   ChevronDown,
   ChevronRight,
-  Map,
-  Circle,
-  CornerUpRight,
   Sparkles,
-  Check,
-  X,
   Loader2,
-  Info
+  Info,
 } from "lucide-react"
-import { ModalConfirmation } from "@/Components/Modals"
-import TextArea from "@/Components/TextArea"
 import { router } from "@inertiajs/react"
+
+// Componentes Shadcn
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Popover,
-  PopoverArrow,
   PopoverContent,
   PopoverTrigger,
+  PopoverArrow,
 } from "@/components/ui/popover"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import TextareaAutosize from "react-textarea-autosize"
+
+const JourneyStepItem = ({
+  step,
+  stepIndex,
+  isLastStep,
+  color,
+  isEditing,
+  editValue,
+  onValueChange,
+  onEdit,
+  onSave,
+  onCancel,
+  onDelete,
+  textareaRef,
+}) => {
+  const [isHovered, setIsHovered] = useState(false)
+  const [showDeletePopover, setShowDeletePopover] = useState(false) // Mantendo o estado do popover
+  const [touchpointChecked, setTouchpointChecked] = useState(step.is_touchpoint)
+
+  useEffect(() => {
+    setTouchpointChecked(step.is_touchpoint)
+  }, [step.is_touchpoint])
+
+  const handleSave = () => {
+    onSave(editValue, touchpointChecked)
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSave()
+    }
+  }
+
+  const handleConfirmDelete = () => {
+    onDelete()
+    setShowDeletePopover(false)
+  }
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="relative group flex items-center"
+    >
+      {/* Circulo */}
+      <div
+        className={` absolute flex-shrink-0 flex size-5 -top-1 -left-1 items-center justify-center rounded-full font-bold text-white ${color.bg}`}
+      >
+        {stepIndex + 1}
+      </div>
+      {/* card de conteudo */}
+      <Card className="w-full bg-gray-900/50 border-gray-800 transition-shadow hover:shadow-lg">
+        <CardContent className="flex-row items-start justify-between gap-2 p-3">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="flex-1">
+              {isEditing ? (
+                <TextareaAutosize
+                  ref={textareaRef}
+                  value={editValue}
+                  onChange={onValueChange}
+                  onKeyDown={handleKeyDown}
+                  className="w-full resize-none rounded-md border border-gray-700 bg-gray-900/50 p-2 text-sm text-gray-300 transition-colors duration-200 focus-visible:border-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/20"
+                  autoFocus
+                />
+              ) : (
+                <p className="text-sm text-gray-300 pt-1 break-words">
+                  {step.description || "..."}
+                </p>
+              )}
+            </div>
+          </div>
+          {step.is_touchpoint && !isEditing && (
+            <Circle
+              size={26}
+              className="fill-white"
+              color="#fff"
+            />
+          )}
+
+          <div className="flex items-center gap-1">
+            {/* {isTemporary && (
+              <LoaderCircle className="text-indigo-400 animate-spin" />
+            )} */}
+            {isEditing ? (
+              <>
+                <Switch
+                  id={`touchpoint-switch-${stepIndex}`}
+                  checked={touchpointChecked}
+                  onCheckedChange={setTouchpointChecked}
+                />
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7 text-red-500/80 hover:bg-red-500/10"
+                  onClick={onCancel}
+                >
+                  <X className="size-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7 text-green-400 hover:bg-green-500/10"
+                  onClick={handleSave}
+                >
+                  <Check className="size-4" />
+                </Button>
+              </>
+            ) : (
+              <div></div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <AnimatePresence>
+        {isHovered && !isEditing && (
+          <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-3 right-3 flex items-center rounded-md bg-gray-900/50 backdrop-blur-sm border border-gray-700 shadow-xl"
+          >
+            <Button
+              variant="motiondiv"
+              size="icon"
+              className="text-gray-300 hover:text-white"
+              onClick={onEdit}
+            >
+              <Edit className="size-4" />
+            </Button>
+            {/* Usando a lógica do Popover que implementamos */}
+            <Popover
+              open={showDeletePopover}
+              onOpenChange={setShowDeletePopover}
+            >
+              <PopoverTrigger asChild>
+                <Button
+                  variant="motiondiv"
+                  size="icon"
+                  className="text-red-500/80 hover:text-red-500"
+                >
+                  <Trash className="size-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 bg-gray-800 border-gray-700 text-white">
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <h4 className="font-medium leading-none">
+                      Confirmar Exclusão
+                    </h4>
+                    <p className="text-sm text-gray-400">
+                      Deseja realmente excluir este passo?
+                    </p>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowDeletePopover(false)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleConfirmDelete}
+                    >
+                      Excluir
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {!isLastStep && (
+        <div className="absolute top-1/2 -right-5 -translate-y-1/2 text-gray-600">
+          <CornerUpRight
+            size={28}
+            strokeWidth={1.5}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
 
 const Journeys = ({ project, setProject }) => {
-  // Estados existentes
-  const [expandedJourney, setExpandedJourney] = useState(0)
+  const [expandedJourney, setExpandedJourney] = useState(null)
   const [editingStep, setEditingStep] = useState({
-    JourneyId: null,
+    journeyId: null,
     stepIndex: null,
   })
   const [editValue, setEditValue] = useState("")
-  const [deleteConfirmStep, setDeleteConfirmStep] = useState({
-    JourneyId: null,
-    stepIndex: null,
-  })
   const [editingJourney, setEditingJourney] = useState(null)
   const [editJourneyName, setEditJourneyTitle] = useState("")
   const [deleteConfirmJourney, setDeleteConfirmJourney] = useState(null)
-
-  // Novos estados para geração de IA
   const [isGeneratingAI, setIsGeneratingAI] = useState(false)
   const [generatedJourneys, setGeneratedJourneys] = useState([])
   const [showConfirmModal, setShowConfirmModal] = useState(false)
-
+  const textareaRef = useRef(null)
   const colors = [
     {
       text: "text-orange-500",
@@ -138,8 +343,6 @@ const Journeys = ({ project, setProject }) => {
         }
       })
 
-    console.log("selec", selectedJourneys)
-
     if (selectedJourneys.length === 0) {
       alert("Selecione pelo menos uma journey para adicionar.")
       return
@@ -200,17 +403,12 @@ const Journeys = ({ project, setProject }) => {
   }
 
   // Função para iniciar a edição de um step
-  const startEditStep = (JourneyId, stepIndex) => {
+  const startEditStep = (journeyId, stepIndex) => {
     const step =
-      project.journeys.find((j) => j.id === JourneyId)?.steps?.[stepIndex] ??
+      project.journeys.find((j) => j.id === journeyId)?.steps?.[stepIndex] ??
       null
-    setEditingStep({ JourneyId, stepIndex })
+    setEditingStep({ journeyId, stepIndex })
     setEditValue(step.description)
-  }
-
-  // Função para mostrar confirmação de exclusão de step
-  const confirmDeleteStep = (JourneyId, stepIndex) => {
-    setDeleteConfirmStep({ JourneyId, stepIndex })
   }
 
   // Função para iniciar a edição de uma journey
@@ -220,10 +418,6 @@ const Journeys = ({ project, setProject }) => {
     setEditJourneyTitle(journey.title)
   }
 
-  // Função para mostrar confirmação de exclusão de journey
-  const confirmDeleteJourney = (JourneyId) => {
-    setDeleteConfirmJourney(JourneyId)
-  }
 
   // Função para adicionar uma nova journey
   const addNewJourney = () => {
@@ -298,99 +492,81 @@ const Journeys = ({ project, setProject }) => {
   }
 
   // Função para salvar a edição de um step
-  const saveEditStep = (touchpoint = false) => {
-    const { JourneyId, stepIndex } = editingStep
-
-    if (!JourneyId || stepIndex === null) return
-
-    // Encontra a jornada específica
-    const journey = project.journeys.find((j) => j.id === JourneyId)
-
-    let updatedSteps
-    // Cria uma nova versão dos steps com a edição aplicada
-    if (touchpoint) {
-      updatedSteps = journey.steps.map((s, i) =>
-        i === stepIndex
-          ? {
-              ...s,
-              description: editValue,
-              touchpoint: s.touchpoint ? false : true,
-            }
-          : s
-      )
-    } else {
-      updatedSteps = journey.steps.map((s, i) =>
-        i === stepIndex ? { ...s, description: editValue } : s
-      )
-    }
-
-    // Cria uma nova lista de journeys com a jornada editada
-    const updatedJourneys = project.journeys.map((j) =>
-      j.id === JourneyId ? { ...j, steps: updatedSteps } : j
+  const saveEditStep = (description, isTouchpoint) => {
+    const { journeyId, stepIndex } = editingStep
+    if (!journeyId || stepIndex === null) return
+    const journey = project.journeys.find((j) => j.id === journeyId)
+    if (!journey) return
+    const updatedSteps = journey.steps.map((s, i) =>
+      i === stepIndex
+        ? { ...s, description: description, is_touchpoint: isTouchpoint }
+        : s
     )
-
-    // Atualiza o estado
+    const updatedJourneys = project.journeys.map((j) =>
+      j.id === journeyId ? { ...j, steps: updatedSteps } : j
+    )
     setProject({ ...project, journeys: updatedJourneys })
-    setEditingStep({ JourneyId: null, stepIndex: null })
+    cancelEditStep()
+    router.patch(route("journey.update", journeyId), { steps: updatedSteps })
+  }
 
-    router.patch(route("journey.update", JourneyId), {
-      steps: updatedSteps,
-    })
+  // Crie uma função para cancelar a edição
+  const cancelEditStep = () => {
+    setEditingStep({ journeyId: null, stepIndex: null })
   }
 
   // Função para excluir um step
-  const deleteStep = () => {
-    const journeyId = deleteConfirmStep.JourneyId
-    const stepIndex = deleteConfirmStep.stepIndex
-
+  const deleteStep = (journeyId, stepIndex) => {
+    // A lógica de verificação agora usa os argumentos diretamente
     if (journeyId === null || stepIndex === null) return
 
-    // Encontra a jornada pelo ID
     const journey = project.journeys.find((j) => j.id === journeyId)
     if (!journey || !journey.steps || stepIndex >= journey.steps.length) return
 
-    // Cria uma nova lista de steps removendo o step no índice especificado
     const updatedSteps = [...journey.steps]
     updatedSteps.splice(stepIndex, 1)
 
-    // Reordena os steps
     const reorderedSteps = updatedSteps.map((s, idx) => ({
       ...s,
       step: idx + 1,
     }))
 
-    // Cria uma nova lista de jornadas com a jornada atualizada
     const updatedJourneys = project.journeys.map((j) =>
       j.id === journeyId ? { ...j, steps: reorderedSteps } : j
     )
 
-    // Atualiza o estado do projeto
     setProject({ ...project, journeys: updatedJourneys })
-    setDeleteConfirmStep({ JourneyId: null, stepIndex: null })
 
-    // Envia os steps atualizados ao backend
+    // O estado de confirmação não precisa mais ser resetado aqui
+    // setDeleteConfirmStep({ JourneyId: null, stepIndex: null })
+
     router.patch(route("journey.update", journeyId), {
       steps: reorderedSteps,
     })
   }
 
   // Função para excluir uma journey inteira
-  const handleDeleteJourney = () => {
-    if (deleteConfirmJourney === null || !project.journeys) return
+  const deleteJourney = (journeyIdToDelete) => {
+    if (journeyIdToDelete === null) return
 
     const updatedJourneys = project.journeys.filter(
-      (journey) => journey.id !== deleteConfirmJourney
+      (journey) => journey.id !== journeyIdToDelete
     )
 
-    setExpandedJourney(null)
-    setDeleteConfirmJourney(null)
+    // Se a journey expandida for a que está sendo deletada, fecha tudo
+    if (expandedJourney === journeyIdToDelete) {
+      setExpandedJourney(null)
+    }
 
     setProject((prevProject) => ({
       ...prevProject,
       journeys: updatedJourneys,
     }))
 
-    router.delete(route("journey.delete", deleteConfirmJourney))
+    // Envia a requisição de exclusão para o backend
+    router.delete(route("journey.delete", journeyIdToDelete), {
+      preserveScroll: true, // Evita que a página role para o topo
+    })
   }
 
   return (
@@ -592,30 +768,62 @@ const Journeys = ({ project, setProject }) => {
                       </svg>
                     </button>
                   )}
-
-                  <button
-                    className="p-1 hover:bg-gray-500 rounded-full mr-2"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      confirmDeleteJourney(journey.id)
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-red-400"
+                  {/* remover journey */}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        className="p-1 hover:bg-gray-500 rounded-full mr-2"
+                        onClick={(e) => e.stopPropagation()} // Impede que o toggle da journey seja acionado
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="text-red-400"
+                        >
+                          <path d="M3 6h18"></path>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-60 bg-gray-800 border-gray-700 text-white"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <path d="M3 6h18"></path>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                  </button>
+                      <div className="space-y-3">
+                        <div className="space-y-1">
+                          <h4 className="font-medium">Excluir Journey</h4>
+                          <p className="text-sm text-gray-400">
+                            Tem certeza? Todos os passos desta jornada serão
+                            perdidos.
+                          </p>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          {/* O Popover do Shadcn não tem um botão de fechar padrão, então criamos um ou usamos o PopoverClose */}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            asChild
+                          >
+                            <PopoverTrigger>Cancelar</PopoverTrigger>
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => deleteJourney(journey.id)}
+                          >
+                            Sim, excluir
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
 
                   {expandedJourney === journey.id ? (
                     <ChevronRight
@@ -631,135 +839,53 @@ const Journeys = ({ project, setProject }) => {
                 </div>
               </div>
 
-              {/* Diálogo de confirmação de exclusão de journey */}
-              {deleteConfirmJourney === journey.id && (
-                <ModalConfirmation
-                  onConfirm={handleDeleteJourney}
-                  onCancel={() => setDeleteConfirmJourney(null)}
-                  message="Deseja remover esta journey e todos seus passos?"
-                />
-              )}
-
               {/* Conteúdo da Journey (Steps) */}
               {expandedJourney === journey.id && (
                 <>
                   {journey.steps && journey.steps.length > 0 ? (
                     <div className="flex flex-col">
                       {/* Grid de steps */}
-                      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center justify-center p-4">
+                      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center p-4">
                         {/* Steps com setas de conexão */}
                         {journey?.steps.map((step, stepIndex) => {
                           const colorIndex = stepIndex % colors.length
                           const currentColor = colors[colorIndex]
+                          // Variável para verificar se este é o item em edição
+                          const isCurrentlyEditing =
+                            editingStep.journeyId === journey.id &&
+                            editingStep.stepIndex === stepIndex
                           return (
-                            <div
+                            <JourneyStepItem
                               key={stepIndex}
-                              className="step relative flex min-h-full min-w-full cursor-pointer rounded hover:bg-gray-700 transition-colors popup-animation"
-                            >
-                              <div
-                                onClick={() =>
-                                  startEditStep(journey.id, stepIndex)
-                                }
-                                className={`rounded-lg border-4 ${currentColor.border} flex min-h-full min-w-full`}
-                              >
-                                <div
-                                  className={`absolute -top-4 -left-1 ${currentColor.bg} text-white rounded-full w-8 h-8 flex items-center justify-center font-bold`}
-                                >
-                                  {stepIndex + 1}
-                                </div>
-                                {editingStep.JourneyId === journey.id &&
-                                editingStep.stepIndex === stepIndex ? (
-                                  <div
-                                    className="h-full w-full p-2 text-sm bg-gray-700 rounded"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <TextArea
-                                      value={editValue}
-                                      onChange={(e) =>
-                                        setEditValue(e.target.value)
-                                      }
-                                      onEnter={() => saveEditStep()}
-                                    />
-                                    <div className="flex justify-between mt-1">
-                                      <button
-                                        className="bg-green-600 hover:bg-green-500 text-white text-xs p-1 rounded"
-                                        onClick={saveEditStep}
-                                      >
-                                        Salvar
-                                      </button>
-                                      <button
-                                        className="bg-red-600 hover:bg-red-500 text-white text-xs p-1 rounded"
-                                        onClick={() =>
-                                          confirmDeleteStep(
-                                            journey.id,
-                                            stepIndex
-                                          )
-                                        }
-                                      >
-                                        Excluir
-                                      </button>
-                                      <button
-                                        onClick={() => saveEditStep(true)}
-                                      >
-                                        {step.touchpoint ? (
-                                          <Circle
-                                            size={20}
-                                            color="red"
-                                            fill="red"
-                                          />
-                                        ) : (
-                                          <Circle
-                                            size={20}
-                                            color="black"
-                                          />
-                                        )}
-                                      </button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <p className={` mt-2 p-2 text-white text-sm`}>
-                                    {step.description}
-                                  </p>
-                                )}
-                              </div>
-
-                              {/* Diálogo de confirmação de exclusão de step */}
-                              {deleteConfirmStep.JourneyId === journey.id &&
-                                deleteConfirmStep.stepIndex === stepIndex && (
-                                  <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-10 bg-gray-700 rounded shadow-lg p-2 w-48">
-                                    <div className="text-white text-xs mb-2">
-                                      Deseja remover este passo?
-                                    </div>
-                                    <div className="flex justify-between gap-1">
-                                      <button
-                                        className="bg-red-500 hover:bg-red-600 text-white text-xs py-1 px-2 rounded flex-1"
-                                        onClick={deleteStep}
-                                      >
-                                        Sim
-                                      </button>
-                                      <button
-                                        className="bg-gray-600 hover:bg-gray-500 text-white text-xs py-1 px-2 rounded flex-1"
-                                        onClick={() =>
-                                          setDeleteConfirmStep({
-                                            JourneyId: null,
-                                            stepIndex: null,
-                                          })
-                                        }
-                                      >
-                                        Não
-                                      </button>
-                                    </div>
-                                  </div>
-                                )}
-                              {/* Seta apontando para proximo passo caso houver */}
-                              {stepIndex < journey.steps.length - 1 && (
-                                <div
-                                  className={`absolute top-1/2 -right-5 transform -translate-y-1/2 z-10 ${currentColor.text}`}
-                                >
-                                  <CornerUpRight size={27} />
-                                </div>
-                              )}
-                            </div>
+                              step={step}
+                              stepIndex={stepIndex}
+                              isLastStep={
+                                stepIndex === journey.steps.length - 1
+                              }
+                              color={currentColor}
+                              // A prop 'isEditing' continua a mesma
+                              isEditing={isCurrentlyEditing}
+                              editValue={
+                                isCurrentlyEditing
+                                  ? editValue
+                                  : step.description
+                              }
+                              onValueChange={(e) =>
+                                setEditValue(e.target.value)
+                              }
+                              onEdit={() =>
+                                startEditStep(journey.id, stepIndex)
+                              }
+                              onSave={saveEditStep} // Passa a nova função save
+                              onCancel={cancelEditStep} // Passa a função de cancelar
+                              onDelete={() => deleteStep(journey.id, stepIndex)}
+                              textareaRef={
+                                editingStep.journeyId === journey.id &&
+                                editingStep.stepIndex === stepIndex
+                                  ? textareaRef
+                                  : null
+                              }
+                            />
                           )
                         })}
 
@@ -840,20 +966,18 @@ const Journeys = ({ project, setProject }) => {
           )}
           <span>{isGeneratingAI ? "Gerando..." : "Gerar com IA"}</span>
           {/* Botão de Info centralizado */}
+
           <Popover>
             <PopoverTrigger asChild>
-              <button 
-                className="p-2 rounded-lg transition-colors"
-                onClick={(e) => e.stopPropagation()} // Previne a propagação do evento
-              >
-                <Info
-                  className="text-gray-400 cursor-pointer"
-                  size={15}
-                />
-              </button>
+              <Info
+                onClick={(e) => e.stopPropagation()}
+                className="text-gray-400 cursor-pointer transition-colors hover:text-gray-300 mx-2"
+                size={15}
+              />
             </PopoverTrigger>
             <PopoverContent className="bg-gray-800 text-white ">
-              Esta função utiliza IA para gerar jornadas personalizadas baseadas nas Goals definidas nas Personas.
+              Esta função utiliza IA para gerar jornadas personalizadas baseadas
+              nas Goals definidas nas Personas.
               <PopoverArrow className="fill-gray-800" />
             </PopoverContent>
           </Popover>
