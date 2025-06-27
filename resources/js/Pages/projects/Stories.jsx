@@ -155,17 +155,17 @@ const StoryItem = ({
             className="absolute right-2 top-4 -translate-y-1 flex items-center rounded-md bg-gray-800 border border-gray-700 shadow-lg"
           >
             <Button
-              variant="ghost"
+              variant="motiondiv"
               size="icon"
-              className="size-8 text-gray-300 hover:text-white hover:bg-gray-500/40"
+              className="text-gray-300 hover:text-white"
               onClick={onEdit}
             >
               <Pencil className="size-4" />
             </Button>
             <Button
-              variant="ghost"
+              variant="motiondiv"
               size="icon"
-              className="size-8 text-red-500/80 hover:text-red-500 hover:bg-gray-500/40"
+              className="text-red-500/80 hover:text-red-500 "
               onClick={onDelete}
             >
               <Trash className="size-4" />

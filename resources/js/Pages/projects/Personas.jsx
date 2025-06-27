@@ -107,21 +107,20 @@ const PersonaItem = ({
             className="absolute right-2 -translate-y-1/2 flex items-center rounded-md bg-gray-800 border border-gray-700 shadow-lg"
           >
             <Button
-              variant="ghost"
+              variant="motiondiv"
               size="icon"
-              className="size-7 hover:bg-gray-500/40"
               onClick={onEdit}
             >
-              <Edit className="size-4" />
+              <Edit  />
             </Button>
 
             <Button
-              variant="ghost"
+              variant="motiondiv"
               size="icon"
-              className="h-7 w-7 text-red-500/80 hover:text-red-500 hover:bg-gray-500/40"
+              className="text-red-500/80 hover:text-red-500 "
               onClick={onDelete}
             >
-              <Trash className="size-4" />
+              <Trash  />
             </Button>
           </motion.div>
         )}
