@@ -1,5 +1,20 @@
 import React, { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence, Reorder } from "framer-motion"
+// Importe os componentes e funções necessários do dnd-kit
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
+import {
+  useSortable,
+  arrayMove,
+  SortableContext,
+  rectSortingStrategy, 
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   X,
   Circle,
@@ -29,6 +44,35 @@ import {
 } from "@/components/ui/popover"
 import { Switch } from "@/components/ui/switch"
 import TextareaAutosize from "react-textarea-autosize"
+
+const SortableJourneyStepItem = (props) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging, 
+  } = useSortable({ id: props.step.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : "auto",
+    boxShadow: isDragging ? "0px 10px 20px rgba(0,0,0,0.2)" : "none",
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
+      <JourneyStepItem {...props} />
+    </div>
+  )
+}
 
 const JourneyStepItem = ({
   step,
@@ -69,18 +113,10 @@ const JourneyStepItem = ({
   }
 
   return (
-    <Reorder.Item
-      value={step}
-      as="div"
-      dragListener={!isEditing}
+    <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="relative group flex items-center"
-      whileDrag={{
-        scale: 1.05,
-        zIndex: 50,
-        boxShadow: "0px 10px 20px rgba(0,0,0,0.2)",
-      }}
     >
       {/* Circulo */}
       <Badge
@@ -227,7 +263,7 @@ const JourneyStepItem = ({
         </div>
       )}
       {/* </div> */}
-    </Reorder.Item>
+    </div>
   )
 }
 
@@ -266,6 +302,32 @@ const Journeys = ({ project, setProject }) => {
     { text: "text-teal-500", border: "border-teal-500", bg: "bg-teal-500" },
   ]
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      // Requer um pequeno movimento antes de iniciar o arrasto
+      activationConstraint: {
+        distance: 14,
+      },
+    })
+  )
+
+  // Função que será chamada quando o arrasto terminar
+  const handleDragEnd = (event, journeyId) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id) {
+      const journey = project.journeys.find((j) => j.id === journeyId)
+      const steps = journey.steps
+      const oldIndex = steps.findIndex((step) => step.id === active.id)
+      const newIndex = steps.findIndex((step) => step.id === over.id)
+
+      // Usa a função `arrayMove` do dnd-kit para reordenar o array
+      const reorderedSteps = arrayMove(steps, oldIndex, newIndex)
+
+      // Chama a sua função existente para atualizar o estado e a API
+      handleReorderSteps(journeyId, reorderedSteps)
+    }
+  }
   // Função para gerar journeys com IA
   const generateJourneysWithAI = async () => {
     setIsGeneratingAI(true)
@@ -290,7 +352,6 @@ const Journeys = ({ project, setProject }) => {
 
       if (data.status === "sucesso") {
         console.log(data.journeys)
-        // Adicionar propriedade 'selected' para cada journey gerada
         const journeysWithSelection = data.journeys.map((journey) => ({
           ...journey,
           selected: true, // Por padrão, todas vêm selecionadas
@@ -488,7 +549,6 @@ const Journeys = ({ project, setProject }) => {
 
   // Função para salvar a edição de um step
   const saveEditStep = (description, isTouchpoint) => {
-    console.log(editingStep, description, isTouchpoint)
     const { journeyId, stepIndex } = editingStep
     if (!journeyId || stepIndex === null) return
     const journey = project.journeys.find((j) => j.id === journeyId)
@@ -824,59 +884,64 @@ const Journeys = ({ project, setProject }) => {
                 <>
                   {journey.steps && journey.steps.length > 0 ? (
                     <div className="flex flex-col">
-                      <Reorder.Group
-                        as="div"
-                        axis="y"
-                        values={journey.steps}
-                        onReorder={(newOrder) => {
-                          console.log(newOrder)
-                          handleReorderSteps(journey.id, newOrder)
-                        }}
-                        className='flex flex-col gap-2 p-2'
-                        // className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center p-4"
+                      {/* DND-KIT CONTEXT WRAPPER */}
+                      <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        // Passamos o journey.id para o handler
+                        onDragEnd={(event) => handleDragEnd(event, journey.id)}
                       >
                         {/* Steps com setas de conexão */}
-                        {journey?.steps.map((step, stepIndex) => {
-                          const colorIndex = stepIndex % colors.length
-                          const currentColor = colors[colorIndex]
-                          // Variável para verificar se este é o item em edição
-                          const isCurrentlyEditing =
-                            editingStep.journeyId === journey.id &&
-                            editingStep.stepIndex === stepIndex
-                          return (
-                            <JourneyStepItem
-                              key={step.id}
-                              step={step}
-                              stepIndex={stepIndex}
-                              isLastStep={
-                                stepIndex === journey.steps.length - 1
-                              }
-                              color={currentColor}
-                              isEditing={isCurrentlyEditing}
-                              editValue={
-                                isCurrentlyEditing
-                                  ? editValue
-                                  : step.description
-                              }
-                              onValueChange={(e) =>
-                                setEditValue(e.target.value)
-                              }
-                              onEdit={() =>
-                                startEditStep(journey.id, stepIndex)
-                              }
-                              onSave={saveEditStep} // Passa a nova função save
-                              onCancel={cancelEditStep} // Passa a função de cancelar
-                              onDelete={() => deleteStep(journey.id, stepIndex)}
-                              textareaRef={
+                        <SortableContext
+                          items={journey.steps.map((s) => s.id)}
+                          strategy={rectSortingStrategy}
+                        >
+ 
+                          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center p-4">
+                            {journey?.steps.map((step, stepIndex) => {
+                              const colorIndex = stepIndex % colors.length
+                              const currentColor = colors[colorIndex]
+                              const isCurrentlyEditing =
                                 editingStep.journeyId === journey.id &&
                                 editingStep.stepIndex === stepIndex
-                                  ? textareaRef
-                                  : null
-                              }
-                            />
-                          )
-                        })}
-                      </Reorder.Group>
+
+                              // Renderize o componente wrapper em vez do item direto
+                              return (
+                                <SortableJourneyStepItem
+                                  key={step.id}
+                                  step={step}
+                                  stepIndex={stepIndex}
+                                  isLastStep={
+                                    stepIndex === journey.steps.length - 1
+                                  }
+                                  color={currentColor}
+                                  isEditing={isCurrentlyEditing}
+                                  editValue={
+                                    isCurrentlyEditing
+                                      ? editValue
+                                      : step.description
+                                  }
+                                  onValueChange={(e) =>
+                                    setEditValue(e.target.value)
+                                  }
+                                  onEdit={() =>
+                                    startEditStep(journey.id, stepIndex)
+                                  }
+                                  onSave={saveEditStep}
+                                  onCancel={cancelEditStep}
+                                  onDelete={() =>
+                                    deleteStep(journey.id, stepIndex)
+                                  }
+                                  textareaRef={
+                                    isCurrentlyEditing ? textareaRef : null
+                                  }
+                                />
+                              )
+                            })}
+                          </div>
+                        </SortableContext>
+                      </DndContext>
+                      {/* Fim do wrapper DndContext */}
                       {/* Botão para adicionar novo passo */}
                       <div className="ml-2">
                         <button
