@@ -41,7 +41,7 @@ class StoryGeneratorControllerGemini extends Controller
 
       $prompt = $this->createPrompt($personas, $journeys, $productConstraints, $constraintGoals);
 
-      $modelName = 'gemini-1.5-flash';
+      $modelName = 'gemini-2.5-flash-lite-preview-06-17';
 
       $fullPrompt = 'Você é um especialista em engenharia de software e análise de requisitos. ' . $prompt;
 
@@ -101,48 +101,60 @@ class StoryGeneratorControllerGemini extends Controller
     $constraintsText = $this->formatConstraintsForPrompt($productConstraints);
     $constraintGoalsText = $this->formatConstraintGoalsForPrompt($constraintGoals);
 
+      // 3. Após escrever as stories, deve verificar e validar esses requisitos.
+      //   A ideia é avaliar se as stories produzidas estão corretas, testáveis, pequenas o suficiente.
+      //   Essa inspeção é feita com o uso dos critérios INVEST.
+
+      //   Critérios INVEST:
+      //   - INDEPENDENT
+      //   - NEGOTIABLE
+      //   - VALUABLE
+      //   - ESTIMABLE
+      //   - SMALL
+      //   - TESTABLE
+        
     return <<<PROMPT
         Com base nos dados fornecidos do sistema, gere user stories e system stories no formato especificado abaixo:
 
         CONTEXTO PARA USER STORIES:
-        Personas (incluindo seus goals): $personasText
-        
-        User Journeys: $journeysText
+          - Goals das Personas do Produto: $personasText
+          
+          - Journeys do Produto: $journeysText
 
         CONTEXTO PARA SYSTEM STORIES:
-        Restrições do Produto: $constraintsText
-        
-        Constraint Goals (Goals Sketch tipo 'cg'): $constraintGoalsText
+          - Restrições do Produto: $constraintsText
+          
+          - Constraint Goals do Produto: $constraintGoalsText
 
         INSTRUÇÕES:
-        - Para USER STORIES: Use as personas (com seus goals internos) e journeys como contexto para criar histórias centradas no usuário
-        - Para SYSTEM STORIES: Use as restrições do produto e constraint goals do goal_sketches (tipo 'cg'). Também acrescente atributos de qualidade para system stories na descrição.
+          1. Para USER STORIES: Use as Goals das Personas e Journeys como contexto para criar histórias centradas no usuário.
 
-        Formato requerido:
-        Inicio do formato requerido           
-        {
-            "stories":
-                [
+          2. Para SYSTEM STORIES: Use as Restrições do Produto e Constraint Goals como contexto para criar histórias do sistema. Também acrescente atributos de qualidade na descrição das system stories.
+
+            FORMATO REQUERIDO:
+            INÍCIO DO FORMATO REQUERIDO        
+              {
+                "stories":
+                  [
                     {
-                        "title":"texto da story",
-                        "type":"user|system"
+                      "title":"texto da story",
+                      "type":"user|system"
                     }
-                ]
-        }
-        Fim do formato requerido
+                  ]
+              }
+            FIM DO FORMATO REQUERIDO
 
-        Exemplo de User Story:
-          "title": "Eu como Thiago Guimarães quero criar listas e adicionar a elas obras disponíveis na plataforma para criar playlists de filmes."
-          "type": "user
-        Fim do exemplo de User Story:
+            EXEMPLO DE USER STORY:
+              "title": "Eu como Thiago Guimarães quero criar listas e adicionar a elas obras disponíveis na plataforma para criar playlists de filmes."
+              "type": "user
+            FIM DO EXEMPLO DE USER STORY:
 
-        Exemplo de System Story:
-          "title": "Implementar tecnologias de compressão eficientes e entrega de conteúdo via CDN (Content Delivery Network) para garantir uma transmissão de vídeo sem interrupções e com carregamento rápido. Atributo de Qualidade: Desempenho e Eficiência"
-          "type": "system"
-        Fim do exemplo de System Story
-
-        Retorne apenas o JSON e não use \ para escapar caracteres especiais.
+            EXEMPLO DE SYSTEM STORY:
+              "title": "Implementar tecnologias de compressão eficientes e entrega de conteúdo via CDN (Content Delivery Network) para garantir uma transmissão de vídeo sem interrupções e com carregamento rápido. Atributo de Qualidade: Desempenho e Eficiência"
+              "type": "system"
+            FIM DO EXEMPLO DE SYSTEM STORY
         
+        IMPORTANTE: Retorne apenas o JSON e não use \ para escapar caracteres especiais.
         IMPORTANTE: Caso não haja dados suficientes para um tipo de story, não gere ou invente stories.
         IMPORTANTE: Gere apenas stories baseadas nos dados fornecidos acima.
         PROMPT;
