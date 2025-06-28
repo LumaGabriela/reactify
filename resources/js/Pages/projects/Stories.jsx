@@ -102,12 +102,12 @@ const StoryItem = ({
                   value={editValue}
                   onChange={onValueChange}
                   onKeyDown={handleKeyDown}
-                  className="w-full border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-semibold dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
+                  className="w-full text-sm border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
                   autoFocus
                 />
               </div>
             ) : (
-              <p className="m-0 font-semibold dark:text-slate-200 break-words w-full">
+              <p className="m-0 text-sm dark:text-slate-200 break-words w-full">
                 {story.title}
               </p>
             )}

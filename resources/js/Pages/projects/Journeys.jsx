@@ -78,14 +78,14 @@ const JourneyStepItem = ({
       {/* Circulo */}
       <Badge
         variant="numberIcon"
-        className={`${color.bg}`}
+        className={`${color.bg} z-40`}
       >
-        {stepIndex + 1}
+        <p className={`m-0 text-gray-900` }>{stepIndex + 1}</p>        
       </Badge>
       {/* card de conteudo */}
-      <Card className="w-full bg-gray-900/50 border-gray-800 transition-shadow hover:shadow-lg">
-        <CardContent className="flex-row items-start justify-between gap-2 p-3">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
+      <Card className="w-full dark:!bg-gray-900 bg-white border-gray-800 transition-shadow hover:shadow-lg z-20">
+        <CardContent className="flex-row items-start justify-between gap-2 p-2 min-h-[60px]">
+          <div className="flex items-center flex-1 min-w-0 ">
             <div className="flex-1">
               {isEditing ? (
                 <TextareaAutosize
@@ -93,11 +93,11 @@ const JourneyStepItem = ({
                   value={editValue}
                   onChange={onValueChange}
                   onKeyDown={handleKeyDown}
-                  className="w-full resize-none rounded-md border border-gray-700 bg-gray-900/50 p-2 text-sm text-gray-300 transition-colors duration-200 focus-visible:border-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/20"
+                  className="w-full text-sm border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
                   autoFocus
                 />
               ) : (
-                <p className="text-sm text-gray-300 pt-1 break-words">
+              <p className="m-0 text-sm dark:text-slate-200 break-words w-full">
                   {step.description || "..."}
                 </p>
               )}
@@ -105,8 +105,8 @@ const JourneyStepItem = ({
           </div>
           {step.is_touchpoint && !isEditing && (
             <Circle
-              size={26}
-              className="fill-violet-600 stroke-violet-600"
+              size={16}
+              className="fill-violet-600 stroke-violet-600 mt-1"
             />
           )}
 
@@ -120,7 +120,7 @@ const JourneyStepItem = ({
                   id={`touchpoint-switch-${stepIndex}`}
                   checked={touchpointChecked}
                   onCheckedChange={setTouchpointChecked}
-                  className="data-[state=checked]:!bg-violet-900 data-[state=unchecked]:bg-neutral-200"
+                  className="data-[state=checked]:!bg-violet-900 data-[state=unchecked]:bg-neutral-200 ring-gray-800 focus-visible:ring-1 focus-visible:ring-gray-800"
                 />
 
                 <Button
@@ -154,7 +154,7 @@ const JourneyStepItem = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-3 right-3 flex items-center rounded-md bg-gray-900/50 backdrop-blur-sm border border-gray-700 shadow-xl"
+            className="z-40 absolute top-3 right-3 flex items-center rounded-md bg-gray-900/50 backdrop-blur-sm border border-gray-700 shadow-xl"
           >
             <Button
               variant="motiondiv"
@@ -212,9 +212,9 @@ const JourneyStepItem = ({
       </AnimatePresence>
 
       {!isLastStep && (
-        <div className="absolute top-1/2 -right-5 -translate-y-1/2 text-gray-600">
+        <div className="absolute top-1/2 -right-3 translate-x-1 -translate-y-1/2 text-gray-300 z-0">
           <CornerUpRight
-            size={28}
+            size={20}
             strokeWidth={1.5}
           />
         </div>
