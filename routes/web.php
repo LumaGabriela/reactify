@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
-  Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
+  Route::get('/dashboard', [ProjectController::class, 'index'])->name('projects.index');
 
   Route::prefix('project')->group(function () {
     Route::post('/create', [ProjectController::class, 'store'])->name('project.store');
@@ -71,5 +71,6 @@ Route::get('/config', function () {
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->middleware('guest')->name('welcome');
+
 
 require __DIR__ . '/auth.php';
