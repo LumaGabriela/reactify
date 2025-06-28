@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion" // Importando framer-motion
+import { motion, AnimatePresence } from "framer-motion" 
 import {
   Plus,
   Sparkles,
-  FileText,
   X,
   Pencil,
   Info,

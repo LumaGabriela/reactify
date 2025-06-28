@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, Reorder } from "framer-motion"
 import {
   X,
-  Save,
   Circle,
   Plus,
   Check,
@@ -70,17 +69,25 @@ const JourneyStepItem = ({
   }
 
   return (
-    <div
+    <Reorder.Item
+      value={step}
+      as="div"
+      dragListener={!isEditing}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="relative group flex items-center"
+      whileDrag={{
+        scale: 1.05,
+        zIndex: 50,
+        boxShadow: "0px 10px 20px rgba(0,0,0,0.2)",
+      }}
     >
       {/* Circulo */}
       <Badge
         variant="numberIcon"
         className={`${color.bg} z-40`}
       >
-        <p className={`m-0 text-gray-900` }>{stepIndex + 1}</p>        
+        <p className={`m-0 text-gray-900`}>{stepIndex + 1}</p>
       </Badge>
       {/* card de conteudo */}
       <Card className="w-full dark:!bg-gray-900 bg-white border-gray-800 transition-shadow hover:shadow-lg z-20">
@@ -97,7 +104,7 @@ const JourneyStepItem = ({
                   autoFocus
                 />
               ) : (
-              <p className="m-0 text-sm dark:text-slate-200 break-words w-full">
+                <p className="m-0 text-sm dark:text-slate-200 break-words w-full">
                   {step.description || "..."}
                 </p>
               )}
@@ -219,7 +226,8 @@ const JourneyStepItem = ({
           />
         </div>
       )}
-    </div>
+      {/* </div> */}
+    </Reorder.Item>
   )
 }
 
@@ -437,11 +445,11 @@ const Journeys = ({ project, setProject }) => {
     if (!project.journeys) return
     const currentSteps =
       project.journeys.find((journey) => journey.id === JourneyId)?.steps || []
-    // const currentSteps = project.journeys[JourneyId].steps || [];
     const newStep = {
+      id: `step_${Date.now()}`,
       step: currentSteps.length + 1,
       description: "Novo passo",
-      touchpoint: false,
+      is_touchpoint: false,
     }
 
     const updatedJourneys = project.journeys.map((journey) => {
@@ -480,6 +488,7 @@ const Journeys = ({ project, setProject }) => {
 
   // Função para salvar a edição de um step
   const saveEditStep = (description, isTouchpoint) => {
+    console.log(editingStep, description, isTouchpoint)
     const { journeyId, stepIndex } = editingStep
     if (!journeyId || stepIndex === null) return
     const journey = project.journeys.find((j) => j.id === journeyId)
@@ -554,6 +563,30 @@ const Journeys = ({ project, setProject }) => {
     router.delete(route("journey.delete", journeyIdToDelete), {
       preserveScroll: true, // Evita que a página role para o topo
     })
+  }
+  // reordena os steps
+  const handleReorderSteps = (journeyId, reorderedSteps) => {
+    const newStepsWithCorrectOrder = reorderedSteps.map((step, index) => ({
+      ...step,
+      step: index + 1,
+    }))
+
+    // 2. Atualiza o estado local para uma resposta visual imediata
+    const updatedJourneys = project.journeys.map((j) =>
+      j.id === journeyId ? { ...j, steps: newStepsWithCorrectOrder } : j
+    )
+    setProject({ ...project, journeys: updatedJourneys })
+
+    router.patch(
+      route("journey.update", journeyId),
+      {
+        steps: newStepsWithCorrectOrder,
+      },
+      {
+        preserveState: true,
+        preserveScroll: true,
+      }
+    )
   }
 
   return (
@@ -791,8 +824,17 @@ const Journeys = ({ project, setProject }) => {
                 <>
                   {journey.steps && journey.steps.length > 0 ? (
                     <div className="flex flex-col">
-                      {/* Grid de steps */}
-                      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center p-4">
+                      <Reorder.Group
+                        as="div"
+                        axis="y"
+                        values={journey.steps}
+                        onReorder={(newOrder) => {
+                          console.log(newOrder)
+                          handleReorderSteps(journey.id, newOrder)
+                        }}
+                        className='flex flex-col gap-2 p-2'
+                        // className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center p-4"
+                      >
                         {/* Steps com setas de conexão */}
                         {journey?.steps.map((step, stepIndex) => {
                           const colorIndex = stepIndex % colors.length
@@ -803,14 +845,13 @@ const Journeys = ({ project, setProject }) => {
                             editingStep.stepIndex === stepIndex
                           return (
                             <JourneyStepItem
-                              key={stepIndex}
+                              key={step.id}
                               step={step}
                               stepIndex={stepIndex}
                               isLastStep={
                                 stepIndex === journey.steps.length - 1
                               }
                               color={currentColor}
-                              // A prop 'isEditing' continua a mesma
                               isEditing={isCurrentlyEditing}
                               editValue={
                                 isCurrentlyEditing
@@ -835,17 +876,17 @@ const Journeys = ({ project, setProject }) => {
                             />
                           )
                         })}
-
-                        {/* Botão para adicionar novo passo */}
-                        <div className="ml-2">
-                          <button
-                            className="w-10 h-10 rounded bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-blue-400"
-                            onClick={() => addNewStep(journey.id)}
-                          >
-                            <Plus size={18} />
-                          </button>
-                        </div>
+                      </Reorder.Group>
+                      {/* Botão para adicionar novo passo */}
+                      <div className="ml-2">
+                        <button
+                          className="w-10 h-10 rounded bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-blue-400"
+                          onClick={() => addNewStep(journey.id)}
+                        >
+                          <Plus size={18} />
+                        </button>
                       </div>
+                      {/* fim do grid */}
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center p-4 text-gray-400">
