@@ -10,7 +10,6 @@ import {
   EllipsisVertical,
 } from "lucide-react"
 import { Link, router, usePage } from "@inertiajs/react"
-import { ModalNewProject } from "@/Components/Modals"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -26,7 +25,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
