@@ -68,5 +68,8 @@ Route::get('/config', function () {
   return Inertia::render('Config');
 })->middleware(['auth', 'verified'])->name('config');
 
+Route::get('/', function () {
+    return Inertia::render('Welcome');
+})->middleware('guest')->name('welcome');
 
 require __DIR__ . '/auth.php';

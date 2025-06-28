@@ -102,7 +102,7 @@ class StoryGeneratorControllerGemini extends Controller
     $constraintGoalsText = $this->formatConstraintGoalsForPrompt($constraintGoals);
 
       // 3. Após escrever as stories, deve verificar e validar esses requisitos.
-      //   A ideia é avaliar se as stories produzidas estão corretas, testáveis, pequenas o suficiente.
+      //   A ideia é avaliar se as stories produzidas estão corretas, testáveis, pequenas o suficiente e se estão alinhados às reais necessidades do Customer em relação ao produto.
       //   Essa inspeção é feita com o uso dos critérios INVEST.
 
       //   Critérios INVEST:
