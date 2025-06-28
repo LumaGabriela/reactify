@@ -31,6 +31,7 @@ class JourneyController extends Controller
             // Formatando os steps para o formato esperado
             $formattedSteps = array_map(function ($step, $index) {
                 return [
+                    'id' => uniqid(),
                     'step' => $index + 1,
                     'description' => $step['description'],
                     'is_touchpoint' => $step['is_touchpoint'] ?? false
