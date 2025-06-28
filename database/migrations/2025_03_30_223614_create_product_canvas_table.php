@@ -32,6 +32,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('product_canvas');
+    Schema::dropSoftDeletes('product_canvas');
   }
 };

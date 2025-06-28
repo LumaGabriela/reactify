@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductCanvas extends Model
 {
+  use SoftDeletes;
+
   protected $fillable = [
     'issues',
     'solutions',
@@ -17,7 +20,7 @@ class ProductCanvas extends Model
   ];
 
   protected $table = 'product_canvas';
-  
+
   public function project()
   {
     return $this->belongsTo(Project::class);

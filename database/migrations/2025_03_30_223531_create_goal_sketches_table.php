@@ -32,7 +32,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('goal_sketches');
+        Schema::dropSoftDeletes('goal_sketches');
         Schema::dropIfExists('priorities');
     }
 };
