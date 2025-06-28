@@ -11,7 +11,7 @@ import {
   useSortable,
   arrayMove,
   SortableContext,
-  rectSortingStrategy, 
+  rectSortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { motion, AnimatePresence } from "framer-motion"
@@ -52,7 +52,7 @@ const SortableJourneyStepItem = (props) => {
     setNodeRef,
     transform,
     transition,
-    isDragging, 
+    isDragging,
   } = useSortable({ id: props.step.id })
 
   const style = {
@@ -896,7 +896,6 @@ const Journeys = ({ project, setProject }) => {
                           items={journey.steps.map((s) => s.id)}
                           strategy={rectSortingStrategy}
                         >
- 
                           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center p-4">
                             {journey?.steps.map((step, stepIndex) => {
                               const colorIndex = stepIndex % colors.length
@@ -938,19 +937,20 @@ const Journeys = ({ project, setProject }) => {
                                 />
                               )
                             })}
+                            <div className="flex justify-start items-center h-full">
+                              <button
+                                className="w-10 h-10 rounded bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-blue-400"
+                                onClick={() => addNewStep(journey.id)}
+                              >
+                                <Plus size={18} />
+                              </button>
+                            </div>
                           </div>
                         </SortableContext>
                       </DndContext>
                       {/* Fim do wrapper DndContext */}
                       {/* Botão para adicionar novo passo */}
-                      <div className="ml-2">
-                        <button
-                          className="w-10 h-10 rounded bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-blue-400"
-                          onClick={() => addNewStep(journey.id)}
-                        >
-                          <Plus size={18} />
-                        </button>
-                      </div>
+
                       {/* fim do grid */}
                     </div>
                   ) : (

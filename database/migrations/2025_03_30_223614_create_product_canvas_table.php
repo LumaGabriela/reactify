@@ -21,6 +21,7 @@ return new class extends Migration
       $table->text('product_is_not')->nullable();
       $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
       $table->timestamps();
+      $table->softDeletes();
     });
   }
 

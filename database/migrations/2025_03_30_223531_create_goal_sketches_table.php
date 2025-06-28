@@ -23,6 +23,7 @@ return new class extends Migration
             $table->enum( 'priority', ['low', 'med', 'high', 'urgent']);
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

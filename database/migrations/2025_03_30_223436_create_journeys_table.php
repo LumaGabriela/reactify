@@ -17,6 +17,7 @@ return new class extends Migration
             $table->jsonb('steps');
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

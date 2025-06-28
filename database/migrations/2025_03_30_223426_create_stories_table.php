@@ -17,6 +17,7 @@ return new class extends Migration
       $table->enum('type', ['user', 'system']); // Tipo fixo
       $table->foreignId('project_id')->constrained('projects')->onDelete('cascade'); // Chave estrangeira
       $table->timestamps();
+      $table->softDeletes();
     });
   }
 
