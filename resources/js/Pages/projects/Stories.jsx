@@ -550,9 +550,9 @@ const Stories = ({ project, setProject }) => {
               />
             </PopoverTrigger>
             <PopoverContent className="bg-gray-800 text-white ">
-              Esta função utiliza IA para gerar Users Stories baseadas nas
-              Persona's Goals e System Stories baseadas nas Restrições do
-              produto e Constraint Goals.
+              Esta função utiliza IA para gerar Users Stories baseadas nos
+              objetivos das Personas e Journeys do Produto e gerar System Stories 
+              baseadas nas Restrições do Produto e Goals do tipo Constraint(CG).
               <PopoverArrow className="fill-gray-800" />
             </PopoverContent>
           </Popover>
