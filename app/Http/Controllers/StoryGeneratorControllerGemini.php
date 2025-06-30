@@ -100,18 +100,6 @@ class StoryGeneratorControllerGemini extends Controller
     $journeysText = $this->formatJourneysForPrompt($journeys);
     $constraintsText = $this->formatConstraintsForPrompt($productConstraints);
     $constraintGoalsText = $this->formatConstraintGoalsForPrompt($constraintGoals);
-
-      // 3. Após escrever as stories, deve verificar e validar esses requisitos.
-      //   A ideia é avaliar se as stories produzidas estão corretas, testáveis, pequenas o suficiente e se estão alinhados às reais necessidades do Customer em relação ao produto.
-      //   Essa inspeção é feita com o uso dos critérios INVEST.
-
-      //   Critérios INVEST:
-      //   - INDEPENDENT
-      //   - NEGOTIABLE
-      //   - VALUABLE
-      //   - ESTIMABLE
-      //   - SMALL
-      //   - TESTABLE
         
     return <<<PROMPT
         Com base nos dados fornecidos do sistema, gere user stories e system stories no formato especificado abaixo:
@@ -153,6 +141,18 @@ class StoryGeneratorControllerGemini extends Controller
               "title": "Implementar tecnologias de compressão eficientes e entrega de conteúdo via CDN (Content Delivery Network) para garantir uma transmissão de vídeo sem interrupções e com carregamento rápido. Atributo de Qualidade: Desempenho e Eficiência"
               "type": "system"
             FIM DO EXEMPLO DE SYSTEM STORY
+
+          3. Após escrever as stories, deve verificar e validar esses requisitos.
+            Avalie se as stories produzidas estão corretas, testáveis, pequenas o suficiente.
+            Essa inspeção é feita com o uso dos critérios INVEST listados abaixo:
+
+            Critérios INVEST:
+            - INDEPENDENT
+            - NEGOTIABLE
+            - VALUABLE
+            - ESTIMABLE
+            - SMALL
+            - TESTABLE
         
         IMPORTANTE: Retorne apenas o JSON e não use \ para escapar caracteres especiais.
         IMPORTANTE: Caso não haja dados suficientes para um tipo de story, não gere ou invente stories.
