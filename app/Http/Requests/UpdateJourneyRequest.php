@@ -24,6 +24,10 @@ class UpdateJourneyRequest extends FormRequest
         return [
             'title' => 'nullable|string:max:255',
             'steps' => 'nullable|array',
+            'steps.*.id' => 'required|string',
+            'steps.*.step' => 'required|integer',
+            'steps.*.description' => 'required|string|max:255',
+            'steps.*.is_touchpoint' => 'required|boolean',
         ];
     }
 }

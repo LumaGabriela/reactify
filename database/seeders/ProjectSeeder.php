@@ -170,85 +170,85 @@ class ProjectSeeder extends Seeder
         'id' => uniqid(),
         'step' => 1,
         'description' => 'Acessar a plataforma',
-        'is_touchpoint' => 'false'
+        'is_touchpoint' => false
       ],
       [
         'id' => uniqid(),
         'step' => 2,
         'description' => 'Abrir a página',
-        'is_touchpoint' => 'false'
+        'is_touchpoint' => false
       ],
       [
         'id' => uniqid(),
         'step' => 3,
         'description' => 'Logar na plataforma',
-        'is_touchpoint' => 'true'
+        'is_touchpoint' => false
       ],
       [
         'id' => uniqid(),
         'step' => 4,
         'description' => 'Abrir tela inical de usuário',
-        'is_touchpoint' => 'false'
+        'is_touchpoint' => false
       ],
       [
         'id' => uniqid(),
         'step' => 5,
         'description' => 'Exibir opções "exibir catálogo" e "comunidade"',
-        'is_touchpoint' => 'false'
+        'is_touchpoint' => false
       ],
       [
         'id' => uniqid(),
         'step' => 6,
         'description' => 'Selecionar opção "exibir catálogo"',
-        'is_touchpoint' => 'true'
+        'is_touchpoint' => true
       ],
       [
         'id' => uniqid(),
         'step' => 7,
         'description' => 'Mostrar categorias de filmes',
-        'is_touchpoint' => 'false'
+        'is_touchpoint' => false
       ],
       [
         'id' => uniqid(),
         'step' => 8,
         'description' => 'Selecionar um filme',
-        'is_touchpoint' => 'true'
+        'is_touchpoint' => true
       ],
       [
         'id' => uniqid(),
         'step' => 9,
         'description' => 'Exibir sinopse e ficha técnica',
-        'is_touchpoint' => 'false'
+        'is_touchpoint' => false
       ],
       [
         'id' => uniqid(),
         'step' => 10,
         'description' => 'Exibir média de notas dadas por outros usuários',
-        'is_touchpoint' => 'false'
+        'is_touchpoint' => false
       ],
       [
         'id' => uniqid(),
         'step' => 11,
         'description' => 'Exibir opção "iniciar filme", "assistir depois" e "escrever comentário"',
-        'is_touchpoint' => 'false'
+        'is_touchpoint' => false
       ],
       [
         'id' => uniqid(),
         'step' => 12,
         'description' => 'Selecionar "iniciar filme"',
-        'is_touchpoint' => 'true'
+        'is_touchpoint' => true
       ],
       [
         'id' => uniqid(),
         'step' => 13,
         'description' => 'Abrir player de vídeo',
-        'is_touchpoint' => 'false'
+        'is_touchpoint' => false
       ],
       [
         'id' => uniqid(),
         'step' => 14,
         'description' => 'Iniciar exibição do filme',
-        'is_touchpoint' => 'false'
+        'is_touchpoint' => false
       ]
     ];
 
