@@ -480,7 +480,7 @@ const Personas = ({ project, setProject }) => {
                 </div>
               </CardHeader>
 
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+              <CardContent className="persona  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
                 {["profile", "expectations", "goals"].map((field) => (
                   <div
                     key={field}

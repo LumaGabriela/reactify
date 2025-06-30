@@ -161,8 +161,9 @@ const Dashboard = ({ projects = [] }) => {
   return (
     <div className=" text-white p-6 rounded w-full mx-auto">
       {/* Header */}
-      <div className="flex min-h-[15rem] justify-between items-center mb-2 gap-2">
-        <div className=" flex flex-col size-full relative">
+      <div className="flex min-h-[10rem] justify-center items-end mb-2 gap-2">
+
+        <div className=" flex flex-col w-1/2 h-full">
           <p className="text-gray-400 text-sm mb-2">Today</p>
           <p className="font-medium text-nowrap">{formattedDate}</p>
 
@@ -236,8 +237,8 @@ const Dashboard = ({ projects = [] }) => {
           </Dialog>
         </div>
 
-        <div className="w-1/2 dark">
-          <Command className=" relative md:min-w-[450px]">
+        <div className="relative w-1/2 h-full flex flex-col justify-end">
+          <Command className=" relative w-full md:min-w-[250px]">
             <CommandInput
               shortcut
               ref={commandInputRef}

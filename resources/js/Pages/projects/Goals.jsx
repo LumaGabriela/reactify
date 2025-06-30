@@ -130,7 +130,7 @@ const GoalItem = ({
                 value={editValue}
                 onChange={onValueChange}
                 onKeyDown={handleKeyDown}
-                className="w-full border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-semibold dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
+                className="w-full border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal text-sm dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
                 autoFocus
               />
               <div className="flex items-center gap-1">
@@ -153,7 +153,7 @@ const GoalItem = ({
               </div>
             </div>
           ) : (
-            <p className="m-0 font-semibold text-slate-200 break-words w-full min-h-[24px]">
+            <p className="m-0 font-normal text-sm text-slate-200 break-words w-full min-h-[24px]">
               {goal.title}
             </p>
           )}
