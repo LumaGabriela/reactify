@@ -63,7 +63,7 @@ class ProjectSeeder extends Seeder
       'issues' => 'Problema',
       'solutions' => 'Solução',
       'personas' => 'Pessoa',
-      'restrictions' => 'Restrição',
+      'restrictions' => 'A plataforma deve funcionar em qualquer navegador web baseado no Chromium, no Opera, no Safari e no Mozilla Firefox. A plataforma deve exigir um cadastro do usuário. A plataforma deve exigir uma assinatura semestral ou anual para acesso ilimitado ao catálogo.',
       'product_is' => 'É',
       'product_is_not' => 'Nao É',
       'project_id' => $projectId,
@@ -81,12 +81,6 @@ class ProjectSeeder extends Seeder
     //   'canvas_is_not',
     // ];
 
-    // foreach ($canvasTables as $table) {
-    //   DB::table($table)->insert([
-    //     'product_canvas_id' => $productCanvasId,
-    //     // Outros campos podem ser adicionados conforme necessidade
-    //   ]);
-    // }
 
     // Criar Prioridade
     $priorityId = DB::table('priorities')->insertGetId([
@@ -95,12 +89,46 @@ class ProjectSeeder extends Seeder
 
     // Criar Goal Sketch
     DB::table('goal_sketches')->insert([
-      'title' => 'Meta Principal',
-      'type' => 'cg',
-      'priority' => 'urgent',
-      'project_id' => $projectId,
-      'created_at' => now(),
-      'updated_at' => now(),
+      [
+        'title' => 'Atendimento às leis de direitos autorais e relacionadas à conteúdo em domínio público.',
+        'type' => 'cg',
+        'priority' => 'urgent',
+        'project_id' => $projectId,
+        'created_at' => now(),
+        'updated_at' => now(),
+      ],
+      [
+        'title' => 'Atendimento às leis de proteção do consumidor.',
+        'type' => 'cg',
+        'priority' => 'urgent',
+        'project_id' => $projectId,
+        'created_at' => now(),
+        'updated_at' => now(),
+      ],
+      [
+        'title' => 'Conformidade com padrões de segurança da informação.',
+        'type' => 'cg',
+        'priority' => 'urgent',
+        'project_id' => $projectId,
+        'created_at' => now(),
+        'updated_at' => now(),
+      ],
+      [
+        'title' => 'Atendimento às leis de proteção de dados pessoais.',
+        'type' => 'cg',
+        'priority' => 'urgent',
+        'project_id' => $projectId,
+        'created_at' => now(),
+        'updated_at' => now(),
+      ],
+      [
+        'title' => 'Assegurar que a plataforma funcione adequadamente nos navegadores web baseados no Chromium, Opera, Safari e Mozilla Firefox.',
+        'type' => 'cg',
+        'priority' => 'urgent',
+        'project_id' => $projectId,
+        'created_at' => now(),
+        'updated_at' => now(),
+      ],
     ]);
 
     // Criar registros básicos para tabelas restantes
@@ -139,85 +167,85 @@ class ProjectSeeder extends Seeder
     // Criar Journey com vários steps
     $journeySteps = [
       [
-        'id' => now(),
+        
         'step' => 1,
         'description' => 'Acessar a plataforma',
         'is_touchpoint' => 'false'
       ],
       [
-        'id' => now(),
+        
         'step' => 2,
         'description' => 'Abrir a página',
         'is_touchpoint' => 'false'
       ],
       [
-        'id' => now(),
+        
         'step' => 3,
         'description' => 'Logar na plataforma',
         'is_touchpoint' => 'true'
       ],
       [
-        'id' => now(),
+        
         'step' => 4,
         'description' => 'Abrir tela inical de usuário',
         'is_touchpoint' => 'false'
       ],
       [
-        'id' => now(),
+        
         'step' => 5,
         'description' => 'Exibir opções "exibir catálogo" e "comunidade"',
         'is_touchpoint' => 'false'
       ],
       [
-        'id' => now(),
+        
         'step' => 6,
         'description' => 'Selecionar opção "exibir catálogo"',
         'is_touchpoint' => 'true'
       ],
       [
-        'id' => now(),
+        
         'step' => 7,
         'description' => 'Mostrar categorias de filmes',
         'is_touchpoint' => 'false'
       ],
       [
-        'id' => now(),
+        
         'step' => 8,
         'description' => 'Selecionar um filme',
         'is_touchpoint' => 'true'
       ],
       [
-        'id' => now(),
+        
         'step' => 9,
         'description' => 'Exibir sinopse e ficha técnica',
         'is_touchpoint' => 'false'
       ],
       [
-        'id' => now(),
+        
         'step' => 10,
         'description' => 'Exibir média de notas dadas por outros usuários',
         'is_touchpoint' => 'false'
       ],
       [
-        'id' => now(),
+        
         'step' => 11,
         'description' => 'Exibir opção "iniciar filme", "assistir depois" e "escrever comentário"',
         'is_touchpoint' => 'false'
       ],
       [
-        'id' => now(),
+        
         'step' => 12,
         'description' => 'Selecionar "iniciar filme"',
         'is_touchpoint' => 'true'
       ],
       [
-        'id' => now(),
+        
         'step' => 13,
         'description' => 'Abrir player de vídeo',
         'is_touchpoint' => 'false'
       ],
       [
-        'id' => now(),
+        
         'step' => 14,
         'description' => 'Iniciar exibição do filme',
         'is_touchpoint' => 'false'
