@@ -35,17 +35,15 @@ class PersonaSeeder extends Seeder
                     'Confiabilidade e disponibilidade constante',
                     'Funcionalidades que economizem tempo'
                 ]),
-                'restrictions' => json_encode([
-                    'Pouco tempo disponível para aprender novas ferramentas',
-                    'Preocupação com segurança dos dados',
-                    'Não gosta de interfaces complexas',
-                    'Acesso principalmente via dispositivos móveis'
-                ]),
                 'goals' => json_encode([
-                    'Aumentar produtividade',
-                    'Simplificar tarefas diárias',
-                    'Organizar informações pessoais',
-                    'Colaborar com colegas de trabalho'
+                    'Assistir um filme',
+                    'Escolher o idioma da legenda do filme',
+                    'Escrever uma resenha ou comentário sobre um filme',
+                    'Dar nota para um filme',
+                    'Seguir outros usuários da plataforma',
+                    'Compartilhar um filme ou resenha em redes sociais',
+                    'Criar playlists de filmes',
+                    'Fazer requisições de filmes a serem adicionados ao catálogo'
                 ]),
                 'project_id' => $project->id,
                 'created_at' => now(),
@@ -67,54 +65,17 @@ class PersonaSeeder extends Seeder
                     'Logs detalhados de atividades',
                     'Recursos de backup e recuperação'
                 ]),
-                'restrictions' => json_encode([
-                    'Precisa atender a requisitos de segurança corporativa',
-                    'Limitações de orçamento para implementação',
-                    'Necessidade de compatibilidade com sistemas legados',
-                    'Responsabilidade pela conformidade com regulamentos'
-                ]),
                 'goals' => json_encode([
-                    'Garantir a segurança dos dados',
-                    'Facilitar o gerenciamento de usuários',
-                    'Reduzir tempo de inatividade do sistema',
-                    'Implementar soluções escaláveis'
+                    'Adicionar e categorizar filme no catálogo',
+                    'Remover um filme do catálogo',
+                    'Consultar o fluxo de visitas à plataforma',
+                    'Gerenciar as inscrições na plataforma'
                 ]),
                 'project_id' => $project->id,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
                 
-            // Persona 3: Novato Digital
-            DB::table('personas')->insert([
-                'name' => 'Novato Digital',
-                'profile' => json_encode([
-                    '45-65 anos',
-                    'Diversos (aposentados, profissionais não-técnicos)',
-                    'habilidade_tecnologica: Básica',
-                    'Utiliza tecnologia com cautela e precisa de orientação clara'
-                ]),
-                'expectations' => json_encode([
-                    'Interface extremamente simples',
-                    'Instruções passo a passo',
-                    'Suporte facilmente acessível',
-                    'Tolerância a erros'
-                ]),
-                'restrictions' => json_encode([
-                    'Pouca familiaridade com termos técnicos',
-                    'Resistência a mudanças frequentes',
-                    'Dificuldade com múltiplas etapas',
-                    'Preocupação com privacidade'
-                ]),
-                'goals' => json_encode([
-                    'Realizar tarefas básicas sem frustrações',
-                    'Acompanhar avanços tecnológicos',
-                    'Conectar-se com familiares e amigos',
-                    'Proteger informações pessoais'
-                ]),
-                'project_id' => $project->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
         }
     }
 }
