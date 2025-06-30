@@ -31,6 +31,7 @@ import {
   Info,
 } from "lucide-react"
 import { router } from "@inertiajs/react"
+import { toast } from "sonner"
 
 // Componentes Shadcn
 import { Card, CardContent } from "@/components/ui/card"
@@ -358,12 +359,18 @@ const Journeys = ({ project, setProject }) => {
         }))
         setGeneratedJourneys(journeysWithSelection)
         setShowConfirmModal(true)
+        toast.success("Journeys geradas com sucesso.")
       } else {
-        alert("Erro ao gerar journeys: " + data.message)
+        ///alert("Erro ao gerar journeys: " + data.message)
+        if (data.status == "warning")
+          toast.warning(data.message)
+        else
+          toast.error(data.message)
       }
     } catch (error) {
-      console.error("Erro ao gerar journeys:", error)
-      alert("Erro ao comunicar com o servidor")
+      //console.error("Erro ao gerar journeys:", error)
+      //alert("Erro ao comunicar com o servidor")
+      toast.error("Erro ao comunicar com o servidor")
     } finally {
       setIsGeneratingAI(false)
     }
@@ -401,7 +408,8 @@ const Journeys = ({ project, setProject }) => {
       })
 
     if (selectedJourneys.length === 0) {
-      alert("Selecione pelo menos uma journey para adicionar.")
+      //alert("Selecione pelo menos uma journey para adicionar.")
+      toast.warning("Selecione pelo menos uma journey para adicionar.")
       return
     }
 

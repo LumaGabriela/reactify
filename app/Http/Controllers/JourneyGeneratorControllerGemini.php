@@ -24,7 +24,7 @@ class JourneyGeneratorControllerGemini extends Controller
 
             if ($personas->isEmpty()) {
                 return response()->json([
-                    'status' => 'error',
+                    'status' => 'warning',
                     'message' => 'Nenhuma persona encontrada para este projeto'
                 ], 404);
             }
@@ -34,7 +34,7 @@ class JourneyGeneratorControllerGemini extends Controller
 
             if ($personasWithGoals->isEmpty()) {
                 return response()->json([
-                    'status' => 'error',
+                    'status' => 'warning',
                     'message' => 'Nenhuma persona com goals válidos encontrada para este projeto'
                 ], 404);
             }
