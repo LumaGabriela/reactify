@@ -14,9 +14,20 @@ use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   */
+
+  public function getUpdatedProject(Project $project) 
+  {
+    return response()->json([
+      'project' => $project->load([
+        'stories',
+        'goal_sketches',
+        'journeys',
+        'personas',
+        'product_canvas',
+      ]),
+    ]);
+  }
+
   public function index()
   {
     $projects = Project::all();

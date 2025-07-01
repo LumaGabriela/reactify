@@ -9,6 +9,7 @@ import Journeys from "./Journeys"
 import Goals from "./Goals"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import { PenLine, X } from "lucide-react"
+import { toast } from "sonner"
 
 const ProjectView = ({ projectDB = [] }) => {
   const [project, setProject] = useState({ ...projectDB })
@@ -62,10 +63,33 @@ const ProjectView = ({ projectDB = [] }) => {
     })
   }
 
+  const getUpdatedProject = async (projectID) => {
+    try {
+      const response = await fetch("/api/project/" + projectID, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRF-TOKEN":
+            document
+              .querySelector('meta[name="csrf-token"]')
+              ?.getAttribute("content") || "",
+        },
+      })
+
+      const data = await response.json()
+      if (response.ok) {
+        setProject(data.project)
+      }
+    } catch (error) {
+      toast.error("Erro ao obter o projeto atualizado: " + error.message)
+    } finally {
+      console.log("Projeto atualizado com sucesso!")
+    }
+  }
   //Usa o websocket para obter o valor mais recente do projeto
   useEcho(`project.${project.id}`, "ProjectUpdated", (e) => {
-    setProject(e.project)
-    console.log(e?.project?.journeys)
+    getUpdatedProject(e.project_id)
   })
   //Altera o menu ativo
   useEffect(() => {
@@ -86,7 +110,7 @@ const ProjectView = ({ projectDB = [] }) => {
   }, [activeMenu])
 
   useEffect(() => {
-    // console.log(project?.journeys[0]?.steps)
+    console.log(project?.stories)
   }, [project])
 
   const renderContent = () => {
