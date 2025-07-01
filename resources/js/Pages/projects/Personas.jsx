@@ -396,7 +396,7 @@ const Personas = ({ project, setProject }) => {
       <div className="col-span-1 flex flex-col sm:flex-row gap-2">
         <Popover>
           <PopoverTrigger asChild>
-            <Button className="flex flex-1 items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
+            <Button className="flex w-1/2 items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
               <UserCircle2 className="size-4 text-indigo-400" />
               Personas
               <Badge className="!bg-indigo-400 border-0">
@@ -412,7 +412,7 @@ const Personas = ({ project, setProject }) => {
         <Button
           onClick={addNewPersona}
           disabled={isSubmitting}
-          className="flex-1 sm:w-auto bg-indigo-400 hover:bg-indigo-500"
+          className="!w-1/2 sm:w-auto bg-indigo-400 hover:bg-indigo-500"
         >
           <Plus
             size={18}
