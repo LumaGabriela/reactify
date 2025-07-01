@@ -288,6 +288,7 @@ class JourneyGeneratorController extends Controller
         foreach ($steps as $step) {
             if (isset($step['description'])) {
                 $validatedSteps[] = [
+                    'id' => uniqid(), // Gerar um ID único para cada step
                     'description' => $step['description'],
                     'is_touchpoint' => isset($step['is_touchpoint']) ? (bool)$step['is_touchpoint'] : false
                 ];
