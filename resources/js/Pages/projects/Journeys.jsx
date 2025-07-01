@@ -681,11 +681,11 @@ const Journeys = ({ project, setProject }) => {
             {/* Cabeçalho fixo */}
             <div className="flex items-center justify-between p-6 pb-4 flex-shrink-0">
               <h3 className="text-xl font-bold text-white flex items-center">
-                <Sparkles
+                {/* <Sparkles
                   className="mr-2 text-yellow-400"
                   size={24}
-                />
-                {!isModalMinimized && "Journeys Geradas pela IA"}
+                /> */}
+                {!isModalMinimized && "Journeys Geradas com IA"}
                  {isModalMinimized && "Journeys Geradas"}
               </h3>
               <div className="flex items-center gap-2">

@@ -9,6 +9,8 @@ import {
   Check,
   LoaderCircle,
   Trash,
+  ChevronsUp,
+  Minus,
 } from "lucide-react"
 import { router } from "@inertiajs/react"
 import { Badge } from "@/components/ui/badge"
@@ -193,73 +195,132 @@ const Stories = ({ project, setProject }) => {
   // Estados para IA
   const [aiGeneratedStories, setAiGeneratedStories] = useState([])
   const [isGenerating, setIsGenerating] = useState(false)
+  const [showAiModal, setShowAiModal] = useState(false)
+  const [isModalMinimized, setIsModalMinimized] = useState(false)
 
   //
   const isTemporary = (story) =>
     typeof story.id === "string" && story.id.startsWith("temp-")
 
-  // Função para gerar stories via IA - simplificada
+  // Função para gerar stories via IA
   const generateStories = async () => {
-    if (aiGeneratedStories.length > 0) {
-      discardAllStories()
-    }
-
     setIsGenerating(true)
+    setIsModalMinimized(false)
 
     try {
       const response = await axios.post("/api/stories/generate", {
         project_id: project.id,
       })
 
-      console.log("Resposta completa:", response.data)
+      const storiesWithSelection = response.data.message.stories.map(
+        (story) => ({
+          ...story,
+          selected: true, // Por padrão, todas vêm selecionadas
+        })
+      )
 
-      // Atualiza o estado com as stories geradas
-      setAiGeneratedStories(response.data.message.stories)
+      setAiGeneratedStories(storiesWithSelection)
+      setShowAiModal(true)
       toast.success("Stories geradas com sucesso.")
     } catch (error) {
-      toast.error(error)
+      toast.error("Erro ao gerar stories.")
       console.error("Erro ao gerar stories:", error)
-      console.error("Detalhes do erro:", error.response?.data)
     } finally {
       setIsGenerating(false)
     }
   }
 
-  const discardAllStories = () => {
-    setAiGeneratedStories([])
+  // Função para alternar seleção de uma story
+  const toggleStorySelection = (index) => {
+    setAiGeneratedStories((prev) =>
+      prev.map((story, i) =>
+        i === index ? { ...story, selected: !story.selected } : story
+      )
+    )
   }
 
-  // Função para adicionar uma story da IA ao projeto
-  const addAiStory = () => {
-    const selectedStories = aiGeneratedStories
-      .filter((story) => story.selected === true)
-      .map((story) => {
-        const { selected, ...rest } = story
-        return {
-          id: Date.now() + Math.random(),
-          created_at: new Date().toISOString(),
-          project_id: project.id,
-          ...rest,
-        }
-      })
+  // Função para selecionar/deselecionar todas as stories
+  const toggleAllStories = () => {
+    const allSelected = aiGeneratedStories.every((story) => story.selected)
+    setAiGeneratedStories((prev) =>
+      prev.map((story) => ({ ...story, selected: !allSelected }))
+    )
+  }
 
-    setProject({
-      ...project,
-      stories: [...project.stories, ...selectedStories],
-    })
-
-    const storiesWithoutId = selectedStories.map(
-      ({ id, created_at, ...rest }) => rest
+  // Função para confirmar e adicionar as stories selecionadas
+  const confirmGeneratedStories = () => {
+    const selectedStories = aiGeneratedStories.filter(
+      (story) => story.selected
+    )
+    const remainingStories = aiGeneratedStories.filter(
+      (story) => !story.selected
     )
 
+    if (selectedStories.length === 0) {
+      toast.warning("Selecione pelo menos uma story para adicionar.")
+      return
+    }
+
+    // Adiciona as novas stories ao estado local para uma UI otimista
+    const storiesToAdd = selectedStories.map((story) => ({
+      id: `temp-${Date.now()}-${Math.random()}`,
+      created_at: new Date().toISOString(),
+      project_id: project.id,
+      ...story,
+    }))
+
+    setProject((prevProject) => ({
+      ...prevProject,
+      stories: [...(prevProject.stories || []), ...storiesToAdd],
+    }))
+
+    // Prepara os dados para o backend, incluindo apenas os campos necessários
+    const storiesForBackend = selectedStories.map(({ title, type }) => ({
+      title,
+      type,
+      project_id: project.id,
+    }))
+
+    // Persiste no backend
     router.post(
       route("story.bulk-store"),
-      { stories: storiesWithoutId },
+      { stories: storiesForBackend },
       {
         preserveState: true,
         preserveScroll: true,
+        onSuccess: () => {
+          toast.success(
+            `${selectedStories.length} storie(s) adicionada(s) com sucesso!`
+          )
+          setAiGeneratedStories(remainingStories)
+          if (remainingStories.length === 0) {
+            setShowAiModal(false)
+            setIsModalMinimized(false)
+          }
+        },
+        onError: (errors) => {
+          toast.error("Ocorreu um erro ao salvar as stories.")
+          console.error("Erro do backend:", errors)
+          // Reverte a UI otimista em caso de erro
+          setProject((prevProject) => {
+            const storiesToAddIds = storiesToAdd.map((s) => s.id)
+            return {
+              ...prevProject,
+              stories: prevProject.stories.filter(
+                (s) => !storiesToAddIds.includes(s.id)
+              ),
+            }
+          })
+        },
       }
     )
+  }
+
+  // Função para cancelar e limpar as stories geradas
+  const cancelGeneratedStories = () => {
+    setShowAiModal(false)
+    setAiGeneratedStories([])
+    setIsModalMinimized(false)
   }
 
   // Função para lidar com mudanças no input
@@ -370,6 +431,144 @@ const Stories = ({ project, setProject }) => {
 
   return (
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
+      {/* Modal de confirmação das stories geradas */}
+      {showAiModal && (
+        <div
+          className={`
+            transition-all duration-300 z-50
+            ${
+              isModalMinimized
+                ? "fixed bottom-4 right-4 w-[400px]" // Estilo minimizado
+                : "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" // Estilo maximizado
+            }
+          `}
+        >
+          <div className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+            {/* Cabeçalho fixo */}
+            <div className="flex items-center justify-between p-6 pb-4 flex-shrink-0">
+              <h3 className="text-xl font-bold text-white flex items-center">
+                {/* <Sparkles
+                  className="mr-2 text-yellow-400"
+                  size={24}
+                /> */}
+                {!isModalMinimized && "Stories Geradas por IA"}
+                {isModalMinimized && "Stories Geradas"}
+              </h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsModalMinimized(!isModalMinimized)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  {isModalMinimized ? (
+                    <ChevronsUp size={20} />
+                  ) : (
+                    <Minus size={20} />
+                  )}
+                </button>
+                <button
+                  onClick={cancelGeneratedStories}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+
+            {!isModalMinimized && (
+              <>
+                {/* Controle para selecionar/deselecionar todos */}
+                <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-gray-700 rounded-lg flex-shrink-0">
+                  <span className="text-white font-medium">
+                    {aiGeneratedStories.filter((j) => j.selected).length} de{" "}
+                    {aiGeneratedStories.length} selecionadas
+                  </span>
+                  <button
+                    onClick={toggleAllStories}
+                    className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors"
+                  >
+                    {aiGeneratedStories.every((story) => story.selected)
+                      ? "Desmarcar Todas"
+                      : "Selecionar Todas"}
+                  </button>
+                </div>
+
+                {/* Área rolável das stories */}
+                <div className="flex-1 overflow-y-auto px-6 min-h-0">
+                  <div className="space-y-2 pb-4">
+                    {aiGeneratedStories.map((story, index) => (
+                      <div
+                        key={index}
+                        className={`rounded-lg p-3 border-2 transition-colors flex items-center gap-4 ${
+                          story.selected
+                            ? "bg-gray-700 border-blue-500"
+                            : "bg-gray-600 border-gray-500 hover:border-gray-400"
+                        }`}
+                      >
+                        <label className="flex items-center cursor-pointer flex-1 gap-4">
+                          <input
+                            type="checkbox"
+                            checked={story.selected}
+                            onChange={() => toggleStorySelection(index)}
+                            className="sr-only" // Esconde o checkbox padrão
+                          />
+                          <Badge
+                            className={`border-none dark:text-slate-900 font-bold ${
+                              story.type === "system"
+                                ? "!bg-teal-600"
+                                : "!bg-violet-600"
+                            }`}
+                          >
+                            {story.type === "system" ? "SS" : "US"}
+                          </Badge>
+                          <span className="text-sm text-gray-200">
+                            {story.title}
+                          </span>
+                          <div
+                            className={`w-5 h-5 rounded-md flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
+                              story.selected
+                                ? "bg-blue-500 border-blue-400"
+                                : "bg-gray-500 border-gray-400"
+                            } `}
+                          >
+                            {story.selected && (
+                              <Check className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Botões fixos na parte inferior */}
+                <div className="flex justify-end space-x-3 p-6 pt-4 border-t border-gray-700 flex-shrink-0">
+                  <button
+                    onClick={cancelGeneratedStories}
+                    className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={confirmGeneratedStories}
+                    className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
+                    disabled={
+                      aiGeneratedStories.filter((j) => j.selected).length === 0
+                    }
+                  >
+                    <Check
+                      className="mr-2"
+                      size={16}
+                    />
+                    Confirmar e Adicionar (
+                    {aiGeneratedStories.filter((j) => j.selected).length})
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col gap-2 ">
         <Popover>
           <PopoverTrigger
@@ -558,89 +757,6 @@ const Stories = ({ project, setProject }) => {
           </Popover>
         </button>
       </div>
-
-      {/* Listagem de Stories Geradas pela IA */}
-      {aiGeneratedStories.length > 0 && (
-        <div className="col-span-2 space-y-2 mt-4">
-          <div className="flex justify-between items-center">
-            <h5 className="text-white">Stories Geradas</h5>
-            <div className="flex gap-2">
-              <button
-                onClick={discardAllStories}
-                className="flex items-center justify-center flex-1 p-2 bg-gradient-to-r from-rose-400 to-rose-700 hover:from-purple-700 hover:to-blue-700 text-white text-nowrap rounded-lg transition-colors duration-300 shadow-md"
-              >
-                Descartar Todas
-              </button>
-              <button
-                onClick={addAiStory}
-                className="flex items-center justify-center flex-1 p-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white text-nowrap rounded-lg transition-colors duration-300 shadow-md"
-              >
-                Adicionar Selecionadas
-              </button>
-            </div>
-          </div>
-
-          {aiGeneratedStories.map((story, index) => (
-            <div
-              key={index}
-              className="bg-gray-800 p-2 rounded flex justify-between items-center gap-1"
-            >
-              <div
-                className={`${
-                  story.type === "user" ? "bg-violet-600" : "bg-teal-600"
-                } text-white text-xs font-medium py-0.5 px-2 rounded-full whitespace-nowrap`}
-              >
-                {story.type}
-              </div>
-              <span className="text-white text-xs px-2 flex-1 min-w-0 break-words">
-                {story.title}
-              </span>
-              <label className="p-2 cursor-pointer">
-                <input
-                  defaultChecked={false}
-                  type="checkbox"
-                  className="hidden"
-                  onChange={(e) =>
-                    setAiGeneratedStories((prev) => {
-                      const updatedStories = [...prev]
-                      updatedStories[index].selected = e.target.checked
-                      return updatedStories
-                    })
-                  }
-                />
-                <div
-                  className={`w-6 h-6 rounded-md flex items-center justify-center transition-all duration-300 ease-in-out ${
-                    aiGeneratedStories[index]?.selected
-                      ? "bg-gradient-to-r from-purple-500 to-blue-500"
-                      : "bg-gray-600"
-                  } border-2 ${
-                    aiGeneratedStories[index]?.selected
-                      ? "border-purple-400"
-                      : "border-gray-500"
-                  }`}
-                >
-                  {aiGeneratedStories[index]?.selected && (
-                    <svg
-                      className="w-4 h-4 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="3"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  )}
-                </div>
-              </label>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   )
 }
