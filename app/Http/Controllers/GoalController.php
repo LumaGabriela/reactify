@@ -13,11 +13,10 @@ class GoalController extends Controller
   {
     $validated = $request->validated();
 
-    Goal::create($validated);
+    $goal = Goal::create($validated);
 
     Log::info('Goal created', [
-      'goal_id' => $validated['id'],
-      'project_id' => $validated['project_id'],
+      'goal_id' => $goal->id,
     ]);
 
     return back();
