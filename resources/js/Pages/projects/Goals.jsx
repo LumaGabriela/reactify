@@ -385,7 +385,7 @@ const Goals = ({ project, setProject }) => {
             <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
               <Badge className={`border-0 ${typeColors[1].color}`}>
                 {
-                  project?.goal_sketches?.filter((goal) => goal.type === "bg")
+                  project?.goal_sketches?.filter((goal) => goal.type === "cg")
                     .length
                 }
               </Badge>{" "}
