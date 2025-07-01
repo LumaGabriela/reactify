@@ -17,6 +17,7 @@ class StoryController extends Controller
 
     Story::create($validated);
 
+    Log::info('Story created', $validated);
     return back();
   }
 
@@ -32,6 +33,8 @@ class StoryController extends Controller
       }
     });
 
+    Log::info('Bulk Story created', $validated['stories']);
+
     return back();
   }
 
@@ -42,6 +45,8 @@ class StoryController extends Controller
 
     $story->update($validated);
 
+    Log::info('Story updated', ['id' => $story->id]);
+
     return back();
   }
 
@@ -49,10 +54,7 @@ class StoryController extends Controller
   {
     $story->delete();
 
-    return back()
-      ->with([
-        'message' => 'Story excluida! ',
-        'status' => 'success'
-      ]);
+    Log::warning('Story deleted', ['id' => $story->id]);
+    return back();
   }
 }

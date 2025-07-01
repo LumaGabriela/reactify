@@ -21,6 +21,7 @@ class JourneyController extends Controller
 
     if ($journey->project) broadcast(new ProjectUpdated($journey->project));
 
+    Log::info('Journey created', ['id' => $journey->id]);
     return back();
   }
 
@@ -30,24 +31,25 @@ class JourneyController extends Controller
     $validated = $request->validated();
 
     DB::transaction(function () use ($validated) {
-        foreach ($validated['journeys'] as $journeyData) {
-            // Formatando os steps para o formato esperado
-            $formattedSteps = array_map(function ($step, $index) {
-                return [
-                    'id' => uniqid(),
-                    'step' => $index + 1,
-                    'description' => $step['description'],
-                    'is_touchpoint' => $step['is_touchpoint'] ?? false
-                ];
-            }, $journeyData['steps'], array_keys($journeyData['steps']));
+      foreach ($validated['journeys'] as $journeyData) {
+        // Formatando os steps para o formato esperado
+        $formattedSteps = array_map(function ($step, $index) {
+          return [
+            'id' => uniqid(),
+            'step' => $index + 1,
+            'description' => $step['description'],
+            'is_touchpoint' => $step['is_touchpoint'] ?? false
+          ];
+        }, $journeyData['steps'], array_keys($journeyData['steps']));
 
-            Journey::create([
-                'title' => $journeyData['title'],
-                'project_id' => $validated['project_id'],
-                'steps' => $formattedSteps
-            ]);
-        }
+        Journey::create([
+          'title' => $journeyData['title'],
+          'project_id' => $validated['project_id'],
+          'steps' => $formattedSteps
+        ]);
+      }
     });
+    Log::info('Bulk Journey created', $validated['journeys']);
 
     return back();
   }
@@ -59,6 +61,8 @@ class JourneyController extends Controller
 
     $journey->update($validated);
 
+    Log::info('Journey updated', ['id' => $journey->id]);
+
     return back();
   }
 
@@ -66,10 +70,7 @@ class JourneyController extends Controller
   {
     $journey->delete();
 
-    return back()
-      ->with([
-        'message' => 'Journey excluida! ',
-        'status' => 'success'
-      ]);
+    Log::info('Journey deleted', ['id' => $journey->id]);
+    return back();
   }
 }

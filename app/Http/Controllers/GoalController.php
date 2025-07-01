@@ -5,39 +5,44 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreGoalRequest;
 use App\Http\Requests\UpdateGoalRequest;
 use App\Models\Goal;
+use Illuminate\Support\Facades\Log;
 
 class GoalController extends Controller
 {
-    public function store(StoreGoalRequest $request)
-    {
-        $validated = $request->validated();
+  public function store(StoreGoalRequest $request)
+  {
+    $validated = $request->validated();
 
-        Goal::create($validated);
+    Goal::create($validated);
 
-        return back()
-            ->with([
-                'message' => 'Goal criada!! ',
-                'status' => 'success'
-            ]);
-    }
+    Log::info('Goal created', [
+      'goal_id' => $validated['id'],
+      'project_id' => $validated['project_id'],
+    ]);
 
-    public function update(UpdateGoalRequest $request, Goal $goal)
-    {
-        $validated = $request->validated();
-        $goal->update($validated);
-        return back()
-            ->with([
-                'message' => 'Goal atualizada!! ',
-                'status' => 'success'
-            ]);
-    }
-    public function destroy(Goal $goal)
-    {
-        $goal->delete();
-        return back()
-            ->with([
-                'message' => 'Goal excluida! ',
-                'status' => 'success'
-            ]);
-    }
+    return back();
+  }
+
+  public function update(UpdateGoalRequest $request, Goal $goal)
+  {
+    $validated = $request->validated();
+
+    $goal->update($validated);
+
+    Log::info('Goal updated', [
+      'goal_id' => $goal->id,
+    ]);
+
+    return back();
+  }
+  public function destroy(Goal $goal)
+  {
+    $goal->delete();
+
+    Log::info('Goal deleted', [
+      'goal_id' => $goal->id,
+    ]);
+
+    return back();
+  }
 }

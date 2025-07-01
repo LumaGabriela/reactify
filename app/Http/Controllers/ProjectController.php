@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Log;
 class ProjectController extends Controller
 {
 
-  public function getUpdatedProject(Project $project) 
+  public function getUpdatedProject(Project $project)
   {
     return response()->json([
       'project' => $project->load([
@@ -68,6 +68,8 @@ class ProjectController extends Controller
 
     broadcast(new ProjectUpdated($project));
 
+    Log::info('Project created successfully: ' . $productCanvas->id . ' for Project: ' . $project->id);
+
     return redirect()
       ->route('project.show', $project->id)
       ->with(
@@ -88,11 +90,9 @@ class ProjectController extends Controller
 
     broadcast(new ProjectUpdated($project));
 
-    return back()
-      ->with([
-        'status' => 'success',
-        'message' => 'Project updated successfully.'
-      ]);
+    Log::info('Project updated successfully: ' . $project->id . ' - ' . $project->title);
+
+    return back();
   }
 
   /**
@@ -107,7 +107,7 @@ class ProjectController extends Controller
     // Excluir o projeto
     $project->delete();
 
-
+    Log::info('Project deleted successfully: ' . $project->id . ' - ' . $project->title);
 
     return redirect()->route('projects.index')->with([
       'status' => 'success',
@@ -126,9 +126,8 @@ class ProjectController extends Controller
 
     broadcast(new ProjectUpdated($project));
 
-    return redirect()->back()->with([
-      'status' => 'success',
-      'message' => $statusMessage
-    ]);
+    Log::info('Project ' . ($project->active ? 'activated' : 'deactivated') . ' successfully: ' . $project->id . ' - ' . $project->title);
+
+    return redirect()->back();
   }
 }
