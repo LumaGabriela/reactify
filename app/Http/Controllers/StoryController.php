@@ -17,8 +17,6 @@ class StoryController extends Controller
 
     Story::create($validated);
 
-    Log::warning('Story created', $validated);
-
     return back();
   }
 

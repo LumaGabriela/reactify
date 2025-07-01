@@ -523,7 +523,7 @@ const Journeys = ({ project, setProject }) => {
   }
 
   // Função para adicionar um novo step a uma journey
-  const addNewStep = (JourneyId) => {
+  const addNewStep = (JourneyId) => {console.log(project.journeys)
     if (!project.journeys) return
     const currentSteps =
       project.journeys.find((journey) => journey.id === JourneyId)?.steps || []

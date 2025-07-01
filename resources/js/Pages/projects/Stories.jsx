@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion" 
+import { motion, AnimatePresence } from "framer-motion"
 import {
   Plus,
   Sparkles,
@@ -197,7 +197,7 @@ const Stories = ({ project, setProject }) => {
   //
   const isTemporary = (story) =>
     typeof story.id === "string" && story.id.startsWith("temp-")
-  
+
   // Função para gerar stories via IA - simplificada
   const generateStories = async () => {
     if (aiGeneratedStories.length > 0) {
@@ -361,10 +361,6 @@ const Stories = ({ project, setProject }) => {
     setProject({ ...project, stories: updatedStories })
     router.delete(route("story.delete", storyId))
   }
-
-  useEffect(() => {
-    console.log(aiGeneratedStories)
-  }, [aiGeneratedStories])
 
   useEffect(() => {
     if (editingId && textareaRef.current) {
@@ -554,8 +550,9 @@ const Stories = ({ project, setProject }) => {
             </PopoverTrigger>
             <PopoverContent className="bg-gray-800 text-white ">
               Esta função utiliza IA para gerar Users Stories baseadas nos
-              objetivos das Personas e Journeys do Produto e gerar System Stories 
-              baseadas nas Restrições do Produto e Goals do tipo Constraint(CG).
+              objetivos das Personas e Journeys do Produto e gerar System
+              Stories baseadas nas Restrições do Produto e Goals do tipo
+              Constraint(CG).
               <PopoverArrow className="fill-gray-800" />
             </PopoverContent>
           </Popover>

@@ -68,12 +68,7 @@ const ProjectView = ({ projectDB = [] }) => {
       const response = await fetch("/api/project/" + projectID, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
-          "X-CSRF-TOKEN":
-            document
-              .querySelector('meta[name="csrf-token"]')
-              ?.getAttribute("content") || "",
         },
       })
 
