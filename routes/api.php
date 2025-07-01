@@ -11,3 +11,5 @@ Route::post('/stories/generate', [StoryGeneratorControllerGemini::class, 'genera
 Route::post('/journeys/generate', [JourneyGeneratorController::class, 'generateJourneys'])->name('journey.generate');
 
 Route::get('/project/{project}', [ProjectController::class, 'getUpdatedProject'])->name('project.updated');
+
+Route::get('/projects', [ProjectController::class, 'getUpdatedProjects'])->name('projects.updated');

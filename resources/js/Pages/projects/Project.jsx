@@ -77,11 +77,12 @@ const ProjectView = ({ projectDB = [] }) => {
         setProject(data.project)
       }
     } catch (error) {
-      toast.error("Erro ao obter o projeto atualizado: " + error.message)
+      toast.error("Erro ao obter o projeto "+ projectId + " atualizado: " + error.message)
     } finally {
       console.log("Projeto atualizado com sucesso!")
     }
   }
+
   //Usa o websocket para obter o valor mais recente do projeto
   useEcho(`project.${project.id}`, "ProjectUpdated", (e) => {
     getUpdatedProject(e.project_id)
@@ -105,7 +106,7 @@ const ProjectView = ({ projectDB = [] }) => {
   }, [activeMenu])
 
   useEffect(() => {
-    console.log(project?.stories)
+    console.log(project?.goal_sketches)
   }, [project])
 
   const renderContent = () => {

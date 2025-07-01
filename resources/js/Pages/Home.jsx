@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { useEcho } from "@laravel/echo-react"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import {
@@ -54,7 +54,7 @@ import { Label } from "@/components/ui/label"
 
 const Dashboard = ({ projects = [] }) => {
   const [currentProjects, setCurrentProjects] = useState(projects)
-  const [filteredProjects, setFilteredProjects] = useState(currentProjects)
+  const [activeFilter, setActiveFilter] = useState("Todos")
   const commandInputRef = React.useRef(null)
   const today = new Date()
   const [newProject, setNewProject] = useState({
@@ -76,7 +76,7 @@ const Dashboard = ({ projects = [] }) => {
     { name: "Inativos", active: false },
   ])
 
-  const filterProjects = (filter) => {
+  const handleFilterChange = (filter) => {
     if (filter) {
       const filters = taskFilters.map((f, i) =>
         f.name === filter.name
@@ -85,29 +85,33 @@ const Dashboard = ({ projects = [] }) => {
       )
       setTaskFilters(filters)
     }
+    const updatedUiFilters = taskFilters.map((f) =>
+      f.name === filter.name ? { ...f, active: true } : { ...f, active: false }
+    )
+    setTaskFilters(updatedUiFilters)
 
-    switch (filter.name) {
-      case "Todos":
-        setFilteredProjects(currentProjects)
-        break
-      case "Ativos":
-        setFilteredProjects(currentProjects.filter((p) => p.active))
-        break
-      case "Inativos":
-        setFilteredProjects(currentProjects.filter((p) => !p.active))
-        break
-      case "Finalizados":
-        // setFilteredProjects(currentProjects.filter((p) => p.status === "finalizado"))
-        break
-      default:
-        setFilteredProjects(currentProjects)
-        break
-    }
+    // Apenas atualiza o nome do filtro ativo no estado
+    setActiveFilter(filter.name)
   }
+
+  const filteredProjects = useMemo(() => {
+    if (!currentProjects) return []
+
+    switch (activeFilter) {
+      case "Ativos":
+        return currentProjects.filter((p) => p.active)
+      case "Inativos":
+        return currentProjects.filter((p) => !p.active)
+      case "Finalizados":
+        return []
+      case "Todos":
+      default:
+        return currentProjects
+    }
+  }, [currentProjects, activeFilter])
 
   const createProject = (e) => {
     e.preventDefault()
-    console.log(e)
     router.post(route("project.store"), newProject)
   }
   const toggleActiveProject = (projectId) => {
@@ -127,6 +131,37 @@ const Dashboard = ({ projects = [] }) => {
     router.delete(route("project.destroy", projectId))
   }
 
+  const getUpdatedProjects = async (idList) => {
+    try {
+      const response = await fetch(route("projects.updated", { ids: idList }), {
+        method: "GET",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+
+      const data = await response.json()
+      if (response.ok && data.projects.length > 0) {
+        setCurrentProjects((prev) => {
+          const updatesMap = new Map(
+            data.projects.map((updatedProject) => [
+              updatedProject.id,
+              updatedProject,
+            ])
+          )
+
+          return prev.map(
+            (oldProject) => updatesMap.get(oldProject.id) || oldProject
+          )
+        })
+      }
+    } catch (error) {
+      toast.error("Erro ao obter projetos atualizados: " + error.message)
+    } finally {
+      console.log("Projetos atualizados com sucesso!")
+    }
+  }
+
   useEffect(() => {
     const focusCommandInput = (e) => {
       if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
@@ -139,20 +174,19 @@ const Dashboard = ({ projects = [] }) => {
   }, [])
 
   useEffect(() => {
-    const filter = taskFilters.find((f) => f.active)
-    filterProjects(filter)
+    console.log(currentProjects)
   }, [currentProjects])
 
   useEcho(`projects`, "ProjectUpdated", (e) => {
-    setCurrentProjects((prevProjects) =>
-      prevProjects.map((project) =>
-        project.id === e.project.id ? e.project : project
-      )
-    )
+    let newProjectList = []
+    currentProjects.forEach((project) => {
+      if (project.id === e.project_id) newProjectList.push(e.project_id)
+    })
+
+    if (newProjectList.length > 0) getUpdatedProjects(newProjectList)
   })
 
   useEcho("projects", "ProjectDeleted", (e) => {
-    console.log(e)
     setCurrentProjects((prev) =>
       prev.filter((project) => project.id !== e.projectId)
     )
@@ -162,7 +196,6 @@ const Dashboard = ({ projects = [] }) => {
     <div className=" text-white p-6 rounded w-full mx-auto">
       {/* Header */}
       <div className="flex min-h-[10rem] justify-center items-end mb-2 gap-2">
-
         <div className=" flex flex-col w-1/2 h-full">
           <p className="text-gray-400 text-sm mb-2">Today</p>
           <p className="font-medium text-nowrap">{formattedDate}</p>
@@ -250,20 +283,23 @@ const Dashboard = ({ projects = [] }) => {
                 Nenhum projeto encontrado.
               </CommandEmpty>
               <CommandGroup>
-                {filteredProjects?.map((project) => (
-                  <CommandItem
-                    key={project.id}
-                    value={project.title}
-                    onSelect={() => {
-                      router.visit(route("project.show", project.id))
-                    }}
-                    className="relative flex cursor-default select-none items-center justify-between rounded-lg px-3 py-2.5 text-sm text-zinc-300 outline-none transition-colors hover:bg-zinc-800 hover:text-white data-[selected=true]:bg-zinc-800 data-[selected=true]:text-white"
-                  >
-                    <CheckCircle className="mr-3 size-4 text-zinc-500" />
-                    <span className="truncate w-full">{project.title}</span>
-                    <CornerDownLeft className="mr-3 size-4 text-zinc-500" />
-                  </CommandItem>
-                ))}
+                {filteredProjects?.map(
+                  (project) =>
+                    project && (
+                      <CommandItem
+                        key={project.id}
+                        value={project.title}
+                        onSelect={() => {
+                          router.visit(route("project.show", project.id))
+                        }}
+                        className="relative flex cursor-default select-none items-center justify-between rounded-lg px-3 py-2.5 text-sm text-zinc-300 outline-none transition-colors hover:bg-zinc-800 hover:text-white data-[selected=true]:bg-zinc-800 data-[selected=true]:text-white"
+                      >
+                        <CheckCircle className="mr-3 size-4 text-zinc-500" />
+                        <span className="truncate w-full">{project.title}</span>
+                        <CornerDownLeft className="mr-3 size-4 text-zinc-500" />
+                      </CommandItem>
+                    )
+                )}
               </CommandGroup>
             </CommandList>
           </Command>
@@ -277,7 +313,7 @@ const Dashboard = ({ projects = [] }) => {
         <div className="flex space-x-2 mb-6">
           {taskFilters.map((filter, index) => (
             <button
-              onClick={() => filterProjects(filter)}
+              onClick={() => handleFilterChange(filter)}
               className={`px-4 py-1 rounded transition-colors duration-200 ${
                 filter.active ? "bg-gray-800 text-white" : "text-gray-400"
               }`}
@@ -293,6 +329,7 @@ const Dashboard = ({ projects = [] }) => {
           {projects &&
             filteredProjects.map((project, index) => {
               let color = null
+              if (!project) return null // Skip if project is undefined or null
               switch (project.active) {
                 case true:
                   color = "bg-green-500"

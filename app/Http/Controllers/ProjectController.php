@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Models\ProductCanvas;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 
@@ -28,6 +29,27 @@ class ProjectController extends Controller
     ]);
   }
 
+  public function getUpdatedProjects(Request $request): JsonResponse
+  {
+    $validated = $request->validate([
+      'ids' => 'required|array',
+      'ids.*' => 'integer|exists:projects,id',
+    ]);
+
+    $projects = Project::whereIn('id', $validated['ids'])->get();
+
+    return response()->json([
+      'projects' => $projects->load([
+        'stories',
+        'goal_sketches',
+        'journeys',
+        'personas',
+        'product_canvas',
+      ]),
+      'message' => 'Projects updated successfully.',
+      'status' => 'success',
+    ]);
+  }
   public function index()
   {
     $projects = Project::all();
