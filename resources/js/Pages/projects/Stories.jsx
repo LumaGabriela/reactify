@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/popover"
 import { Card, CardContent } from "@/components/ui/card"
 import axios from "axios"
+import { toast } from "sonner"
 
 const StoryItem = ({
   story,
@@ -214,7 +215,9 @@ const Stories = ({ project, setProject }) => {
 
       // Atualiza o estado com as stories geradas
       setAiGeneratedStories(response.data.message.stories)
+      toast.success("Stories geradas com sucesso.")
     } catch (error) {
+      toast.error(error)
       console.error("Erro ao gerar stories:", error)
       console.error("Detalhes do erro:", error.response?.data)
     } finally {
