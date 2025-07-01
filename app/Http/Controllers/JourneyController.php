@@ -9,6 +9,7 @@ use App\Http\Requests\BulkStoreJourneyRequest;
 use App\Models\Journey;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Events\ProjectUpdated;
 
 class JourneyController extends Controller
 {
@@ -16,7 +17,9 @@ class JourneyController extends Controller
   {
     $validated = $request->validated();
 
-    Journey::create($validated);
+    $journey = Journey::create($validated);
+
+    if ($journey->project) broadcast(new ProjectUpdated($journey->project));
 
     return back();
   }

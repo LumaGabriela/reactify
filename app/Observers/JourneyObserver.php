@@ -7,10 +7,10 @@ use App\Models\Journey;
 
 class JourneyObserver
 {
-  public function created(Journey $journey): void
-  {
-    $this->updateProject($journey);
-  }
+  // public function created(Journey $journey): void
+  // {
+  //   $this->updateProject($journey);
+  // }
   public function updated(Journey $journey): void
   {
     $this->updateProject($journey);
