@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react"
-// Importe os componentes e funções necessários do dnd-kit
 import {
   DndContext,
   closestCenter,
@@ -29,11 +28,12 @@ import {
   Sparkles,
   Loader2,
   Info,
+  Minus, 
+  ChevronsUp,
 } from "lucide-react"
 import { router } from "@inertiajs/react"
 import { toast } from "sonner"
 
-// Componentes Shadcn
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -90,7 +90,7 @@ const JourneyStepItem = ({
   textareaRef,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
-  const [showDeletePopover, setShowDeletePopover] = useState(false) // Mantendo o estado do popover
+  const [showDeletePopover, setShowDeletePopover] = useState(false) 
   const [touchpointChecked, setTouchpointChecked] = useState(step.is_touchpoint)
 
   useEffect(() => {
@@ -280,6 +280,7 @@ const Journeys = ({ project, setProject }) => {
   const [isGeneratingAI, setIsGeneratingAI] = useState(false)
   const [generatedJourneys, setGeneratedJourneys] = useState([])
   const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [isModalMinimized, setIsModalMinimized] = useState(false)
   const textareaRef = useRef(null)
   const colors = [
     {
@@ -332,6 +333,7 @@ const Journeys = ({ project, setProject }) => {
   // Função para gerar journeys com IA
   const generateJourneysWithAI = async () => {
     setIsGeneratingAI(true)
+    setIsModalMinimized(false) 
 
     try {
       const response = await fetch("/api/journeys/generate", {
@@ -361,15 +363,12 @@ const Journeys = ({ project, setProject }) => {
         setShowConfirmModal(true)
         toast.success("Journeys geradas com sucesso.")
       } else {
-        ///alert("Erro ao gerar journeys: " + data.message)
         if (data.status == "warning")
           toast.warning(data.message)
         else
           toast.error(data.message)
       }
     } catch (error) {
-      //console.error("Erro ao gerar journeys:", error)
-      //alert("Erro ao comunicar com o servidor")
       toast.error("Erro ao comunicar com o servidor")
     } finally {
       setIsGeneratingAI(false)
@@ -395,36 +394,38 @@ const Journeys = ({ project, setProject }) => {
 
   // Função para confirmar e adicionar as journeys selecionadas
   const confirmGeneratedJourneys = () => {
-    const selectedJourneys = generatedJourneys
-      .filter((journey) => journey.selected === true)
-      .map((journey) => {
-        const { selected, ...rest } = journey
-        return {
-          id: Date.now() + Math.random(),
-          created_at: new Date().toISOString(),
-          project_id: project.id,
-          ...rest,
-        }
-      })
+    const selectedJourneys = generatedJourneys.filter(
+      (journey) => journey.selected
+    )
+    const remainingJourneys = generatedJourneys.filter(
+      (journey) => !journey.selected
+    )
 
     if (selectedJourneys.length === 0) {
-      //alert("Selecione pelo menos uma journey para adicionar.")
       toast.warning("Selecione pelo menos uma journey para adicionar.")
       return
     }
 
-    // Adicionar ao estado antes de persistir
-    const updatedJourneys = project.journeys
-      ? [...project.journeys, ...selectedJourneys]
-      : [...selectedJourneys]
+    // Mapeia as jornadas selecionadas para o formato esperado pelo estado local
+    const journeysToAdd = selectedJourneys.map((journey) => {
+      const { selected, ...rest } = journey
+      return {
+        id: Date.now() + Math.random(),
+        created_at: new Date().toISOString(),
+        project_id: project.id,
+        ...rest,
+      }
+    })
 
-    console.log("up", updatedJourneys)
+    // Adiciona as novas jornadas ao estado do projeto
+    const updatedProjectJourneys = project.journeys
+      ? [...project.journeys, ...journeysToAdd]
+      : [...journeysToAdd]
+    setProject({ ...project, journeys: updatedProjectJourneys })
 
-    setProject({ ...project, journeys: updatedJourneys })
-
-    // Preparar dados para envio (remover id e created_at que são gerados localmente)
+    // Prepara os dados para o backend (sem os campos gerados localmente)
     const journeysForBackend = selectedJourneys.map(
-      ({ id, created_at, project_id, ...rest }) => ({
+      ({ id, created_at, project_id, selected, ...rest }) => ({
         ...rest,
         steps: rest.steps.map((step) => ({
           description: step.description,
@@ -433,9 +434,7 @@ const Journeys = ({ project, setProject }) => {
       })
     )
 
-    console.log(journeysForBackend)
-
-    // Persistir no backend
+    // Persiste no backend
     router.post(
       route("journey.bulk-store"),
       {
@@ -445,17 +444,31 @@ const Journeys = ({ project, setProject }) => {
       {
         preserveState: true,
         preserveScroll: true,
+        onSuccess: () => {
+          toast.success(
+            `${selectedJourneys.length} journey(s) adicionada(s) com sucesso!`
+          )
+          // Atualiza o estado do modal com as jornadas restantes
+          setGeneratedJourneys(remainingJourneys)
+
+          // Se não houver mais jornadas restantes, fecha o modal
+          if (remainingJourneys.length === 0) {
+            setShowConfirmModal(false)
+            setIsModalMinimized(false)
+          }
+        },
+        onError: () => {
+          toast.error("Ocorreu um erro ao adicionar as jornadas.")
+        },
       }
     )
-
-    setShowConfirmModal(false)
-    setGeneratedJourneys([])
   }
 
-  // Função para cancelar as journeys geradas
+  // Função para cancelar e limpar as journeys geradas
   const cancelGeneratedJourneys = () => {
     setShowConfirmModal(false)
-    setGeneratedJourneys([])
+    setGeneratedJourneys([]) 
+    setIsModalMinimized(false) 
   }
 
   // Todas as funções existentes permanecem inalteradas
@@ -581,7 +594,6 @@ const Journeys = ({ project, setProject }) => {
 
   // Função para excluir um step
   const deleteStep = (journeyId, stepIndex) => {
-    // A lógica de verificação agora usa os argumentos diretamente
     if (journeyId === null || stepIndex === null) return
 
     const journey = project.journeys.find((j) => j.id === journeyId)
@@ -601,9 +613,6 @@ const Journeys = ({ project, setProject }) => {
 
     setProject({ ...project, journeys: updatedJourneys })
 
-    // O estado de confirmação não precisa mais ser resetado aqui
-    // setDeleteConfirmStep({ JourneyId: null, stepIndex: null })
-
     router.patch(route("journey.update", journeyId), {
       steps: reorderedSteps,
     })
@@ -617,7 +626,6 @@ const Journeys = ({ project, setProject }) => {
       (journey) => journey.id !== journeyIdToDelete
     )
 
-    // Se a journey expandida for a que está sendo deletada, fecha tudo
     if (expandedJourney === journeyIdToDelete) {
       setExpandedJourney(null)
     }
@@ -627,9 +635,8 @@ const Journeys = ({ project, setProject }) => {
       journeys: updatedJourneys,
     }))
 
-    // Envia a requisição de exclusão para o backend
     router.delete(route("journey.delete", journeyIdToDelete), {
-      preserveScroll: true, // Evita que a página role para o topo
+      preserveScroll: true,
     })
   }
   // reordena os steps
@@ -639,7 +646,6 @@ const Journeys = ({ project, setProject }) => {
       step: index + 1,
     }))
 
-    // 2. Atualiza o estado local para uma resposta visual imediata
     const updatedJourneys = project.journeys.map((j) =>
       j.id === journeyId ? { ...j, steps: newStepsWithCorrectOrder } : j
     )
@@ -661,8 +667,17 @@ const Journeys = ({ project, setProject }) => {
     <div className="flex flex-col gap-4 p-4 w-full">
       {/* Modal de confirmação das journeys geradas */}
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg max-w-4xl max-h-[80vh] flex flex-col">
+        <div
+          className={`
+            transition-all duration-300 z-50
+            ${
+              isModalMinimized
+                ? "fixed bottom-4 right-4 w-[400px]" // Estilo minimizado
+                : "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" // Estilo maximizado
+            }
+          `}
+        >
+          <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl">
             {/* Cabeçalho fixo */}
             <div className="flex items-center justify-between p-6 pb-4 flex-shrink-0">
               <h3 className="text-xl font-bold text-white flex items-center">
@@ -670,103 +685,116 @@ const Journeys = ({ project, setProject }) => {
                   className="mr-2 text-yellow-400"
                   size={24}
                 />
-                Journeys Geradas pela IA
+                {!isModalMinimized && "Journeys Geradas pela IA"}
+                 {isModalMinimized && "Journeys Geradas"}
               </h3>
-              <button
-                onClick={cancelGeneratedJourneys}
-                className="text-gray-400 hover:text-white"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            {/* Controle para selecionar/deselecionar todos - fixo */}
-            <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-gray-700 rounded-lg flex-shrink-0">
-              <span className="text-white font-medium">
-                {generatedJourneys.filter((j) => j.selected).length} de{" "}
-                {generatedJourneys.length} selecionadas
-              </span>
-              <button
-                onClick={toggleAllJourneys}
-                className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors"
-              >
-                {generatedJourneys.every((journey) => journey.selected)
-                  ? "Desmarcar Todas"
-                  : "Selecionar Todas"}
-              </button>
-            </div>
-
-            {/* Área rolável das journeys */}
-            <div className="flex-1 overflow-y-auto px-6 min-h-0">
-              <div className="space-y-4 pb-4">
-                {generatedJourneys.map((journey, index) => (
-                  <div
-                    key={index}
-                    className={`rounded-lg p-4 border-2 transition-colors ${
-                      journey.selected
-                        ? "bg-gray-700 border-blue-500"
-                        : "bg-gray-600 border-gray-500"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-white font-medium">
-                        {journey.title}
-                      </h4>
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={journey.selected}
-                          onChange={() => toggleJourneySelection(index)}
-                          className="mr-2 w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
-                        />
-                      </label>
-                    </div>
-                    <div className="space-y-2">
-                      {journey.steps.map((step, stepIndex) => (
-                        <div
-                          key={stepIndex}
-                          className="flex items-center text-sm text-gray-300"
-                        >
-                          <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">
-                            {stepIndex + 1}
-                          </span>
-                          <span className="flex-1">{step.description}</span>
-                          {step.is_touchpoint && (
-                            <span className="bg-green-500 text-white text-xs px-2 py-1 rounded ml-2">
-                              Touchpoint
-                            </span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+              <div className="flex items-center gap-2">
+                 <button
+                  onClick={() => setIsModalMinimized(!isModalMinimized)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  {isModalMinimized ? <ChevronsUp size={20} /> : <Minus size={20} />}
+                </button>
+                <button
+                  onClick={cancelGeneratedJourneys}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <X size={24} />
+                </button>
               </div>
             </div>
 
-            {/* Botões fixos na parte inferior */}
-            <div className="flex justify-end space-x-3 p-6 pt-4 border-t border-gray-700 flex-shrink-0">
-              <button
-                onClick={cancelGeneratedJourneys}
-                className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={confirmGeneratedJourneys}
-                className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
-                disabled={
-                  generatedJourneys.filter((j) => j.selected).length === 0
-                }
-              >
-                <Check
-                  className="mr-2"
-                  size={16}
-                />
-                Confirmar e Adicionar (
-                {generatedJourneys.filter((j) => j.selected).length})
-              </button>
-            </div>
+            {!isModalMinimized && (
+            <>
+              {/* Controle para selecionar/deselecionar todos - fixo */}
+              <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-gray-700 rounded-lg flex-shrink-0">
+                <span className="text-white font-medium">
+                  {generatedJourneys.filter((j) => j.selected).length} de{" "}
+                  {generatedJourneys.length} selecionadas
+                </span>
+                <button
+                  onClick={toggleAllJourneys}
+                  className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors"
+                >
+                  {generatedJourneys.every((journey) => journey.selected)
+                    ? "Desmarcar Todas"
+                    : "Selecionar Todas"}
+                </button>
+              </div>
+
+              {/* Área rolável das journeys */}
+              <div className="flex-1 overflow-y-auto px-6 min-h-0">
+                <div className="space-y-4 pb-4">
+                  {generatedJourneys.map((journey, index) => (
+                    <div
+                      key={index}
+                      className={`rounded-lg p-4 border-2 transition-colors ${
+                        journey.selected
+                          ? "bg-gray-700 border-blue-500"
+                          : "bg-gray-600 border-gray-500"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-white font-medium">
+                          {journey.title}
+                        </h4>
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={journey.selected}
+                            onChange={() => toggleJourneySelection(index)}
+                            className="mr-2 w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+                          />
+                        </label>
+                      </div>
+                      <div className="space-y-2">
+                        {journey.steps.map((step, stepIndex) => (
+                          <div
+                            key={stepIndex}
+                            className="flex items-center text-sm text-gray-300"
+                          >
+                            <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">
+                              {stepIndex + 1}
+                            </span>
+                            <span className="flex-1">{step.description}</span>
+                            {step.is_touchpoint && (
+                              <span className="bg-green-500 text-white text-xs px-2 py-1 rounded ml-2">
+                                Touchpoint
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Botões fixos na parte inferior */}
+              <div className="flex justify-end space-x-3 p-6 pt-4 border-t border-gray-700 flex-shrink-0">
+                <button
+                  onClick={cancelGeneratedJourneys}
+                  className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmGeneratedJourneys}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
+                  disabled={
+                    generatedJourneys.filter((j) => j.selected).length === 0
+                  }
+                >
+                  <Check
+                    className="mr-2"
+                    size={16}
+                  />
+                  Confirmar e Adicionar (
+                  {generatedJourneys.filter((j) => j.selected).length})
+                </button>
+              </div>
+            </>
+            )}
           </div>
         </div>
       )}
@@ -896,10 +924,8 @@ const Journeys = ({ project, setProject }) => {
                       <DndContext
                         sensors={sensors}
                         collisionDetection={closestCenter}
-                        // Passamos o journey.id para o handler
                         onDragEnd={(event) => handleDragEnd(event, journey.id)}
                       >
-                        {/* Steps com setas de conexão */}
                         <SortableContext
                           items={journey.steps.map((s) => s.id)}
                           strategy={rectSortingStrategy}
@@ -912,7 +938,6 @@ const Journeys = ({ project, setProject }) => {
                                 editingStep.journeyId === journey.id &&
                                 editingStep.stepIndex === stepIndex
 
-                              // Renderize o componente wrapper em vez do item direto
                               return (
                                 <SortableJourneyStepItem
                                   key={step.id}
@@ -956,10 +981,6 @@ const Journeys = ({ project, setProject }) => {
                           </div>
                         </SortableContext>
                       </DndContext>
-                      {/* Fim do wrapper DndContext */}
-                      {/* Botão para adicionar novo passo */}
-
-                      {/* fim do grid */}
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center p-4 text-gray-400">
@@ -996,7 +1017,6 @@ const Journeys = ({ project, setProject }) => {
 
       {/* Container dos botões */}
       <div className="flex gap-2 w-full items-center">
-        {/* Botão "Nova Journey" */}
         <button
           className="flex-1 flex items-center justify-center py-2 px-4 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors shadow-md"
           onClick={addNewJourney}
@@ -1008,7 +1028,6 @@ const Journeys = ({ project, setProject }) => {
           <span>Nova Journey</span>
         </button>
 
-        {/* Botão "Gerar com IA" */}
         <button
           className="flex-1 flex items-center justify-center py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={generateJourneysWithAI}
@@ -1026,7 +1045,6 @@ const Journeys = ({ project, setProject }) => {
             />
           )}
           <span>{isGeneratingAI ? "Gerando..." : "Gerar com IA"}</span>
-          {/* Botão de Info centralizado */}
 
           <Popover>
             <PopoverTrigger asChild>
