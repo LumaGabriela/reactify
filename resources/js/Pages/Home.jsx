@@ -193,7 +193,7 @@ const Dashboard = ({ projects = [] }) => {
   })
 
   return (
-    <div className=" text-white p-6 rounded w-full mx-auto">
+    <div className="bg-gray-2 text-white p-6 w-full mx-auto">
       {/* Header */}
       <div className="flex min-h-[10rem] justify-center items-end mb-2 gap-2">
         <div className=" flex flex-col w-1/2 h-full">
@@ -204,9 +204,9 @@ const Dashboard = ({ projects = [] }) => {
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="default"
+                variant="custom"
                 asChild
-                className="flex flex-col justify-center items-center bg-purple-1 h-[28rem] hover:bg-indigo-500/80 transition-colors rounded p-4 w-full max-w-3xl h-full cursor-pointer"
+                className="flex flex-col justify-center items-center h-[28rem] bg-chart-5 transition-colors rounded p-4 w-full max-w-3xl h-full cursor-pointer"
               >
                 <p className="font-bold text-lg dark:text-white">
                   Criar Projeto

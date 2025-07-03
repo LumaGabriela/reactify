@@ -12,7 +12,7 @@ const LeftMenu = ({}) => {
   const currentRoute = route().current()
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-2 min-w-[17rem] max-w-[17rem] text-gray-300 ">
+    <div className="flex flex-col min-h-screen bg-gray-1 min-w-[17rem] max-w-[17rem] text-gray-300 ">
       {/* Header */}
       <Link 
         as='div' 

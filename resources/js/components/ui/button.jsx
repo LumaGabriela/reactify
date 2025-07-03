@@ -21,6 +21,7 @@ const buttonVariants = cva(
         transparent: "bg-transparent ",
         motiondiv: "!size-6 hover:bg-gray-500/40",
         link: "text-primary underline-offset-4 hover:underline",
+        custom: "shadow",
       },
       size: {
         default: "h-9 px-4 py-2",

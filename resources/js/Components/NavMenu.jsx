@@ -35,7 +35,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
               <PopoverTrigger onClick={ e => e.stopPropagation()}>
                 <Info
                   className={`${
-                    menuItem.value ? "text-indigo-800" : "text-gray-500"
+                    menuItem.value ? "text-white-200" : "text-gray-500"
                   }`}
                   size={15}
                 />
