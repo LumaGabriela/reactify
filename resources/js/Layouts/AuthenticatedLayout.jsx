@@ -1,6 +1,5 @@
 import React from "react"
 import LeftMenu from "../Components/LeftMenu"
-import RightMenu from "../Components/RightMenu"
 import { useState, useEffect } from "react"
 import { usePage } from "@inertiajs/react"
 import { toast } from "sonner"
@@ -33,7 +32,6 @@ const AuthenticatedLayout = ({ children }) => {
     <div className="flex justify-between min-h-screen bg-background w-min-full">
       <LeftMenu />
       {children}
-      <RightMenu />
     </div>
   )
 }

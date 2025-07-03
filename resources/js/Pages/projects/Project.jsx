@@ -152,7 +152,7 @@ const ProjectView = ({ projectDB = [] }) => {
   }
 
   return (
-    <div className="project-view flex flex-col items-center justify-start px-1 w-full max-w-6xl">
+    <div className="project-view flex flex-col items-center justify-start px-1 w-full max-w-6xl bg-gray-2 text-white">
       <div
         id="project-title-container"
         className="flex items-center justify-between text-3xl font-bold text-white text-center w-full my-4 p-0"
@@ -170,10 +170,10 @@ const ProjectView = ({ projectDB = [] }) => {
               onKeyUp={(e) => {
                 if (e.key === "Enter") updateProjectTitle()
               }}
-              className="bg-gray-1 text-3xl font-bold text-white text-center h-full p-0 border-0 m-0"
+              className="bg-gray-2 text-3xl font-bold text-white text-center h-full p-0 border-0 m-0"
             />
           ) : (
-            <p className="bg-gray-1 text-3xl font-bold text-white text-center h-full p-0 border-0 m-0">
+            <p className="bg-gray-2 text-3xl font-bold text-white text-center h-full p-0 border-0 m-0">
               {project.title}
             </p>
           )}
@@ -202,7 +202,7 @@ const ProjectView = ({ projectDB = [] }) => {
 const Project = ({ project }) => {
   return (
     <>
-      <Head title="Project" />
+      <Head title={project.title} />
       <AuthenticatedLayout>
         <ProjectView projectDB={project} />
       </AuthenticatedLayout>

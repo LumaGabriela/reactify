@@ -193,7 +193,7 @@ const Dashboard = ({ projects = [] }) => {
   })
 
   return (
-    <div className="bg-gray-2 text-white p-6 w-full mx-auto">
+    <div className="bg-gray-2 text-white p-6 w-full mx-auto pt-16">
       {/* Header */}
       <div className="flex min-h-[10rem] justify-center items-end mb-2 gap-2">
         <div className=" flex flex-col w-1/2 h-full">
@@ -206,9 +206,9 @@ const Dashboard = ({ projects = [] }) => {
               <Button
                 variant="custom"
                 asChild
-                className="flex flex-col justify-center items-center h-[28rem] bg-chart-5 transition-colors rounded p-4 w-full max-w-3xl h-full cursor-pointer"
+                className="flex flex-col justify-center items-center h-[28rem] bg-purple-2 hover:bg-purple-1 transition-colors rounded p-4 w-full max-w-3xl h-full cursor-pointer"
               >
-                <p className="font-bold text-lg dark:text-white">
+                <p className="font-bold text-lg">
                   Criar Projeto
                 </p>
               </Button>
