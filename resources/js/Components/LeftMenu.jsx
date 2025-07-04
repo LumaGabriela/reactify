@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import { Link, usePage } from "@inertiajs/react"
+import { usePage } from "@inertiajs/react"
+import { router } from "@inertiajs/react"
 import { Grid, User, Squirrel, LogOut, Sun, Moon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -7,7 +8,9 @@ const LeftMenu = () => {
   const { props } = usePage()
   const user = props.auth.user
 
-  const [theme, setTheme] = useState(() => (document.documentElement.classList.contains("dark") ? "dark" : "light"))
+  const [theme, setTheme] = useState(() =>
+    document.documentElement.classList.contains("dark") ? "dark" : "light"
+  )
 
   const handleThemeToggle = () => {
     const isDark = document.documentElement.classList.toggle("dark")
@@ -18,7 +21,9 @@ const LeftMenu = () => {
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
-      const newTheme = document.documentElement.classList.contains("dark") ? "dark" : "light"
+      const newTheme = document.documentElement.classList.contains("dark")
+        ? "dark"
+        : "light"
       setTheme(newTheme)
     })
 
@@ -33,12 +38,10 @@ const LeftMenu = () => {
   const items = [
     { name: "My Projects", url: "projects.index", icon: Grid },
     { name: "Profile", url: "profile.edit", icon: User },
-    // { name: 'Settings', url: 'config', icon: Settings },
     { name: "Logout", url: "logout", icon: LogOut },
   ]
 
   const currentRoute = route().current()
-
   return (
     <div className="w-40 md:w-64 bg-background text-foreground border-r border-border flex flex-col h-screen z-10">
       {/* Header */}
@@ -55,7 +58,11 @@ const LeftMenu = () => {
             className="inline-flex items-center justify-center p-2 rounded-full text-primary hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors duration-200"
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <Moon className="size-4" /> : <Sun className="size-4" />}
+            {theme === "dark" ? (
+              <Moon className="size-4" />
+            ) : (
+              <Sun className="size-4" />
+            )}
           </Button>
         </div>
       </div>
@@ -67,8 +74,12 @@ const LeftMenu = () => {
             <User className="h-5 w-5 text-primary-foreground" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">{user?.name || "User Name"}</p>
-            <p className="text-xs text-muted-foreground truncate">{user?.email || "user@example.com"}</p>
+            <p className="text-sm font-medium text-foreground truncate">
+              {user?.name || "User Name"}
+            </p>
+            <p className="text-xs text-muted-foreground truncate">
+              {user?.email || "user@example.com"}
+            </p>
           </div>
         </div>
       </div>
@@ -80,13 +91,19 @@ const LeftMenu = () => {
           const isActive = currentRoute === item.url
 
           return (
-            <Link
+            <Button
               key={index}
-              href={route(item.url)}
-              className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+              onClick={() => {
+                if (item.url === "logout") {
+                  router.post(route("logout"))
+                  return
+                }
+                router.get(route(item.url))
+              }}
+              className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors w-full ${
                 isActive
                   ? "bg-accent text-accent-foreground"
-                  : "text-foreground hover:bg-accent hover:text-accent-foreground"
+                  : "bg-primary text-foreground hover:bg-accent hover:text-accent-foreground"
               }`}
             >
               <IconComponent className="h-5 w-5" />
@@ -96,7 +113,7 @@ const LeftMenu = () => {
                   {item.badge}
                 </span>
               )}
-            </Link>
+            </Button>
           )
         })}
       </nav>

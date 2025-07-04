@@ -1,4 +1,4 @@
-import React from "react"
+"use client"
 import Checkbox from "@/Components/Checkbox"
 import InputError from "@/Components/InputError"
 import InputLabel from "@/Components/InputLabel"
@@ -24,90 +24,106 @@ export default function Login({ status, canResetPassword }) {
   return (
     <GuestLayout>
       <Head title="Log in" />
-      <div className="bg-gray-2 p-8 rounded-xl w-full max-w-md">
+      <div className="bg-card border border-border p-8 rounded-xl w-full max-w-md shadow-lg">
         {status && (
-          <div className="mb-4 text-sm font-medium text-green-1">{status}</div>
+          <div className="mb-4 text-sm font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950 p-3 rounded-lg border border-green-200 dark:border-green-800">
+            {status}
+          </div>
         )}
 
-        <form onSubmit={submit}>
+        <form
+          onSubmit={submit}
+          className="space-y-6"
+        >
           <div>
             <InputLabel
               htmlFor="email"
               value="Email"
-              className="text-white"
+              className="text-foreground font-medium"
             />
-
             <TextInput
               id="email"
               type="email"
               name="email"
               value={data.email}
-              className="mt-1 block w-full bg-gray-1 border-gray-2 text-white focus:border-purple-2 focus:ring-purple-2"
+              className="mt-2 block w-full bg-background border-input text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary rounded-lg px-3 py-2 text-sm transition-colors"
               autoComplete="username"
               isFocused={true}
               onChange={(e) => setData("email", e.target.value)}
+              placeholder="Enter your email"
             />
-
             <InputError
               message={errors.email}
-              className="mt-2"
+              className="mt-2 text-destructive"
             />
           </div>
 
-          <div className="mt-4">
+          <div>
             <InputLabel
               htmlFor="password"
               value="Password"
-              className="text-white"
+              className="text-foreground font-medium"
             />
-
             <TextInput
               id="password"
               type="password"
               name="password"
               value={data.password}
-              className="mt-1 block w-full bg-gray-1 border-gray-2 text-white focus:border-purple-2 focus:ring-purple-2"
+              className="mt-2 block w-full bg-background border-input text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary rounded-lg px-3 py-2 text-sm transition-colors"
               autoComplete="current-password"
               onChange={(e) => setData("password", e.target.value)}
+              placeholder="Enter your password"
             />
-
             <InputError
               message={errors.password}
-              className="mt-2"
+              className="mt-2 text-destructive"
             />
           </div>
 
-          <div className="mt-4 block">
-            <label className="flex items-center">
+          <div className="flex items-center">
+            <label className="flex items-center cursor-pointer">
               <Checkbox
                 name="remember"
                 checked={data.remember}
                 onChange={(e) => setData("remember", e.target.checked)}
-                className="border-gray-2 text-purple-2 focus:ring-purple-2"
+                className="border-input text-primary focus:ring-primary focus:ring-offset-0 rounded"
               />
-              <span className="ms-2 text-sm text-white">Remember me</span>
+              <span className="ml-2 text-sm text-foreground select-none">
+                Remember me
+              </span>
             </label>
           </div>
 
-          <div className="mt-8 flex items-center justify-between">
+          <div className="flex items-center justify-between pt-4">
             {canResetPassword && (
               <Link
                 href={route("password.request")}
-                className="text-sm text-white hover:text-purple-2 transition-colors duration-200"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 underline-offset-4 hover:underline"
               >
                 Forgot your password?
               </Link>
             )}
-
             <PrimaryButton
-              className="ms-4 bg-purple-2 hover:bg-purple-1 text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={processing}
               id="login-button"
             >
-              Log in
+              {processing ? "Signing in..." : "Log in"}
             </PrimaryButton>
           </div>
         </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            Don't have an account?{" "}
+            <Link
+              href={route("register")}
+              className="text-primary hover:text-primary/80 font-medium underline-offset-4 hover:underline transition-colors"
+            >
+              Sign up
+            </Link>
+          </p>
+        </div>
       </div>
     </GuestLayout>
   )
