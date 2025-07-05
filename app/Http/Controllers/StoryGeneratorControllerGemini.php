@@ -25,35 +25,34 @@ class StoryGeneratorControllerGemini extends Controller
 
       $projectId = $request->input('project_id');
 
-      // Buscar dados do banco de dados para contexto
       $personas = $this->getPersonasFromDatabase($projectId);
       $journeys = $this->getJourneysFromDatabase($projectId);
       $productConstraints = $this->getProductConstraintsFromDatabase($projectId);
       $constraintGoals = $this->getConstraintGoalsFromDatabase($projectId);
 
-
       $missingItems = [];
-      if (empty($personas)) {
+      if (!$this->hasContentfulPersonas($personas)) {
         $missingItems[] = 'Objetivo de Persona';
       }
-      if (empty($journeys)) {
-        $missingItems[] = 'Journey do Produto';
+      if (!$this->hasContentfulJourneys($journeys)) {
+        $missingItems[] = 'Step de Journey';
       }
-      if (empty($productConstraints)) {
+      if (empty($productConstraints)) { 
         $missingItems[] = 'Restrição do Produto';
       }
-      if (empty($constraintGoals)) {
-        $missingItems[] = 'Constraint Goals(CG)';
+      if (!$this->hasContentfulConstraintGoals($constraintGoals)) {
+        $missingItems[] = 'Constraint Goal (CG) com título';
       }
 
       if (!empty($missingItems)) {
-        $message = 'Cadastre ao menos um ' . implode(' e ', $missingItems) . '.';
+        $message = 'Para gerar histórias, é necessário cadastrar ao menos um de cada item a seguir: ' . implode(', ', $missingItems) . '.';
         return response()->json([
           'status' => 'warning',
-          'message' => $message
-        ], 404);  
+          'message' => $message,
+          'itens_faltantes' => $missingItems
+        ], 422); // 422 (Unprocessable Entity)
       }
-      
+
 
       $prompt = $this->createPrompt($personas, $journeys, $productConstraints, $constraintGoals);
 
@@ -87,10 +86,58 @@ class StoryGeneratorControllerGemini extends Controller
     }
   }
 
+  private function hasContentfulPersonas(array $personas): bool
+  {
+    if (empty($personas)) {
+      return false;
+    }
+    foreach ($personas as $persona) {
+      if (isset($persona->goals)) {
+        $goals = is_string($persona->goals) ? json_decode($persona->goals, true) : $persona->goals;
+        if (is_array($goals) && !empty($goals)) {
+          return true; 
+        }
+      }
+    }
+    return false;
+  }
+
+  private function hasContentfulJourneys(array $journeys): bool
+  {
+    if (empty($journeys)) {
+      return false;
+    }
+    foreach ($journeys as $journey) {
+      if (isset($journey->steps)) {
+        $steps = is_string($journey->steps) ? json_decode($journey->steps, true) : $journey->steps;
+        if (is_array($steps) && !empty($steps)) {
+          return true; 
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Verifica se existe ao menos um constraint goal com título.
+   */
+  private function hasContentfulConstraintGoals(array $constraintGoals): bool
+  {
+    if (empty($constraintGoals)) {
+      return false;
+    }
+    foreach ($constraintGoals as $goal) {
+      // Verifica se o título existe e não é apenas uma string vazia
+      if (isset($goal->title) && !empty(trim($goal->title))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private function parseResponse(string $content): array
   {
     try {
-      // Remove os blocos de markdown ```json e ``` antes do parsing
       $cleanedContent = preg_replace('/```json\n([\s\S]*?)\n```/', '$1', $content);
       $cleanedContent = preg_replace('/```json\s*(.*?)\s*```/s', '$1', $cleanedContent);
       $cleanedContent = trim($cleanedContent);
@@ -149,13 +196,17 @@ class StoryGeneratorControllerGemini extends Controller
             FIM DO FORMATO REQUERIDO
 
             EXEMPLO DE USER STORY:
-              "title": "Eu como Thiago Guimarães quero criar listas e adicionar a elas obras disponíveis na plataforma para criar playlists de filmes."
-              "type": "user
+              {
+                "title":"Eu como Thiago Guimarães quero criar listas e adicionar a elas obras disponíveis na plataforma para criar playlists de filmes.",
+                "type":"user"
+              }
             FIM DO EXEMPLO DE USER STORY:
 
             EXEMPLO DE SYSTEM STORY:
-              "title": "Implementar tecnologias de compressão eficientes e entrega de conteúdo via CDN (Content Delivery Network) para garantir uma transmissão de vídeo sem interrupções e com carregamento rápido. Atributo de Qualidade: Desempenho e Eficiência"
-              "type": "system"
+              {
+                "title": "Implementar tecnologias de compressão eficientes e entrega de conteúdo via CDN (Content Delivery Network) para garantir uma transmissão de vídeo sem interrupções e com carregamento rápido. Atributo de Qualidade: Desempenho e Eficiência"
+                "type": "system"
+              }
             FIM DO EXEMPLO DE SYSTEM STORY
 
           3. Após escrever as stories, deve verificar e validar esses requisitos.
@@ -172,7 +223,7 @@ class StoryGeneratorControllerGemini extends Controller
 
         IMPORTANTE: Retorne apenas o JSON e não use \ para escapar caracteres especiais.
         IMPORTANTE: Caso não haja dados suficientes para um tipo de story, não gere ou invente stories.
-        IMPORTANTE: Gere apenas stories baseadas nos dados fornecidos acima.
+        IMPORTANTE: Gere stories baseadas totalmente nos exemplos e informações fornecidos acima.
         PROMPT;
   }
 
@@ -322,7 +373,7 @@ class StoryGeneratorControllerGemini extends Controller
                     " (Prioridade: " . $priorityText . ")" .
                     " - Foco em atributos de qualidade como performance, segurança, escalabilidade";
     }
-    return implode("\n", $formatted);
+    return implode("\n\n", $formatted);
   }
 
 }
