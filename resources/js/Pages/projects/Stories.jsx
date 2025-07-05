@@ -204,31 +204,42 @@ const Stories = ({ project, setProject }) => {
 
   // Função para gerar stories via IA
   const generateStories = async () => {
-    setIsGenerating(true)
-    setIsModalMinimized(false)
+    setIsGenerating(true);
+    setIsModalMinimized(false);
 
     try {
       const response = await axios.post("/api/stories/generate", {
         project_id: project.id,
-      })
+      });
 
-      const storiesWithSelection = response.data.message.stories.map(
-        (story) => ({
-          ...story,
-          selected: true, // Por padrão, todas vêm selecionadas
-        })
-      )
+      const data = response.data;
+      
+      const storiesWithSelection = data.message.stories.map((story) => ({
+        ...story,
+        selected: true, // Por padrão, todas vêm selecionadas
+      }));
 
-      setAiGeneratedStories(storiesWithSelection)
-      setShowAiModal(true)
-      toast.success("Stories geradas com sucesso.")
+      setAiGeneratedStories(storiesWithSelection);
+      setShowAiModal(true);
+      toast.success("Histórias geradas com sucesso.");
+
     } catch (error) {
-      toast.error("Erro ao gerar stories.")
-      console.error("Erro ao gerar stories:", error)
+      console.error("Erro ao gerar stories:", error);
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        
+        if (errorData.status === 'warning') {
+          toast.warning(errorData.message);
+        } else {
+          toast.error(errorData.message || 'Ocorreu um erro desconhecido no servidor.');
+        }
+      } else {
+        toast.error('Não foi possível conectar ao servidor. Verifique sua internet.');
+      }
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
-  }
+  };
 
   // Função para alternar seleção de uma story
   const toggleStorySelection = (index) => {
@@ -749,7 +760,7 @@ const Stories = ({ project, setProject }) => {
             </PopoverTrigger>
             <PopoverContent className="bg-gray-800 text-white ">
               Esta função utiliza IA para gerar Users Stories baseadas nos
-              objetivos das Personas e Journeys do Produto e gerar System
+              Objetivos das Personas e Journeys do Produto e gerar System
               Stories baseadas nas Restrições do Produto e Goals do tipo
               Constraint(CG).
               <PopoverArrow className="fill-gray-800" />

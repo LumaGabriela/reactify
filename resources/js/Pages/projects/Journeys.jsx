@@ -331,7 +331,7 @@ const Journeys = ({ project, setProject }) => {
     }
   }
   // Função para gerar journeys com IA
-  const generateJourneysWithAI = async () => {
+  const generateJourneys = async () => {
     setIsGeneratingAI(true)
     setIsModalMinimized(false) 
 
@@ -370,6 +370,7 @@ const Journeys = ({ project, setProject }) => {
       }
     } catch (error) {
       toast.error("Erro ao comunicar com o servidor")
+      console.error("Erro ao gerar stories:", error)
     } finally {
       setIsGeneratingAI(false)
     }
@@ -1030,7 +1031,7 @@ const Journeys = ({ project, setProject }) => {
 
         <button
           className="flex-1 flex items-center justify-center py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={generateJourneysWithAI}
+          onClick={generateJourneys}
           disabled={isGeneratingAI}
         >
           {isGeneratingAI ? (
