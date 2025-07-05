@@ -31,13 +31,29 @@ class StoryGeneratorControllerGemini extends Controller
       $productConstraints = $this->getProductConstraintsFromDatabase($projectId);
       $constraintGoals = $this->getConstraintGoalsFromDatabase($projectId);
 
-      // Verificar se há dados suficientes para gerar stories
-      if (empty($personas) && empty($journeys) && empty($productConstraints) && empty($constraintGoals)) {
-        return response()->json([
-          'status' => 'error',
-          'message' => 'Nenhum dado encontrado para este projeto. Certifique-se de que há personas, journeys ou constraints cadastrados.'
-        ], 404);
+
+      $missingItems = [];
+      if (empty($personas)) {
+        $missingItems[] = 'Objetivo de Persona';
       }
+      if (empty($journeys)) {
+        $missingItems[] = 'Journey do Produto';
+      }
+      if (empty($productConstraints)) {
+        $missingItems[] = 'Restrição do Produto';
+      }
+      if (empty($constraintGoals)) {
+        $missingItems[] = 'Constraint Goals(CG)';
+      }
+
+      if (!empty($missingItems)) {
+        $message = 'Cadastre ao menos um ' . implode(' e ', $missingItems) . '.';
+        return response()->json([
+          'status' => 'warning',
+          'message' => $message
+        ], 404);  
+      }
+      
 
       $prompt = $this->createPrompt($personas, $journeys, $productConstraints, $constraintGoals);
 
@@ -78,7 +94,7 @@ class StoryGeneratorControllerGemini extends Controller
       $cleanedContent = preg_replace('/```json\n([\s\S]*?)\n```/', '$1', $content);
       $cleanedContent = preg_replace('/```json\s*(.*?)\s*```/s', '$1', $cleanedContent);
       $cleanedContent = trim($cleanedContent);
-      
+
       $data = json_decode($cleanedContent, true, 512, JSON_THROW_ON_ERROR);
 
       // Extrai apenas o array de stories do JSON
@@ -93,25 +109,25 @@ class StoryGeneratorControllerGemini extends Controller
       throw new \Exception('Erro ao fazer o PARSER: ' . $e->getMessage());
     }
   }
-  
+
   private function createPrompt(array $personas, array $journeys, array $productConstraints, array $constraintGoals): string
   {
     $personasText = $this->formatPersonasForPrompt($personas);
     $journeysText = $this->formatJourneysForPrompt($journeys);
     $constraintsText = $this->formatConstraintsForPrompt($productConstraints);
     $constraintGoalsText = $this->formatConstraintGoalsForPrompt($constraintGoals);
-        
+
     return <<<PROMPT
         Com base nos dados fornecidos do sistema, gere user stories e system stories no formato especificado abaixo:
 
         CONTEXTO PARA USER STORIES:
           - Goals das Personas do Produto: $personasText
-          
+
           - Journeys do Produto: $journeysText
 
         CONTEXTO PARA SYSTEM STORIES:
           - Restrições do Produto: $constraintsText
-          
+
           - Constraint Goals do Produto: $constraintGoalsText
 
         INSTRUÇÕES:
@@ -120,7 +136,7 @@ class StoryGeneratorControllerGemini extends Controller
           2. Para SYSTEM STORIES: Use as Restrições do Produto e Constraint Goals como contexto para criar histórias do sistema. Também acrescente atributos de qualidade na descrição das system stories.
 
             FORMATO REQUERIDO:
-            INÍCIO DO FORMATO REQUERIDO        
+            INÍCIO DO FORMATO REQUERIDO
               {
                 "stories":
                   [
@@ -153,22 +169,21 @@ class StoryGeneratorControllerGemini extends Controller
             - ESTIMABLE
             - SMALL
             - TESTABLE
-        
+
         IMPORTANTE: Retorne apenas o JSON e não use \ para escapar caracteres especiais.
         IMPORTANTE: Caso não haja dados suficientes para um tipo de story, não gere ou invente stories.
         IMPORTANTE: Gere apenas stories baseadas nos dados fornecidos acima.
         PROMPT;
   }
 
-  // Métodos auxiliares para buscar dados do banco de dados
+  // Métodos auxiliares para buscar dados do banco de dados (mantendo o filtro de soft-delete)
   private function getPersonasFromDatabase(int $projectId): array
   {
     try {
-      // Buscar personas com seus goals (do campo jsonb 'goals')
       return \DB::table('personas')
         ->select('goals')
         ->where('project_id', $projectId)
-        ->whereNull('deleted_at') // MODIFICAÇÃO: Ignora registros com soft delete
+        ->whereNull('deleted_at')
         ->get()
         ->toArray();
     } catch (\Exception $e) {
@@ -180,11 +195,10 @@ class StoryGeneratorControllerGemini extends Controller
   private function getJourneysFromDatabase(int $projectId): array
   {
     try {
-      // Buscar journeys da tabela journeys
       return \DB::table('journeys')
         ->select('id', 'title', 'steps')
         ->where('project_id', $projectId)
-        ->whereNull('deleted_at') // MODIFICAÇÃO: Ignora registros com soft delete
+        ->whereNull('deleted_at')
         ->get()
         ->toArray();
     } catch (\Exception $e) {
@@ -196,13 +210,12 @@ class StoryGeneratorControllerGemini extends Controller
   private function getProductConstraintsFromDatabase(int $projectId): array
   {
     try {
-      // Buscar restrições do product_canvas
       return \DB::table('product_canvas')
         ->select('id', 'restrictions')
         ->where('project_id', $projectId)
         ->whereNotNull('restrictions')
         ->where('restrictions', '!=', '')
-        ->whereNull('deleted_at') // MODIFICAÇÃO: Ignora registros com soft delete
+        ->whereNull('deleted_at')
         ->get()
         ->toArray();
     } catch (\Exception $e) {
@@ -214,12 +227,11 @@ class StoryGeneratorControllerGemini extends Controller
   private function getConstraintGoalsFromDatabase(int $projectId): array
   {
     try {
-      // Buscar constraint goals (type = 'cg') da tabela goal_sketches
       return \DB::table('goal_sketches')
         ->select('id', 'title', 'type', 'priority')
         ->where('project_id', $projectId)
         ->where('type', 'cg')
-        ->whereNull('deleted_at') // MODIFICAÇÃO: Ignora registros com soft delete
+        ->whereNull('deleted_at')
         ->get()
         ->toArray();
     } catch (\Exception $e) {
@@ -228,22 +240,22 @@ class StoryGeneratorControllerGemini extends Controller
     }
   }
 
-  // Métodos para formatar os dados para o prompt
+  // Métodos para formatar os dados para o prompt (inalterados)
   private function formatPersonasForPrompt(array $personas): string
   {
     if (empty($personas)) {
       return "Nenhuma persona definida";
     }
-    
+
     $formatted = [];
     foreach ($personas as $persona) {
       $goals = is_string($persona->goals) ? json_decode($persona->goals, true) : $persona->goals;
-      
+
       if ($goals) {
         $goalsText = is_array($goals) ? implode(', ', $goals) : $goals;
         $personaText = "\nGoals: " . $goalsText;
       }
-      
+
       $formatted[] = $personaText;
     }
     return implode("\n\n", $formatted);
@@ -254,13 +266,13 @@ class StoryGeneratorControllerGemini extends Controller
     if (empty($journeys)) {
       return "Nenhuma journey definida";
     }
-    
+
     $formatted = [];
     foreach ($journeys as $journey) {
       $steps = is_string($journey->steps) ? json_decode($journey->steps, true) : $journey->steps;
-      
+
       $journeyText = "Journey: " . ($journey->title ?? 'N/A') . " (ID: {$journey->id})";
-      
+
       if (is_array($steps)) {
         $stepsText = [];
         foreach ($steps as $step) {
@@ -275,7 +287,7 @@ class StoryGeneratorControllerGemini extends Controller
       } else {
         $journeyText .= "\nPassos: " . ($steps ?? 'N/A');
       }
-      
+
       $formatted[] = $journeyText;
     }
     return implode("\n\n", $formatted);
@@ -286,14 +298,14 @@ class StoryGeneratorControllerGemini extends Controller
     if (empty($constraints)) {
       return "Nenhuma restrição definida";
     }
-    
+
     $formatted = [];
     foreach ($constraints as $constraint) {
       if (!empty($constraint->restrictions)) {
         $formatted[] = "Restrições do Produto (ID: {$constraint->id}): " . $constraint->restrictions;
       }
     }
-    
+
     return empty($formatted) ? "Nenhuma restrição definida" : implode("\n", $formatted);
   }
 
@@ -302,11 +314,11 @@ class StoryGeneratorControllerGemini extends Controller
     if (empty($constraintGoals)) {
       return "Nenhum constraint goal definido";
     }
-    
+
     $formatted = [];
     foreach ($constraintGoals as $constraintGoal) {
       $priorityText = ucfirst($constraintGoal->priority ?? 'N/A');
-      $formatted[] = "Constraint Goal (ID: {$constraintGoal->id}): " . ($constraintGoal->title ?? 'N/A') . 
+      $formatted[] = "Constraint Goal (ID: {$constraintGoal->id}): " . ($constraintGoal->title ?? 'N/A') .
                     " (Prioridade: " . $priorityText . ")" .
                     " - Foco em atributos de qualidade como performance, segurança, escalabilidade";
     }
