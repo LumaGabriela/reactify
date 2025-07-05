@@ -168,6 +168,7 @@ class StoryGeneratorControllerGemini extends Controller
       return \DB::table('personas')
         ->select('goals')
         ->where('project_id', $projectId)
+        ->whereNull('deleted_at') // MODIFICAÇÃO: Ignora registros com soft delete
         ->get()
         ->toArray();
     } catch (\Exception $e) {
@@ -183,6 +184,7 @@ class StoryGeneratorControllerGemini extends Controller
       return \DB::table('journeys')
         ->select('id', 'title', 'steps')
         ->where('project_id', $projectId)
+        ->whereNull('deleted_at') // MODIFICAÇÃO: Ignora registros com soft delete
         ->get()
         ->toArray();
     } catch (\Exception $e) {
@@ -200,6 +202,7 @@ class StoryGeneratorControllerGemini extends Controller
         ->where('project_id', $projectId)
         ->whereNotNull('restrictions')
         ->where('restrictions', '!=', '')
+        ->whereNull('deleted_at') // MODIFICAÇÃO: Ignora registros com soft delete
         ->get()
         ->toArray();
     } catch (\Exception $e) {
@@ -216,6 +219,7 @@ class StoryGeneratorControllerGemini extends Controller
         ->select('id', 'title', 'type', 'priority')
         ->where('project_id', $projectId)
         ->where('type', 'cg')
+        ->whereNull('deleted_at') // MODIFICAÇÃO: Ignora registros com soft delete
         ->get()
         ->toArray();
     } catch (\Exception $e) {

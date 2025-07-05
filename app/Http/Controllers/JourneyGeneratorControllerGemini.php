@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Models\Persona;
 
-class JourneyGeneratorControllerGemini extends Controller 
+class JourneyGeneratorControllerGemini extends Controller
 {
     public function generateJourneys(Request $request): JsonResponse
     {
@@ -67,8 +67,10 @@ class JourneyGeneratorControllerGemini extends Controller
     private function getPersonasByProject(int $projectId)
     {
         try {
+            // MODIFICAÇÃO: Adicionado whereNull para ignorar soft deletes e corrigido o select.
             return Persona::where('project_id', $projectId)
-                ->select('goals')
+                ->whereNull('deleted_at')
+                ->select('id', 'name', 'goals') // Selecionando id e name para uso nos logs.
                 ->get();
         } catch (\Exception $e) {
             throw new \Exception('Erro ao buscar personas: ' . $e->getMessage());
