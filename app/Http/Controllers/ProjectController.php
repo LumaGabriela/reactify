@@ -52,7 +52,7 @@ class ProjectController extends Controller
   }
   public function index()
   {
-    $projects = Project::all();
+    $projects = Project::select('title', 'id')->get();
 
     return Inertia::render('Home', [
       'projects' => $projects,
@@ -68,7 +68,7 @@ class ProjectController extends Controller
       'product_canvas',
     ])->find($id);
 
-    return Inertia::render('projects/Project', ['project' => $project]);
+    return Inertia::render('projects/Project', ['project' => $project, 'projects' => Project::select('title', 'id')->get()]);
   }
 
   public function store(ProjectRequest $request)

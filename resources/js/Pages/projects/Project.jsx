@@ -106,7 +106,7 @@ const ProjectView = ({ projectDB = [] }) => {
   }, [activeMenu])
 
   useEffect(() => {
-    console.log(project?.goal_sketches)
+    // console.log(project?.goal_sketches)
   }, [project])
 
   const renderContent = () => {
