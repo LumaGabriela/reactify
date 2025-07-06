@@ -3,22 +3,29 @@ import React, { useState } from 'react';
 const ProgressIcon = ({ 
   value = 0, 
   max = 100,
-  color = "#806dff", 
+  variant = 'primary',
   label = "Journeys",
   link = "#",
   icon: IconComponent
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   
-  // Calcular a porcentagem para o progresso circular
   const percentage = max === 0 ? 0 : Math.min(Math.round((value / max) * 100), 100);
   const circumference = 2 * Math.PI * 45;
   const offset = circumference - (percentage / 100) * circumference;
+
+  const colorVariants = {
+    primary: 'stroke-primary border-t-primary text-primary',
+    secondary: 'stroke-secondary border-t-secondary text-secondary',
+    accent: 'stroke-accent border-t-accent text-accent',
+    destructive: 'stroke-destructive border-t-destructive text-destructive',
+  };
+
+  const selectedVariant = colorVariants[variant] || colorVariants.primary;
   
-  // Se não houver ícone definido, usar um placeholder visual
   const IconDisplay = () => {
     if (IconComponent) {
-      return <IconComponent size={24} color={color} className="mb-1" />;
+      return <IconComponent size={24} className={`mb-1 ${selectedVariant}`} />;
     }
     return null;
   };
@@ -34,11 +41,12 @@ const ProgressIcon = ({
         <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
           <circle 
             cx="50" cy="50" r="45" fill="none" 
-            stroke="#374151" strokeWidth="10"
+            className="stroke-muted" strokeWidth="10"
           />
           <circle 
             cx="50" cy="50" r="45" fill="none" 
-            stroke={color} strokeWidth="10"
+            className={selectedVariant}
+            strokeWidth="10"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             strokeLinecap="round"
@@ -46,15 +54,12 @@ const ProgressIcon = ({
         </svg>
         
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-
-          <span className="text-2xl font-bold text-white">{value}</span>
-
+          <span className="text-2xl font-bold text-foreground">{value}</span>
         </div>
       </div>
       
       <div 
-        className="w-full px-2 py-1 text-center text-white text-sm font-semibold bg-gray-700 rounded-md shadow-md"
-        style={{ borderTop: `3px solid ${color}` }}
+        className={`w-full px-2 py-1 text-center !text-muted-foreground text-sm font-semibold bg-card rounded-md shadow-md border-t-4 ${selectedVariant}`}
       >
         {label}
       </div>

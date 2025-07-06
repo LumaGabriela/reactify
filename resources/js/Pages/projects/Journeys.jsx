@@ -28,7 +28,7 @@ import {
   Sparkles,
   Loader2,
   Info,
-  Minus, 
+  Minus,
   ChevronsUp,
 } from "lucide-react"
 import { router } from "@inertiajs/react"
@@ -45,6 +45,8 @@ import {
 } from "@/components/ui/popover"
 import { Switch } from "@/components/ui/switch"
 import TextareaAutosize from "react-textarea-autosize"
+import { cn } from "@/lib/utils"
+
 
 const SortableJourneyStepItem = (props) => {
   const {
@@ -75,6 +77,7 @@ const SortableJourneyStepItem = (props) => {
   )
 }
 
+
 const JourneyStepItem = ({
   step,
   stepIndex,
@@ -90,24 +93,20 @@ const JourneyStepItem = ({
   textareaRef,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
-  const [showDeletePopover, setShowDeletePopover] = useState(false) 
+  const [showDeletePopover, setShowDeletePopover] = useState(false)
   const [touchpointChecked, setTouchpointChecked] = useState(step.is_touchpoint)
 
   useEffect(() => {
     setTouchpointChecked(step.is_touchpoint)
   }, [step.is_touchpoint])
 
-  const handleSave = () => {
-    onSave(editValue, touchpointChecked)
-  }
-
+  const handleSave = () => onSave(editValue, touchpointChecked)
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       handleSave()
     }
   }
-
   const handleConfirmDelete = () => {
     onDelete()
     setShowDeletePopover(false)
@@ -119,17 +118,13 @@ const JourneyStepItem = ({
       onMouseLeave={() => setIsHovered(false)}
       className="relative group flex items-center"
     >
-      {/* Circulo */}
-      <Badge
-        variant="numberIcon"
-        className={`${color.bg} z-40`}
-      >
-        <p className={`m-0 text-gray-900`}>{stepIndex + 1}</p>
+      <Badge variant="numberIcon" className={cn(color.bg, "z-40")}>
+        <p className="m-0 text-primary-foreground">{stepIndex + 1}</p>
       </Badge>
-      {/* card de conteudo */}
-      <Card className="w-full dark:!bg-gray-900 bg-white border-gray-800 transition-shadow hover:shadow-lg z-20">
-        <CardContent className="flex-row items-start justify-between gap-2 p-2 min-h-[60px]">
-          <div className="flex items-center flex-1 min-w-0 ">
+      
+      <Card className="w-full bg-card border-border transition-shadow hover:shadow-lg z-20">
+        <CardContent className="flex flex-row items-start justify-between gap-2 p-2 min-h-[60px]">
+          <div className="flex items-center flex-1 min-w-0">
             <div className="flex-1">
               {isEditing ? (
                 <TextareaAutosize
@@ -137,56 +132,36 @@ const JourneyStepItem = ({
                   value={editValue}
                   onChange={onValueChange}
                   onKeyDown={handleKeyDown}
-                  className="w-full text-sm border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
+                  className="w-full text-sm border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal text-foreground focus-visible:outline-none focus-visible:ring-0"
                   autoFocus
                 />
               ) : (
-                <p className="m-0 text-sm dark:text-slate-200 break-words w-full">
+                <p className="m-0 text-sm text-foreground break-words w-full">
                   {step.description || "..."}
                 </p>
               )}
             </div>
           </div>
           {step.is_touchpoint && !isEditing && (
-            <Circle
-              size={16}
-              className="fill-violet-600 stroke-violet-600 mt-1"
-            />
+            <Circle size={16} className="fill-primary stroke-primary mt-1" />
           )}
 
           <div className="flex items-center gap-1">
-            {/* {isTemporary && (
-              <LoaderCircle className="text-indigo-400 animate-spin" />
-            )} */}
             {isEditing ? (
               <>
                 <Switch
                   id={`touchpoint-switch-${stepIndex}`}
                   checked={touchpointChecked}
                   onCheckedChange={setTouchpointChecked}
-                  className="data-[state=checked]:!bg-violet-900 data-[state=unchecked]:bg-neutral-200 ring-gray-800 focus-visible:ring-1 focus-visible:ring-gray-800"
                 />
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-7 text-red-500/80 hover:bg-red-500/10"
-                  onClick={onCancel}
-                >
+                <Button variant="ghost" size="icon" className="size-7 text-destructive/80 hover:bg-destructive/10 hover:text-destructive" onClick={onCancel}>
                   <X className="size-4" />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-7 text-green-400 hover:bg-green-500/10"
-                  onClick={handleSave}
-                >
+                <Button variant="ghost" size="icon" className="size-7 text-success/80 hover:bg-success/10 hover:text-success" onClick={handleSave}>
                   <Check />
                 </Button>
               </>
-            ) : (
-              <div></div>
-            )}
+            ) : <div />}
           </div>
         </CardContent>
       </Card>
@@ -198,54 +173,29 @@ const JourneyStepItem = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
             transition={{ duration: 0.2 }}
-            className="z-40 absolute top-3 right-3 flex items-center rounded-md bg-gray-900/50 backdrop-blur-sm border border-gray-700 shadow-xl"
+            className="z-40 absolute top-3 right-3 flex items-center rounded-md bg-card/50 backdrop-blur-sm border border-border shadow-xl"
           >
-            <Button
-              variant="motiondiv"
-              size="icon"
-              className="text-gray-300 hover:text-white"
-              onClick={onEdit}
-            >
+            <Button variant="motiondiv" size="icon" className="text-muted-foreground hover:text-foreground" onClick={onEdit}>
               <Edit />
             </Button>
-            {/* Usando a lógica do Popover que implementamos */}
-            <Popover
-              open={showDeletePopover}
-              onOpenChange={setShowDeletePopover}
-            >
+            <Popover open={showDeletePopover} onOpenChange={setShowDeletePopover}>
               <PopoverTrigger asChild>
-                <Button
-                  variant="motiondiv"
-                  size="icon"
-                  className="text-red-500/80 hover:text-red-500"
-                >
+                <Button variant="motiondiv" size="icon" className="text-destructive/80 hover:text-destructive">
                   <Trash />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-56 bg-gray-800 border-gray-700 text-white">
+              <PopoverContent className="w-56 bg-popover border-border text-popover-foreground">
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <h4 className="font-medium leading-none">
-                      Confirmar Exclusão
-                    </h4>
-                    <p className="text-sm text-gray-400">
-                      Deseja realmente excluir este passo?
-                    </p>
+                    <h4 className="font-medium leading-none">Confirm Deletion</h4>
+                    <p className="text-sm text-muted-foreground">Are you sure you want to delete this step?</p>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowDeletePopover(false)}
-                    >
-                      Cancelar
+                    <Button variant="ghost" size="sm" onClick={() => setShowDeletePopover(false)}>
+                      Cancel
                     </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={handleConfirmDelete}
-                    >
-                      Excluir
+                    <Button variant="destructive" size="sm" onClick={handleConfirmDelete}>
+                      Delete
                     </Button>
                   </div>
                 </div>
@@ -256,14 +206,10 @@ const JourneyStepItem = ({
       </AnimatePresence>
 
       {!isLastStep && (
-        <div className="absolute top-1/2 -right-3 translate-x-1 -translate-y-1/2 text-gray-300 z-0">
-          <CornerUpRight
-            size={20}
-            strokeWidth={1.5}
-          />
+        <div className="absolute top-1/2 -right-3 translate-x-1 -translate-y-1/2 text-muted-foreground z-0">
+          <CornerUpRight size={20} strokeWidth={1.5} />
         </div>
       )}
-      {/* </div> */}
     </div>
   )
 }
@@ -333,7 +279,7 @@ const Journeys = ({ project, setProject }) => {
   // Função para gerar journeys com IA
   const generateJourneys = async () => {
     setIsGeneratingAI(true)
-    setIsModalMinimized(false) 
+    setIsModalMinimized(false)
 
     try {
       const response = await fetch("/api/journeys/generate", {
@@ -363,10 +309,8 @@ const Journeys = ({ project, setProject }) => {
         setShowConfirmModal(true)
         toast.success("Journeys geradas com sucesso.")
       } else {
-        if (data.status == "warning")
-          toast.warning(data.message)
-        else
-          toast.error(data.message)
+        if (data.status == "warning") toast.warning(data.message)
+        else toast.error(data.message)
       }
     } catch (error) {
       toast.error("Erro ao comunicar com o servidor")
@@ -468,8 +412,8 @@ const Journeys = ({ project, setProject }) => {
   // Função para cancelar e limpar as journeys geradas
   const cancelGeneratedJourneys = () => {
     setShowConfirmModal(false)
-    setGeneratedJourneys([]) 
-    setIsModalMinimized(false) 
+    setGeneratedJourneys([])
+    setIsModalMinimized(false)
   }
 
   // Todas as funções existentes permanecem inalteradas
@@ -524,7 +468,8 @@ const Journeys = ({ project, setProject }) => {
   }
 
   // Função para adicionar um novo step a uma journey
-  const addNewStep = (JourneyId) => {console.log(project.journeys)
+  const addNewStep = (JourneyId) => {
+    console.log(project.journeys)
     if (!project.journeys) return
     const currentSteps =
       project.journeys.find((journey) => journey.id === JourneyId)?.steps || []
@@ -666,402 +611,186 @@ const Journeys = ({ project, setProject }) => {
 
   return (
     <div className="flex flex-col gap-4 p-4 w-full">
-      {/* Modal de confirmação das journeys geradas */}
+      {/* AI Generated Journeys Modal */}
       {showConfirmModal && (
-        <div
-          className={`
-            transition-all duration-300 z-50
-            ${
-              isModalMinimized
-                ? "fixed bottom-4 right-4 w-[400px]" // Estilo minimizado
-                : "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" // Estilo maximizado
-            }
-          `}
-        >
-          <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl">
-            {/* Cabeçalho fixo */}
+        <div className={cn("transition-all duration-300 z-50", isModalMinimized ? "fixed bottom-4 right-4 w-[400px]" : "fixed inset-0 bg-background/80 flex items-center justify-center")}>
+          <div className="bg-card rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-border">
             <div className="flex items-center justify-between p-6 pb-4 flex-shrink-0">
-              <h3 className="text-xl font-bold text-white flex items-center">
-                {/* <Sparkles
-                  className="mr-2 text-yellow-400"
-                  size={24}
-                /> */}
-                {!isModalMinimized && "Journeys Geradas com IA"}
-                 {isModalMinimized && "Journeys Geradas"}
+              <h3 className="text-xl font-bold text-foreground flex items-center">
+                {!isModalMinimized && "AI Generated Journeys"}
+                {isModalMinimized && "Generated Journeys"}
               </h3>
               <div className="flex items-center gap-2">
-                 <button
-                  onClick={() => setIsModalMinimized(!isModalMinimized)}
-                  className="text-gray-400 hover:text-white"
-                >
+                <button onClick={() => setIsModalMinimized(!isModalMinimized)} className="text-muted-foreground hover:text-foreground">
                   {isModalMinimized ? <ChevronsUp size={20} /> : <Minus size={20} />}
                 </button>
-                <button
-                  onClick={cancelGeneratedJourneys}
-                  className="text-gray-400 hover:text-white"
-                >
+                <button onClick={cancelGeneratedJourneys} className="text-muted-foreground hover:text-foreground">
                   <X size={24} />
                 </button>
               </div>
             </div>
 
             {!isModalMinimized && (
-            <>
-              {/* Controle para selecionar/deselecionar todos - fixo */}
-              <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-gray-700 rounded-lg flex-shrink-0">
-                <span className="text-white font-medium">
-                  {generatedJourneys.filter((j) => j.selected).length} de{" "}
-                  {generatedJourneys.length} selecionadas
-                </span>
-                <button
-                  onClick={toggleAllJourneys}
-                  className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors"
-                >
-                  {generatedJourneys.every((journey) => journey.selected)
-                    ? "Desmarcar Todas"
-                    : "Selecionar Todas"}
-                </button>
-              </div>
-
-              {/* Área rolável das journeys */}
-              <div className="flex-1 overflow-y-auto px-6 min-h-0">
-                <div className="space-y-4 pb-4">
-                  {generatedJourneys.map((journey, index) => (
-                    <div
-                      key={index}
-                      className={`rounded-lg p-4 border-2 transition-colors ${
-                        journey.selected
-                          ? "bg-gray-700 border-blue-500"
-                          : "bg-gray-600 border-gray-500"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-white font-medium">
-                          {journey.title}
-                        </h4>
-                        <label className="flex items-center cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={journey.selected}
-                            onChange={() => toggleJourneySelection(index)}
-                            className="mr-2 w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
-                          />
-                        </label>
-                      </div>
-                      <div className="space-y-2">
-                        {journey.steps.map((step, stepIndex) => (
-                          <div
-                            key={stepIndex}
-                            className="flex items-center text-sm text-gray-300"
-                          >
-                            <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">
-                              {stepIndex + 1}
-                            </span>
-                            <span className="flex-1">{step.description}</span>
-                            {step.is_touchpoint && (
-                              <span className="bg-green-500 text-white text-xs px-2 py-1 rounded ml-2">
-                                Touchpoint
-                              </span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+              <>
+                <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-accent rounded-lg flex-shrink-0">
+                  <span className="text-accent-foreground font-medium">
+                    {generatedJourneys.filter((j) => j.selected).length} of {generatedJourneys.length} selected
+                  </span>
+                  <Button onClick={toggleAllJourneys} size="sm">
+                    {generatedJourneys.every((j) => j.selected) ? "Deselect All" : "Select All"}
+                  </Button>
                 </div>
-              </div>
-
-              {/* Botões fixos na parte inferior */}
-              <div className="flex justify-end space-x-3 p-6 pt-4 border-t border-gray-700 flex-shrink-0">
-                <button
-                  onClick={cancelGeneratedJourneys}
-                  className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={confirmGeneratedJourneys}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
-                  disabled={
-                    generatedJourneys.filter((j) => j.selected).length === 0
-                  }
-                >
-                  <Check
-                    className="mr-2"
-                    size={16}
-                  />
-                  Confirmar e Adicionar (
-                  {generatedJourneys.filter((j) => j.selected).length})
-                </button>
-              </div>
-            </>
+                <div className="flex-1 overflow-y-auto px-6 min-h-0">
+                  <div className="space-y-4 pb-4">
+                    {generatedJourneys.map((journey, index) => (
+                      <div key={index} className={cn("rounded-lg p-4 border-2 transition-colors", journey.selected ? "bg-accent border-primary" : "bg-muted/50 border-border")}>
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="text-foreground font-medium">{journey.title}</h4>
+                          <Switch id={`journey-select-${index}`} checked={journey.selected} onCheckedChange={() => toggleJourneySelection(index)} />
+                        </div>
+                        <div className="space-y-2">
+                          {journey.steps.map((step, stepIndex) => (
+                            <div key={stepIndex} className="flex items-center text-sm text-muted-foreground">
+                              <span className={cn("text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2", colors[index % colors.length].bg)}>
+                                {stepIndex + 1}
+                              </span>
+                              <span className="flex-1">{step.description}</span>
+                              {step.is_touchpoint && <Badge variant="success" className="ml-2">Touchpoint</Badge>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex justify-end space-x-3 p-6 pt-4 border-t border-border flex-shrink-0">
+                  <Button variant="outline" onClick={cancelGeneratedJourneys}>Cancel</Button>
+                  <Button variant="success" onClick={confirmGeneratedJourneys} disabled={generatedJourneys.filter((j) => j.selected).length === 0}>
+                    <Check className="mr-2" size={16} />
+                    Confirm and Add ({generatedJourneys.filter((j) => j.selected).length})
+                  </Button>
+                </div>
+              </>
             )}
           </div>
         </div>
       )}
 
+      {/* Journeys List */}
       {project.journeys && project.journeys.length > 0 ? (
-        project.journeys
-          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-          .map((journey, i) => (
-            <div
-              key={i}
-              className="bg-gray-800 rounded-lg shadow-md overflow-hidden"
-            >
-              {/* Cabeçalho da Journey */}
-              <div
-                className="flex items-center justify-between py-2 px-3 cursor-pointer bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
-                onClick={() => toggleJourney(journey.id)}
-              >
-                <div className="flex items-center text-2xl">
-                  <Map
-                    className="text-purple-2 mr-2"
-                    size={20}
-                  />
-                  {editingJourney === journey.id ? (
-                    <input
-                      type="text"
-                      value={editJourneyName}
-                      onChange={(e) => setEditJourneyTitle(e.target.value)}
-                      onKeyUp={(e) => {
-                        if (e.key === "Enter") saveEditJourney()
-                      }}
-                      className=" text-white p-0 bg-transparent border-none focus:ring-0 font-medium text-2xl rounded h-full focus:outline-none"
-                      autoFocus
-                    />
-                  ) : (
-                    <h4 className="text-white font-medium m-0">
-                      {journey.title}
-                    </h4>
-                  )}
-                </div>
+        project.journeys.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)).map((journey, i) => (
+          <div key={i} className="bg-card rounded-lg shadow-md overflow-hidden border border-border">
+            <div className="flex items-center justify-between py-2 px-3 cursor-pointer bg-card hover:bg-accent/50 transition-colors" onClick={() => toggleJourney(journey.id)}>
+              <div className="flex items-center text-2xl">
+                <Map className="text-primary mr-2" size={20} />
+                {editingJourney === journey.id ? (
+                  <input type="text" value={editJourneyName} onChange={(e) => setEditJourneyTitle(e.target.value)} onKeyUp={(e) => { if (e.key === "Enter") saveEditJourney() }} className="text-foreground p-0 bg-transparent border-none focus:ring-0 font-medium text-2xl rounded h-full focus:outline-none" autoFocus />
+                ) : (
+                  <h4 className="text-foreground font-medium m-0">{journey.title}</h4>
+                )}
+              </div>
+              <div className="flex items-center">
+                {editingJourney === journey.id ? (
+                  <Button variant="ghost" size="icon" className="text-success hover:bg-success/10" onClick={(e) => { e.stopPropagation(); saveEditJourney(); }}>
+                    <Check size={20} />
+                  </Button>
+                ) : (
+                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); startEditJourney(journey.id); }}>
+                    <Edit size={20} />
+                  </Button>
+                )}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-destructive/80 hover:text-destructive" onClick={(e) => e.stopPropagation()}>
+                      <Trash size={20} />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-60 bg-popover border-border text-popover-foreground" onClick={(e) => e.stopPropagation()}>
+                    <div className="space-y-3">
+                      <h4 className="font-medium">Delete Journey</h4>
+                      <p className="text-sm text-muted-foreground">Are you sure? All steps will be lost.</p>
+                      <div className="flex justify-end gap-2">
+                        <Button variant="destructive" size="sm" onClick={() => deleteJourney(journey.id)}>Delete</Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                <ChevronRight className={cn("text-foreground transition-transform", expandedJourney === journey.id && "rotate-90")} size={20} />
+              </div>
+            </div>
 
-                <div className="flex items-center">
-                  {editingJourney === journey.id ? (
-                    <button
-                      className="p-1 bg-green-600/60 hover:bg-green-600 transition-colors rounded-full mr-2"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        saveEditJourney()
-                      }}
-                    >
-                      <Check
-                        size={20}
-                        className="stroke-gray-300"
-                      />
-                    </button>
-                  ) : (
-                    <button
-                      className="p-1 hover:bg-gray-500 rounded-full mr-2"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        startEditJourney(journey.id)
-                      }}
-                    >
-                      <Edit
-                        size={20}
-                        className="stroke-gray-300"
-                      />
-                    </button>
-                  )}
-                  {/* remover journey */}
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button
-                        className="p-1 hover:bg-gray-500 rounded-full mr-2"
-                        onClick={(e) => e.stopPropagation()} // Impede que o toggle da journey seja acionado
-                      >
-                        <Trash
-                          size={20}
-                          className="stroke-red-500"
-                        />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-60 bg-gray-800 border-gray-700 text-white"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="space-y-3">
-                        <div className="space-y-1">
-                          <h4 className="font-medium">Excluir Journey</h4>
-                          <p className="text-sm text-gray-400">
-                            Tem certeza? Todos os passos desta jornada serão
-                            perdidos.
-                          </p>
-                        </div>
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => deleteJourney(journey.id)}
-                          >
-                            Excluir
+            {expandedJourney === journey.id && (
+              <>
+                {journey.steps && journey.steps.length > 0 ? (
+                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(event) => handleDragEnd(event, journey.id)}>
+                    <SortableContext items={journey.steps.map((s) => s.id)} strategy={rectSortingStrategy}>
+                      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center p-4">
+                        {journey.steps.map((step, stepIndex) => {
+                           const isCurrentlyEditing = editingStep.journeyId === journey.id && editingStep.stepIndex === stepIndex;
+                          return (
+                            <SortableJourneyStepItem
+                              key={step.id}
+                              step={step}
+                              stepIndex={stepIndex}
+                              isLastStep={stepIndex === journey.steps.length - 1}
+                              color={colors[stepIndex % colors.length]}
+                              isEditing={isCurrentlyEditing}
+                              editValue={isCurrentlyEditing ? editValue : step.description}
+                              onValueChange={(e) => setEditValue(e.target.value)}
+                              onEdit={() => startEditStep(journey.id, stepIndex)}
+                              onSave={saveEditStep}
+                              onCancel={cancelEditStep}
+                              onDelete={() => deleteStep(journey.id, stepIndex)}
+                              textareaRef={isCurrentlyEditing ? textareaRef : null}
+                            />
+                          )
+                        })}
+                        <div className="flex justify-start items-center h-full">
+                          <Button variant="outline" size="icon" className="text-primary" onClick={() => addNewStep(journey.id)}>
+                            <Plus size={18} />
                           </Button>
                         </div>
                       </div>
-                    </PopoverContent>
-                  </Popover>
-
-                  {expandedJourney === journey.id ? (
-                    <ChevronRight
-                      className="text-white animate-rotate-90"
-                      size={20}
-                    />
-                  ) : (
-                    <ChevronDown
-                      className="text-white animate-rotate-90-reverse"
-                      size={20}
-                    />
-                  )}
-                </div>
-              </div>
-
-              {/* Conteúdo da Journey (Steps) */}
-              {expandedJourney === journey.id && (
-                <>
-                  {journey.steps && journey.steps.length > 0 ? (
-                    <div className="flex flex-col">
-                      {/* DND-KIT CONTEXT WRAPPER */}
-                      <DndContext
-                        sensors={sensors}
-                        collisionDetection={closestCenter}
-                        onDragEnd={(event) => handleDragEnd(event, journey.id)}
-                      >
-                        <SortableContext
-                          items={journey.steps.map((s) => s.id)}
-                          strategy={rectSortingStrategy}
-                        >
-                          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center p-4">
-                            {journey?.steps.map((step, stepIndex) => {
-                              const colorIndex = stepIndex % colors.length
-                              const currentColor = colors[colorIndex]
-                              const isCurrentlyEditing =
-                                editingStep.journeyId === journey.id &&
-                                editingStep.stepIndex === stepIndex
-
-                              return (
-                                <SortableJourneyStepItem
-                                  key={step.id}
-                                  step={step}
-                                  stepIndex={stepIndex}
-                                  isLastStep={
-                                    stepIndex === journey.steps.length - 1
-                                  }
-                                  color={currentColor}
-                                  isEditing={isCurrentlyEditing}
-                                  editValue={
-                                    isCurrentlyEditing
-                                      ? editValue
-                                      : step.description
-                                  }
-                                  onValueChange={(e) =>
-                                    setEditValue(e.target.value)
-                                  }
-                                  onEdit={() =>
-                                    startEditStep(journey.id, stepIndex)
-                                  }
-                                  onSave={saveEditStep}
-                                  onCancel={cancelEditStep}
-                                  onDelete={() =>
-                                    deleteStep(journey.id, stepIndex)
-                                  }
-                                  textareaRef={
-                                    isCurrentlyEditing ? textareaRef : null
-                                  }
-                                />
-                              )
-                            })}
-                            <div className="flex justify-start items-center h-full">
-                              <button
-                                className="w-10 h-10 rounded bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-blue-400"
-                                onClick={() => addNewStep(journey.id)}
-                              >
-                                <Plus size={18} />
-                              </button>
-                            </div>
-                          </div>
-                        </SortableContext>
-                      </DndContext>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center p-4 text-gray-400">
-                      <p className="mb-2">
-                        Esta journey ainda não possui passos.
-                      </p>
-                      <button
-                        className="flex items-center justify-center py-1 px-3 bg-gray-700 hover:bg-gray-600 text-blue-400 rounded transition-colors"
-                        onClick={() => addNewStep(journey.id)}
-                      >
-                        <Plus size={16} />
-                        <span className="text-sm">
-                          Adicionar primeiro passo
-                        </span>
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          ))
+                    </SortableContext>
+                  </DndContext>
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-4 text-muted-foreground">
+                    <p className="mb-2">This journey has no steps yet.</p>
+                    <Button variant="outline" size="sm" className="text-primary" onClick={() => addNewStep(journey.id)}>
+                      <Plus size={16} className="mr-1"/> Add first step
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        ))
       ) : (
-        <div className="flex flex-col items-center justify-center p-6 bg-gray-800 rounded-lg text-gray-400">
-          <Map
-            size={40}
-            className="mb-4 text-purple-2"
-          />
-          <p className="mb-2">Nenhuma journey definida ainda.</p>
-          <p className="mb-4 text-sm">
-            Crie uma nova journey para mapear o fluxo do usuário.
-          </p>
+        <div className="flex flex-col items-center justify-center p-6 bg-card rounded-lg text-muted-foreground border-2 border-dashed border-border">
+          <Map size={40} className="mb-4 text-primary" />
+          <p className="mb-2">No journeys defined yet.</p>
+          <p className="mb-4 text-sm">Create a new journey to map the user flow.</p>
         </div>
       )}
 
-      {/* Container dos botões */}
+      {/* Action Buttons */}
       <div className="flex gap-2 w-full items-center">
-        <button
-          className="flex-1 flex items-center justify-center py-2 px-4 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors shadow-md"
-          onClick={addNewJourney}
-        >
-          <Plus
-            size={18}
-            className="mr-2"
-          />
-          <span>Nova Journey</span>
-        </button>
-
-        <button
-          className="flex-1 flex items-center justify-center py-2 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={generateJourneys}
-          disabled={isGeneratingAI}
-        >
-          {isGeneratingAI ? (
-            <Loader2
-              className="animate-spin mr-2"
-              size={18}
-            />
-          ) : (
-            <Sparkles
-              className="mr-2"
-              size={18}
-            />
-          )}
-          <span>{isGeneratingAI ? "Gerando..." : "Gerar com IA"}</span>
-
+        <Button variant="outline" className="flex-1" onClick={addNewJourney}>
+          <Plus size={18} className="mr-2" /> New Journey
+        </Button>
+        <Button className="flex-1 bg-gradient-to-r from-primary to-blue-600 hover:opacity-90 text-primary-foreground" onClick={generateJourneys} disabled={isGeneratingAI}>
+          {isGeneratingAI ? <Loader2 className="animate-spin mr-2" size={18} /> : <Sparkles className="mr-2" size={18} />}
+          {isGeneratingAI ? "Generating..." : "Generate with AI"}
           <Popover>
             <PopoverTrigger asChild>
-              <Info
-                onClick={(e) => e.stopPropagation()}
-                className="text-gray-400 cursor-pointer transition-colors hover:text-gray-300 mx-2"
-                size={15}
-              />
+              <Info onClick={(e) => e.stopPropagation()} className="text-muted-foreground/80 cursor-pointer transition-colors hover:text-muted-foreground mx-2" size={15} />
             </PopoverTrigger>
-            <PopoverContent className="bg-gray-800 text-white ">
-              Esta função utiliza IA para gerar jornadas personalizadas baseadas
-              nas Goals definidas nas Personas.
-              <PopoverArrow className="fill-gray-800" />
+            <PopoverContent className="bg-popover text-popover-foreground border-border">
+              This function uses AI to generate journeys based on the Goals defined in the Personas.
+              <PopoverArrow className="fill-popover" />
             </PopoverContent>
           </Popover>
-        </button>
+        </Button>
       </div>
     </div>
   )

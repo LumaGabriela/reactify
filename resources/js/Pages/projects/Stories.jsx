@@ -39,7 +39,7 @@ const StoryItem = ({
   textareaRef,
   typeSelectId,
   onToggleTypeSelect,
-  colors,
+  storyVariants,
   onChangeStoryType,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
@@ -51,13 +51,15 @@ const StoryItem = ({
     }
   }
 
+  const selectedVariant = storyVariants[story.type] || storyVariants.user
+
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="relative group"
     >
-      <Card className="dark:!bg-gray-800 bg-gray-300 border-0 transition-all duration-300 ease-in-out">
+      <Card className="bg-card border-0 transition-all duration-300 ease-in-out">
         <CardContent className="p-2 flex items-center justify-between gap-2">
           <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
             <Popover
@@ -66,29 +68,27 @@ const StoryItem = ({
             >
               <PopoverTrigger>
                 <Badge
-                  className={`border-transparent dark:text-slate-900 font-bold w-fit cursor-pointer ${
-                    story.type === "system" ? "!bg-teal-600" : "!bg-violet-600"
-                  }`}
+                  className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
                 >
                   {`${story.type === "system" ? "SS" : "US"}${
                     isTemporary ? "" : story.id
                   }`.toUpperCase()}
                 </Badge>
               </PopoverTrigger>
-              <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
+              <PopoverContent className="w-auto bg-popover border-border p-1">
                 <div className="flex flex-col gap-1">
-                  {colors.map((item, i) => (
+                  {Object.values(storyVariants).map((variant, i) => (
                     <Button
                       key={i}
                       variant="ghost"
-                      className="h-auto p-2 justify-start hover:bg-gray-700/80"
-                      onClick={() => onChangeStoryType(story.id, item.title)}
+                      className="h-auto p-2 justify-start hover:bg-accent"
+                      onClick={() => onChangeStoryType(story.id, variant.title)}
                     >
                       <Badge
-                        className={`border-transparent dark:text-slate-900 font-bold w-full cursor-pointer ${item.color}`}
+                        className={`border-transparent text-primary-foreground font-bold w-full cursor-pointer ${variant.bg}`}
                       >
                         {`${
-                          item.title === "system" ? "ss" : "us"
+                          variant.title === "system" ? "ss" : "us"
                         }`.toUpperCase()}
                       </Badge>
                     </Button>
@@ -104,12 +104,12 @@ const StoryItem = ({
                   value={editValue}
                   onChange={onValueChange}
                   onKeyDown={handleKeyDown}
-                  className="w-full text-sm border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
+                  className="w-full text-sm border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal text-foreground focus-visible:outline-none focus-visible:ring-0"
                   autoFocus
                 />
               </div>
             ) : (
-              <p className="m-0 text-sm dark:text-slate-200 break-words w-full">
+              <p className="m-0 text-sm text-foreground break-words w-full">
                 {story.title}
               </p>
             )}
@@ -117,7 +117,7 @@ const StoryItem = ({
 
           <div className="flex items-center gap-1">
             {isTemporary && (
-              <LoaderCircle className="text-indigo-400 animate-spin" />
+              <LoaderCircle className="text-primary animate-spin" />
             )}
 
             {isEditing ? (
@@ -125,7 +125,7 @@ const StoryItem = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-7 text-red-500/80 hover:bg-red-500/10"
+                  className="size-7 text-destructive/80 hover:bg-destructive/10"
                   onClick={onCancel}
                 >
                   <X className="size-4" />
@@ -133,7 +133,7 @@ const StoryItem = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-7 text-green-400 hover:bg-green-500/10"
+                  className="size-7 text-green-500 hover:bg-green-500/10"
                   onClick={onSave}
                 >
                   <Check className="size-4" />
@@ -146,7 +146,6 @@ const StoryItem = ({
         </CardContent>
       </Card>
 
-      {/* Ações que aparecem no Hover */}
       <AnimatePresence>
         {isHovered && !isEditing && !isTemporary && (
           <motion.div
@@ -154,12 +153,12 @@ const StoryItem = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-2 top-4 -translate-y-1 flex items-center rounded-md bg-gray-800 border border-gray-700 shadow-lg"
+            className="absolute right-2 top-4 -translate-y-1 flex items-center rounded-md bg-card border border-border shadow-lg"
           >
             <Button
               variant="motiondiv"
               size="icon"
-              className="text-gray-300 hover:text-white"
+              className="text-muted-foreground hover:text-foreground"
               onClick={onEdit}
             >
               <Pencil className="size-4" />
@@ -167,7 +166,7 @@ const StoryItem = ({
             <Button
               variant="motiondiv"
               size="icon"
-              className="text-red-500/80 hover:text-red-500 "
+              className="text-destructive/80 hover:text-destructive"
               onClick={onDelete}
             >
               <Trash className="size-4" />
@@ -180,68 +179,60 @@ const StoryItem = ({
 }
 
 const Stories = ({ project, setProject }) => {
-  const colors = [
-    { color: "!bg-violet-600", title: "user" },
-    { color: "!bg-teal-600", title: "system" },
-  ]
-  // Estado para controlar qual story está sendo editada
+  const storyVariants = {
+    user: { bg: "bg-primary", title: "user" },
+    system: { bg: "bg-secondary", title: "system" },
+  }
   const [editingId, setEditingId] = useState(null)
-  // Estado para armazenar o valor temporário durante a edição
   const [editValue, setEditValue] = useState("")
-
   const textareaRef = useRef(null)
-  // Estado para controlar qual story está com o seletor de tipo aberto
   const [typeSelectId, setTypeSelectId] = useState(null)
-  // Estados para IA
   const [aiGeneratedStories, setAiGeneratedStories] = useState([])
   const [isGenerating, setIsGenerating] = useState(false)
   const [showAiModal, setShowAiModal] = useState(false)
   const [isModalMinimized, setIsModalMinimized] = useState(false)
 
-  //
   const isTemporary = (story) =>
     typeof story.id === "string" && story.id.startsWith("temp-")
 
-  // Função para gerar stories via IA
   const generateStories = async () => {
-    setIsGenerating(true);
-    setIsModalMinimized(false);
+    setIsGenerating(true)
+    setIsModalMinimized(false)
 
     try {
       const response = await axios.post("/api/stories/generate", {
         project_id: project.id,
-      });
+      })
 
-      const data = response.data;
+      const data = response.data
       
       const storiesWithSelection = data.message.stories.map((story) => ({
         ...story,
-        selected: true, // Por padrão, todas vêm selecionadas
-      }));
+        selected: true,
+      }))
 
-      setAiGeneratedStories(storiesWithSelection);
-      setShowAiModal(true);
-      toast.success("Histórias geradas com sucesso.");
+      setAiGeneratedStories(storiesWithSelection)
+      setShowAiModal(true)
+      toast.success("Histórias geradas com sucesso.")
 
     } catch (error) {
-      console.error("Erro ao gerar stories:", error);
+      console.error("Erro ao gerar stories:", error)
       if (error.response && error.response.data) {
-        const errorData = error.response.data;
+        const errorData = error.response.data
         
         if (errorData.status === 'warning') {
-          toast.warning(errorData.message);
+          toast.warning(errorData.message)
         } else {
-          toast.error(errorData.message || 'Ocorreu um erro desconhecido no servidor.');
+          toast.error(errorData.message || 'Ocorreu um erro desconhecido no servidor.')
         }
       } else {
-        toast.error('Não foi possível conectar ao servidor. Verifique sua internet.');
+        toast.error('Não foi possível conectar ao servidor. Verifique sua internet.')
       }
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false)
     }
-  };
+  }
 
-  // Função para alternar seleção de uma story
   const toggleStorySelection = (index) => {
     setAiGeneratedStories((prev) =>
       prev.map((story, i) =>
@@ -250,7 +241,6 @@ const Stories = ({ project, setProject }) => {
     )
   }
 
-  // Função para selecionar/deselecionar todas as stories
   const toggleAllStories = () => {
     const allSelected = aiGeneratedStories.every((story) => story.selected)
     setAiGeneratedStories((prev) =>
@@ -258,7 +248,6 @@ const Stories = ({ project, setProject }) => {
     )
   }
 
-  // Função para confirmar e adicionar as stories selecionadas
   const confirmGeneratedStories = () => {
     const selectedStories = aiGeneratedStories.filter(
       (story) => story.selected
@@ -272,7 +261,6 @@ const Stories = ({ project, setProject }) => {
       return
     }
 
-    // Adiciona as novas stories ao estado local para uma UI otimista
     const storiesToAdd = selectedStories.map((story) => ({
       id: `temp-${Date.now()}-${Math.random()}`,
       created_at: new Date().toISOString(),
@@ -285,14 +273,12 @@ const Stories = ({ project, setProject }) => {
       stories: [...(prevProject.stories || []), ...storiesToAdd],
     }))
 
-    // Prepara os dados para o backend, incluindo apenas os campos necessários
     const storiesForBackend = selectedStories.map(({ title, type }) => ({
       title,
       type,
       project_id: project.id,
     }))
 
-    // Persiste no backend
     router.post(
       route("story.bulk-store"),
       { stories: storiesForBackend },
@@ -312,7 +298,6 @@ const Stories = ({ project, setProject }) => {
         onError: (errors) => {
           toast.error("Ocorreu um erro ao salvar as stories.")
           console.error("Erro do backend:", errors)
-          // Reverte a UI otimista em caso de erro
           setProject((prevProject) => {
             const storiesToAddIds = storiesToAdd.map((s) => s.id)
             return {
@@ -327,19 +312,16 @@ const Stories = ({ project, setProject }) => {
     )
   }
 
-  // Função para cancelar e limpar as stories geradas
   const cancelGeneratedStories = () => {
     setShowAiModal(false)
     setAiGeneratedStories([])
     setIsModalMinimized(false)
   }
 
-  // Função para lidar com mudanças no input
   const handleInputChange = (e) => {
     setEditValue(e.target.value)
   }
 
-  // Função para alternar a exibição do seletor de tipo
   const toggleTypeSelect = (storyId) => {
     if (typeSelectId === storyId) {
       setTypeSelectId(null)
@@ -348,7 +330,6 @@ const Stories = ({ project, setProject }) => {
     }
   }
 
-  // Função para adicionar uma nova story
   const addNewStory = () => {
     setProject({
       ...project,
@@ -367,16 +348,14 @@ const Stories = ({ project, setProject }) => {
       {
         title: "Nova Story",
         type: "user",
-        project_id: project.id, // ID do projeto atual
+        project_id: project.id,
       },
       { preserveState: true, preserveScroll: true }
     )
   }
 
-  // Função para alternar entre modo de edição e visualização
   const editStory = (story) => {
     if (editingId === story.id) {
-      // Se já estiver editando esta story, salve as alterações
       if (story.title !== editValue) {
         const updatedStories = project.stories.map((s) =>
           s.id === story.id
@@ -396,13 +375,11 @@ const Stories = ({ project, setProject }) => {
       }
       setEditingId(null)
     } else {
-      // Entra no modo de edição para esta story
       setEditingId(story.id)
-      setEditValue(story.title) // Inicializa o campo com o valor atual
+      setEditValue(story.title)
     }
   }
 
-  // Função para alterar o tipo da story
   const changeStoryType = (storyId, newType) => {
     const story = project.stories.find((s) => s.id === storyId)
 
@@ -424,10 +401,9 @@ const Stories = ({ project, setProject }) => {
       })
     }
 
-    setTypeSelectId(null) // Fecha o seletor de tipo
+    setTypeSelectId(null)
   }
 
-  // Função para excluir a story
   const deleteStory = (storyId) => {
     const updatedStories = project?.stories.filter((s) => s.id !== storyId)
     setProject({ ...project, stories: updatedStories })
@@ -442,33 +418,27 @@ const Stories = ({ project, setProject }) => {
 
   return (
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
-      {/* Modal de confirmação das stories geradas */}
       {showAiModal && (
         <div
           className={`
             transition-all duration-300 z-50
             ${
               isModalMinimized
-                ? "fixed bottom-4 right-4 w-[400px]" // Estilo minimizado
-                : "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" // Estilo maximizado
+                ? "fixed bottom-4 right-4 w-[400px]"
+                : "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
             }
           `}
         >
-          <div className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
-            {/* Cabeçalho fixo */}
+          <div className="bg-card rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
             <div className="flex items-center justify-between p-6 pb-4 flex-shrink-0">
-              <h3 className="text-xl font-bold text-white flex items-center">
-                {/* <Sparkles
-                  className="mr-2 text-yellow-400"
-                  size={24}
-                /> */}
+              <h3 className="text-xl font-bold text-foreground flex items-center">
                 {!isModalMinimized && "Stories Geradas por IA"}
                 {isModalMinimized && "Stories Geradas"}
               </h3>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsModalMinimized(!isModalMinimized)}
-                  className="text-gray-400 hover:text-white"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   {isModalMinimized ? (
                     <ChevronsUp size={20} />
@@ -478,7 +448,7 @@ const Stories = ({ project, setProject }) => {
                 </button>
                 <button
                   onClick={cancelGeneratedStories}
-                  className="text-gray-400 hover:text-white"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <X size={24} />
                 </button>
@@ -487,15 +457,14 @@ const Stories = ({ project, setProject }) => {
 
             {!isModalMinimized && (
               <>
-                {/* Controle para selecionar/deselecionar todos */}
-                <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-gray-700 rounded-lg flex-shrink-0">
-                  <span className="text-white font-medium">
+                <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-muted rounded-lg flex-shrink-0">
+                  <span className="text-foreground font-medium">
                     {aiGeneratedStories.filter((j) => j.selected).length} de{" "}
                     {aiGeneratedStories.length} selecionadas
                   </span>
                   <button
                     onClick={toggleAllStories}
-                    className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors"
+                    className="px-3 py-1 bg-primary hover:bg-primary/90 text-primary-foreground text-sm rounded transition-colors"
                   >
                     {aiGeneratedStories.every((story) => story.selected)
                       ? "Desmarcar Todas"
@@ -503,7 +472,6 @@ const Stories = ({ project, setProject }) => {
                   </button>
                 </div>
 
-                {/* Área rolável das stories */}
                 <div className="flex-1 overflow-y-auto px-6 min-h-0">
                   <div className="space-y-2 pb-4">
                     {aiGeneratedStories.map((story, index) => (
@@ -511,8 +479,8 @@ const Stories = ({ project, setProject }) => {
                         key={index}
                         className={`rounded-lg p-3 border-2 transition-colors flex items-center gap-4 ${
                           story.selected
-                            ? "bg-gray-700 border-blue-500"
-                            : "bg-gray-600 border-gray-500 hover:border-gray-400"
+                            ? "bg-muted border-primary"
+                            : "bg-muted/50 border-border hover:border-muted-foreground"
                         }`}
                       >
                         <label className="flex items-center cursor-pointer flex-1 gap-4">
@@ -520,29 +488,29 @@ const Stories = ({ project, setProject }) => {
                             type="checkbox"
                             checked={story.selected}
                             onChange={() => toggleStorySelection(index)}
-                            className="sr-only" // Esconde o checkbox padrão
+                            className="sr-only"
                           />
                           <Badge
-                            className={`border-none dark:text-slate-900 font-bold ${
+                            className={`border-none text-primary-foreground font-bold ${
                               story.type === "system"
-                                ? "!bg-teal-600"
-                                : "!bg-violet-600"
+                                ? "bg-secondary"
+                                : "bg-primary"
                             }`}
                           >
                             {story.type === "system" ? "SS" : "US"}
                           </Badge>
-                          <span className="text-sm text-gray-200">
+                          <span className="text-sm text-foreground">
                             {story.title}
                           </span>
                           <div
                             className={`w-5 h-5 rounded-md flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
                               story.selected
-                                ? "bg-blue-500 border-blue-400"
-                                : "bg-gray-500 border-gray-400"
+                                ? "bg-primary border-primary/80"
+                                : "bg-muted-foreground border-border"
                             } `}
                           >
                             {story.selected && (
-                              <Check className="w-4 h-4 text-white" />
+                              <Check className="w-4 h-4 text-primary-foreground" />
                             )}
                           </div>
                         </label>
@@ -551,11 +519,10 @@ const Stories = ({ project, setProject }) => {
                   </div>
                 </div>
 
-                {/* Botões fixos na parte inferior */}
-                <div className="flex justify-end space-x-3 p-6 pt-4 border-t border-gray-700 flex-shrink-0">
+                <div className="flex justify-end space-x-3 p-6 pt-4 border-t border-border flex-shrink-0">
                   <button
                     onClick={cancelGeneratedStories}
-                    className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+                    className="px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg transition-colors"
                   >
                     Cancelar
                   </button>
@@ -586,8 +553,8 @@ const Stories = ({ project, setProject }) => {
             asChild
             className=""
           >
-            <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
-              <Badge className="!bg-violet-600 border-0">
+            <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
+              <Badge className="bg-primary border-0">
                 {
                   project?.stories?.filter((story) => story.type === "user")
                     .length
@@ -595,33 +562,31 @@ const Stories = ({ project, setProject }) => {
               </Badge>{" "}
               User Stories
               <Info
-                className="text-gray-400"
+                className="text-muted-foreground"
                 size={18}
               />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="bg-gray-800 text-white ">
+          <PopoverContent className="bg-popover text-popover-foreground ">
             As histórias de usuário focam nas necessidades dos usuários do
             aplicativo, como a criação de contas para acessar o sistema, a
             gestão de playlists para organizar músicas e outras funcionalidades
             voltadas para a experiência do usuário.
-            <PopoverArrow className="fill-gray-800" />
+            <PopoverArrow className="fill-popover" />
           </PopoverContent>
         </Popover>
-        {/* User stories */}
         {project?.stories?.length > 0 ? (
           project?.stories
             .filter((story) => story.type === "user")
             .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
             .map((story, i) => {
               return (
-                // card das user stories
                 <StoryItem
                   key={story.id}
                   story={story}
                   isEditing={editingId === story.id}
                   editValue={editValue}
-                  onValueChange={handleInputChange}
+                  onValue-change={handleInputChange}
                   onEdit={() => editStory(story)}
                   onSave={() => editStory(story)}
                   onDelete={() => deleteStory(story.id)}
@@ -630,42 +595,40 @@ const Stories = ({ project, setProject }) => {
                   textareaRef={editingId === story.id ? textareaRef : null}
                   typeSelectId={typeSelectId}
                   onToggleTypeSelect={() => toggleTypeSelect(story.id)}
-                  colors={colors}
+                  storyVariants={storyVariants}
                   onChangeStoryType={changeStoryType}
                 />
               )
             })
         ) : (
-          // Exibir um card de exemplo quando não houver stories
-          <div className="bg-gray-800 rounded-lg p-4 shadow-md">
+          <div className="bg-card rounded-lg p-4 shadow-md">
             <div className="flex items-center mb-2">
-              <div className="bg-blue-600 text-white text-xs font-medium py-1 px-3 rounded-full">
+              <div className="bg-primary text-primary-foreground text-xs font-medium py-1 px-3 rounded-full">
                 Em andamento
               </div>
             </div>
-            <div className="text-white text-base font-medium mb-4">
+            <div className="text-foreground text-base font-medium mb-4">
               criar get da tela de edição update e delete dos psr
             </div>
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white">
+              <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center text-foreground">
                 E
               </div>
-              <span className="ml-2 text-gray-300 text-sm">
+              <span className="ml-2 text-muted-foreground text-sm">
                 Eduardo Rodrigues
               </span>
             </div>
           </div>
         )}
       </div>
-      {/* System stories */}
       <div className="flex flex-col gap-2 ">
         <Popover>
           <PopoverTrigger
             asChild
             className=""
           >
-            <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
-              <Badge className="!bg-teal-600 border-0">
+            <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
+              <Badge className="bg-secondary border-0">
                 {
                   project?.stories?.filter((story) => story.type === "system")
                     .length
@@ -673,17 +636,17 @@ const Stories = ({ project, setProject }) => {
               </Badge>{" "}
               System Stories
               <Info
-                className="text-gray-400"
+                className="text-muted-foreground"
                 size={18}
               />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="bg-gray-800 text-white ">
+          <PopoverContent className="bg-popover text-popover-foreground ">
             As histórias de sistema abordam funcionalidades administrativas e
             técnicas, como o gerenciamento de usuários para controle de acesso e
             outras tarefas que garantem o funcionamento e a manutenção do
             sistema.
-            <PopoverArrow className="fill-gray-800" />
+            <PopoverArrow className="fill-popover" />
           </PopoverContent>
         </Popover>
         {project?.stories?.length > 0 &&
@@ -706,17 +669,16 @@ const Stories = ({ project, setProject }) => {
                   textareaRef={editingId === story.id ? textareaRef : null}
                   typeSelectId={typeSelectId}
                   onToggleTypeSelect={() => toggleTypeSelect(story.id)}
-                  colors={colors}
+                  storyVariants={storyVariants}
                   onChangeStoryType={changeStoryType}
                 />
               )
             })}
       </div>
 
-      {/* Botões "Nova story" e "Gerar com IA" */}
       <div className="col-span-2 flex gap-2">
         <button
-          className="flex items-center justify-center flex-1 py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md"
+          className="flex items-center justify-center flex-1 py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors rounded shadow-md"
           onClick={addNewStory}
         >
           <Plus
@@ -729,15 +691,15 @@ const Stories = ({ project, setProject }) => {
         <button
           onClick={generateStories}
           disabled={isGenerating}
-          className={`flex items-center justify-center flex-1 py-2 rounded-lg transition-colors shadow-md ${
+          className={`flex items-center justify-center flex-1 py-2 rounded-lg transition-colors shadow-md text-foreground ${
             isGenerating
-              ? "bg-gray-600 cursor-not-allowed text-gray-400"
-              : "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+              ? "bg-muted cursor-not-allowed text-muted-foreground"
+              : "bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground"
           }`}
         >
           {isGenerating ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-400 border-t-transparent mr-2"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-muted-foreground border-t-transparent mr-2"></div>
               Gerando...
             </>
           ) : (
@@ -746,24 +708,23 @@ const Stories = ({ project, setProject }) => {
                 size={18}
                 className="mr-2"
               />
-              <span>Gerar com IA</span>
+              <span >Gerar com IA</span>
             </>
           )}
-          {/* Botão de Info centralizado */}
           <Popover>
             <PopoverTrigger asChild>
               <Info
                 onClick={(e) => e.stopPropagation()}
-                className="text-gray-400 mx-2 cursor-pointer"
+                className="text-muted-foreground mx-2 cursor-pointer"
                 size={15}
               />
             </PopoverTrigger>
-            <PopoverContent className="bg-gray-800 text-white ">
+            <PopoverContent className="bg-popover text-popover-foreground ">
               Esta função utiliza IA para gerar Users Stories baseadas nos
               Objetivos das Personas e Journeys do Produto e gerar System
               Stories baseadas nas Restrições do Produto e Goals do tipo
               Constraint(CG).
-              <PopoverArrow className="fill-gray-800" />
+              <PopoverArrow className="fill-popover" />
             </PopoverContent>
           </Popover>
         </button>

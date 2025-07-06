@@ -193,14 +193,10 @@ const Dashboard = ({ projects = [] }) => {
   })
 
   return (
-    <div className="bg-gray-2 text-white p-6 w-full mx-auto pt-16">
+    <div className="bg-card text-white p-6 w-full mx-auto pt-16">
       {/* Header */}
       <div className="flex min-h-[10rem] justify-center items-end mb-2 gap-2">
         <div className=" flex flex-col w-1/2 h-full">
-          <p className="text-gray-400 text-sm mb-2">Today</p>
-          <p className="font-medium text-nowrap">{formattedDate}</p>
-
-          {/* dialog para criar projeto  */}
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -292,9 +288,9 @@ const Dashboard = ({ projects = [] }) => {
                         onSelect={() => {
                           router.visit(route("project.show", project.id))
                         }}
-                        className="relative flex cursor-default select-none items-center justify-between rounded-lg px-3 py-2.5 text-sm text-zinc-300 outline-none transition-colors hover:bg-zinc-800 hover:text-white data-[selected=true]:bg-zinc-800 data-[selected=true]:text-white"
+                        className="relative flex cursor-default select-none items-center justify-between rounded-lg px-3 py-2.5 text-sm text-foreground outline-none transition-colors "
                       >
-                        <CheckCircle className="mr-3 size-4 text-zinc-500" />
+                        <CheckCircle className="mr-3 size-4 text-foreground" />
                         <span className="truncate w-full">{project.title}</span>
                         <CornerDownLeft className="mr-3 size-4 text-zinc-500" />
                       </CommandItem>
@@ -460,74 +456,6 @@ const Dashboard = ({ projects = [] }) => {
         </div>
       </div>
 
-      {/* Active Projects */}
-      <div>
-        <div className="flex justify-between items-center mb-4">
-          <p className="font-semibold text-lg">My Active Project</p>
-          <button className="rounded transition-colors py-2 px-4 text-sm font-medium bg-purple-2-hover">
-            <a href="/projects">See All</a>
-          </button>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          {/* Project 1 */}
-          <div className="bg-gray-800 p-4 rounded-xl">
-            <div className="flex items-center mb-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-red-500 to-purple-500 flex items-center justify-center mr-3">
-                <CheckCircle
-                  size={20}
-                  className="text-white"
-                />
-              </div>
-              <div>
-                <p className="font-medium">Taxi online</p>
-                <p className="text-gray-400 text-xs">Release time:</p>
-              </div>
-            </div>
-            <div className="bg-green-100 text-green-800 text-xs font-medium py-1 px-2 rounded-md mt-2 inline-block">
-              Apr 5, 2023
-            </div>
-          </div>
-
-          {/* Project 2 */}
-          <div className="bg-gray-800 p-4 rounded-xl">
-            <div className="flex items-center mb-2">
-              <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center mr-3">
-                <CheckCircle
-                  size={20}
-                  className="text-white"
-                />
-              </div>
-              <div>
-                <p className="font-medium">E-movies mobile</p>
-                <p className="text-gray-400 text-xs">Release time:</p>
-              </div>
-            </div>
-            <div className="bg-green-100 text-green-800 text-xs font-medium py-1 px-2 rounded-md mt-2 inline-block">
-              May 15, 2023
-            </div>
-          </div>
-
-          {/* Project 3 */}
-          <div className="bg-gray-800 p-4 rounded-xl">
-            <div className="flex items-center mb-2">
-              <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center mr-3">
-                <CheckCircle
-                  size={20}
-                  className="text-white"
-                />
-              </div>
-              <div>
-                <p className="font-medium">Video converter app</p>
-                <p className="text-gray-400 text-xs">Release time:</p>
-              </div>
-            </div>
-            <div className="bg-green-100 text-green-800 text-xs font-medium py-1 px-2 rounded-md mt-2 inline-block">
-              Feb 3, 2023
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

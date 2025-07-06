@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/popover"
 import TextareaAutosize from "react-textarea-autosize"
 import { router } from "@inertiajs/react"
+import { cn } from "@/lib/utils"
 
 // --- NOVO COMPONENTE: GoalItem ---
 const GoalItem = ({
@@ -49,9 +50,9 @@ const GoalItem = ({
       onMouseLeave={() => setIsHovered(false)}
       className="relative group"
     >
-      <Card className="dark:!bg-gray-800 bg-gray-300 border-0 transition-all duration-300 ease-in-out">
+      <Card className="bg-card border-0 transition-all duration-300 ease-in-out">
         <CardContent className="p-2 flex flex-col gap-2">
-          {/* Linha dos Badges de Tipo e Prioridade */}
+          {/* Badge Row for Type and Priority */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Popover
@@ -60,24 +61,24 @@ const GoalItem = ({
               >
                 <PopoverTrigger disabled={isTemporary}>
                   <Badge
-                    className={`border-transparent text-white font-bold cursor-pointer ${
+                    className={cn(
+                      "border-transparent text-white font-bold cursor-pointer",
                       typeColors.find((c) => c.title === goal.type)?.color
-                    }`}
+                    )}
                   >
                     {goal.type.toUpperCase()}
-                    {isTemporary ? "" : goal.id}
                   </Badge>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
+                <PopoverContent className="w-auto bg-popover border-border p-1">
                   <div className="flex flex-col gap-1">
                     {typeColors.map((type) => (
                       <Button
                         key={type.title}
                         variant="ghost"
-                        className="h-auto p-2 justify-start hover:bg-gray-700/80"
+                        className="h-auto p-2 justify-start hover:bg-accent"
                         onClick={() => onChangeGoalType(goal.id, type.title)}
                       >
-                        <Badge className={`w-full text-white ${type.color}`}>
+                        <Badge className={cn("w-full text-white", type.color)}>
                           {type.title.toUpperCase()}
                         </Badge>
                       </Button>
@@ -91,24 +92,24 @@ const GoalItem = ({
               >
                 <PopoverTrigger disabled={isTemporary}>
                   <Badge
-                    className={`border-transparent text-white font-bold cursor-pointer ${
-                      priorityColors.find((c) => c.title === goal.priority)
-                        ?.color
-                    }`}
+                    className={cn(
+                      "border-transparent text-white font-bold cursor-pointer",
+                      priorityColors.find((c) => c.title === goal.priority)?.color
+                    )}
                   >
                     {goal.priority.toUpperCase()}
                   </Badge>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto bg-gray-900 border-gray-700 p-1">
+                <PopoverContent className="w-auto bg-popover border-border p-1">
                   <div className="flex flex-col gap-1">
                     {priorityColors.map((p) => (
                       <Button
                         key={p.title}
                         variant="ghost"
-                        className="h-auto p-2 justify-start hover:bg-gray-700/80"
+                        className="h-auto p-2 justify-start hover:bg-accent"
                         onClick={() => onChangeGoalPriority(goal.id, p.title)}
                       >
-                        <Badge className={`w-full text-white ${p.color}`}>
+                        <Badge className={cn("w-full text-white", p.color)}>
                           {p.title.toUpperCase()}
                         </Badge>
                       </Button>
@@ -118,11 +119,11 @@ const GoalItem = ({
               </Popover>
             </div>
             {isTemporary && (
-              <LoaderCircle className="text-indigo-400 animate-spin size-4" />
+              <LoaderCircle className="text-primary animate-spin size-4" />
             )}
           </div>
 
-          {/* Área do Título e Edição */}
+          {/* Title and Editing Area */}
           {isEditing ? (
             <div className="flex w-full items-center gap-2">
               <TextareaAutosize
@@ -130,14 +131,14 @@ const GoalItem = ({
                 value={editValue}
                 onChange={onValueChange}
                 onKeyDown={handleKeyDown}
-                className="w-full border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal text-sm dark:text-slate-200 focus-visible:outline-none focus-visible:ring-0"
+                className="w-full border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal text-sm text-foreground focus-visible:outline-none focus-visible:ring-0"
                 autoFocus
               />
               <div className="flex items-center gap-1">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-7 text-red-500/80 hover:bg-red-500/10"
+                  className="size-7 text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
                   onClick={onCancel}
                 >
                   <X className="size-4" />
@@ -145,7 +146,7 @@ const GoalItem = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-7 text-green-400 hover:bg-green-500/10"
+                  className="size-7 text-success/80 hover:bg-success/10 hover:text-success"
                   onClick={onSave}
                 >
                   <Check className="size-4" />
@@ -153,14 +154,14 @@ const GoalItem = ({
               </div>
             </div>
           ) : (
-            <p className="m-0 font-normal text-sm text-slate-200 break-words w-full min-h-[24px]">
+            <p className="m-0 font-normal text-sm text-foreground break-words w-full min-h-[24px]">
               {goal.title}
             </p>
           )}
         </CardContent>
       </Card>
 
-      {/* Ações que aparecem no Hover */}
+      {/* Hover Actions */}
       <AnimatePresence>
         {isHovered && !isEditing && !isTemporary && (
           <motion.div
@@ -168,20 +169,20 @@ const GoalItem = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 10 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="absolute right-2 top-4 -translate-y-1 flex items-center rounded-md bg-gray-800 border border-gray-700 shadow-lg"
+            className="absolute right-2 top-4 -translate-y-1 flex items-center rounded-md bg-card border border-border shadow-lg"
           >
             <Button
-              variant="motiondiv"
+              variant="motiondiv" // Assuming 'motiondiv' is a custom variant you've defined
               size="icon"
-              className="text-gray-300 hover:text-white"
+              className="text-muted-foreground hover:text-foreground"
               onClick={onEdit}
             >
-              <Pencil  />
+              <Pencil />
             </Button>
             <Button
               variant="motiondiv"
               size="icon"
-              className="text-red-500/80 hover:text-red-500"
+              className="text-destructive/80 hover:text-destructive"
               onClick={onDelete}
             >
               <Trash />
@@ -371,44 +372,31 @@ const Goals = ({ project, setProject }) => {
     router.delete(route("goal.delete", goalId))
   }
 
-  // Helper para definir a cor de fundo baseada na prioridade
 
   return (
-    <div className="goalSketches  rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
-      <div className="flex flex-col gap-2 ">
-        {/* tooltip sobre as goals */}
+    <div className="goalSketches rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
+      {/* --- Column 1: Constraint Goals --- */}
+      <div className="flex flex-col gap-2">
         <Popover>
-          <PopoverTrigger
-            asChild
-            className=""
-          >
-            <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
-              <Badge className={`border-0 ${typeColors[1].color}`}>
-                {
-                  project?.goal_sketches?.filter((goal) => goal.type === "cg")
-                    .length
-                }
-              </Badge>{" "}
+          <PopoverTrigger asChild>
+            <button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
+              <Badge className={cn("border-0", typeColors[1].color)}>
+                {project?.goal_sketches?.filter((goal) => goal.type === "cg").length || 0}
+              </Badge>
               Constraint Goals
-              <Info
-                className="text-gray-400"
-                size={18}
-              />
+              <Info className="text-muted-foreground" size={18} />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="bg-gray-800 text-white ">
-            As histórias de usuário focam nas necessidades dos usuários do
-            aplicativo, como a criação de contas para acessar o sistema, a
-            gestão de playlists para organizar músicas e outras funcionalidades
-            voltadas para a experiência do usuário.
-            <PopoverArrow className="fill-gray-800" />
+          <PopoverContent className="bg-popover text-popover-foreground border-border">
+            User stories focus on the needs of the application's users...
+            <PopoverArrow className="fill-popover" />
           </PopoverContent>
         </Popover>
-        {project.goal_sketches && project.goal_sketches.length > 0 ? (
-          project?.goal_sketches
+        {project.goal_sketches?.filter((goal) => goal.type === "cg").length > 0 ? (
+          project.goal_sketches
             .filter((goal) => goal.type === "cg")
             .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-            .map((goal, i) => (
+            .map((goal) => (
               <GoalItem
                 key={goal.id}
                 goal={goal}
@@ -432,89 +420,68 @@ const Goals = ({ project, setProject }) => {
               />
             ))
         ) : (
-          // Exibir um card de exemplo quando não houver goals
-          <div className="bg-gray-800 rounded-lg p-4 shadow-md">
+          <Card className="bg-card p-4 shadow-md">
             <div className="flex items-center mb-2 gap-2">
-              <div className="bg-purple-600 text-white text-xs font-medium py-1 px-3 rounded-full">
-                BG
-              </div>
-              <div className="bg-yellow-600 text-white text-xs font-medium py-1 px-3 rounded-full">
-                med
-              </div>
+              <Badge className={cn("text-white", typeColors.find(c => c.title === "cg")?.color)}>CG</Badge>
+              <Badge className={cn("text-white", priorityColors.find(c => c.title === "med")?.color)}>MED</Badge>
             </div>
-            <div className="text-white text-base font-medium mb-4">
-              Descobrir quem está por trás do desaparecimento dos artefatos
-            </div>
-          </div>
+            <p className="text-foreground text-sm font-medium">Example of a constraint goal...</p>
+          </Card>
         )}
       </div>
-      <div className="flex flex-col gap-2 ">
-        {/* tooltip sobre as goals */}
+
+      {/* --- Column 2: Business Goals --- */}
+      <div className="flex flex-col gap-2">
         <Popover>
-          <PopoverTrigger
-            asChild
-            className=""
-          >
-            <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-white bg-gray-800 hover:bg-gray-600 transition-colors">
-              <Badge className={`border-0 ${typeColors[0].color}`}>
-                {
-                  project?.goal_sketches?.filter((goal) => goal.type === "bg")
-                    .length
-                }
-              </Badge>{" "}
+          <PopoverTrigger asChild>
+            <button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
+              <Badge className={cn("border-0", typeColors[0].color)}>
+                {project?.goal_sketches?.filter((goal) => goal.type === "bg").length || 0}
+              </Badge>
               Business Goals
-              <Info
-                className="text-gray-400"
-                size={18}
-              />
+              <Info className="text-muted-foreground" size={18} />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="bg-gray-800 text-white ">
-            As histórias de usuário focam nas necessidades dos usuários do
-            aplicativo, como a criação de contas para acessar o sistema, a
-            gestão de playlists para organizar músicas e outras funcionalidades
-            voltadas para a experiência do usuário.
-            <PopoverArrow className="fill-gray-800" />
+          <PopoverContent className="bg-popover text-popover-foreground border-border">
+            User stories focus on the needs of the application's users...
+            <PopoverArrow className="fill-popover" />
           </PopoverContent>
         </Popover>
-        {/* cards de goals */}
-        {project?.goal_sketches
-          .filter((goal) => goal.type === "bg")
+        {project.goal_sketches
+          ?.filter((goal) => goal.type === "bg")
           .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-          .map((goal, i) => (
-            <GoalItem
-              key={goal.id}
-              goal={goal}
-              isTemporary={isTemporary(goal)}
-              isEditing={editingId === goal.id}
-              editValue={editValue}
-              onValueChange={handleInputChange}
-              onEdit={() => editGoal(goal)}
-              onSave={() => editGoal(goal)}
-              onCancel={() => setEditingId(null)}
-              onDelete={() => deleteGoal(goal.id)}
-              textareaRef={editingId === goal.id ? textareaRef : null}
-              typeSelectId={typeSelectId}
-              onToggleTypeSelect={() => toggleTypeSelect(goal.id)}
-              typeColors={typeColors}
-              onChangeGoalType={changeGoalType}
-              prioritySelectId={prioritySelectId}
-              onTogglePrioritySelect={() => togglePrioritySelect(goal.id)}
-              priorityColors={priorityColors}
-              onChangeGoalPriority={changeGoalPriority}
-            />
+          .map((goal) => (
+             <GoalItem
+                key={goal.id}
+                goal={goal}
+                isTemporary={isTemporary(goal)}
+                isEditing={editingId === goal.id}
+                editValue={editValue}
+                onValueChange={handleInputChange}
+                onEdit={() => editGoal(goal)}
+                onSave={() => editGoal(goal)}
+                onCancel={() => setEditingId(null)}
+                onDelete={() => deleteGoal(goal.id)}
+                textareaRef={editingId === goal.id ? textareaRef : null}
+                typeSelectId={typeSelectId}
+                onToggleTypeSelect={() => toggleTypeSelect(goal.id)}
+                typeColors={typeColors}
+                onChangeGoalType={changeGoalType}
+                prioritySelectId={prioritySelectId}
+                onTogglePrioritySelect={() => togglePrioritySelect(goal.id)}
+                priorityColors={priorityColors}
+                onChangeGoalPriority={changeGoalPriority}
+              />
           ))}
       </div>
-      {/* Botão "Nova goal" */}
+      
+      {/* --- "New Goal" Button --- */}
       <button
-        className="col-span-2 flex items-center justify-center w-full py-1 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-colors rounded shadow-md"
+        className="col-span-2 flex items-center justify-center w-full py-1 bg-card hover:bg-accent text-primary rounded-lg transition-colors shadow-md"
         onClick={addNewGoal}
       >
-        <Plus
-          size={18}
-          className="mr-2"
-        />
-        <span>Nova goal</span>
+        <Plus size={18} className="mr-2" />
+        <span>New goal</span>
       </button>
     </div>
   )

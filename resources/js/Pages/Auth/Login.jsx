@@ -26,7 +26,7 @@ export default function Login({ status, canResetPassword }) {
       <Head title="Log in" />
       <div className="bg-card border border-border p-8 rounded-xl w-full max-w-md shadow-lg">
         {status && (
-          <div className="mb-4 text-sm font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950 p-3 rounded-lg border border-green-200 dark:border-green-800">
+          <div className="mb-4 text-sm font-medium text-success-foreground bg-success p-3 rounded-lg border border-success-border">
             {status}
           </div>
         )}
@@ -98,7 +98,7 @@ export default function Login({ status, canResetPassword }) {
             {canResetPassword && (
               <Link
                 href={route("password.request")}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 underline-offset-4 hover:underline"
+                className="text-sm !text-foreground hover:text-primary transition-colors duration-200 underline-offset-4 hover:underline"
               >
                 Forgot your password?
               </Link>
