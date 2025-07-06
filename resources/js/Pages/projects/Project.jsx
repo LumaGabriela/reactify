@@ -10,6 +10,7 @@ import Goals from "./Goals"
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
 import { PenLine, X } from "lucide-react"
 import { toast } from "sonner"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const ProjectView = ({ projectDB = [] }) => {
   const [project, setProject] = useState({ ...projectDB })
@@ -77,7 +78,9 @@ const ProjectView = ({ projectDB = [] }) => {
         setProject(data.project)
       }
     } catch (error) {
-      toast.error("Erro ao obter o projeto "+ projectId + " atualizado: " + error.message)
+      toast.error(
+        "Erro ao obter o projeto " + projectId + " atualizado: " + error.message
+      )
     } finally {
       console.log("Projeto atualizado com sucesso!")
     }
@@ -152,13 +155,27 @@ const ProjectView = ({ projectDB = [] }) => {
   }
 
   return (
-    <div className="project-view flex flex-col items-center justify-start px-1 w-full max-w-6xl text-white">
+    <div className="project-view flex flex-col items-center justify-start px-1 w-full max-w-6xl text-foreground">
       <div
         id="project-title-container"
         className="flex items-center justify-between text-3xl font-bold text-white text-center w-full my-4 p-0"
       >
-        <div className="size-5"></div>
-        <div
+        {/* tabs para alternar entre fases do projeto */}
+        <Tabs
+          defaultValue="account"
+          className="w-[400px]"
+        >
+          <TabsList>
+            <TabsTrigger value="fase-1">Fase 1</TabsTrigger>
+            <TabsTrigger value="fase-2">Fase 2</TabsTrigger>
+          </TabsList>
+          <TabsContent value="fase-1">
+            Story discover entre outras
+          </TabsContent>
+          <TabsContent value="fase-2">Modeling.</TabsContent>
+        </Tabs>
+        {/* title and change title button  */}
+        {/* <div
           id="project-title-content"
           className="w-full h-full"
         >
@@ -170,10 +187,10 @@ const ProjectView = ({ projectDB = [] }) => {
               onKeyUp={(e) => {
                 if (e.key === "Enter") updateProjectTitle()
               }}
-              className="bg-gray-2 text-3xl font-bold text-white text-center h-full p-0 border-0 m-0"
+              className="bg-background text-3xl font-bold text-foreground text-center h-full p-0 border-0 m-0"
             />
           ) : (
-            <p className="bg-gray-2 text-3xl font-bold text-white text-center h-full p-0 border-0 m-0">
+            <p className="bg-background text-3xl font-bold text-foreground text-center h-full p-0 border-0 m-0">
               {project.title}
             </p>
           )}
@@ -189,7 +206,7 @@ const ProjectView = ({ projectDB = [] }) => {
           >
             {!isEditing ? <PenLine size={20} /> : <X size={20} />}
           </button>
-        </div>
+        </div> */}
       </div>
       <NavMenu
         menuItems={menuItems}

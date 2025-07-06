@@ -22,6 +22,14 @@ import {
   CommandShortcut,
 } from "@/components/ui/command"
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -193,20 +201,17 @@ const Dashboard = ({ projects = [] }) => {
   })
 
   return (
-    <div className="bg-card text-white p-6 w-full mx-auto pt-16">
+    <div className="bg-background text-white p-6 w-full mx-auto pt-16">
       {/* Header */}
-      <div className="flex min-h-[10rem] justify-center items-end mb-2 gap-2">
-        <div className=" flex flex-col w-1/2 h-full">
+      <div className="flex  justify-stretch items-stretch gap-2">
+        <div className=" flex flex-col w-1/2">
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="custom"
-                asChild
-                className="flex flex-col justify-center items-center h-[28rem] bg-purple-2 hover:bg-purple-1 transition-colors rounded p-4 w-full max-w-3xl h-full cursor-pointer"
+                variant="default"
+                className="h-full max-h-[100px] "
               >
-                <p className="font-bold text-lg">
-                  Criar Projeto
-                </p>
+                Criar Projeto
               </Button>
             </DialogTrigger>{" "}
             <DialogContent className="sm:max-w-[425px]">
@@ -240,6 +245,7 @@ const Dashboard = ({ projects = [] }) => {
                       placeholder="Descrição do Projeto"
                       id="description-1"
                       name="description"
+                      className="bg-background "
                       value={newProject.description}
                       onChange={(e) =>
                         setNewProject({
@@ -265,8 +271,8 @@ const Dashboard = ({ projects = [] }) => {
             </DialogContent>
           </Dialog>
         </div>
-
-        <div className="relative w-1/2 h-full flex flex-col justify-end">
+        {/* command */}
+        <div className="relative w-1/2 flex flex-col justify-end">
           <Command className=" relative w-full md:min-w-[250px]">
             <CommandInput
               shortcut
@@ -341,121 +347,111 @@ const Dashboard = ({ projects = [] }) => {
               }
 
               return (
-                <div
-                  key={index}
-                  className="bg-gray-800 p-4 rounded-xl cursor-pointer"
-                >
-                  <div className="flex justify-between items-center mb-3">
-                    <Link
-                      href={route("project.show", project.id)}
-                      className="flex items-center flex-grow"
-                    >
-                      <div
-                        className={`h-2 w-2 ${color} rounded-full mr-2`}
-                      ></div>
-                      <p className="m-0">{project.title}</p>
-                    </Link>
-                    {/* Dialogo de confirmacao de exclusao de projeto */}
-                    <AlertDialog>
-                      <AlertDialogContent className="">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Tem certeza que deseja excluir o projeto?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Essa decisão nao pode ser desfeita.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => deleteProject(project.id)}
-                          >
-                            Excluir
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                      {/* menu com opcoes sobre o projeto */}
+                <AlertDialog key={index}>
+                  <Card className="flex h-full flex-col transition-all hover:shadow-md">
+                    {/* CABEÇALHO: Título do projeto e menu de ações */}
+                    <CardHeader className="flex-row items-center justify-between">
+                      <CardTitle className="text-lg">
+                        <Link
+                          href={route("project.show", project.id)}
+                          className="flex items-center gap-2 hover:underline"
+                        >
+                          <div
+                            className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`}
+                          ></div>
+                          {project.title}
+                        </Link>
+                      </CardTitle>
+
+                      {/* MENU DE AÇÕES */}
                       <DropdownMenu>
-                        <DropdownMenuTrigger className="">
-                          <EllipsisVertical
-                            size={22}
-                            className="text-gray-400"
-                          />
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                          >
+                            <EllipsisVertical className="size-5" />
+                          </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-48 ">
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-48"
+                        >
                           <DropdownMenuItem
                             onSelect={() => toggleActiveProject(project.id)}
                           >
-                            {" "}
                             <Power
-                              size={16}
-                              className={
+                              className={`mr-2 size-4 ${
                                 project.active
-                                  ? "text-green-400"
-                                  : "text-red-400"
-                              }
-                            />{" "}
-                            {project.active
-                              ? "Desativar projeto"
-                              : "Ativar projeto"}
+                                  ? "text-success"
+                                  : "text-destructive"
+                              }`}
+                            />
+                            <span>
+                              {project.active ? "Desativar" : "Ativar"}
+                            </span>
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator className="bg-zinc-800" />
-
-                          <DropdownMenuItem>
-                            <AlertDialogTrigger className="m-0 flex gap-2">
-                              <Trash2
-                                size={16}
-                                className="text-red-400"
-                              />
-                              Excluir projeto{" "}
-                            </AlertDialogTrigger>
-                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <AlertDialogTrigger asChild>
+                            <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                              <Trash2 className="mr-2 size-4" />
+                              <span>Excluir</span>
+                            </DropdownMenuItem>
+                          </AlertDialogTrigger>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </AlertDialog>
-                  </div>
+                    </CardHeader>
 
-                  <Link
-                    href={route("project.show", project.id)}
-                    className="block"
-                  >
-                    <p className="text-gray-400 text-sm mb-4">
-                      {project.description}
-                    </p>
-                    <div className="flex justify-between items-center mt-2">
-                      <div
-                        className={`${color} text-white text-xs font-medium py-1 px-4 rounded-full inline-block`}
-                      >
-                        {project.status}
-                      </div>
+                    {/* CONTEÚDO: Descrição e contagem de membros */}
+                    <CardContent className="">
+                      <Link href={route("project.show", project.id)}>
+                        <CardDescription>{project.description}</CardDescription>
+                      </Link>
+                    </CardContent>
+
+                    {/* RODAPÉ: Status e badge de Ativo/Inativo */}
+                    <CardFooter className="flex justify-between">
                       <Badge
-                        className={`${
-                          project.active ? "!bg-green-600" : "!bg-red-600"
-                        } text-xs text-white font-semibold py-1 px-4 rounded-full inline-block`}
+                        variant={project.active ? "default" : "destructive"}
                       >
                         {project.active ? "Ativo" : "Inativo"}
                       </Badge>
-                    </div>
-
-                    <div className="flex justify-start items-center">
-                      <div className="flex items-center space-x-2">
-                        <Users
-                          size={16}
-                          className="text-gray-400"
-                        />
-                        <span className="text-gray-400 text-sm">
-                          {project?.members?.length}
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Users className="size-4" />
+                        <span className="text-sm">
+                          {project?.members?.length} membros
                         </span>
                       </div>
-                    </div>
-                  </Link>
-                </div>
+                    </CardFooter>
+                  </Card>
+
+                  {/* CONTEÚDO DO DIÁLOGO DE CONFIRMAÇÃO */}
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Excluir "{project.title}"?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta ação não pode ser desfeita. Isso excluirá
+                        permanentemente o projeto e todos os seus dados
+                        associados.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => deleteProject(project.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )
             })}
         </div>
       </div>
-
     </div>
   )
 }

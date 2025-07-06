@@ -19,7 +19,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
         {menuItems.map((menuItem, index) => (
           <div
             key={index}
-            className={`flex-1 z-20 h-12 flex items-center justify-evenly text-center text-white font-medium text-lg cursor-pointer  
+            className={`flex-1 z-20 h-12 flex items-center justify-evenly text-center text-foreground font-medium text-lg cursor-pointer  
               border-purple-2 border-b-4 slide-in
               ${index === 0 ? "rounded-tl-md rounded-bl-md" : ""}
               ${
@@ -27,22 +27,22 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
                   ? "rounded-tr-md rounded-br-md"
                   : ""
               }
-              ${menuItem.value ? "bg-purple-2" : "bg-gray-800"}`}
+              ${menuItem.value ? "bg-purple-2 text-white" : "bg-card"}`}
             onClick={() => handleItemClick(menuItem)}
           >
             {menuItem.label}
             <Popover>
-              <PopoverTrigger onClick={ e => e.stopPropagation()}>
+              <PopoverTrigger onClick={(e) => e.stopPropagation()}>
                 <Info
                   className={`${
-                    menuItem.value ? "text-white-200" : "text-gray-500"
+                    !menuItem.value ? "text-foreground" : "text-background"
                   }`}
                   size={15}
                 />
               </PopoverTrigger>
-              <PopoverContent className="bg-gray-800 text-white ">
+              <PopoverContent className="bg-background text-white ">
                 {menuItem.tooltip}
-                <PopoverArrow className="fill-gray-800" />
+                <PopoverArrow className="fill-background" />
               </PopoverContent>
             </Popover>
           </div>

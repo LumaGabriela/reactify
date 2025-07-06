@@ -132,7 +132,7 @@ const LeftMenu = () => {
                   isActive && "bg-accent text-accent-foreground"
               )}
             >
-              <IconComponent className="h-5 w-5" />
+              <IconComponent className="size-5" />
               <span className="font-medium hidden md:inline">{item.name}</span>
             </Button>
           )

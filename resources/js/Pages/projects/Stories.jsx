@@ -68,6 +68,7 @@ const StoryItem = ({
             >
               <PopoverTrigger>
                 <Badge
+                  variant="outline"
                   className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
                 >
                   {`${story.type === "system" ? "SS" : "US"}${
@@ -81,10 +82,11 @@ const StoryItem = ({
                     <Button
                       key={i}
                       variant="ghost"
-                      className="h-auto p-2 justify-start hover:bg-accent"
+                      className="h-auto p-2 justify-start "
                       onClick={() => onChangeStoryType(story.id, variant.title)}
                     >
                       <Badge
+                        variant="outline"
                         className={`border-transparent text-primary-foreground font-bold w-full cursor-pointer ${variant.bg}`}
                       >
                         {`${
@@ -180,8 +182,8 @@ const StoryItem = ({
 
 const Stories = ({ project, setProject }) => {
   const storyVariants = {
-    user: { bg: "bg-primary", title: "user" },
-    system: { bg: "bg-secondary", title: "system" },
+    user: { bg: "bg-purple-600", title: "user" },
+    system: { bg: "bg-orange-600", title: "system" },
   }
   const [editingId, setEditingId] = useState(null)
   const [editValue, setEditValue] = useState("")
@@ -205,7 +207,7 @@ const Stories = ({ project, setProject }) => {
       })
 
       const data = response.data
-      
+
       const storiesWithSelection = data.message.stories.map((story) => ({
         ...story,
         selected: true,
@@ -214,19 +216,22 @@ const Stories = ({ project, setProject }) => {
       setAiGeneratedStories(storiesWithSelection)
       setShowAiModal(true)
       toast.success("Histórias geradas com sucesso.")
-
     } catch (error) {
       console.error("Erro ao gerar stories:", error)
       if (error.response && error.response.data) {
         const errorData = error.response.data
-        
-        if (errorData.status === 'warning') {
+
+        if (errorData.status === "warning") {
           toast.warning(errorData.message)
         } else {
-          toast.error(errorData.message || 'Ocorreu um erro desconhecido no servidor.')
+          toast.error(
+            errorData.message || "Ocorreu um erro desconhecido no servidor."
+          )
         }
       } else {
-        toast.error('Não foi possível conectar ao servidor. Verifique sua internet.')
+        toast.error(
+          "Não foi possível conectar ao servidor. Verifique sua internet."
+        )
       }
     } finally {
       setIsGenerating(false)
@@ -249,9 +254,7 @@ const Stories = ({ project, setProject }) => {
   }
 
   const confirmGeneratedStories = () => {
-    const selectedStories = aiGeneratedStories.filter(
-      (story) => story.selected
-    )
+    const selectedStories = aiGeneratedStories.filter((story) => story.selected)
     const remainingStories = aiGeneratedStories.filter(
       (story) => !story.selected
     )
@@ -554,7 +557,10 @@ const Stories = ({ project, setProject }) => {
             className=""
           >
             <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
-              <Badge className="bg-primary border-0">
+              <Badge
+                variant="outline"
+                className="bg-purple-600 border-0 text-primary-foreground"
+              >
                 {
                   project?.stories?.filter((story) => story.type === "user")
                     .length
@@ -628,7 +634,10 @@ const Stories = ({ project, setProject }) => {
             className=""
           >
             <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
-              <Badge className="bg-secondary border-0">
+              <Badge
+                variant="outline"
+                className="bg-orange-600 border-0 text-primary-foreground"
+              >
                 {
                   project?.stories?.filter((story) => story.type === "system")
                     .length
@@ -708,7 +717,7 @@ const Stories = ({ project, setProject }) => {
                 size={18}
                 className="mr-2"
               />
-              <span >Gerar com IA</span>
+              <span>Gerar com IA</span>
             </>
           )}
           <Popover>

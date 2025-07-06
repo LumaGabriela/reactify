@@ -48,18 +48,8 @@ const CommandInput = React.forwardRef(
 
       {shortcut === true && (
         <>
-          <Badge
-            className="dark:bg-zinc-800"
-            variant="outline"
-          >
-            Ctrl
-          </Badge>
-          <Badge
-            className="dark:bg-zinc-800"
-            variant="outline"
-          >
-            k
-          </Badge>
+          <Badge variant="secondary">Ctrl</Badge>
+          <Badge variant="secondary">k</Badge>
         </>
       )}
     </div>
