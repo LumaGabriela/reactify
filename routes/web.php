@@ -17,21 +17,21 @@ use Inertia\Inertia;
 
 //rotas de autorizacao com socialite
 
-Route::get('/auth/github/redirect', function () {
-  return Socialite::driver('github')->redirect();
-})->name('auth.github.redirect');
+Route::get('/auth/{provider}/redirect', function (string $provider) {
+  return Socialite::driver($provider)->redirect();
+})->name('auth.redirect');
 
-Route::get('/auth/github/callback', function () {
-  $githubUser = Socialite::driver('github')->user();
-  // dump($githubUser);
+Route::get('/auth/{provider}/callback', function (string $provider) {
+  $providerUser = Socialite::driver($provider)->user();
 
   $user = User::updateOrCreate([
-    'github_id' => $githubUser->id,
+    'email' => $providerUser->email, // Verifica se o email já existe
   ], [
-    'name' => $githubUser->name,
-    'email' => $githubUser->email,
-    'github_token' => $githubUser->token,
-    'github_refresh_token' => $githubUser->refreshToken,
+    'provider_id' => $providerUser->id,
+    'name' => $providerUser->name,
+
+    'provider_avatar' => $providerUser->avatar,
+    'provider_name' => $provider,
     'user_role_id' => 1,
     'active' => true
   ]);
@@ -41,8 +41,7 @@ Route::get('/auth/github/callback', function () {
   Auth::login($user);
 
   return redirect()->intended(route('projects.index', absolute: false));
-  
-})->name('auth.github.callback');
+})->name('auth.callback');
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::get('/dashboard', [ProjectController::class, 'index'])->name('projects.index');

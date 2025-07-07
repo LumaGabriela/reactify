@@ -59,7 +59,11 @@ console.log(props)
       <div className="p-3 border-b border-border">
         <div className="flex items-center space-x-3">
           <div className="size-10 bg-primary rounded-full flex items-center justify-center">
-            <User className="h-5 w-5 text-primary-foreground" />
+            {user?.provider_avatar ? (
+              <img src={user.provider_avatar} alt="User Avatar" className="size-full rounded-full object-contain" />
+            ) : (
+              <User className="size-8 text-primary-foreground" />
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-foreground truncate">{user?.name}</p>

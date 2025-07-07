@@ -124,6 +124,16 @@ console.log(usePage().props)
               {'Log in com GitHub'}
             </a>
           </Button>
+                    <Button className="w-full">
+            <Computer />
+            <a
+              className=""
+              disabled={processing}
+              href={'/auth/google/redirect'}
+            >
+              {'Log in com Google'}
+            </a>
+          </Button>
           <p className="text-sm text-muted-foreground">
             Don't have an account?{' '}
             <Link

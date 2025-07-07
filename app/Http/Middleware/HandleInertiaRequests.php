@@ -33,14 +33,13 @@ class HandleInertiaRequests extends Middleware
     return array_merge(parent::share($request), [
       'auth' => [
         'user' =>
-        fn() => $request->user() ? $request->user()->only(['id', 'name', 'email', 'funcao']) : null
+        fn() => $request->user() ? $request->user()->only(['id', 'name', 'email', 'provider_avatar']) : null
       ],
       'flash' => [
         'message' => fn() => $request->session()->get('message'),
         'status' => fn() => $request->session()->get('status'),
         'flash_key' => fn() => Str::uuid(),
       ],
-      'old' => $request->old(), // Adicione esta linha
     ]);
   }
 }

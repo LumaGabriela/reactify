@@ -22,11 +22,11 @@ return new class extends Migration
 
     Schema::create('users', function (Blueprint $table) {
       $table->id();
-      $table->string('github_id')->nullable();
-      $table->string('github_token')->nullable();
-      $table->string('github_refresh_token')->nullable();
-
-      $table->string('google_id')->nullable();      
+      // colunas referentes a autenticacao
+      $table->string('provider_name')->nullable();
+      $table->string('provider_id')->nullable();
+      $table->string('provider_avatar')->nullable();
+      // colunas referentes a informacoes do usuario
       $table->string('name');
       $table->string('email')->unique();
       $table->timestamp('email_verified_at')->nullable();
