@@ -23,7 +23,7 @@ Route::get('/auth/github/redirect', function () {
 
 Route::get('/auth/github/callback', function () {
   $githubUser = Socialite::driver('github')->user();
-  dump($githubUser);
+  // dump($githubUser);
 
   $user = User::updateOrCreate([
     'github_id' => $githubUser->id,
@@ -41,6 +41,7 @@ Route::get('/auth/github/callback', function () {
   Auth::login($user);
 
   return redirect()->intended(route('projects.index', absolute: false));
+  
 })->name('auth.github.callback');
 
 Route::group(['middleware' => ['auth', 'verified']], function () {

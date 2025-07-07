@@ -24,6 +24,9 @@ class User extends Authenticatable
         'password',
         'user_role_id', // Certifique-se de incluir este campo
         'active',
+        'github_id',
+        'github_token',
+        'github_refresh_token',
     ];
 
     /**
