@@ -58,7 +58,7 @@ class ProjectController extends Controller
       'projects' => $projects,
     ]);
   }
-  public function show(string $id)
+  public function show(string $id, string $page = 'overview')
   {
     $project = Project::with([
       'stories',
@@ -68,7 +68,11 @@ class ProjectController extends Controller
       'product_canvas',
     ])->find($id);
 
-    return Inertia::render('projects/Project', ['project' => $project, 'projects' => Project::select('title', 'id', 'active')->get()]);
+    return Inertia::render('projects/Project', [
+      'project' => $project, 
+      'projects' => Project::select('title', 'id', 'active')->get(),
+      'page' => $page
+    ]);
   }
 
   public function store(ProjectRequest $request)

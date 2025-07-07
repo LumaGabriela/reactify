@@ -29,7 +29,7 @@ const AuthenticatedLayout = ({ children }) => {
     }
   }, [flash_key])
   return (
-    <div className="flex justify-between min-h-screen bg-background w-min-full">
+    <div className="flex justify-start min-h-screen bg-background w-min-full">
       <LeftMenu />
       {children}
     </div>

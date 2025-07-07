@@ -1,30 +1,14 @@
-import React, { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import {
-  Plus,
-  Sparkles,
-  X,
-  Pencil,
-  Info,
-  Check,
-  LoaderCircle,
-  Trash,
-  ChevronsUp,
-  Minus,
-} from "lucide-react"
-import { router } from "@inertiajs/react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import TextareaAutosize from "react-textarea-autosize"
-import {
-  Popover,
-  PopoverArrow,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { Card, CardContent } from "@/components/ui/card"
-import axios from "axios"
-import { toast } from "sonner"
+import React, { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Plus, Sparkles, X, Pencil, Info, Check, LoaderCircle, Trash, ChevronsUp, Minus } from 'lucide-react'
+import { router } from '@inertiajs/react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import TextareaAutosize from 'react-textarea-autosize'
+import { Popover, PopoverArrow, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Card, CardContent } from '@/components/ui/card'
+import axios from 'axios'
+import { toast } from 'sonner'
 
 const StoryItem = ({
   story,
@@ -45,7 +29,7 @@ const StoryItem = ({
   const [isHovered, setIsHovered] = useState(false)
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       onSave()
     }
@@ -54,26 +38,17 @@ const StoryItem = ({
   const selectedVariant = storyVariants[story.type] || storyVariants.user
 
   return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="relative group"
-    >
+    <div onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} className="relative group">
       <Card className="bg-card border-0 transition-all duration-300 ease-in-out">
         <CardContent className="p-2 flex items-center justify-between gap-2">
           <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
-            <Popover
-              open={typeSelectId === story.id}
-              onOpenChange={onToggleTypeSelect}
-            >
+            <Popover open={typeSelectId === story.id} onOpenChange={onToggleTypeSelect}>
               <PopoverTrigger>
                 <Badge
                   variant="outline"
                   className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
                 >
-                  {`${story.type === "system" ? "SS" : "US"}${
-                    isTemporary ? "" : story.id
-                  }`.toUpperCase()}
+                  {`${story.type === 'system' ? 'SS' : 'US'}${isTemporary ? '' : story.id}`.toUpperCase()}
                 </Badge>
               </PopoverTrigger>
               <PopoverContent className="w-auto bg-popover border-border p-1">
@@ -89,9 +64,7 @@ const StoryItem = ({
                         variant="outline"
                         className={`border-transparent text-primary-foreground font-bold w-full cursor-pointer ${variant.bg}`}
                       >
-                        {`${
-                          variant.title === "system" ? "ss" : "us"
-                        }`.toUpperCase()}
+                        {`${variant.title === 'system' ? 'ss' : 'us'}`.toUpperCase()}
                       </Badge>
                     </Button>
                   ))}
@@ -111,16 +84,12 @@ const StoryItem = ({
                 />
               </div>
             ) : (
-              <p className="m-0 text-sm text-foreground break-words w-full">
-                {story.title}
-              </p>
+              <p className="m-0 text-sm text-foreground break-words w-full">{story.title}</p>
             )}
           </div>
 
           <div className="flex items-center gap-1">
-            {isTemporary && (
-              <LoaderCircle className="text-primary animate-spin" />
-            )}
+            {isTemporary && <LoaderCircle className="text-primary animate-spin" />}
 
             {isEditing ? (
               <>
@@ -182,11 +151,11 @@ const StoryItem = ({
 
 const Stories = ({ project, setProject }) => {
   const storyVariants = {
-    user: { bg: "bg-purple-600", title: "user" },
-    system: { bg: "bg-orange-600", title: "system" },
+    user: { bg: 'bg-purple-600', title: 'user' },
+    system: { bg: 'bg-orange-600', title: 'system' },
   }
   const [editingId, setEditingId] = useState(null)
-  const [editValue, setEditValue] = useState("")
+  const [editValue, setEditValue] = useState('')
   const textareaRef = useRef(null)
   const [typeSelectId, setTypeSelectId] = useState(null)
   const [aiGeneratedStories, setAiGeneratedStories] = useState([])
@@ -194,15 +163,14 @@ const Stories = ({ project, setProject }) => {
   const [showAiModal, setShowAiModal] = useState(false)
   const [isModalMinimized, setIsModalMinimized] = useState(false)
 
-  const isTemporary = (story) =>
-    typeof story.id === "string" && story.id.startsWith("temp-")
+  const isTemporary = (story) => typeof story.id === 'string' && story.id.startsWith('temp-')
 
   const generateStories = async () => {
     setIsGenerating(true)
     setIsModalMinimized(false)
 
     try {
-      const response = await axios.post("/api/stories/generate", {
+      const response = await axios.post('/api/stories/generate', {
         project_id: project.id,
       })
 
@@ -215,23 +183,19 @@ const Stories = ({ project, setProject }) => {
 
       setAiGeneratedStories(storiesWithSelection)
       setShowAiModal(true)
-      toast.success("Histórias geradas com sucesso.")
+      toast.success('Histórias geradas com sucesso.')
     } catch (error) {
-      console.error("Erro ao gerar stories:", error)
+      console.error('Erro ao gerar stories:', error)
       if (error.response && error.response.data) {
         const errorData = error.response.data
 
-        if (errorData.status === "warning") {
+        if (errorData.status === 'warning') {
           toast.warning(errorData.message)
         } else {
-          toast.error(
-            errorData.message || "Ocorreu um erro desconhecido no servidor."
-          )
+          toast.error(errorData.message || 'Ocorreu um erro desconhecido no servidor.')
         }
       } else {
-        toast.error(
-          "Não foi possível conectar ao servidor. Verifique sua internet."
-        )
+        toast.error('Não foi possível conectar ao servidor. Verifique sua internet.')
       }
     } finally {
       setIsGenerating(false)
@@ -240,27 +204,21 @@ const Stories = ({ project, setProject }) => {
 
   const toggleStorySelection = (index) => {
     setAiGeneratedStories((prev) =>
-      prev.map((story, i) =>
-        i === index ? { ...story, selected: !story.selected } : story
-      )
+      prev.map((story, i) => (i === index ? { ...story, selected: !story.selected } : story))
     )
   }
 
   const toggleAllStories = () => {
     const allSelected = aiGeneratedStories.every((story) => story.selected)
-    setAiGeneratedStories((prev) =>
-      prev.map((story) => ({ ...story, selected: !allSelected }))
-    )
+    setAiGeneratedStories((prev) => prev.map((story) => ({ ...story, selected: !allSelected })))
   }
 
   const confirmGeneratedStories = () => {
     const selectedStories = aiGeneratedStories.filter((story) => story.selected)
-    const remainingStories = aiGeneratedStories.filter(
-      (story) => !story.selected
-    )
+    const remainingStories = aiGeneratedStories.filter((story) => !story.selected)
 
     if (selectedStories.length === 0) {
-      toast.warning("Selecione pelo menos uma story para adicionar.")
+      toast.warning('Selecione pelo menos uma story para adicionar.')
       return
     }
 
@@ -283,15 +241,13 @@ const Stories = ({ project, setProject }) => {
     }))
 
     router.post(
-      route("story.bulk-store"),
+      route('story.bulk-store'),
       { stories: storiesForBackend },
       {
         preserveState: true,
         preserveScroll: true,
         onSuccess: () => {
-          toast.success(
-            `${selectedStories.length} storie(s) adicionada(s) com sucesso!`
-          )
+          toast.success(`${selectedStories.length} storie(s) adicionada(s) com sucesso!`)
           setAiGeneratedStories(remainingStories)
           if (remainingStories.length === 0) {
             setShowAiModal(false)
@@ -299,15 +255,13 @@ const Stories = ({ project, setProject }) => {
           }
         },
         onError: (errors) => {
-          toast.error("Ocorreu um erro ao salvar as stories.")
-          console.error("Erro do backend:", errors)
+          toast.error('Ocorreu um erro ao salvar as stories.')
+          console.error('Erro do backend:', errors)
           setProject((prevProject) => {
             const storiesToAddIds = storiesToAdd.map((s) => s.id)
             return {
               ...prevProject,
-              stories: prevProject.stories.filter(
-                (s) => !storiesToAddIds.includes(s.id)
-              ),
+              stories: prevProject.stories.filter((s) => !storiesToAddIds.includes(s.id)),
             }
           })
         },
@@ -340,17 +294,17 @@ const Stories = ({ project, setProject }) => {
         ...project.stories,
         {
           id: `temp-${Date.now()}`,
-          title: "Nova Story",
-          type: "user",
+          title: 'Nova Story',
+          type: 'user',
         },
       ],
     })
 
     router.post(
-      route("story.store"),
+      route('story.store'),
       {
-        title: "Nova Story",
-        type: "user",
+        title: 'Nova Story',
+        type: 'user',
         project_id: project.id,
       },
       { preserveState: true, preserveScroll: true }
@@ -372,7 +326,7 @@ const Stories = ({ project, setProject }) => {
 
         setProject({ ...project, stories: updatedStories })
 
-        router.patch(route("story.update", story.id), {
+        router.patch(route('story.update', story.id), {
           title: editValue,
         })
       }
@@ -399,7 +353,7 @@ const Stories = ({ project, setProject }) => {
 
       setProject({ ...project, stories: updatedStories })
 
-      router.patch(route("story.update", storyId), {
+      router.patch(route('story.update', storyId), {
         type: newType,
       })
     }
@@ -410,7 +364,7 @@ const Stories = ({ project, setProject }) => {
   const deleteStory = (storyId) => {
     const updatedStories = project?.stories.filter((s) => s.id !== storyId)
     setProject({ ...project, stories: updatedStories })
-    router.delete(route("story.delete", storyId))
+    router.delete(route('story.delete', storyId))
   }
 
   useEffect(() => {
@@ -427,32 +381,25 @@ const Stories = ({ project, setProject }) => {
             transition-all duration-300 z-50
             ${
               isModalMinimized
-                ? "fixed bottom-4 right-4 w-[400px]"
-                : "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                ? 'fixed bottom-4 right-4 w-[400px]'
+                : 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center'
             }
           `}
         >
           <div className="bg-card rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
             <div className="flex items-center justify-between p-6 pb-4 flex-shrink-0">
               <h3 className="text-xl font-bold text-foreground flex items-center">
-                {!isModalMinimized && "Stories Geradas por IA"}
-                {isModalMinimized && "Stories Geradas"}
+                {!isModalMinimized && 'Stories Geradas por IA'}
+                {isModalMinimized && 'Stories Geradas'}
               </h3>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsModalMinimized(!isModalMinimized)}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  {isModalMinimized ? (
-                    <ChevronsUp size={20} />
-                  ) : (
-                    <Minus size={20} />
-                  )}
+                  {isModalMinimized ? <ChevronsUp size={20} /> : <Minus size={20} />}
                 </button>
-                <button
-                  onClick={cancelGeneratedStories}
-                  className="text-muted-foreground hover:text-foreground"
-                >
+                <button onClick={cancelGeneratedStories} className="text-muted-foreground hover:text-foreground">
                   <X size={24} />
                 </button>
               </div>
@@ -462,16 +409,13 @@ const Stories = ({ project, setProject }) => {
               <>
                 <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-muted rounded-lg flex-shrink-0">
                   <span className="text-foreground font-medium">
-                    {aiGeneratedStories.filter((j) => j.selected).length} de{" "}
-                    {aiGeneratedStories.length} selecionadas
+                    {aiGeneratedStories.filter((j) => j.selected).length} de {aiGeneratedStories.length} selecionadas
                   </span>
                   <button
                     onClick={toggleAllStories}
                     className="px-3 py-1 bg-primary hover:bg-primary/90 text-primary-foreground text-sm rounded transition-colors"
                   >
-                    {aiGeneratedStories.every((story) => story.selected)
-                      ? "Desmarcar Todas"
-                      : "Selecionar Todas"}
+                    {aiGeneratedStories.every((story) => story.selected) ? 'Desmarcar Todas' : 'Selecionar Todas'}
                   </button>
                 </div>
 
@@ -482,8 +426,8 @@ const Stories = ({ project, setProject }) => {
                         key={index}
                         className={`rounded-lg p-3 border-2 transition-colors flex items-center gap-4 ${
                           story.selected
-                            ? "bg-muted border-primary"
-                            : "bg-muted/50 border-border hover:border-muted-foreground"
+                            ? 'bg-muted border-primary'
+                            : 'bg-muted/50 border-border hover:border-muted-foreground'
                         }`}
                       >
                         <label className="flex items-center cursor-pointer flex-1 gap-4">
@@ -495,26 +439,18 @@ const Stories = ({ project, setProject }) => {
                           />
                           <Badge
                             className={`border-none text-primary-foreground font-bold ${
-                              story.type === "system"
-                                ? "bg-secondary"
-                                : "bg-primary"
+                              story.type === 'system' ? 'bg-secondary' : 'bg-primary'
                             }`}
                           >
-                            {story.type === "system" ? "SS" : "US"}
+                            {story.type === 'system' ? 'SS' : 'US'}
                           </Badge>
-                          <span className="text-sm text-foreground">
-                            {story.title}
-                          </span>
+                          <span className="text-sm text-foreground">{story.title}</span>
                           <div
                             className={`w-5 h-5 rounded-md flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
-                              story.selected
-                                ? "bg-primary border-primary/80"
-                                : "bg-muted-foreground border-border"
+                              story.selected ? 'bg-primary border-primary/80' : 'bg-muted-foreground border-border'
                             } `}
                           >
-                            {story.selected && (
-                              <Check className="w-4 h-4 text-primary-foreground" />
-                            )}
+                            {story.selected && <Check className="w-4 h-4 text-primary-foreground" />}
                           </div>
                         </label>
                       </div>
@@ -532,16 +468,10 @@ const Stories = ({ project, setProject }) => {
                   <button
                     onClick={confirmGeneratedStories}
                     className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
-                    disabled={
-                      aiGeneratedStories.filter((j) => j.selected).length === 0
-                    }
+                    disabled={aiGeneratedStories.filter((j) => j.selected).length === 0}
                   >
-                    <Check
-                      className="mr-2"
-                      size={16}
-                    />
-                    Confirmar e Adicionar (
-                    {aiGeneratedStories.filter((j) => j.selected).length})
+                    <Check className="mr-2" size={16} />
+                    Confirmar e Adicionar ({aiGeneratedStories.filter((j) => j.selected).length})
                   </button>
                 </div>
               </>
@@ -552,38 +482,25 @@ const Stories = ({ project, setProject }) => {
 
       <div className="flex flex-col gap-2 ">
         <Popover>
-          <PopoverTrigger
-            asChild
-            className=""
-          >
+          <PopoverTrigger asChild className="">
             <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
-              <Badge
-                variant="outline"
-                className="bg-purple-600 border-0 text-primary-foreground"
-              >
-                {
-                  project?.stories?.filter((story) => story.type === "user")
-                    .length
-                }
-              </Badge>{" "}
+              <Badge variant="outline" className="bg-purple-600 border-0 text-primary-foreground">
+                {project?.stories?.filter((story) => story.type === 'user').length}
+              </Badge>{' '}
               User Stories
-              <Info
-                className="text-muted-foreground"
-                size={18}
-              />
+              <Info className="text-muted-foreground" size={18} />
             </button>
           </PopoverTrigger>
           <PopoverContent className="bg-popover text-popover-foreground ">
-            As histórias de usuário focam nas necessidades dos usuários do
-            aplicativo, como a criação de contas para acessar o sistema, a
-            gestão de playlists para organizar músicas e outras funcionalidades
-            voltadas para a experiência do usuário.
+            As histórias de usuário focam nas necessidades dos usuários do aplicativo, como a criação de contas para
+            acessar o sistema, a gestão de playlists para organizar músicas e outras funcionalidades voltadas para a
+            experiência do usuário.
             <PopoverArrow className="fill-popover" />
           </PopoverContent>
         </Popover>
         {project?.stories?.length > 0 ? (
           project?.stories
-            .filter((story) => story.type === "user")
+            .filter((story) => story.type === 'user')
             .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
             .map((story, i) => {
               return (
@@ -617,50 +534,32 @@ const Stories = ({ project, setProject }) => {
               criar get da tela de edição update e delete dos psr
             </div>
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center text-foreground">
-                E
-              </div>
-              <span className="ml-2 text-muted-foreground text-sm">
-                Eduardo Rodrigues
-              </span>
+              <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center text-foreground">E</div>
+              <span className="ml-2 text-muted-foreground text-sm">Eduardo Rodrigues</span>
             </div>
           </div>
         )}
       </div>
       <div className="flex flex-col gap-2 ">
         <Popover>
-          <PopoverTrigger
-            asChild
-            className=""
-          >
+          <PopoverTrigger asChild className="">
             <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
-              <Badge
-                variant="outline"
-                className="bg-orange-600 border-0 text-primary-foreground"
-              >
-                {
-                  project?.stories?.filter((story) => story.type === "system")
-                    .length
-                }
-              </Badge>{" "}
+              <Badge variant="outline" className="bg-orange-600 border-0 text-primary-foreground">
+                {project?.stories?.filter((story) => story.type === 'system').length}
+              </Badge>{' '}
               System Stories
-              <Info
-                className="text-muted-foreground"
-                size={18}
-              />
+              <Info className="text-muted-foreground" size={18} />
             </button>
           </PopoverTrigger>
           <PopoverContent className="bg-popover text-popover-foreground ">
-            As histórias de sistema abordam funcionalidades administrativas e
-            técnicas, como o gerenciamento de usuários para controle de acesso e
-            outras tarefas que garantem o funcionamento e a manutenção do
-            sistema.
+            As histórias de sistema abordam funcionalidades administrativas e técnicas, como o gerenciamento de usuários
+            para controle de acesso e outras tarefas que garantem o funcionamento e a manutenção do sistema.
             <PopoverArrow className="fill-popover" />
           </PopoverContent>
         </Popover>
         {project?.stories?.length > 0 &&
           project?.stories
-            .filter((story) => story.type === "system")
+            .filter((story) => story.type === 'system')
             .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
             .map((story, i) => {
               return (
@@ -690,10 +589,7 @@ const Stories = ({ project, setProject }) => {
           className="flex items-center justify-center flex-1 py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors rounded shadow-md"
           onClick={addNewStory}
         >
-          <Plus
-            size={18}
-            className="mr-2"
-          />
+          <Plus size={18} className="mr-2" />
           <span>Nova story</span>
         </button>
 
@@ -702,8 +598,8 @@ const Stories = ({ project, setProject }) => {
           disabled={isGenerating}
           className={`flex items-center justify-center flex-1 py-2 rounded-lg transition-colors shadow-md text-foreground ${
             isGenerating
-              ? "bg-muted cursor-not-allowed text-muted-foreground"
-              : "bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground"
+              ? 'bg-muted cursor-not-allowed text-muted-foreground'
+              : 'bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground'
           }`}
         >
           {isGenerating ? (
@@ -713,10 +609,7 @@ const Stories = ({ project, setProject }) => {
             </>
           ) : (
             <>
-              <Sparkles
-                size={18}
-                className="mr-2"
-              />
+              <Sparkles size={18} className="mr-2" />
               <span>Gerar com IA</span>
             </>
           )}
@@ -729,10 +622,8 @@ const Stories = ({ project, setProject }) => {
               />
             </PopoverTrigger>
             <PopoverContent className="bg-popover text-popover-foreground ">
-              Esta função utiliza IA para gerar Users Stories baseadas nos
-              Objetivos das Personas e Journeys do Produto e gerar System
-              Stories baseadas nas Restrições do Produto e Goals do tipo
-              Constraint(CG).
+              Esta função utiliza IA para gerar Users Stories baseadas nos Objetivos das Personas e Journeys do Produto
+              e gerar System Stories baseadas nas Restrições do Produto e Goals do tipo Constraint(CG).
               <PopoverArrow className="fill-popover" />
             </PopoverContent>
           </Popover>
