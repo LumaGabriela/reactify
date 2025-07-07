@@ -38,11 +38,18 @@ const StoryItem = ({
   const selectedVariant = storyVariants[story.type] || storyVariants.user
 
   return (
-    <div onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} className="relative group">
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="relative group"
+    >
       <Card className="bg-card border-0 transition-all duration-300 ease-in-out">
         <CardContent className="p-2 flex items-center justify-between gap-2">
           <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
-            <Popover open={typeSelectId === story.id} onOpenChange={onToggleTypeSelect}>
+            <Popover
+              open={typeSelectId === story.id}
+              onOpenChange={onToggleTypeSelect}
+            >
               <PopoverTrigger>
                 <Badge
                   variant="outline"
@@ -399,7 +406,10 @@ const Stories = ({ project, setProject }) => {
                 >
                   {isModalMinimized ? <ChevronsUp size={20} /> : <Minus size={20} />}
                 </button>
-                <button onClick={cancelGeneratedStories} className="text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={cancelGeneratedStories}
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <X size={24} />
                 </button>
               </div>
@@ -470,7 +480,10 @@ const Stories = ({ project, setProject }) => {
                     className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
                     disabled={aiGeneratedStories.filter((j) => j.selected).length === 0}
                   >
-                    <Check className="mr-2" size={16} />
+                    <Check
+                      className="mr-2"
+                      size={16}
+                    />
                     Confirmar e Adicionar ({aiGeneratedStories.filter((j) => j.selected).length})
                   </button>
                 </div>
@@ -482,13 +495,22 @@ const Stories = ({ project, setProject }) => {
 
       <div className="flex flex-col gap-2 ">
         <Popover>
-          <PopoverTrigger asChild className="">
+          <PopoverTrigger
+            asChild
+            className=""
+          >
             <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
-              <Badge variant="outline" className="bg-purple-600 border-0 text-primary-foreground">
+              <Badge
+                variant="outline"
+                className="bg-purple-600 border-0 text-primary-foreground"
+              >
                 {project?.stories?.filter((story) => story.type === 'user').length}
               </Badge>{' '}
               User Stories
-              <Info className="text-muted-foreground" size={18} />
+              <Info
+                className="text-muted-foreground"
+                size={18}
+              />
             </button>
           </PopoverTrigger>
           <PopoverContent className="bg-popover text-popover-foreground ">
@@ -542,13 +564,22 @@ const Stories = ({ project, setProject }) => {
       </div>
       <div className="flex flex-col gap-2 ">
         <Popover>
-          <PopoverTrigger asChild className="">
+          <PopoverTrigger
+            asChild
+            className=""
+          >
             <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
-              <Badge variant="outline" className="bg-orange-600 border-0 text-primary-foreground">
+              <Badge
+                variant="outline"
+                className="bg-orange-600 border-0 text-primary-foreground"
+              >
                 {project?.stories?.filter((story) => story.type === 'system').length}
               </Badge>{' '}
               System Stories
-              <Info className="text-muted-foreground" size={18} />
+              <Info
+                className="text-muted-foreground"
+                size={18}
+              />
             </button>
           </PopoverTrigger>
           <PopoverContent className="bg-popover text-popover-foreground ">
@@ -589,7 +620,10 @@ const Stories = ({ project, setProject }) => {
           className="flex items-center justify-center flex-1 py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors rounded shadow-md"
           onClick={addNewStory}
         >
-          <Plus size={18} className="mr-2" />
+          <Plus
+            size={18}
+            className="mr-2"
+          />
           <span>Nova story</span>
         </button>
 
@@ -609,7 +643,10 @@ const Stories = ({ project, setProject }) => {
             </>
           ) : (
             <>
-              <Sparkles size={18} className="mr-2" />
+              <Sparkles
+                size={18}
+                className="mr-2"
+              />
               <span>Gerar com IA</span>
             </>
           )}

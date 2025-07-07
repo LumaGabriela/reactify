@@ -1,26 +1,28 @@
-"use client"
-import Checkbox from "@/Components/Checkbox"
-import InputError from "@/Components/InputError"
-import InputLabel from "@/Components/InputLabel"
-import PrimaryButton from "@/Components/PrimaryButton"
-import TextInput from "@/Components/TextInput"
-import GuestLayout from "@/Layouts/GuestLayout"
-import { Head, Link, useForm } from "@inertiajs/react"
+import Checkbox from '@/Components/Checkbox'
+import InputError from '@/Components/InputError'
+import InputLabel from '@/Components/InputLabel'
+import PrimaryButton from '@/Components/PrimaryButton'
+import TextInput from '@/Components/TextInput'
+import { Button } from '@/components/ui/button'
+import GuestLayout from '@/Layouts/GuestLayout'
+import { Head, Link, useForm, usePage } from '@inertiajs/react'
+import { Computer } from 'lucide-react'
+
 
 export default function Login({ status, canResetPassword }) {
   const { data, setData, post, processing, errors, reset } = useForm({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
     remember: false,
   })
 
   const submit = (e) => {
     e.preventDefault()
-    post(route("login"), {
-      onFinish: () => reset("password"),
+    post(route('login'), {
+      onFinish: () => reset('password'),
     })
   }
-
+console.log(usePage().props)
   return (
     <GuestLayout>
       <Head title="Log in" />
@@ -49,7 +51,7 @@ export default function Login({ status, canResetPassword }) {
               className="mt-2 block w-full bg-background border-input text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary rounded-lg px-3 py-2 text-sm transition-colors"
               autoComplete="username"
               isFocused={true}
-              onChange={(e) => setData("email", e.target.value)}
+              onChange={(e) => setData('email', e.target.value)}
               placeholder="Enter your email"
             />
             <InputError
@@ -71,7 +73,7 @@ export default function Login({ status, canResetPassword }) {
               value={data.password}
               className="mt-2 block w-full bg-background border-input text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary rounded-lg px-3 py-2 text-sm transition-colors"
               autoComplete="current-password"
-              onChange={(e) => setData("password", e.target.value)}
+              onChange={(e) => setData('password', e.target.value)}
               placeholder="Enter your password"
             />
             <InputError
@@ -85,19 +87,17 @@ export default function Login({ status, canResetPassword }) {
               <Checkbox
                 name="remember"
                 checked={data.remember}
-                onChange={(e) => setData("remember", e.target.checked)}
+                onChange={(e) => setData('remember', e.target.checked)}
                 className="border-input text-primary focus:ring-primary focus:ring-offset-0 rounded"
               />
-              <span className="ml-2 text-sm text-foreground select-none">
-                Remember me
-              </span>
+              <span className="ml-2 text-sm text-foreground select-none">Remember me</span>
             </label>
           </div>
 
           <div className="flex items-center justify-between pt-4">
             {canResetPassword && (
               <Link
-                href={route("password.request")}
+                href={route('password.request')}
                 className="text-sm !text-foreground hover:text-primary transition-colors duration-200 underline-offset-4 hover:underline"
               >
                 Forgot your password?
@@ -108,16 +108,26 @@ export default function Login({ status, canResetPassword }) {
               disabled={processing}
               id="login-button"
             >
-              {processing ? "Signing in..." : "Log in"}
+              {processing ? 'Signing in...' : 'Log in'}
             </PrimaryButton>
           </div>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center flex flex-col gap-4">
+          <Button className="w-full">
+            <Computer />
+            <a
+              className=""
+              disabled={processing}
+              href={'/auth/github/redirect'}
+            >
+              {'Log in com GitHub'}
+            </a>
+          </Button>
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            Don't have an account?{' '}
             <Link
-              href={route("register")}
+              href={route('register')}
               className="text-primary hover:text-primary/80 font-medium underline-offset-4 hover:underline transition-colors"
             >
               Sign up

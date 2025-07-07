@@ -39,7 +39,7 @@ const LeftMenu = () => {
   const currentProjectId = route().params.project
 
   const isProjectsSectionActive = currentRouteName && currentRouteName.startsWith('project')
-
+console.log(props)
   return (
     <div className="w-50 md:w-58 bg-background text-foreground border-r border-border flex flex-col h-screen z-10">
       {/* Header */}

@@ -6,57 +6,61 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        
-        Schema::create('user_roles', function (Blueprint $table) {
-          $table->id();
-          $table->string('name')->unique(); // Ex: "admin", "editor"
-          $table->boolean('can_create')->default(false);
-          $table->boolean('can_read')->default(false);
-          $table->boolean('can_update')->default(false);  
-        });
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
 
-        Schema::create('users', function (Blueprint $table) {
-          $table->id();
-          $table->string('name');
-          $table->string('email')->unique();
-          $table->timestamp('email_verified_at')->nullable();
-          $table->string('password');
-          $table->foreignId('user_role_id')->constrained('user_roles');
-          $table->boolean('active')->default(false);
-          $table->rememberToken();
-          $table->timestamps();
-          $table->softDeletes();
-        });
+    Schema::create('user_roles', function (Blueprint $table) {
+      $table->id();
+      $table->string('name')->unique(); // Ex: "admin", "editor"
+      $table->boolean('can_create')->default(false);
+      $table->boolean('can_read')->default(false);
+      $table->boolean('can_update')->default(false);
+    });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-          $table->string('email')->primary();
-          $table->string('token');
-          $table->timestamp('created_at')->nullable();
-        });
+    Schema::create('users', function (Blueprint $table) {
+      $table->id();
+      $table->string('github_id')->nullable();
+      $table->string('github_token')->nullable();
+      $table->string('github_refresh_token')->nullable();
+      $table->string('google_id')->nullable();      
+      $table->string('name');
+      $table->string('email')->unique();
+      $table->timestamp('email_verified_at')->nullable();
+      $table->string('password')->nullable();
+      $table->foreignId('user_role_id')->constrained('user_roles');
+      $table->boolean('active')->default(false);
+      $table->rememberToken();
+      $table->timestamps();
+      $table->softDeletes();
+    });
 
-        Schema::create('sessions', function (Blueprint $table) {
-          $table->string('id')->primary();
-          $table->foreignId('user_id')->nullable()->index();
-          $table->string('ip_address', 45)->nullable();
-          $table->text('user_agent')->nullable();
-          $table->longText('payload');
-          $table->integer('last_activity')->index();
-        });
-    }
+    Schema::create('password_reset_tokens', function (Blueprint $table) {
+      $table->string('email')->primary();
+      $table->string('token');
+      $table->timestamp('created_at')->nullable();
+    });
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropSoftDeletes('users');
-        Schema::dropIfExists('user_roles'); 
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions'); 
-    }
+    Schema::create('sessions', function (Blueprint $table) {
+      $table->string('id')->primary();
+      $table->foreignId('user_id')->nullable()->index();
+      $table->string('ip_address', 45)->nullable();
+      $table->text('user_agent')->nullable();
+      $table->longText('payload');
+      $table->integer('last_activity')->index();
+    });
+  }
+
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::dropSoftDeletes('users');
+    Schema::dropIfExists('user_roles');
+    Schema::dropIfExists('password_reset_tokens');
+    Schema::dropIfExists('sessions');
+  }
 };

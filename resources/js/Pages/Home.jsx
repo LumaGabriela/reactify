@@ -1,17 +1,10 @@
-import React, { useEffect, useState, useMemo } from "react"
-import { useEcho } from "@laravel/echo-react"
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout"
-import {
-  CheckCircle,
-  Users,
-  CornerDownLeft,
-  Power,
-  Trash2,
-  EllipsisVertical,
-} from "lucide-react"
-import { Link, router, usePage } from "@inertiajs/react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import React, { useEffect, useState, useMemo } from 'react'
+import { useEcho } from '@laravel/echo-react'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import { CheckCircle, Users, CornerDownLeft, Power, Trash2, EllipsisVertical } from 'lucide-react'
+import { Link, router, usePage } from '@inertiajs/react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import {
   Command,
   CommandEmpty,
@@ -20,22 +13,15 @@ import {
   CommandItem,
   CommandList,
   CommandShortcut,
-} from "@/components/ui/command"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+} from '@/components/ui/command'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,7 +32,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from '@/components/ui/alert-dialog'
 import {
   Dialog,
   DialogContent,
@@ -56,40 +42,38 @@ import {
   DialogClose,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 const Dashboard = ({ projects = [] }) => {
   const [currentProjects, setCurrentProjects] = useState(projects)
-  const [activeFilter, setActiveFilter] = useState("Todos")
+  const [activeFilter, setActiveFilter] = useState('Todos')
   const commandInputRef = React.useRef(null)
   const today = new Date()
   const [newProject, setNewProject] = useState({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
   })
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
   }).format(today)
 
   const props = usePage().props
 
   const [taskFilters, setTaskFilters] = useState([
-    { name: "Todos", active: true },
-    { name: "Ativos", active: false },
-    { name: "Inativos", active: false },
+    { name: 'Todos', active: true },
+    { name: 'Ativos', active: false },
+    { name: 'Inativos', active: false },
   ])
 
   const handleFilterChange = (filter) => {
     if (filter) {
       const filters = taskFilters.map((f, i) =>
-        f.name === filter.name
-          ? { ...f, active: true }
-          : { ...f, active: false }
+        f.name === filter.name ? { ...f, active: true } : { ...f, active: false }
       )
       setTaskFilters(filters)
     }
@@ -106,13 +90,13 @@ const Dashboard = ({ projects = [] }) => {
     if (!currentProjects) return []
 
     switch (activeFilter) {
-      case "Ativos":
+      case 'Ativos':
         return currentProjects.filter((p) => p.active)
-      case "Inativos":
+      case 'Inativos':
         return currentProjects.filter((p) => !p.active)
-      case "Finalizados":
+      case 'Finalizados':
         return []
-      case "Todos":
+      case 'Todos':
       default:
         return currentProjects
     }
@@ -120,15 +104,13 @@ const Dashboard = ({ projects = [] }) => {
 
   const createProject = (e) => {
     e.preventDefault()
-    router.post(route("project.store"), newProject)
+    router.post(route('project.store'), newProject)
   }
   const toggleActiveProject = (projectId) => {
-    const updatedProjects = currentProjects.map((p) =>
-      p.id === projectId ? { ...p, active: !p.active } : p
-    )
+    const updatedProjects = currentProjects.map((p) => (p.id === projectId ? { ...p, active: !p.active } : p))
     setCurrentProjects(updatedProjects)
 
-    router.patch(route("project.toggle-active", projectId))
+    router.patch(route('project.toggle-active', projectId))
   }
 
   const deleteProject = (projectId) => {
@@ -136,56 +118,49 @@ const Dashboard = ({ projects = [] }) => {
 
     setCurrentProjects(updatedProjects)
 
-    router.delete(route("project.destroy", projectId))
+    router.delete(route('project.destroy', projectId))
   }
 
   const getUpdatedProjects = async (idList) => {
     try {
-      const response = await fetch(route("projects.updated", { ids: idList }), {
-        method: "GET",
+      const response = await fetch(route('projects.updated', { ids: idList }), {
+        method: 'GET',
         headers: {
-          "X-Requested-With": "XMLHttpRequest",
+          'X-Requested-With': 'XMLHttpRequest',
         },
       })
 
       const data = await response.json()
       if (response.ok && data.projects.length > 0) {
         setCurrentProjects((prev) => {
-          const updatesMap = new Map(
-            data.projects.map((updatedProject) => [
-              updatedProject.id,
-              updatedProject,
-            ])
-          )
+          const updatesMap = new Map(data.projects.map((updatedProject) => [updatedProject.id, updatedProject]))
 
-          return prev.map(
-            (oldProject) => updatesMap.get(oldProject.id) || oldProject
-          )
+          return prev.map((oldProject) => updatesMap.get(oldProject.id) || oldProject)
         })
       }
     } catch (error) {
-      toast.error("Erro ao obter projetos atualizados: " + error.message)
+      toast.error('Erro ao obter projetos atualizados: ' + error.message)
     } finally {
-      console.log("Projetos atualizados com sucesso!")
+      console.log('Projetos atualizados com sucesso!')
     }
   }
 
   useEffect(() => {
     const focusCommandInput = (e) => {
-      if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
+      if (e.key === 'k' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault()
         if (commandInputRef.current) commandInputRef.current.focus()
       }
     }
-    document.addEventListener("keydown", focusCommandInput)
-    return () => document.removeEventListener("keydown", focusCommandInput)
+    document.addEventListener('keydown', focusCommandInput)
+    return () => document.removeEventListener('keydown', focusCommandInput)
   }, [])
 
   useEffect(() => {
     console.log(currentProjects)
   }, [currentProjects])
 
-  useEcho(`projects`, "ProjectUpdated", (e) => {
+  useEcho(`projects`, 'ProjectUpdated', (e) => {
     let newProjectList = []
     currentProjects.forEach((project) => {
       if (project.id === e.project_id) newProjectList.push(e.project_id)
@@ -194,10 +169,8 @@ const Dashboard = ({ projects = [] }) => {
     if (newProjectList.length > 0) getUpdatedProjects(newProjectList)
   })
 
-  useEcho("projects", "ProjectDeleted", (e) => {
-    setCurrentProjects((prev) =>
-      prev.filter((project) => project.id !== e.projectId)
-    )
+  useEcho('projects', 'ProjectDeleted', (e) => {
+    setCurrentProjects((prev) => prev.filter((project) => project.id !== e.projectId))
   })
 
   return (
@@ -213,7 +186,7 @@ const Dashboard = ({ projects = [] }) => {
               >
                 Criar Projeto
               </Button>
-            </DialogTrigger>{" "}
+            </DialogTrigger>{' '}
             <DialogContent className="sm:max-w-[425px]">
               <form
                 className="space-y-4"
@@ -221,9 +194,7 @@ const Dashboard = ({ projects = [] }) => {
               >
                 <DialogHeader>
                   <DialogTitle>Criar Novo Projeto</DialogTitle>
-                  <DialogDescription>
-                    Preencha os campos abaixo para criar um novo projeto.
-                  </DialogDescription>
+                  <DialogDescription>Preencha os campos abaixo para criar um novo projeto.</DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4">
@@ -234,9 +205,7 @@ const Dashboard = ({ projects = [] }) => {
                       id="title-1"
                       name="title"
                       value={newProject.title}
-                      onChange={(e) =>
-                        setNewProject({ ...newProject, title: e.target.value })
-                      }
+                      onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
                     />
                   </div>
                   <div className="grid gap-3">
@@ -281,9 +250,7 @@ const Dashboard = ({ projects = [] }) => {
               className="flex h-12 w-full rounded-md border-none bg-transparent px-4 py-3 text-sm text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
             />
             <CommandList className="max-h-[300px] overflow-y-auto overflow-x-hidden">
-              <CommandEmpty className="py-6 text-center text-sm text-zinc-500">
-                Nenhum projeto encontrado.
-              </CommandEmpty>
+              <CommandEmpty className="py-6 text-center text-sm text-zinc-500">Nenhum projeto encontrado.</CommandEmpty>
               <CommandGroup>
                 {filteredProjects?.map(
                   (project) =>
@@ -292,7 +259,7 @@ const Dashboard = ({ projects = [] }) => {
                         key={project.id}
                         value={project.title}
                         onSelect={() => {
-                          router.visit(route("project.show", project.id))
+                          router.visit(route('project.show', project.id))
                         }}
                         className="relative flex cursor-default select-none items-center justify-between rounded-lg px-3 py-2.5 text-sm text-foreground outline-none transition-colors "
                       >
@@ -317,7 +284,7 @@ const Dashboard = ({ projects = [] }) => {
             <button
               onClick={() => handleFilterChange(filter)}
               className={`px-4 py-1 rounded transition-colors duration-200 ${
-                filter.active ? "bg-gray-800 text-white" : "text-gray-400"
+                filter.active ? 'bg-gray-800 text-white' : 'text-gray-400'
               }`}
               key={index}
             >
@@ -334,16 +301,16 @@ const Dashboard = ({ projects = [] }) => {
               if (!project) return null // Skip if project is undefined or null
               switch (project.active) {
                 case true:
-                  color = "bg-green-500"
+                  color = 'bg-green-500'
                   break
-                case "Finalizado":
-                  color = "bg-blue-500"
+                case 'Finalizado':
+                  color = 'bg-blue-500'
                   break
                 case false:
-                  color = "bg-red-500"
+                  color = 'bg-red-500'
                   break
                 default:
-                  color = "bg-gray-800"
+                  color = 'bg-gray-800'
               }
 
               return (
@@ -353,12 +320,10 @@ const Dashboard = ({ projects = [] }) => {
                     <CardHeader className="flex-row items-center justify-between">
                       <CardTitle className="text-lg">
                         <Link
-                          href={route("project.show", project.id)}
+                          href={route('project.show', project.id)}
                           className="flex items-center gap-2 hover:underline"
                         >
-                          <div
-                            className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`}
-                          ></div>
+                          <div className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`}></div>
                           {project.title}
                         </Link>
                       </CardTitle>
@@ -377,19 +342,9 @@ const Dashboard = ({ projects = [] }) => {
                           align="end"
                           className="w-48"
                         >
-                          <DropdownMenuItem
-                            onSelect={() => toggleActiveProject(project.id)}
-                          >
-                            <Power
-                              className={`mr-2 size-4 ${
-                                project.active
-                                  ? "text-success"
-                                  : "text-destructive"
-                              }`}
-                            />
-                            <span>
-                              {project.active ? "Desativar" : "Ativar"}
-                            </span>
+                          <DropdownMenuItem onSelect={() => toggleActiveProject(project.id)}>
+                            <Power className={`mr-2 size-4 ${project.active ? 'text-success' : 'text-destructive'}`} />
+                            <span>{project.active ? 'Desativar' : 'Ativar'}</span>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <AlertDialogTrigger asChild>
@@ -404,23 +359,19 @@ const Dashboard = ({ projects = [] }) => {
 
                     {/* CONTEÚDO: Descrição e contagem de membros */}
                     <CardContent className="">
-                      <Link href={route("project.show", project.id)}>
+                      <Link href={route('project.show', project.id)}>
                         <CardDescription>{project.description}</CardDescription>
                       </Link>
                     </CardContent>
 
                     {/* RODAPÉ: Status e badge de Ativo/Inativo */}
                     <CardFooter className="flex justify-between">
-                      <Badge
-                        variant={project.active ? "default" : "destructive"}
-                      >
-                        {project.active ? "Ativo" : "Inativo"}
+                      <Badge variant={project.active ? 'default' : 'destructive'}>
+                        {project.active ? 'Ativo' : 'Inativo'}
                       </Badge>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Users className="size-4" />
-                        <span className="text-sm">
-                          {project?.members?.length} membros
-                        </span>
+                        <span className="text-sm">{project?.members?.length} membros</span>
                       </div>
                     </CardFooter>
                   </Card>
@@ -428,12 +379,9 @@ const Dashboard = ({ projects = [] }) => {
                   {/* CONTEÚDO DO DIÁLOGO DE CONFIRMAÇÃO */}
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Excluir "{project.title}"?
-                      </AlertDialogTitle>
+                      <AlertDialogTitle>Excluir "{project.title}"?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Esta ação não pode ser desfeita. Isso excluirá
-                        permanentemente o projeto e todos os seus dados
+                        Esta ação não pode ser desfeita. Isso excluirá permanentemente o projeto e todos os seus dados
                         associados.
                       </AlertDialogDescription>
                     </AlertDialogHeader>

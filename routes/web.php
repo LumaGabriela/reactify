@@ -7,9 +7,41 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProductCanvasController;
-use Illuminate\Foundation\Application;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Auth\Events\Registered;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+//rotas de autorizacao com socialite
+
+Route::get('/auth/github/redirect', function () {
+  return Socialite::driver('github')->redirect();
+})->name('auth.github.redirect');
+
+Route::get('/auth/github/callback', function () {
+  $githubUser = Socialite::driver('github')->user();
+  dump($githubUser);
+
+  $user = User::updateOrCreate([
+    'github_id' => $githubUser->id,
+  ], [
+    'name' => $githubUser->name,
+    'email' => $githubUser->email,
+    'github_token' => $githubUser->token,
+    'github_refresh_token' => $githubUser->refreshToken,
+    'user_role_id' => 1,
+    'active' => true
+  ]);
+
+  event(new Registered($user));
+
+  Auth::login($user);
+
+  return redirect()->intended(route('projects.index', absolute: false));
+})->name('auth.github.callback');
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::get('/dashboard', [ProjectController::class, 'index'])->name('projects.index');
@@ -53,8 +85,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/', [ProductCanvasController::class, 'store'])->name('product-canvas.store');
     Route::patch('/{productCanvas}', [ProductCanvasController::class, 'update'])->name('product-canvas.update');
     Route::delete('/{productCanvas}', [ProductCanvasController::class, 'destroy'])->name('product-canvas.delete');
-  }); 
-
+  });
 });
 
 
@@ -69,7 +100,7 @@ Route::get('/config', function () {
 })->middleware(['auth', 'verified'])->name('config');
 
 Route::get('/', function () {
-    return Inertia::render('Welcome');
+  return Inertia::render('Welcome');
 })->middleware('guest')->name('welcome');
 
 
