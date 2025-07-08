@@ -122,7 +122,7 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
     }
   }
   return (
-    <div className="project-view flex flex-col items-center justify-start px-1 w-full max-w-6xl text-foreground">
+    <div className="project-view flex flex-col items-center justify-start px-1 w-full text-foreground">
       <div
         id="project-title-container"
         className="flex items-center justify-between text-3xl font-bold text-white text-center w-full my-4 p-0"
