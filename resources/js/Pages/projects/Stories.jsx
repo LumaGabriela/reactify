@@ -400,18 +400,18 @@ const Stories = ({ project, setProject }) => {
                 {isModalMinimized && 'Stories Geradas'}
               </h3>
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   onClick={() => setIsModalMinimized(!isModalMinimized)}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   {isModalMinimized ? <ChevronsUp size={20} /> : <Minus size={20} />}
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={cancelGeneratedStories}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   <X size={24} />
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -421,12 +421,12 @@ const Stories = ({ project, setProject }) => {
                   <span className="text-foreground font-medium">
                     {aiGeneratedStories.filter((j) => j.selected).length} de {aiGeneratedStories.length} selecionadas
                   </span>
-                  <button
+                  <Button
                     onClick={toggleAllStories}
                     className="px-3 py-1 bg-primary hover:bg-primary/90 text-primary-foreground text-sm rounded transition-colors"
                   >
                     {aiGeneratedStories.every((story) => story.selected) ? 'Desmarcar Todas' : 'Selecionar Todas'}
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto px-6 min-h-0">
@@ -469,13 +469,13 @@ const Stories = ({ project, setProject }) => {
                 </div>
 
                 <div className="flex justify-end space-x-3 p-6 pt-4 border-t border-border flex-shrink-0">
-                  <button
+                  <Button
                     onClick={cancelGeneratedStories}
                     className="px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg transition-colors"
                   >
                     Cancelar
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={confirmGeneratedStories}
                     className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
                     disabled={aiGeneratedStories.filter((j) => j.selected).length === 0}
@@ -485,7 +485,7 @@ const Stories = ({ project, setProject }) => {
                       size={16}
                     />
                     Confirmar e Adicionar ({aiGeneratedStories.filter((j) => j.selected).length})
-                  </button>
+                  </Button>
                 </div>
               </>
             )}
@@ -499,7 +499,7 @@ const Stories = ({ project, setProject }) => {
             asChild
             className=""
           >
-            <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
+            <Button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
               <Badge
                 variant="outline"
                 className="bg-purple-600 border-0 text-primary-foreground"
@@ -511,7 +511,7 @@ const Stories = ({ project, setProject }) => {
                 className="text-muted-foreground"
                 size={18}
               />
-            </button>
+            </Button>
           </PopoverTrigger>
           <PopoverContent className="bg-popover text-popover-foreground ">
             As histórias de usuário focam nas necessidades dos usuários do aplicativo, como a criação de contas para
@@ -568,7 +568,7 @@ const Stories = ({ project, setProject }) => {
             asChild
             className=""
           >
-            <button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
+            <Button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
               <Badge
                 variant="outline"
                 className="bg-orange-600 border-0 text-primary-foreground"
@@ -580,7 +580,7 @@ const Stories = ({ project, setProject }) => {
                 className="text-muted-foreground"
                 size={18}
               />
-            </button>
+            </Button>
           </PopoverTrigger>
           <PopoverContent className="bg-popover text-popover-foreground ">
             As histórias de sistema abordam funcionalidades administrativas e técnicas, como o gerenciamento de usuários
@@ -616,7 +616,7 @@ const Stories = ({ project, setProject }) => {
       </div>
 
       <div className="col-span-2 flex gap-2">
-        <button
+        <Button
           className="flex items-center justify-center flex-1 py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors rounded shadow-md"
           onClick={addNewStory}
         >
@@ -625,9 +625,9 @@ const Stories = ({ project, setProject }) => {
             className="mr-2"
           />
           <span>Nova story</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={generateStories}
           disabled={isGenerating}
           className={`flex items-center justify-center flex-1 py-2 rounded-lg transition-colors shadow-md text-foreground ${
@@ -664,7 +664,7 @@ const Stories = ({ project, setProject }) => {
               <PopoverArrow className="fill-popover" />
             </PopoverContent>
           </Popover>
-        </button>
+        </Button>
       </div>
     </div>
   )

@@ -32,13 +32,13 @@ const ProgressIcon = ({
   
   return (
     <div 
-      className={`flex flex-col mx-auto items-center mx-2 w-32 h-min cursor-pointer transition-all duration-200 ${isHovered ? 'scale-105' : 'scale-100'}`}
+      className={`flex flex-col mx-auto items-center mx-2 w-22 h-min cursor-pointer transition-all duration-200 ${isHovered ? 'scale-105' : 'scale-100'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => window.location.href = link}
     >
-      <div className="relative flex items-center justify-center w-24 h-24 mb-2">
-        <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+      <div className="relative flex items-center justify-center size-16 mb-2">
+        <svg className="size-16 transform -rotate-90" viewBox="0 0 100 100">
           <circle 
             cx="50" cy="50" r="45" fill="none" 
             className="stroke-muted" strokeWidth="10"

@@ -379,13 +379,13 @@ const Goals = ({ project, setProject }) => {
       <div className="flex flex-col gap-2">
         <Popover>
           <PopoverTrigger asChild>
-            <button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
+            <Button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
               <Badge className={cn("border-0", typeColors[1].color)}>
                 {project?.goal_sketches?.filter((goal) => goal.type === "cg").length || 0}
               </Badge>
               Constraint Goals
               <Info className="text-muted-foreground" size={18} />
-            </button>
+            </Button>
           </PopoverTrigger>
           <PopoverContent className="bg-popover text-popover-foreground border-border">
             User stories focus on the needs of the application's users...
@@ -434,13 +434,13 @@ const Goals = ({ project, setProject }) => {
       <div className="flex flex-col gap-2">
         <Popover>
           <PopoverTrigger asChild>
-            <button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
+            <Button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
               <Badge className={cn("border-0", typeColors[0].color)}>
                 {project?.goal_sketches?.filter((goal) => goal.type === "bg").length || 0}
               </Badge>
               Business Goals
               <Info className="text-muted-foreground" size={18} />
-            </button>
+            </Button>
           </PopoverTrigger>
           <PopoverContent className="bg-popover text-popover-foreground border-border">
             User stories focus on the needs of the application's users...
@@ -476,13 +476,13 @@ const Goals = ({ project, setProject }) => {
       </div>
       
       {/* --- "New Goal" Button --- */}
-      <button
+      <Button
         className="col-span-2 flex items-center justify-center w-full py-1 bg-card hover:bg-accent text-primary rounded-lg transition-colors shadow-md"
         onClick={addNewGoal}
       >
         <Plus size={18} className="mr-2" />
         <span>New goal</span>
-      </button>
+      </Button>
     </div>
   )
 }
