@@ -4,12 +4,11 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
-
+import { Input } from '@/components/ui/input';
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
     className = '',
-    style
 }) {
     const user = usePage().props.auth.user;
 
@@ -21,27 +20,28 @@ export default function UpdateProfileInformation({
 
     const submit = (e) => {
         e.preventDefault();
-
         patch(route('profile.update'));
     };
 
     return (
-        <section className={className}>
-            <header className={`text-lg font-medium ${style.text}`}>
-                <h2 className={`text-lg font-medium`}>
+        // Use `card` for the main container and `card-foreground` for primary text
+        <section className={`p-6 bg-card text-card-foreground rounded-lg ${className}`}>
+            <header>
+                <h2 className="text-lg font-medium">
                     Profile Information
                 </h2>
 
-                <p className="mt-1 text-sm">
+                <p className="mt-1 text-sm text-muted-foreground">
                     Update your account's profile information and email address.
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
+                    {/* InputLabel presumably uses foreground color by default */}
                     <InputLabel htmlFor="name" value="Name" />
 
-                    <TextInput
+                    <Input
                         id="name"
                         className="mt-1 block w-full"
                         value={data.name}
@@ -57,7 +57,7 @@ export default function UpdateProfileInformation({
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
-                    <TextInput
+                    <Input
                         id="email"
                         type="email"
                         className="mt-1 block w-full"
@@ -72,13 +72,14 @@ export default function UpdateProfileInformation({
 
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
-                        <p className="mt-2 text-sm text-gray-50">
+                        {/* Use a muted foreground for less important text */}
+                        <p className="mt-2 text-sm text-muted-foreground">
                             Your email address is unverified.
                             <Link
                                 href={route('verification.send')}
                                 method="post"
                                 as="button"
-                                className="rounded-md text-sm text-gray-50 underline hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                className="ml-1 rounded-md text-sm underline hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                             >
                                 Click here to re-send the verification email.
                             </Link>
@@ -103,7 +104,7 @@ export default function UpdateProfileInformation({
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-50">
+                        <p className="text-sm text-muted-foreground">
                             Saved.
                         </p>
                     </Transition>

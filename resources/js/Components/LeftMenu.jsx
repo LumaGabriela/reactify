@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { usePage, router } from '@inertiajs/react'
+import { usePage, router, Link } from '@inertiajs/react'
 import { Grid, User, Squirrel, LogOut, Sun, Moon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -45,10 +45,11 @@ console.log(props)
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          {/* link para dasboard */}
+          <Link as='div' className="flex items-center gap-3 cursor-pointer" href={route('dashboard')}>
             <Squirrel className="size-8 text-primary" />
             <h1 className="text-xl font-bold m-0">Reactify</h1>
-          </div>
+          </Link>
           <Button variant="ghost" size="icon" onClick={handleThemeToggle} aria-label="Toggle theme">
             {theme === 'dark' ? <Moon className="size-4" /> : <Sun className="size-4" />}
           </Button>

@@ -23,7 +23,6 @@ class UserEmailVerificationController extends Controller
       'message' => 'Por favor, verifique seu email clicando no link abaixo.',
     ]));
 
-    dump($message);
     return;
   }
 }
