@@ -5,9 +5,8 @@ import PrimaryButton from '@/Components/PrimaryButton'
 import TextInput from '@/Components/TextInput'
 import { Button } from '@/components/ui/button'
 import GuestLayout from '@/Layouts/GuestLayout'
-import { Head, Link, useForm, usePage } from '@inertiajs/react'
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
 import { Computer } from 'lucide-react'
-
 
 export default function Login({ status, canResetPassword }) {
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -22,7 +21,7 @@ export default function Login({ status, canResetPassword }) {
       onFinish: () => reset('password'),
     })
   }
-console.log(usePage().props)
+  console.log(usePage().props)
   return (
     <GuestLayout>
       <Head title="Log in" />
@@ -33,16 +32,9 @@ console.log(usePage().props)
           </div>
         )}
 
-        <form
-          onSubmit={submit}
-          className="space-y-6"
-        >
+        <form onSubmit={submit} className="space-y-6">
           <div>
-            <InputLabel
-              htmlFor="email"
-              value="Email"
-              className="text-foreground font-medium"
-            />
+            <InputLabel htmlFor="email" value="Email" className="text-foreground font-medium" />
             <TextInput
               id="email"
               type="email"
@@ -54,18 +46,11 @@ console.log(usePage().props)
               onChange={(e) => setData('email', e.target.value)}
               placeholder="Enter your email"
             />
-            <InputError
-              message={errors.email}
-              className="mt-2 text-destructive"
-            />
+            <InputError message={errors.email} className="mt-2 text-destructive" />
           </div>
 
           <div>
-            <InputLabel
-              htmlFor="password"
-              value="Password"
-              className="text-foreground font-medium"
-            />
+            <InputLabel htmlFor="password" value="Password" className="text-foreground font-medium" />
             <TextInput
               id="password"
               type="password"
@@ -76,10 +61,7 @@ console.log(usePage().props)
               onChange={(e) => setData('password', e.target.value)}
               placeholder="Enter your password"
             />
-            <InputError
-              message={errors.password}
-              className="mt-2 text-destructive"
-            />
+            <InputError message={errors.password} className="mt-2 text-destructive" />
           </div>
 
           <div className="flex items-center">
@@ -116,23 +98,21 @@ console.log(usePage().props)
         <div className="mt-6 text-center flex flex-col gap-4">
           <Button className="w-full">
             <Computer />
-            <a
-              className=""
-              disabled={processing}
-              href={'/auth/github/redirect'}
-            >
-              {'Log in com GitHub'}
+            <a disabled={processing} href={'/auth/github/redirect'}>
+              Log in com GitHub
             </a>
           </Button>
-                    <Button className="w-full">
+          <Button className="w-full">
             <Computer />
-            <a
-              className=""
-              disabled={processing}
-              href={'/auth/google/redirect'}
-            >
-              {'Log in com Google'}
+            <a disabled={processing} href={'/auth/google/redirect'}>
+              Log in com Google
             </a>
+          </Button>
+          <Button className="w-full" 
+          onClick = { () => router.post(route('email-verification.store'))}
+          disabled={processing}>
+            <Computer />
+              Enviar e-mail
           </Button>
           <p className="text-sm text-muted-foreground">
             Don't have an account?{' '}

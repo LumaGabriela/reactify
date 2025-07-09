@@ -41,7 +41,7 @@ const LeftMenu = () => {
   const isProjectsSectionActive = currentRouteName && currentRouteName.startsWith('project')
 console.log(props)
   return (
-    <div className="w-50 md:w-58 bg-background text-foreground border-r border-border flex flex-col h-screen z-10">
+    <div className="w-50 md:w-58 bg-background text-foreground border-r border-border flex flex-col min-h-screen z-10">
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">

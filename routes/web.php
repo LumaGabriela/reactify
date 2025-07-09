@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProductCanvasController;
+use App\Http\Controllers\UserEmailVerificationController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
@@ -15,8 +16,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-//rotas de autorizacao com socialite
+//rota para envio de email
+Route::post('/email/verify', [UserEmailVerificationController::class, 'store'])->name('email-verification.store');
 
+//rotas de autorizacao com socialite
 Route::get('/auth/{provider}/redirect', function (string $provider) {
   return Socialite::driver($provider)->redirect();
 })->name('auth.redirect');
@@ -43,6 +46,7 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
   return redirect()->intended(route('projects.index', absolute: false));
 })->name('auth.callback');
 
+// rotas para usuários autenticados
 Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::get('/dashboard', [ProjectController::class, 'index'])->name('projects.index');
 
@@ -88,7 +92,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   });
 });
 
-
+// rotas para gerenciar o perfil 
 Route::middleware('auth')->group(function () {
   Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
   Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

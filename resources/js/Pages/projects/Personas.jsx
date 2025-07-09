@@ -416,7 +416,7 @@ const Personas = ({ project, setProject }) => {
                 {["profile", "expectations", "goals"].map((field) => (
                   <div
                     key={field}
-                    className="flex flex-col gap-2 p-3 rounded-lg bg-muted/50 border"
+                    className="flex flex-col gap-2 p-3 rounded-lg bg-card border-border border-2"
                   >
                     <div className="flex items-center justify-between">
                       <h4
