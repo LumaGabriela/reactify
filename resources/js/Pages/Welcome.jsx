@@ -1,5 +1,5 @@
-import { Head, Link } from "@inertiajs/react"
-import { route } from "ziggy-js"
+import { Head, Link } from '@inertiajs/react'
+import { route } from 'ziggy-js'
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
   return (
@@ -13,7 +13,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
             <nav className="flex gap-4">
               {auth.user ? (
                 <Link
-                  href={route("projects.index")}
+                  href={route('dashboard')}
                   className="px-4 py-2 text-foreground hover:bg-primary hover:text-primary-foreground rounded-lg transition-all duration-300"
                 >
                   Dashboard
@@ -21,13 +21,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
               ) : (
                 <>
                   <Link
-                    href={route("login")}
+                    href={route('login')}
                     className="px-4 py-2 text-foreground hover:bg-secondary rounded-lg transition-all duration-300"
                   >
                     Login
                   </Link>
                   <Link
-                    href={route("register")}
+                    href={route('register')}
                     className="px-6 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg font-semibold transition-all duration-300"
                   >
                     Registre
@@ -48,13 +48,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-16">
               <Link
-                href={route("register")}
+                href={route('register')}
                 className="px-8 py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 Registre
               </Link>
               <Link
-                href={route("login")}
+                href={route('login')}
                 className="px-8 py-4 border-2 border-border bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-xl font-bold text-lg transition-all duration-300"
               >
                 Login
@@ -65,17 +65,17 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-16 max-w-7xl">
               {[
                 {
-                  title: "React Components",
+                  title: 'React Components',
                   description:
-                    "Build with modern React components and hooks for better performance and maintainability.",
+                    'Build with modern React components and hooks for better performance and maintainability.',
                 },
                 {
-                  title: "Real-Time Updates",
-                  description: "Get instant updates and live reloading during development for faster iteration.",
+                  title: 'Real-Time Updates',
+                  description: 'Get instant updates and live reloading during development for faster iteration.',
                 },
                 {
-                  title: "Cloud Deployment",
-                  description: "Deploy your applications to the cloud with one click and scale effortlessly.",
+                  title: 'Cloud Deployment',
+                  description: 'Deploy your applications to the cloud with one click and scale effortlessly.',
                 },
               ].map((feature) => (
                 <div

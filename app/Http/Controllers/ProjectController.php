@@ -69,7 +69,7 @@ class ProjectController extends Controller
     ])->find($id);
 
     return Inertia::render('projects/Project', [
-      'project' => $project, 
+      'project' => $project,
       'projects' => Project::select('title', 'id', 'active')->get(),
       'page' => $page
     ]);
@@ -135,7 +135,7 @@ class ProjectController extends Controller
 
     Log::info('Project deleted successfully: ' . $project->id . ' - ' . $project->title);
 
-    return redirect()->route('projects.index')->with([
+    return redirect()->route('dashboard')->with([
       'status' => 'success',
       'message' => 'Projeto excluído com sucesso.'
     ]);

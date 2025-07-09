@@ -16,40 +16,40 @@ use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
-    public function create(): Response
-    {
-        return Inertia::render('Auth/Register');
-    }
+  /**
+   * Display the registration view.
+   */
+  public function create(): Response
+  {
+    return Inertia::render('Auth/Register');
+  }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+  /**
+   * Handle an incoming registration request.
+   *
+   * @throws \Illuminate\Validation\ValidationException
+   */
+  public function store(Request $request): RedirectResponse
+  {
+    $request->validate([
+      'name' => 'required|string|max:255',
+      'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+      'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    ]);
 
-        $userRole = UserRole::where('name', 'user')->firstOrFail(); // Lança ModelNotFoundException se não encontrar
+    $userRole = UserRole::where('name', 'user')->firstOrFail(); // Lança ModelNotFoundException se não encontrar
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'user_role_id' => $userRole->id,
-        ]);
+    $user = User::create([
+      'name' => $request->name,
+      'email' => $request->email,
+      'password' => Hash::make($request->password),
+      'user_role_id' => $userRole->id,
+    ]);
 
-        event(new Registered($user));
+    event(new Registered($user));
 
-        Auth::login($user);
+    Auth::login($user);
 
-        return redirect()->intended(route('projects.index', absolute: false));
-    }
+    return redirect()->intended(route('dashboard', absolute: false));
+  }
 }

@@ -42,12 +42,12 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
 
   Auth::login($user);
 
-  return redirect()->intended(route('projects.index', absolute: false));
+  return redirect()->intended(route('dashboard', absolute: false));
 })->name('auth.callback');
 
 // rotas para usuários autenticados
 Route::group(['middleware' => ['auth', 'verified']], function () {
-  Route::get('/dashboard', [ProjectController::class, 'index'])->name('projects.index');
+  Route::get('/dashboard', [ProjectController::class, 'index'])->name('dashboard');
 
   Route::prefix('project')->group(function () {
     Route::post('/create', [ProjectController::class, 'store'])->name('project.store');
