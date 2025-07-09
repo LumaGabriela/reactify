@@ -14,7 +14,7 @@ class UserEmailVerificationController extends Controller
     return view('email-verification');
   }
 
-  public function store()
+  public function store(Request $request)
   {
     $message = Mail::to('lumagabriela1333@gmail.com', 'Raccoon')->send(new UserEmailVerification([
       'name' => 'Luma Andrade',
