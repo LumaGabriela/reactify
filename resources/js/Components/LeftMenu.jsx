@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { usePage, router } from '@inertiajs/react'
-import { Grid, User, Squirrel, LogOut, Sun, Moon, Dot } from 'lucide-react'
+import { Grid, User, Squirrel, LogOut, Sun, Moon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'

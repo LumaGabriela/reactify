@@ -30,10 +30,9 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
   $user = User::updateOrCreate([
     'email' => $providerUser->email, // Verifica se o email já existe
   ], [
-    'provider_id' => $providerUser->id,
-    'name' => $providerUser->name,
-
-    'provider_avatar' => $providerUser->avatar,
+    'provider_id' => $providerUser->getId(),
+    'name' => $providerUser->getName(),
+    'provider_avatar' => $providerUser->getAvatar(),
     'provider_name' => $provider,
     'user_role_id' => 1,
     'active' => true
