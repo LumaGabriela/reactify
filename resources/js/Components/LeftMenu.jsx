@@ -78,10 +78,10 @@ console.log(props)
         {/* Botão Home/Dashboard */}
         <Button
           variant="ghost"
-          onClick={() => router.get(route('projects.index'))}
+          onClick={() => router.get(route('dashboard'))}
           className={cn(
             'flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors w-full justify-start',
-            route().current('projects.index') && 'bg-accent text-accent-foreground'
+            route().current('dashboard') && 'bg-accent text-accent-foreground'
           )}
         >
           <Home className="size-5" />
