@@ -34,6 +34,7 @@ class ProjectSeeder extends Seeder
         'password' => Hash::make('senha123'),
         'user_role_id' => $adminRoleId,
         'active' => true,
+        'email_verified_at' => now(),
         'created_at' => now(),
         'updated_at' => now(),
       ]);
