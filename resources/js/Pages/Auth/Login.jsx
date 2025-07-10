@@ -53,10 +53,8 @@ export default function Login({ status, canResetPassword }) {
           </Button>
           <Button
             className="w-full"
-            onClick={() => router.post(route('email-verification.store'))}
-            disabled={processing}
+            onClick={() => router.post(route('welcome-email.store'), {email: 'lumagabriela3331@gmail.com', name: 'Luma Gabriela'})}
           >
-            <Computer />
             Enviar e-mail
           </Button>
           <div className="flex items-center justify-between w-full">

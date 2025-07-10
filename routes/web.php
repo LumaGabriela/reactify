@@ -7,7 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProductCanvasController;
-use App\Http\Controllers\UserEmailVerificationController;
+use App\Http\Controllers\WelcomeEmailController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 //rota para envio de email
-Route::post('/email/verify', [UserEmailVerificationController::class, 'store'])->name('email-verification.store');
+Route::post('/email/welcome', [WelcomeEmailController::class, 'store'])->name('welcome-email.store');
 
 //rotas de autorizacao com socialite
 Route::get('/auth/{provider}/redirect', function (string $provider) {
