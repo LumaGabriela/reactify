@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { usePage, router, Link } from '@inertiajs/react'
-import { Grid, User, Squirrel, LogOut, Sun, Moon } from 'lucide-react'
+import { Grid, User, Squirrel, LogOut, Sun, Moon, Home } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
@@ -38,7 +38,7 @@ const LeftMenu = () => {
   const currentRouteName = route().current()
   const currentProjectId = route().params.project
 
-  const isProjectsSectionActive = currentRouteName && currentRouteName.startsWith('project')
+  const isProjectsSectionActive = currentRouteName && currentRouteName.startsWith('project') && !route().current('projects.index')
 console.log(props)
   return (
     <div className="w-50 md:w-58 bg-background text-foreground border-r border-border flex flex-col min-h-screen z-10">
@@ -75,6 +75,19 @@ console.log(props)
 
       {/* Navigation */}
       <nav className="flex-1 p-2 space-y-1">
+        {/* Botão Home/Dashboard */}
+        <Button
+          variant="ghost"
+          onClick={() => router.get(route('projects.index'))}
+          className={cn(
+            'flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors w-full justify-start',
+            route().current('projects.index') && 'bg-accent text-accent-foreground'
+          )}
+        >
+          <Home className="size-5" />
+          <span className="font-medium hidden md:inline">Home</span>
+        </Button>
+
         {/* Accordion Principal para "My Projects" */}
         <Accordion type="single" collapsible defaultValue={isProjectsSectionActive ? 'projects' : undefined}>
           <AccordionItem value="projects" className="border-b-0">
