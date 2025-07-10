@@ -4,6 +4,7 @@ import InputLabel from '@/Components/InputLabel'
 import PrimaryButton from '@/Components/PrimaryButton'
 import TextInput from '@/Components/TextInput'
 import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import GuestLayout from '@/Layouts/GuestLayout'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
 import { Computer } from 'lucide-react'
@@ -31,10 +32,50 @@ export default function Login({ status, canResetPassword }) {
             {status}
           </div>
         )}
+        <div className="mb-6 text-center flex flex-col gap-4">
+          <Button className="w-full">
+            <Computer />
+            <a
+              disabled={processing}
+              href={'/auth/github/redirect'}
+            >
+              Log in com GitHub
+            </a>
+          </Button>
+          <Button className="w-full">
+            <Computer />
+            <a
+              disabled={processing}
+              href={'/auth/google/redirect'}
+            >
+              Log in com Google
+            </a>
+          </Button>
+          <Button
+            className="w-full"
+            onClick={() => router.post(route('email-verification.store'))}
+            disabled={processing}
+          >
+            <Computer />
+            Enviar e-mail
+          </Button>
+          <div className="flex items-center justify-between w-full">
+            <Separator className='w-[45%]'/>
+            <p className="flex items-center justify-center">or</p>
+            <Separator className='w-[45%]'/>
+          </div>
+        </div>
 
-        <form onSubmit={submit} className="space-y-6">
+        <form
+          onSubmit={submit}
+          className="space-y-6"
+        >
           <div>
-            <InputLabel htmlFor="email" value="Email" className="text-foreground font-medium" />
+            <InputLabel
+              htmlFor="email"
+              value="Email"
+              className="text-foreground font-medium"
+            />
             <TextInput
               id="email"
               type="email"
@@ -46,11 +87,18 @@ export default function Login({ status, canResetPassword }) {
               onChange={(e) => setData('email', e.target.value)}
               placeholder="Enter your email"
             />
-            <InputError message={errors.email} className="mt-2 text-destructive" />
+            <InputError
+              message={errors.email}
+              className="mt-2 text-destructive"
+            />
           </div>
 
           <div>
-            <InputLabel htmlFor="password" value="Password" className="text-foreground font-medium" />
+            <InputLabel
+              htmlFor="password"
+              value="Password"
+              className="text-foreground font-medium"
+            />
             <TextInput
               id="password"
               type="password"
@@ -61,7 +109,10 @@ export default function Login({ status, canResetPassword }) {
               onChange={(e) => setData('password', e.target.value)}
               placeholder="Enter your password"
             />
-            <InputError message={errors.password} className="mt-2 text-destructive" />
+            <InputError
+              message={errors.password}
+              className="mt-2 text-destructive"
+            />
           </div>
 
           <div className="flex items-center">
@@ -96,24 +147,6 @@ export default function Login({ status, canResetPassword }) {
         </form>
 
         <div className="mt-6 text-center flex flex-col gap-4">
-          <Button className="w-full">
-            <Computer />
-            <a disabled={processing} href={'/auth/github/redirect'}>
-              Log in com GitHub
-            </a>
-          </Button>
-          <Button className="w-full">
-            <Computer />
-            <a disabled={processing} href={'/auth/google/redirect'}>
-              Log in com Google
-            </a>
-          </Button>
-          <Button className="w-full" 
-          onClick = { () => router.post(route('email-verification.store'))}
-          disabled={processing}>
-            <Computer />
-              Enviar e-mail
-          </Button>
           <p className="text-sm text-muted-foreground">
             Don't have an account?{' '}
             <Link

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserEmailVerification;
 
+
 class UserEmailVerificationController extends Controller
 {
 
@@ -18,7 +19,7 @@ class UserEmailVerificationController extends Controller
   {
     $message = Mail::to('lumagabriela3331@gmail.com', 'Usuário')->send(new UserEmailVerification([
       'name' => 'Admin',
-      'email' => 'lumaandrade@zohomail.com',
+      'email' =>  env('MAIL_FROM_ADDRESS'),
       'subject' => 'Verificação de Email',
       'message' => 'Por favor, verifique seu email clicando no link abaixo.',
     ]));
