@@ -10,7 +10,6 @@ use App\Models\ProductCanvas;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 
@@ -82,15 +81,6 @@ class ProjectController extends Controller
     $validatedData = $request->validated();
 
     $project = Project::create($validatedData);
-
-    // Associa o usuário autenticado como o "dono" (admin) do projeto.
-    if ($project) {
-        $user = Auth::user();
-        if ($user) {
-            // Vincula o usuário ao projeto com o papel de 'admin'
-            $project->users()->attach($user->id, ['role' => 'admin']);
-        }
-    }
 
     $productCanvas = ProductCanvas::create([
       'project_id' => $project->id

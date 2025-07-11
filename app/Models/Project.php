@@ -50,9 +50,4 @@ class Project extends Model
   {
     return $this->hasMany(Story::class);
   }
-
-  public function users()
-  {
-    return $this->belongsToMany(User::class, 'user_project')->withPivot('role')->withTimestamps();
-  }
 }

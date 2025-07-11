@@ -12,7 +12,6 @@ import { PenLine, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ProjectPermissions } from '@/Components/ProjectPermissions'
 
 const ProjectView = ({ projectDB = [], page = 'overview' }) => {
   const [project, setProject] = useState({ ...projectDB })
@@ -157,16 +156,13 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
                 </p>
               )}
               {page === 'overview' && (
-                <>
-                  <button
-                    onClick={() => setIsEditing(!isEditing)}
-                    className="text-foreground hover:text-white transition-colors"
-                    title="Editar conteúdo"
-                  >
-                    {!isEditing ? <PenLine size={20} /> : <X size={20} />}
-                  </button>
-                  <ProjectPermissions projectId={project.id} />
-                </>
+                <button
+                  onClick={() => setIsEditing(!isEditing)}
+                  className="text-foreground hover:text-white transition-colors"
+                  title="Editar conteúdo"
+                >
+                  {!isEditing ? <PenLine size={20} /> : <X size={20} />}
+                </button>
               )}
             </div>
           </div>
