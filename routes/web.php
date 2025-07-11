@@ -36,12 +36,11 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
     'provider_avatar' => $providerUser->getAvatar(),
     'provider_name' => $provider,
     'user_role_id' => 1,
-    'active' => true
+    'active' => true,
+    'email_verified_at' => now(), 
   ]);
 
-  event(new Registered($user));
-
-  Auth::login($user);
+  Auth::login($user, true);
 
   return redirect()->intended(route('dashboard', absolute: false));
 })->name('auth.callback');
