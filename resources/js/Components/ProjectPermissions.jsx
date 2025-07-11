@@ -23,6 +23,9 @@ export function ProjectPermissions({ projectId, ownerId }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentUserRole, setCurrentUserRole] = useState('');
 
+  // Variável de controle de permissão
+  const canManagePermissions = currentUserRole === 'admin';
+
   // Função para buscar os usuários do projeto
   const fetchPermissions = async () => {
     if (!projectId) return;
@@ -31,7 +34,6 @@ export function ProjectPermissions({ projectId, ownerId }) {
       const response = await axios.get(`/api/projects/${projectId}/permissions`);
       setUsers(response.data);
       
-      // Encontra o usuário atual na lista e define sua role
       const currentUser = response.data.find(user => user.id === auth.user.id);
       if (currentUser) {
         setCurrentUserRole(currentUser.role);
@@ -75,7 +77,6 @@ export function ProjectPermissions({ projectId, ownerId }) {
     }
   }, [isOpen, projectId]);
 
-
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -85,8 +86,10 @@ export function ProjectPermissions({ projectId, ownerId }) {
         <SheetHeader>
           <SheetTitle className="text-foreground">Gerenciar Permissões</SheetTitle>
           <SheetDescription className="text-muted-foreground">
-            {currentUserRole && `( ${currentUserRole}) `} <br/>
-            Adicione, remova ou edite o acesso dos membros a este projeto.
+            {currentUserRole && `(${currentUserRole})`} <br/>
+            {canManagePermissions 
+              ? 'Adicione, remova ou edite o acesso dos membros a este projeto.'
+              : 'Você pode visualizar os membros do projeto.'}
           </SheetDescription>
         </SheetHeader>
         <div className="py-4 space-y-4">
@@ -103,7 +106,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
                 <Select 
                   value={user.role} 
                   onValueChange={(newRole) => handleRoleChange(user.id, newRole)}
-                  disabled={isOwner}
+                  disabled={!canManagePermissions || isOwner}
                 >
                   <SelectTrigger className="w-[120px]">
                     <SelectValue placeholder="Role" />
@@ -118,7 +121,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
                   variant="ghost" 
                   size="icon" 
                   onClick={() => handleRemoveUser(user.id)}
-                  disabled={isOwner}
+                  disabled={!canManagePermissions || isOwner}
                 >
                   X
                 </Button>
@@ -126,16 +129,18 @@ export function ProjectPermissions({ projectId, ownerId }) {
             </div>
           )})}
         </div>
-        <SheetFooter>
-            <div className="flex flex-col w-full gap-2">
-                <SheetClose asChild>
-                    <Button variant="outline">Cancelar</Button>
-                </SheetClose>
-                <Button onClick={handleSaveChanges} disabled={isLoading}>
-                {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-                </Button>
-            </div>
-        </SheetFooter>
+        {canManagePermissions && (
+          <SheetFooter>
+              <div className="flex flex-col w-full gap-2">
+                  <SheetClose asChild>
+                      <Button variant="outline">Cancelar</Button>
+                  </SheetClose>
+                  <Button onClick={handleSaveChanges} disabled={isLoading}>
+                  {isLoading ? 'Salvando...' : 'Salvar Alterações'}
+                  </Button>
+              </div>
+          </SheetFooter>
+        )}
       </SheetContent>
     </Sheet>
   );
