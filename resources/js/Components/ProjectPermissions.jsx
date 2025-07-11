@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -15,10 +16,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import axios from 'axios';
 
-export function ProjectPermissions({ projectId }) {
+export function ProjectPermissions({ projectId, ownerId }) {
+  const { auth } = usePage().props;
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [currentUserRole, setCurrentUserRole] = useState('');
 
   // Função para buscar os usuários do projeto
   const fetchPermissions = async () => {
@@ -27,9 +30,14 @@ export function ProjectPermissions({ projectId }) {
     try {
       const response = await axios.get(`/api/projects/${projectId}/permissions`);
       setUsers(response.data);
+      
+      // Encontra o usuário atual na lista e define sua role
+      const currentUser = response.data.find(user => user.id === auth.user.id);
+      if (currentUser) {
+        setCurrentUserRole(currentUser.role);
+      }
     } catch (error) {
       console.error('Failed to fetch permissions:', error);
-      // Adicione um feedback de erro para o usuário aqui
     } finally {
       setIsLoading(false);
     }
@@ -40,11 +48,9 @@ export function ProjectPermissions({ projectId }) {
     setIsLoading(true);
     try {
       await axios.post(`/api/projects/${projectId}/permissions`, { users });
-      // Adicione um feedback de sucesso (ex: toast)
-      setIsOpen(false); // Fecha o sheet ao salvar
+      setIsOpen(false);
     } catch (error) {
       console.error('Failed to update permissions:', error);
-      // Adicione um feedback de erro
     } finally {
       setIsLoading(false);
     }
@@ -79,19 +85,26 @@ export function ProjectPermissions({ projectId }) {
         <SheetHeader>
           <SheetTitle className="text-foreground">Gerenciar Permissões</SheetTitle>
           <SheetDescription className="text-muted-foreground">
+            {currentUserRole && `( ${currentUserRole}) `} <br/>
             Adicione, remova ou edite o acesso dos membros a este projeto.
           </SheetDescription>
         </SheetHeader>
         <div className="py-4 space-y-4">
           {isLoading && <p className="text-muted-foreground">Carregando...</p>}
-          {!isLoading && users.map((user) => (
+          {!isLoading && users.filter(user => user.id !== auth.user.id).map((user) => {
+            const isOwner = user.id == ownerId && user.role === 'admin';
+            return (
             <div key={user.id} className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-foreground">{user.name}</p>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
               </div>
               <div className="flex items-center gap-2">
-                <Select value={user.role} onValueChange={(newRole) => handleRoleChange(user.id, newRole)}>
+                <Select 
+                  value={user.role} 
+                  onValueChange={(newRole) => handleRoleChange(user.id, newRole)}
+                  disabled={isOwner}
+                >
                   <SelectTrigger className="w-[120px]">
                     <SelectValue placeholder="Role" />
                   </SelectTrigger>
@@ -101,12 +114,17 @@ export function ProjectPermissions({ projectId }) {
                     <SelectItem value="viewer">Visualizador</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="ghost" size="icon" onClick={() => handleRemoveUser(user.id)}>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handleRemoveUser(user.id)}
+                  disabled={isOwner}
+                >
                   X
                 </Button>
               </div>
             </div>
-          ))}
+          )})}
         </div>
         <SheetFooter>
             <div className="flex flex-col w-full gap-2">

@@ -8,6 +8,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProductCanvasController;
 use App\Http\Controllers\WelcomeEmailController;
+use App\Http\Controllers\ProjectPermissionController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
@@ -108,3 +109,9 @@ Route::get('/', function () {
 
 
 require __DIR__ . '/auth.php';
+
+// API routes that need session authentication
+Route::prefix('api')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('/projects/{project}/permissions', [ProjectPermissionController::class, 'index'])->name('api.project.permissions.index');
+    Route::post('/projects/{project}/permissions', [ProjectPermissionController::class, 'update'])->name('api.projects.permissions.update');
+});
