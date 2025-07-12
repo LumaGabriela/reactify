@@ -8,6 +8,7 @@ use App\Http\Requests\ProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\ProductCanvas;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -16,17 +17,10 @@ use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
-
   public function getUpdatedProject(Project $project)
   {
     return response()->json([
-      'project' => $project->load([
-        'stories',
-        'goal_sketches',
-        'journeys',
-        'personas',
-        'product_canvas',
-      ]),
+      'project' => $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas']),
     ]);
   }
 
@@ -40,13 +34,7 @@ class ProjectController extends Controller
     $projects = Project::whereIn('id', $validated['ids'])->get();
 
     return response()->json([
-      'projects' => $projects->load([
-        'stories',
-        'goal_sketches',
-        'journeys',
-        'personas',
-        'product_canvas',
-      ]),
+      'projects' => $projects->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas']),
       'message' => 'Projects updated successfully.',
       'status' => 'success',
     ]);
@@ -61,39 +49,30 @@ class ProjectController extends Controller
   }
   public function show(string $id, string $page = 'overview')
   {
-    $project = Project::with([
-      'stories',
-      'goal_sketches',
-      'journeys',
-      'personas',
-      'product_canvas',
-    ])->find($id);
+    $project = Project::with(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas'])->find($id);
 
     return Inertia::render('projects/Project', [
       'project' => $project,
       'projects' => Project::select('title', 'id', 'active')->get(),
-      'page' => $page
+      'page' => $page,
     ]);
   }
 
   public function store(ProjectRequest $request)
   {
-
     $validatedData = $request->validated();
 
     $project = Project::create($validatedData);
 
+    $user = Auth::user();
     // Associa o usuário autenticado como o "dono" (admin) do projeto.
-    if ($project) {
-        $user = Auth::user();
-        if ($user) {
-            // Vincula o usuário ao projeto com o papel de 'admin'
-            $project->users()->attach($user->id, ['role' => 'admin']);
-        }
+    if ($project && $user) {
+      // Vincula o usuário ao projeto com o papel de 'admin'
+      $project->users()->attach($user->id, ['role' => 'admin']);
     }
 
     $productCanvas = ProductCanvas::create([
-      'project_id' => $project->id
+      'project_id' => $project->id,
     ]);
 
     $project->active = true;
@@ -108,18 +87,14 @@ class ProjectController extends Controller
 
     return redirect()
       ->route('project.show', $project->id)
-      ->with(
-        [
-          'status' => 'success',
-          'message' => 'Project created successfully. Project id: ' . $project->id,
-        ]
-      );
+      ->with([
+        'status' => 'success',
+        'message' => 'Project created successfully. Project id: ' . $project->id,
+      ]);
   }
-
 
   public function update(UpdateProjectRequest $request, Project $project)
   {
-
     $validated = $request->validated();
 
     $project->update($validated);
@@ -145,10 +120,12 @@ class ProjectController extends Controller
 
     Log::info('Project deleted successfully: ' . $project->id . ' - ' . $project->title);
 
-    return redirect()->route('dashboard')->with([
-      'status' => 'success',
-      'message' => 'Projeto excluído com sucesso.'
-    ]);
+    return redirect()
+      ->route('dashboard')
+      ->with([
+        'status' => 'success',
+        'message' => 'Projeto excluído com sucesso.',
+      ]);
   }
 
   public function toggleActive(string $id)
@@ -162,7 +139,14 @@ class ProjectController extends Controller
 
     broadcast(new ProjectUpdated($project));
 
-    Log::info('Project ' . ($project->active ? 'activated' : 'deactivated') . ' successfully: ' . $project->id . ' - ' . $project->title);
+    Log::info(
+      'Project ' .
+        ($project->active ? 'activated' : 'deactivated') .
+        ' successfully: ' .
+        $project->id .
+        ' - ' .
+        $project->title
+    );
 
     return redirect()->back();
   }

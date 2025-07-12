@@ -28,17 +28,20 @@ Route::get('/auth/{provider}/redirect', function (string $provider) {
 Route::get('/auth/{provider}/callback', function (string $provider) {
   $providerUser = Socialite::driver($provider)->user();
 
-  $user = User::updateOrCreate([
-    'email' => $providerUser->email, // Verifica se o email já existe
-  ], [
-    'provider_id' => $providerUser->getId(),
-    'name' => $providerUser->getName(),
-    'provider_avatar' => $providerUser->getAvatar(),
-    'provider_name' => $provider,
-    'user_role_id' => 1,
-    'active' => true,
-    'email_verified_at' => now(), 
-  ]);
+  $user = User::updateOrCreate(
+    [
+      'email' => $providerUser->email, // Verifica se o email já existe
+    ],
+    [
+      'provider_id' => $providerUser->getId(),
+      'name' => $providerUser->getName(),
+      'provider_avatar' => $providerUser->getAvatar(),
+      'provider_name' => $provider,
+      'user_role_id' => 1,
+      'active' => true,
+      'email_verified_at' => now(),
+    ]
+  );
 
   Auth::login($user, true);
 
@@ -52,6 +55,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::prefix('project')->group(function () {
     Route::post('/create', [ProjectController::class, 'store'])->name('project.store');
     Route::get('/{project}/{page?}', [ProjectController::class, 'show'])->name('project.show');
+    Route::patch('/{project}/members/add', [ProjectController::class, 'addNewMember'])->name('project.users.add');
     Route::patch('/{project}', [ProjectController::class, 'update'])->name('project.update');
     Route::patch('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggle-active');
     Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
@@ -91,7 +95,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   });
 });
 
-// rotas para gerenciar o perfil 
+// rotas para gerenciar o perfil
 Route::middleware('auth')->group(function () {
   Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
   Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -100,17 +104,32 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/config', function () {
   return Inertia::render('Config');
-})->middleware(['auth', 'verified'])->name('config');
+})
+  ->middleware(['auth', 'verified'])
+  ->name('config');
 
 Route::get('/', function () {
   return Inertia::render('Welcome');
-})->middleware('guest')->name('welcome');
-
+})
+  ->middleware('guest')
+  ->name('welcome');
 
 require __DIR__ . '/auth.php';
 
 // API routes that need session authentication
-Route::prefix('api')->middleware(['auth', 'verified'])->group(function () {
-    Route::get('/projects/{project}/permissions', [ProjectPermissionController::class, 'index'])->name('api.project.permissions.index');
-    Route::post('/projects/{project}/permissions', [ProjectPermissionController::class, 'update'])->name('api.projects.permissions.update');
-});
+Route::prefix('api')
+  ->middleware(['auth', 'verified'])
+  ->group(function () {
+    Route::get('/projects/{project}/permissions', [ProjectPermissionController::class, 'index'])->name(
+      'api.project.permissions.index'
+    );
+    Route::post('/projects/{project}/permissions', [ProjectPermissionController::class, 'update'])->name(
+      'api.projects.permissions.update'
+    );
+    Route::post('/projects/{project}/addMember', [ProjectPermissionController::class, 'addMember'])->name(
+      'api.projects.permissions.addMember'
+    );
+    Route::post('/projects/{project}/removeMember', [ProjectPermissionController::class, 'removeMember'])->name(
+      'api.projects.permissions.removeMember'
+    );
+  });

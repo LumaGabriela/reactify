@@ -14,7 +14,6 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
-
 class RegisteredUserController extends Controller
 {
   /**
@@ -49,10 +48,10 @@ class RegisteredUserController extends Controller
 
     event(new Registered($user));
 
-
-
     Auth::login($user);
 
     return redirect()->intended(route('dashboard', absolute: false));
   }
+
+  public function update(Request $request, User $user) {}
 }
