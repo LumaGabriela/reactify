@@ -55,6 +55,7 @@ class ProjectSeeder extends Seeder
     DB::table('user_project')->insert([
       'user_id' => $userId,
       'project_id' => $projectId,
+      'role' => 'admin',
       'created_at' => now(),
       'updated_at' => now(),
     ]);

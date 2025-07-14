@@ -20,6 +20,7 @@ return new class extends Migration {
                 ->foreignId("project_id")
                 ->constrained("projects")
                 ->onDelete("cascade ");
+            $table->string('role');
             $table->timestamps();
             $table->softDeletes();
         });
