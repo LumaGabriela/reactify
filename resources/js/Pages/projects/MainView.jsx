@@ -286,6 +286,15 @@ const MainView = ({ project = {}, setProject }) => {
 
       {/* Progress Indicators */}
       <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-4 mb-6">
+        <ExpandableCard
+          title={project?.title || 'Project'}
+          content={project?.description}
+          col={1}
+          variant="secondary"
+          icon={List}
+          placeholder="Describe your project..."
+          onContentUpdate={(content) => updateProject('description', content)}
+        />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full items-center justify-center bg-card p-4 rounded-lg">
           <ProgressIcon
             value={project?.stories?.length || 0}
@@ -316,16 +325,8 @@ const MainView = ({ project = {}, setProject }) => {
             icon={GitBranch}
           />
         </div>
-        <ExpandableCard
-          title={project?.title || 'Project'}
-          content={project?.description}
-          col={1}
-          variant="secondary"
-          icon={List}
-          placeholder="Describe your project..."
-          onContentUpdate={(content) => updateProject('description', content)}
-        />
       </div>
+      
       {/* Main Dashboard - Responsive Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <ExpandableCard
