@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\ProjectStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends Model
@@ -17,6 +19,7 @@ class Project extends Model
 
   protected $casts = [
     'active' => 'boolean',
+    'status' => ProjectStatus::class,
   ];
   // Relação: Um projeto pertence a um usuário
   public function user()
@@ -48,6 +51,10 @@ class Project extends Model
     return $this->hasMany(Story::class);
   }
 
+  public function invitations(): HasMany
+  {
+    return $this->hasMany(ProjectInvitation::class);
+  }
   public function users(): BelongsToMany
   {
     return $this->belongsToMany(User::class, 'user_project')->withPivot('role')->withTimestamps();

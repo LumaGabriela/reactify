@@ -300,7 +300,18 @@ const Dashboard = ({ projects = [] }) => {
       </div>
 
       {/* Task Overview */}
-      <div className="mb-8">
+      <div className="my-8">
+        <Button
+          onClick={() =>
+            router.post(route('projects.invitations.store', 1), {
+              email: 'lumagabriela1333@gmail.com',
+              role: 'admin',
+            })
+          }
+          className="p-4"
+        >
+          BUTAO
+        </Button>
         <p className="font-semibold text-lg mb-4 text-foreground">
           Task Overview
         </p>

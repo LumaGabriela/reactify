@@ -9,6 +9,7 @@ use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProductCanvasController;
 use App\Http\Controllers\WelcomeEmailController;
 use App\Http\Controllers\ProjectPermissionController;
+use App\Http\Controllers\ProjectInvitationController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
@@ -51,7 +52,7 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
 // rotas para usuários autenticados
 Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::get('/dashboard', [ProjectController::class, 'index'])->name('dashboard');
-
+  //rotas para projetos
   Route::prefix('project')->group(function () {
     Route::post('/create', [ProjectController::class, 'store'])->name('project.store');
     Route::get('/{project}/{page?}', [ProjectController::class, 'show'])->name('project.show');
@@ -60,6 +61,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggle-active');
     Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
   });
+  //rotas para convites de projeto
+  Route::post('/projects/{project}/invitations', [ProjectInvitationController::class, 'store'])->name('projects.invitations.store');
+
+  Route::get('/invitations/{invitation}/accept', [ProjectInvitationController::class, 'accept'])->name('invitations.accept');
+
+  Route::get('/invitations/{invitation:token}/decline', [ProjectInvitationController::class, 'decline'])->name('invitations.decline');
 
   // Rotas para stories
   Route::prefix('story')->group(function () {
