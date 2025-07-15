@@ -1,7 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { useEcho } from '@laravel/echo-react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import { CheckCircle, Users, CornerDownLeft, Power, Trash2, EllipsisVertical } from 'lucide-react'
+import {
+  CheckCircle,
+  Users,
+  CornerDownLeft,
+  Power,
+  Trash2,
+  EllipsisVertical,
+} from 'lucide-react'
 import { Link, router, usePage } from '@inertiajs/react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,7 +21,14 @@ import {
   CommandList,
   CommandShortcut,
 } from '@/components/ui/command'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,12 +87,14 @@ const Dashboard = ({ projects = [] }) => {
   const handleFilterChange = (filter) => {
     if (filter) {
       const filters = taskFilters.map((f, i) =>
-        f.name === filter.name ? { ...f, active: true } : { ...f, active: false }
+        f.name === filter.name
+          ? { ...f, active: true }
+          : { ...f, active: false },
       )
       setTaskFilters(filters)
     }
     const updatedUiFilters = taskFilters.map((f) =>
-      f.name === filter.name ? { ...f, active: true } : { ...f, active: false }
+      f.name === filter.name ? { ...f, active: true } : { ...f, active: false },
     )
     setTaskFilters(updatedUiFilters)
 
@@ -107,7 +123,9 @@ const Dashboard = ({ projects = [] }) => {
     router.post(route('project.store'), newProject)
   }
   const toggleActiveProject = (projectId) => {
-    const updatedProjects = currentProjects.map((p) => (p.id === projectId ? { ...p, active: !p.active } : p))
+    const updatedProjects = currentProjects.map((p) =>
+      p.id === projectId ? { ...p, active: !p.active } : p,
+    )
     setCurrentProjects(updatedProjects)
 
     router.patch(route('project.toggle-active', projectId))
@@ -133,9 +151,16 @@ const Dashboard = ({ projects = [] }) => {
       const data = await response.json()
       if (response.ok && data.projects.length > 0) {
         setCurrentProjects((prev) => {
-          const updatesMap = new Map(data.projects.map((updatedProject) => [updatedProject.id, updatedProject]))
+          const updatesMap = new Map(
+            data.projects.map((updatedProject) => [
+              updatedProject.id,
+              updatedProject,
+            ]),
+          )
 
-          return prev.map((oldProject) => updatesMap.get(oldProject.id) || oldProject)
+          return prev.map(
+            (oldProject) => updatesMap.get(oldProject.id) || oldProject,
+          )
         })
       }
     } catch (error) {
@@ -170,7 +195,9 @@ const Dashboard = ({ projects = [] }) => {
   })
 
   useEcho('projects', 'ProjectDeleted', (e) => {
-    setCurrentProjects((prev) => prev.filter((project) => project.id !== e.projectId))
+    setCurrentProjects((prev) =>
+      prev.filter((project) => project.id !== e.projectId),
+    )
   })
 
   return (
@@ -180,21 +207,17 @@ const Dashboard = ({ projects = [] }) => {
         <div className=" flex flex-col w-1/2">
           <Dialog>
             <DialogTrigger asChild>
-              <Button
-                variant="default"
-                className="h-full max-h-[100px] "
-              >
+              <Button variant="default" className="h-full max-h-[100px] ">
                 Criar Projeto
               </Button>
             </DialogTrigger>{' '}
             <DialogContent className="sm:max-w-[425px]">
-              <form
-                className="space-y-4"
-                onSubmit={createProject}
-              >
+              <form className="space-y-4" onSubmit={createProject}>
                 <DialogHeader>
                   <DialogTitle>Criar Novo Projeto</DialogTitle>
-                  <DialogDescription>Preencha os campos abaixo para criar um novo projeto.</DialogDescription>
+                  <DialogDescription>
+                    Preencha os campos abaixo para criar um novo projeto.
+                  </DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4">
@@ -205,7 +228,9 @@ const Dashboard = ({ projects = [] }) => {
                       id="title-1"
                       name="title"
                       value={newProject.title}
-                      onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+                      onChange={(e) =>
+                        setNewProject({ ...newProject, title: e.target.value })
+                      }
                     />
                   </div>
                   <div className="grid gap-3">
@@ -227,10 +252,7 @@ const Dashboard = ({ projects = [] }) => {
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                    >
+                    <Button type="button" variant="outline">
                       Cancelar
                     </Button>
                   </DialogClose>
@@ -250,7 +272,9 @@ const Dashboard = ({ projects = [] }) => {
               className="flex h-12 w-full rounded-md border-none bg-transparent px-4 py-3 text-sm text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
             />
             <CommandList className="max-h-[300px] overflow-y-auto overflow-x-hidden">
-              <CommandEmpty className="py-6 text-center text-sm text-zinc-500">Nenhum projeto encontrado.</CommandEmpty>
+              <CommandEmpty className="py-6 text-center text-sm text-zinc-500">
+                Nenhum projeto encontrado.
+              </CommandEmpty>
               <CommandGroup>
                 {filteredProjects?.map(
                   (project) =>
@@ -267,7 +291,7 @@ const Dashboard = ({ projects = [] }) => {
                         <span className="truncate w-full">{project.title}</span>
                         <CornerDownLeft className="mr-3 size-4 text-zinc-500" />
                       </CommandItem>
-                    )
+                    ),
                 )}
               </CommandGroup>
             </CommandList>
@@ -277,7 +301,9 @@ const Dashboard = ({ projects = [] }) => {
 
       {/* Task Overview */}
       <div className="mb-8">
-        <p className="font-semibold text-lg mb-4">Task Overview</p>
+        <p className="font-semibold text-lg mb-4 text-foreground">
+          Task Overview
+        </p>
 
         <div className="flex space-x-2 mb-6">
           {taskFilters.map((filter, index) => (
@@ -323,7 +349,9 @@ const Dashboard = ({ projects = [] }) => {
                           href={route('project.show', project.id)}
                           className="flex items-center gap-2 hover:underline"
                         >
-                          <div className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`}></div>
+                          <div
+                            className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`}
+                          ></div>
                           {project.title}
                         </Link>
                       </CardTitle>
@@ -331,20 +359,20 @@ const Dashboard = ({ projects = [] }) => {
                       {/* MENU DE AÇÕES */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                          >
+                          <Button variant="ghost" size="icon">
                             <EllipsisVertical className="size-5" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="w-48"
-                        >
-                          <DropdownMenuItem onSelect={() => toggleActiveProject(project.id)}>
-                            <Power className={`mr-2 size-4 ${project.active ? 'text-success' : 'text-destructive'}`} />
-                            <span>{project.active ? 'Desativar' : 'Ativar'}</span>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem
+                            onSelect={() => toggleActiveProject(project.id)}
+                          >
+                            <Power
+                              className={`mr-2 size-4 ${project.active ? 'text-success' : 'text-destructive'}`}
+                            />
+                            <span>
+                              {project.active ? 'Desativar' : 'Ativar'}
+                            </span>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <AlertDialogTrigger asChild>
@@ -366,12 +394,16 @@ const Dashboard = ({ projects = [] }) => {
 
                     {/* RODAPÉ: Status e badge de Ativo/Inativo */}
                     <CardFooter className="flex justify-between">
-                      <Badge variant={project.active ? 'default' : 'destructive'}>
+                      <Badge
+                        variant={project.active ? 'default' : 'destructive'}
+                      >
                         {project.active ? 'Ativo' : 'Inativo'}
                       </Badge>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Users className="size-4" />
-                        <span className="text-sm">{project?.members?.length} membros</span>
+                        <span className="text-sm">
+                          {project?.members?.length} membros
+                        </span>
                       </div>
                     </CardFooter>
                   </Card>
@@ -379,9 +411,12 @@ const Dashboard = ({ projects = [] }) => {
                   {/* CONTEÚDO DO DIÁLOGO DE CONFIRMAÇÃO */}
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Excluir "{project.title}"?</AlertDialogTitle>
+                      <AlertDialogTitle>
+                        Excluir "{project.title}"?
+                      </AlertDialogTitle>
                       <AlertDialogDescription>
-                        Esta ação não pode ser desfeita. Isso excluirá permanentemente o projeto e todos os seus dados
+                        Esta ação não pode ser desfeita. Isso excluirá
+                        permanentemente o projeto e todos os seus dados
                         associados.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
