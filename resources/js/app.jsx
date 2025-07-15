@@ -1,14 +1,14 @@
-import "../css/app.css"
-import React from "react"
-import "./bootstrap"
-import { createInertiaApp } from "@inertiajs/react"
-import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers"
-import { createRoot } from "react-dom/client"
-import { configureEcho } from "@laravel/echo-react"
-import { Toaster } from "@/components/ui/sonner"
+import '../css/app.css'
+import React from 'react'
+import './bootstrap'
+import { createInertiaApp } from '@inertiajs/react'
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
+import { createRoot } from 'react-dom/client'
+import { configureEcho } from '@laravel/echo-react'
+import { Toaster } from '@/components/ui/sonner'
 
 configureEcho({
-  broadcaster: "reverb",
+  broadcaster: 'reverb',
 })
 
 createInertiaApp({
@@ -16,7 +16,7 @@ createInertiaApp({
   resolve: (name) =>
     resolvePageComponent(
       `./Pages/${name}.jsx`,
-      import.meta.glob("./Pages/**/*.jsx")
+      import.meta.glob('./Pages/**/*.jsx'),
     ),
   eager: true,
   setup({ el, App, props }) {
@@ -35,21 +35,21 @@ createInertiaApp({
             duration={5000} // I noticed you had 50000, adjusted to 5s
           />
           <App {...props} />
-        </>
+        </>,
       )
     }
 
     // 2. Determine the initial theme from the <html> tag and render for the first time
-    const initialTheme = document.documentElement.classList.contains("dark")
-      ? "dark"
-      : "light"
+    const initialTheme = document.documentElement.classList.contains('dark')
+      ? 'dark'
+      : 'light'
     renderAppWithTheme(initialTheme)
 
     // 3. Set up an observer to watch for class changes on the <html> element
     const observer = new MutationObserver(() => {
-      const newTheme = document.documentElement.classList.contains("dark")
-        ? "dark"
-        : "light"
+      const newTheme = document.documentElement.classList.contains('dark')
+        ? 'dark'
+        : 'light'
       // 4. When the class changes, re-render the app with the new theme
       renderAppWithTheme(newTheme)
     })
@@ -57,10 +57,10 @@ createInertiaApp({
     // Start observing
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ['class'],
     })
   },
   progress: {
-    color: "#755ce4",
+    color: '#755ce4',
   },
 })

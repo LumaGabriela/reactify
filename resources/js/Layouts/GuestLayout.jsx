@@ -1,4 +1,4 @@
-import { Link } from "@inertiajs/react"
+import { Link } from "@inertiajs/react";
 
 export default function GuestLayout({ children }) {
   return (
@@ -11,9 +11,9 @@ export default function GuestLayout({ children }) {
         </Link>
       </div>
 
-      <div className="w-full overflow-hidden px-6 py-8 sm:max-w-md sm:rounded-xl bg-card text-foreground">
+      <div className="w-full overflow-hidden px-6 py-8 sm:max-w-md sm:rounded-xl  text-foreground">
         {children}
       </div>
     </div>
-  )
+  );
 }

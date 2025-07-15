@@ -19,28 +19,34 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
   const [isEditing, setIsEditing] = useState(false)
   const [newTitle, setNewTitle] = useState(project.title)
 
-  const [activeMenu, setActiveMenu] = useState(() => localStorage.getItem('activeMenu') || 'All')
+  const [activeMenu, setActiveMenu] = useState(
+    () => localStorage.getItem('activeMenu') || 'All',
+  )
 
   const [menuItems, setMenuItems] = useState([
     {
       label: 'All',
       value: true,
-      tooltip: 'Visualize todos os itens do projeto, incluindo histórias, personas, objetivos e jornadas.',
+      tooltip:
+        'Visualize todos os itens do projeto, incluindo histórias, personas, objetivos e jornadas.',
     },
     {
       label: 'Stories',
       value: false,
-      tooltip: 'Histórias de usuários e requisitos do sistema que detalham funcionalidades e necessidades do projeto.',
+      tooltip:
+        'Histórias de usuários e requisitos do sistema que detalham funcionalidades e necessidades do projeto.',
     },
     {
       label: 'Personas',
       value: false,
-      tooltip: 'Perfis representativos dos usuários do sistema, com expectativas, restrições e objetivos.',
+      tooltip:
+        'Perfis representativos dos usuários do sistema, com expectativas, restrições e objetivos.',
     },
     {
       label: 'Goals',
       value: false,
-      tooltip: 'Objetivos principais do projeto, indicando metas e resultados esperados.',
+      tooltip:
+        'Objetivos principais do projeto, indicando metas e resultados esperados.',
     },
     {
       label: 'Journeys',
@@ -74,7 +80,12 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
         setProject(data.project)
       }
     } catch (error) {
-      toast.error('Erro ao obter o projeto ' + projectId + ' atualizado: ' + error.message)
+      toast.error(
+        'Erro ao obter o projeto ' +
+          projectId +
+          ' atualizado: ' +
+          error.message,
+      )
     } finally {
       console.log('Projeto atualizado com sucesso!')
     }
@@ -131,7 +142,9 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
         {/* tabs para alternar entre fases do projeto */}
         <Tabs
           value={page}
-          onValueChange={(e) => router.get(route('project.show', { project: project.id, page: e }))}
+          onValueChange={(e) =>
+            router.get(route('project.show', { project: project.id, page: e }))
+          }
           className="w-full  "
         >
           <div className="flex gap-4 items-center justify-start w-full">
@@ -140,7 +153,10 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
               <TabsTrigger value="product-vision">Product Vision</TabsTrigger>
             </TabsList>
             {/* title and change title button  */}
-            <div id="project-title-content" className="flex gap-4 px-4 w-full cursor-pointer">
+            <div
+              id="project-title-content"
+              className="flex gap-4 px-4 w-full cursor-pointer"
+            >
               {isEditing ? (
                 <Input
                   type="text"
