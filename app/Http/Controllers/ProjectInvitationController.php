@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\ProjectInvitation;
 use App\Models\User;
 use App\Mail\ProjectInvitationMail;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -60,7 +61,28 @@ class ProjectInvitationController extends Controller
     return back()->with(['message' => 'Invitation sent successfully', 'status' => 'success']);
   }
 
-  public function accept(ProjectInvitation $invitation) {}
+  public function accept(ProjectInvitation $invitation)
+  {
+    //caso 1: usuário já possui uma conta
+    $user = User::where('email', $invitation->email)->first();
+    $project = $invitation->project;
+
+    if (!$user->exists()) {
+      return back()->with(['message' => 'User not found', 'status' => 'error']);
+    }
+    if ($invitation->status === 'accepted') {
+      return back()->with(['message' => 'User already accepted', 'status' => 'error']);
+    }
+    if ($invitation->status === 'declined') {
+      return back()->with(['message' => 'User already declined the invitation', 'status' => 'error']);
+    }
+    $invitation->accept();
+
+    $project->users()->attach($user->id, ['role' => $invitation->role]);
+
+    Auth::login($user);
+    return redirect()->route('project.show', ['project' => $project->id, 'page' => 'overview'])->with(['message' => 'Invitation accepted successfully', 'status' => 'success']);
+  }
 
   public function reject(ProjectInvitation $invitation) {}
 }

@@ -49,6 +49,11 @@ Route::get('/auth/{provider}/callback', function (string $provider) {
   return redirect()->intended(route('dashboard', absolute: false));
 })->name('auth.callback');
 
+//rotas para aceitar/recusar convites de projeto
+Route::get('/invitations/{invitation:token}/accept', [ProjectInvitationController::class, 'accept'])->name('invitations.accept');
+
+Route::get('/invitations/{invitation:token}/decline', [ProjectInvitationController::class, 'decline'])->name('invitations.decline');
+
 // rotas para usuários autenticados
 Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::get('/dashboard', [ProjectController::class, 'index'])->name('dashboard');
@@ -61,12 +66,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggle-active');
     Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
   });
-  //rotas para convites de projeto
+  //envia convite de projeto
   Route::post('/projects/{project}/invitations', [ProjectInvitationController::class, 'store'])->name('projects.invitations.store');
-
-  Route::get('/invitations/{invitation:token}/accept', [ProjectInvitationController::class, 'accept'])->name('invitations.accept');
-
-  Route::get('/invitations/{invitation:token}/decline', [ProjectInvitationController::class, 'decline'])->name('invitations.decline');
 
   // Rotas para stories
   Route::prefix('story')->group(function () {
