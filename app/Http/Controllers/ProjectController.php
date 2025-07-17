@@ -47,9 +47,9 @@ class ProjectController extends Controller
       'projects' => $projects,
     ]);
   }
-  public function show(string $id, string $page = 'overview')
+  public function show(Project $project, string $page = 'overview')
   {
-    $project = Project::with(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas'])->find($id);
+    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas']);
 
     return Inertia::render('projects/Project', [
       'project' => $project,
