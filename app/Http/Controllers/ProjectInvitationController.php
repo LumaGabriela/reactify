@@ -74,7 +74,7 @@ class ProjectInvitationController extends Controller
       return back()->with(['message' => 'User already accepted', 'status' => 'error']);
     }
     if ($invitation->status === 'declined') {
-      return back()->with(['message' => 'User already declined the invitation', 'status' => 'error']);
+      return back()->with(['message' => 'User declined the invitation', 'status' => 'error']);
     }
     $invitation->accept();
 
@@ -84,5 +84,10 @@ class ProjectInvitationController extends Controller
     return redirect()->route('project.show', ['project' => $project->id, 'page' => 'overview'])->with(['message' => 'Invitation accepted successfully', 'status' => 'success']);
   }
 
-  public function reject(ProjectInvitation $invitation) {}
+  public function decline(ProjectInvitation $invitation)
+  {
+    if ($invitation->status === 'declined') {
+      return back()->with(['message' => 'User declined the invitation', 'status' => 'error']);
+    }
+  }
 }
