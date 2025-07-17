@@ -30,18 +30,18 @@ class ProjectSeeder extends Seeder
       ->first();
 
     if (!$user1) {
-      $userId = DB::table("users")->insertGetId([
+      $userId1 = DB::table("users")->insertGetId([
         "name" => "Admin",
         "email" => "admin@example.com",
         "password" => Hash::make("senha123"),
-        "user_role_id" => $adminRoleId,
+        // "user_role_id" => $adminRoleId,
         "active" => true,
         "email_verified_at" => now(),
         "created_at" => now(),
         "updated_at" => now(),
       ]);
     } else {
-      $userId = $user1->id;
+      $userId1 = $user1->id;
     }
 
     // Criar Usuário katlen
@@ -50,18 +50,18 @@ class ProjectSeeder extends Seeder
       ->first();
 
     if (!$user2) {
-      $userId = DB::table("users")->insertGetId([
+      $userId2 = DB::table("users")->insertGetId([
         "name" => "Kat",
         "email" => "katlenvanessa15@gmail.com",
         "password" => Hash::make("senha123"),
-        "user_role_id" => $adminRoleId,
+        // "user_role_id" => $adminRoleId,
         "active" => true,
         "email_verified_at" => now(),
         "created_at" => now(),
         "updated_at" => now(),
       ]);
     } else {
-      $userId = $user2->id;
+      $userId2 = $user2->id;
     }
     // Criar Usuário luma
     $user3 = DB::table("users")
@@ -69,18 +69,18 @@ class ProjectSeeder extends Seeder
       ->first();
 
     if (!$user3) {
-      $userId = DB::table("users")->insertGetId([
+      $userId3 = DB::table("users")->insertGetId([
         "name" => "luma",
         "email" => "lumagabriela1333@gmail.com",
         "password" => Hash::make("senha123"),
-        "user_role_id" => $adminRoleId,
+        // "user_role_id" => $adminRoleId,
         "active" => true,
         "email_verified_at" => now(),
         "created_at" => now(),
         "updated_at" => now(),
       ]);
     } else {
-      $userId = $user3->id;
+      $userId3 = $user3->id;
     }
     // Criar Projeto
     $projectId = DB::table("projects")->insertGetId([
@@ -93,7 +93,7 @@ class ProjectSeeder extends Seeder
 
     // Vincular Usuários ao Projeto
     DB::table("user_project")->insert([
-      "user_id" => $userId,
+      "user_id" => $userId1,
       "role" => "admin",
       "project_id" => $projectId,
       "created_at" => now(),
@@ -101,7 +101,7 @@ class ProjectSeeder extends Seeder
     ]);
 
     DB::table("user_project")->insert([
-      "user_id" => $userId,
+      "user_id" => $userId2,
       "role" => "admin",
       "project_id" => $projectId,
       "created_at" => now(),

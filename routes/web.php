@@ -64,7 +64,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   //rotas para convites de projeto
   Route::post('/projects/{project}/invitations', [ProjectInvitationController::class, 'store'])->name('projects.invitations.store');
 
-  Route::get('/invitations/{invitation}/accept', [ProjectInvitationController::class, 'accept'])->name('invitations.accept');
+  Route::get('/invitations/{invitation:token}/accept', [ProjectInvitationController::class, 'accept'])->name('invitations.accept');
 
   Route::get('/invitations/{invitation:token}/decline', [ProjectInvitationController::class, 'decline'])->name('invitations.decline');
 

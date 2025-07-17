@@ -14,7 +14,9 @@ return new class extends Migration
     Schema::create("project_invitations", function (Blueprint $table) {
       $table->id();
       $table->foreignId('project_id')->constrained();
+      $table->foreignId('inviter_id')->constrained('users')->onDelete('cascade');
       $table->string('email');
+      $table->string('role');
       $table->string('token');
       $table->string('status');
       $table->timestamp('expires_at');
