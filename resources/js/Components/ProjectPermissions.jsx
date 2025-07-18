@@ -14,7 +14,13 @@ import {
 } from '@/components/ui/sheet'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import axios from 'axios'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
@@ -64,7 +70,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
         onError: (error) => {
           // console.error('Failed to update permissions:', error)
         },
-      }
+      },
     )
     setIsLoading(false)
   }
@@ -74,7 +80,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
     setIsAddingUser(true)
 
     router.post(
-      route('api.projects.permissions.addMember', projectId),
+      route('projects.invitations.store', projectId),
       {
         email: newUserEmail,
         role: newUserRole,
@@ -87,7 +93,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
         onError: (error) => {
           // toast.error('Failed to add user')
         },
-      }
+      },
     )
     setIsAddingUser(false)
     setNewUserEmail('') // Limpa o input
@@ -107,7 +113,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
         onError: (error) => {
           // toast.error('Failed to remove user')
         },
-      }
+      },
     )
     setIsLoading(false)
     // await fetchPermissions() // Recarrega a lista de usuários
@@ -115,7 +121,11 @@ export function ProjectPermissions({ projectId, ownerId }) {
 
   // Função para alterar o papel de um usuário
   const handleRoleChange = (userId, newRole) => {
-    setUsers(users.map((user) => (user.id === userId ? { ...user, role: newRole } : user)))
+    setUsers(
+      users.map((user) =>
+        user.id === userId ? { ...user, role: newRole } : user,
+      ),
+    )
   }
 
   // Efeito para buscar os dados quando o sheet for aberto
@@ -131,7 +141,9 @@ export function ProjectPermissions({ projectId, ownerId }) {
       </SheetTrigger>
       <SheetContent className="w-[370px] sm:w-[450px] md:w-[470px]">
         <SheetHeader>
-          <SheetTitle className="text-foreground">Gerenciar Permissões : {currentUserRole?.toUpperCase()}</SheetTitle>
+          <SheetTitle className="text-foreground">
+            Gerenciar Permissões : {currentUserRole?.toUpperCase()}
+          </SheetTitle>
           <SheetDescription className="text-muted-foreground">
             {canManagePermissions
               ? 'Adicione, remova ou edite o acesso dos membros a este projeto.'
@@ -146,15 +158,22 @@ export function ProjectPermissions({ projectId, ownerId }) {
               .map((user) => {
                 const isOwner = user.id == ownerId && user.role === 'admin'
                 return (
-                  <div key={user.id} className="flex w-full items-center justify-between">
+                  <div
+                    key={user.id}
+                    className="flex w-full items-center justify-between"
+                  >
                     <div className="flex flex-col">
                       <p className="font-medium text-foreground">{user.name}</p>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {user.email}
+                      </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Select
                         value={user.role}
-                        onValueChange={(newRole) => handleRoleChange(user.id, newRole)}
+                        onValueChange={(newRole) =>
+                          handleRoleChange(user.id, newRole)
+                        }
                         disabled={!canManagePermissions || isOwner}
                       >
                         <SelectTrigger className="w-[120px]">
@@ -193,7 +212,11 @@ export function ProjectPermissions({ projectId, ownerId }) {
                     onClick={handleAddUser}
                     disabled={isAddingUser || !newUserEmail}
                   >
-                    {isAddingUser ? <LoaderCircle className="!size-5 animate-spin" /> : <Plus className="!size-5" />}
+                    {isAddingUser ? (
+                      <LoaderCircle className="!size-5 animate-spin" />
+                    ) : (
+                      <Plus className="!size-5" />
+                    )}
                   </Button>
                 </div>
                 <span className="text-destructive text-xs">{errors.email}</span>
@@ -208,7 +231,10 @@ export function ProjectPermissions({ projectId, ownerId }) {
                     onChange={(e) => setNewUserEmail(e.target.value)}
                     disabled={isAddingUser}
                   />
-                  <Select value={newUserRole} onValueChange={(e) => setNewUserRole(e)}>
+                  <Select
+                    value={newUserRole}
+                    onValueChange={(e) => setNewUserRole(e)}
+                  >
                     <SelectTrigger className="max-w-[30%]">
                       <SelectValue placeholder="Role" />
                     </SelectTrigger>
@@ -228,7 +254,11 @@ export function ProjectPermissions({ projectId, ownerId }) {
                     Cancelar
                   </Button>
                 </SheetClose>
-                <Button variant="default" onClick={handleSaveChanges} disabled={isLoading || isAddingUser}>
+                <Button
+                  variant="default"
+                  onClick={handleSaveChanges}
+                  disabled={isLoading || isAddingUser}
+                >
                   {isLoading ? 'Salvando...' : 'Salvar Alterações'}
                 </Button>
               </div>
