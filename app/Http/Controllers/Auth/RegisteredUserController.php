@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserRole;
+use App\Models\ProjectInvitation;
+use App\Services\InvitationService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,15 +31,16 @@ class RegisteredUserController extends Controller
    *
    * @throws \Illuminate\Validation\ValidationException
    */
-  public function store(Request $request): RedirectResponse
+  public function store(Request $request, InvitationService $invitationService): RedirectResponse
   {
     $request->validate([
       'name' => 'required|string|max:255',
       'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
       'password' => ['required', 'confirmed', Rules\Password::defaults()],
+      'invitation_token' => 'nullable|string|exists:project_invitations,token'
     ]);
 
-    $userRole = UserRole::where('name', 'user')->firstOrFail(); // Lança ModelNotFoundException se não encontrar
+    $userRole = UserRole::where('name', 'user')->firstOrFail();
 
     $user = User::create([
       'name' => $request->name,
@@ -46,9 +49,18 @@ class RegisteredUserController extends Controller
       'user_role_id' => $userRole->id,
     ]);
 
+
     event(new Registered($user));
 
     Auth::login($user);
+
+    if ($request->invitation_token) {
+      $invitation = ProjectInvitation::where('token', $request->invitation_token)->first();
+      $result = $invitationService->acceptInvitation($invitation);
+      if ($result['status'] === 'success') {
+        return redirect()->intended(route('project.show', $result['data']['project']));
+      }
+    }
 
     return redirect()->intended(route('dashboard', absolute: false));
   }

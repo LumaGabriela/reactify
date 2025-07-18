@@ -19,6 +19,15 @@ class ProjectInvitation extends Model
   {
     $this->update(['status' => 'declined']);
   }
+  public function isExpired(): bool
+  {
+    return now()->greaterThan($this->expires_at);
+  }
+
+  public function isPending(): bool
+  {
+    return $this->status === 'pending';
+  }
 
   public function project(): BelongsTo
   {

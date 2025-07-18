@@ -10,6 +10,7 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use App\Services\InvitationService;
 
 class ProjectInvitationController extends Controller
 {
@@ -17,7 +18,8 @@ class ProjectInvitationController extends Controller
   {
 
     $validated = $request->validate([
-      'email' => 'required|email|exists:users,email',
+      // 'email' => 'required|email|exists:users,email',
+      'email' => 'required|email',
       'role' => 'required|in:member,admin,viewer'
     ]);
 
@@ -61,33 +63,30 @@ class ProjectInvitationController extends Controller
     return back()->with(['message' => 'Invitation sent successfully', 'status' => 'success']);
   }
 
-  public function accept(ProjectInvitation $invitation)
+  public function accept(ProjectInvitation $invitation, InvitationService $invitationService)
   {
-    //caso 1: usuário já possui uma conta
-    $user = User::where('email', $invitation->email)->first();
-    $project = $invitation->project;
+    $result = $invitationService->acceptInvitation($invitation);
 
-    if (!$user->exists()) {
-      return back()->with(['message' => 'User not found', 'status' => 'error']);
+    // Se a operação principal foi um sucesso...
+    if ($result['status'] === 'success') {
+      Auth::login($result['data']['user']);
+      return redirect()->route('project.show', $result['data']['project'])
+        ->with('success', $result['message']);
     }
-    if ($invitation->status === 'accepted') {
-      return back()->with(['message' => 'User already accepted', 'status' => 'error']);
-    }
-    if ($invitation->status === 'declined') {
-      return back()->with(['message' => 'User declined the invitation', 'status' => 'error']);
-    }
-    $invitation->accept();
 
-    $project->users()->attach($user->id, ['role' => $invitation->role]);
+    // Se o serviço indicou que o usuário precisa se registrar...
+    if (isset($result['redirect_to']) && $result['redirect_to'] === 'register') {
+      return redirect()->route('register', ['invitation_token' => $invitation->token])
+        ->with('info', $result['message']);
+    }
 
-    Auth::login($user);
-    return redirect()->route('project.show', ['project' => $project->id, 'page' => 'overview'])->with(['message' => 'Invitation accepted successfully', 'status' => 'success']);
+    return redirect()->route('login')->with('error', $result['message']);
   }
 
-  public function decline(ProjectInvitation $invitation)
+  public function decline(ProjectInvitation $invitation, InvitationService $invitationService)
   {
-    if ($invitation->status === 'declined') {
-      return back()->with(['message' => 'User declined the invitation', 'status' => 'error']);
-    }
+    $result = $invitationService->declineInvitation($invitation);
+
+    return redirect()->route('login')->with(['message' => $result['message'], 'status' => $result['status']]);
   }
 }
