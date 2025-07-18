@@ -304,7 +304,7 @@ const Dashboard = ({ projects = [] }) => {
         <Button
           onClick={() =>
             router.post(route('projects.invitations.store', 1), {
-              email: 'lumagabriela1333@gmail.com',
+              email: 'lumagabriela3331@gmail.com',
               role: 'admin',
             })
           }
