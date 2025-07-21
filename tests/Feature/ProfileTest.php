@@ -63,12 +63,9 @@ test('user can delete their account', function () {
     ->assertSessionHasNoErrors()
     ->assertRedirect('/');
 
-  dump($response->all());
-
   $this->assertGuest();
 
-  // dump($user->fresh());
-  // expect($user->fresh())->toBeNull();
+  $this->assertSoftDeleted($user);
 });
 
 test('correct password must be provided to delete account', function () {

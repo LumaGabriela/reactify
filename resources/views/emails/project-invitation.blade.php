@@ -14,3 +14,5 @@ Recusar Convite
 @component('mail::panel')
 <p>Se você tiver alguma dúvida ou precisar de ajuda, não hesite em nos contatar.</p>
 @endcomponent
+
+@endcomponent

@@ -23,7 +23,6 @@ import {
 } from '@/components/ui/select'
 import axios from 'axios'
 import { Separator } from '@/components/ui/separator'
-import { toast } from 'sonner'
 
 export function ProjectPermissions({ projectId, ownerId }) {
   const { auth, errors } = usePage().props

@@ -6,11 +6,11 @@ use App\Models\Project;
 use App\Models\ProjectInvitation;
 use App\Models\User;
 use App\Mail\ProjectInvitationMail;
-use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Services\InvitationService;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectInvitationController extends Controller
 {
@@ -23,7 +23,7 @@ class ProjectInvitationController extends Controller
       'role' => 'required|in:member,admin,viewer'
     ]);
 
-    $user = $request->user();
+    $user = Auth::user();
 
     $currentProject = $user->projects()->where('projects.id', $project->id)->first();
 
