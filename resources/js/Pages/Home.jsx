@@ -59,6 +59,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import MainLayout from '@/Layouts/MainLayout'
 
 const Dashboard = ({ projects = [] }) => {
   const [currentProjects, setCurrentProjects] = useState(projects)
@@ -263,6 +264,7 @@ const Dashboard = ({ projects = [] }) => {
           </Dialog>
         </div>
         {/* command */}
+
         <div className="relative w-1/2 flex flex-col justify-end">
           <Command className=" relative w-full md:min-w-[250px]">
             <CommandInput
@@ -304,6 +306,16 @@ const Dashboard = ({ projects = [] }) => {
         <p className="font-semibold text-lg mb-4 text-foreground">
           Task Overview
         </p>
+        {/* <Button
+          onClick={() => {
+            router.post(route('projects.invitations.store', 1), {
+              email: 'olimpiokbz@gmail.com',
+              role: 'member',
+            })
+          }}
+        >
+          Butao
+        </Button> */}
 
         <div className="flex space-x-2 mb-6">
           {taskFilters.map((filter, index) => (
@@ -440,11 +452,8 @@ const Dashboard = ({ projects = [] }) => {
 }
 
 const Home = ({ projects }) => {
-  return (
-    <AuthenticatedLayout>
-      <Dashboard projects={projects} />
-    </AuthenticatedLayout>
-  )
+  return <Dashboard projects={projects} />
 }
 
+Home.layout = (page) => <MainLayout children={page} />
 export default Home

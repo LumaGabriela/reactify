@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductCanvasController;
 use App\Http\Controllers\WelcomeEmailController;
 use App\Http\Controllers\ProjectPermissionController;
 use App\Http\Controllers\ProjectInvitationController;
+use App\Http\Controllers\NotificationController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
@@ -100,6 +101,14 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/', [ProductCanvasController::class, 'store'])->name('product-canvas.store');
     Route::patch('/{productCanvas}', [ProductCanvasController::class, 'update'])->name('product-canvas.update');
     Route::delete('/{productCanvas}', [ProductCanvasController::class, 'destroy'])->name('product-canvas.delete');
+  });
+
+  //pagina de notificacoes
+  Route::prefix('notifications')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/', [NotificationController::class, 'store'])->name('notifications.store');
+    Route::patch('/{notification}', [NotificationController::class, 'update'])->name('notifications.update');
+    Route::delete('/{notification}', [NotificationController::class, 'destroy'])->name('notifications.delete');
   });
 });
 

@@ -1,12 +1,11 @@
 import '../css/app.css'
 import React from 'react'
 import './bootstrap'
-import { createInertiaApp } from '@inertiajs/react'
+import { createInertiaApp, usePage } from '@inertiajs/react'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createRoot } from 'react-dom/client'
 import { configureEcho } from '@laravel/echo-react'
 import { Toaster } from '@/components/ui/sonner'
-
 configureEcho({
   broadcaster: 'reverb',
 })
@@ -21,7 +20,6 @@ createInertiaApp({
   eager: true,
   setup({ el, App, props }) {
     const root = createRoot(el)
-
     // 1. Create a function that renders our app with a given theme
     const renderAppWithTheme = (currentTheme) => {
       root.render(
