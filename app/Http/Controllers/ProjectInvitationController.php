@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\ProjectInvitation;
 use App\Models\User;
+use App\Notifications\UserInvitedToProject;
 use App\Mail\ProjectInvitationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use App\Services\InvitationService;
 use Illuminate\Support\Facades\Auth;
@@ -58,7 +60,10 @@ class ProjectInvitationController extends Controller
       'expires_at' => now()->addDays(7),
     ]);
 
+
     Mail::to($validated['email'])->send(new ProjectInvitationMail($invitation));
+    // Notification::send($users, new UserInvitedToProject($project));
+
 
     return back()->with(['message' => 'Invitation sent successfully', 'status' => 'success']);
   }

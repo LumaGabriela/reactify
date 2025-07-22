@@ -51,9 +51,8 @@ class UserInvitedToProject extends Notification
   public function toArray(object $notifiable): array
   {
     return [
-      'message' => 'You have been invited to join the project: ' . $this->project->name . '.',
+      'message' => 'You have been invited to join the project: ' . $this->project->title . '.',
       'project_id' => $this->project->id,
-      'project_name' => $this->project->name,
 
     ];
   }

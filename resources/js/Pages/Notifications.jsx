@@ -1,26 +1,51 @@
 import MainLayout from '@/Layouts/MainLayout'
 import { usePage } from '@inertiajs/react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { BellRing, Trash } from 'lucide-react'
+
 const Notifications = () => {
-  const props = usePage().props
-  const notifications = props.auth.notifications
-  console.log(notifications)
+  const { auth } = usePage().props
+  const { notifications } = auth
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-4xl font-bold mb-8">Notifications</h1>
-      <div className="flex w-full">
-        {notifications.length > 0 ? (
-          notifications.map((notification) => (
-            <div
-              key={notification.id}
-              className="flex flex-col items-center justify-center w-full"
-            >
-              <p className="text-lg font-bold">{notification.data?.message}</p>
+    <div className="container mx-auto py-10">
+      <Card className="bg-card border-border">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between gap-2 text-2xl font-bold">
+            <div className="flex items-center gap-2">
+              <BellRing className="h-6 w-6" />
+              <span>Notifications</span>
             </div>
-          ))
-        ) : (
-          <p className="text-lg text-gray-600">You have no notifications.</p>
-        )}
-      </div>
+            <Button variant="secondary" className="h-12 ">
+              Mark all as read
+              <Trash className="!size-6" />
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {notifications.length > 0 ? (
+            <div className="cursor-pointer flex flex-col gap-4">
+              {notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className="rounded-lg bg-foreground/10 p-4"
+                >
+                  <p className="font-medium text-foreground">
+                    {notification.data?.message}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-12 text-center">
+              <p className="text-lg text-muted-foreground">
+                You have no notifications.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
