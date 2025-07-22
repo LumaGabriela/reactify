@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\User;
+use App\Notifications\ProjectInvitation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class ProjectPermissionController extends Controller
 {
@@ -39,8 +40,7 @@ class ProjectPermissionController extends Controller
    */
   public function update(Request $request, Project $project)
   {
-    // Futuramente, você deve adicionar uma Policy para garantir que o usuário atual tem permissão para atualizar
-    // $this->authorize('updatePermissions', $project);
+
 
     $validated = $request->validate([
       'users' => 'required|array',
@@ -55,6 +55,10 @@ class ProjectPermissionController extends Controller
     }
 
     $project->users()->sync($syncData);
+
+    $users = User::all();
+
+    Notification::send($users, new ProjectInvitation($project));
 
     return back()->with([
       'message' => 'Permissions updated successfully.',

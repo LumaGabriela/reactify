@@ -1,5 +1,6 @@
 <?php
 
+use App\Mail\ProjectInvitationMail;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\ProjectInvitation;
@@ -24,7 +25,6 @@ test('sending project invitation', function () {
 
   $invite = ProjectInvitation::where('email', $userToInvite->email)->first();
 
-  $response->dumpSession();
   $response
     ->assertSessionHas('status', 'success')
     ->assertSessionHas('message', 'Invitation sent successfully')
@@ -35,4 +35,8 @@ test('sending project invitation', function () {
     'project_id' => $project->id,
     'role' => 'member',
   ]);
+
+  Mail::assertSent(ProjectInvitationMail::class, function ($mail) use ($userToInvite) {
+    return $mail->hasTo($userToInvite->email);
+  });
 });
