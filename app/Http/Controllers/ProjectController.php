@@ -43,17 +43,11 @@ class ProjectController extends Controller
   {
     $user = Auth::user();
 
-    $projects = $user->projects;
-
-    return Inertia::render('Home', [
-      'projects' => $projects,
-    ]);
+    return Inertia::render('Home');
   }
   public function show(Project $project, string $page = 'overview')
   {
     $user = Auth::user();
-
-    $projects = $user->projects()->select('projects.id', 'title', 'active')->get();
 
     if (!$project->users()->where('users.id', $user->id)->exists()) {
       abort(403, 'Acesso não autorizado a este projeto.');
@@ -63,7 +57,6 @@ class ProjectController extends Controller
 
     return Inertia::render('projects/Project', [
       'project' => $project,
-      'projects' => $projects,
       'page' => $page,
     ]);
   }

@@ -35,6 +35,7 @@ class HandleInertiaRequests extends Middleware
         'user' =>
         fn() => $request->user() ? $request->user()->only(['id', 'name', 'email', 'provider_avatar']) : null,
         'notifications' => fn() => $request->user() ? $request->user()->notifications()->get() : null,
+        'projects' => fn() => $request->user() ? $request->user()->projects()->select(['title', 'projects.id', 'description', 'active'])->get() : null,
       ],
       'flash' => [
         'message' => fn() => $request->session()->get('message'),

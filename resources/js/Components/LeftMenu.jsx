@@ -24,7 +24,7 @@ const LeftMenu = () => {
   const { props } = usePage()
   const user = props.auth.user
   const notifications = props.auth.notifications || []
-  const projects = props.projects || []
+  const projects = props.auth.projects || []
   const [theme, setTheme] = useState(() =>
     document.documentElement.classList.contains('dark') ? 'dark' : 'light',
   )
