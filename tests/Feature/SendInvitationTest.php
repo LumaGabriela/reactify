@@ -7,7 +7,7 @@ use App\Notifications\UserInvitedToProject;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
-test('sending project invitation notification', function () {
+test('sending REAL project invitation notification', function () {
 
   $owner = User::factory()->create();
   $userToInvite = User::factory()->create();
@@ -21,9 +21,6 @@ test('sending project invitation notification', function () {
       'email' => $userToInvite->email,
       'role' => 'member',
     ]);
-
-
-  $invite = ProjectInvitation::where('email', $userToInvite->email)->first();
 
   $response
     ->assertSessionHas('status', 'success')
@@ -43,9 +40,8 @@ test('sending project invitation notification', function () {
     ]);
 });
 
-test('sending project invitation notification ', function () {
+test('sending FAKE project invitation notification ', function () {
   Notification::fake();
-
   // 2. Crie os dados necessários para este teste específico.
   $owner = User::factory()->create();
   $userToInvite = User::factory()->create();
