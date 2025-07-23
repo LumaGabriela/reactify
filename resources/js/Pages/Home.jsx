@@ -306,16 +306,16 @@ const Dashboard = ({ projects = [] }) => {
         <p className="font-semibold text-lg mb-4 text-foreground">
           Task Overview
         </p>
-        {/* <Button
+        <Button
           onClick={() => {
             router.post(route('projects.invitations.store', 1), {
-              email: 'olimpiokbz@gmail.com',
+              email: 'lumagabriela1333@gmail.com',
               role: 'member',
             })
           }}
         >
           Butao
-        </Button> */}
+        </Button>
 
         <div className="flex space-x-2 mb-6">
           {taskFilters.map((filter, index) => (

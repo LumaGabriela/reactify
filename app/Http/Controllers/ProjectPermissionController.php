@@ -59,8 +59,6 @@ class ProjectPermissionController extends Controller
 
     $users = Auth::user();
 
-    Notification::send($users, new UserInvitedToProject($project));
-
     return back()->with([
       'message' => 'Permissions updated successfully.',
       'status' => 'success',

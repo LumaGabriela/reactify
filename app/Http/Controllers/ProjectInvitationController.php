@@ -60,10 +60,13 @@ class ProjectInvitationController extends Controller
       'expires_at' => now()->addDays(7),
     ]);
 
+    $invitedUser = User::where('email', $validated['email'])->first();
 
-    Mail::to($validated['email'])->send(new ProjectInvitationMail($invitation));
-    // Notification::send($users, new UserInvitedToProject($project));
-
+    if ($invitedUser) {
+      Notification::send($invitedUser, new UserInvitedToProject($invitation));
+    } else {
+      Mail::to($validated['email'])->send(new ProjectInvitationMail($invitation));
+    }
 
     return back()->with(['message' => 'Invitation sent successfully', 'status' => 'success']);
   }

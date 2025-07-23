@@ -3,6 +3,8 @@
 namespace App\Notifications;
 
 use App\Models\Project;
+use App\Models\ProjectInvitation;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -15,11 +17,13 @@ class UserInvitedToProject extends Notification
   /**
    * Create a new notification instance.
    */
-
-
-  public function __construct(public Project $project)
+  public Project $project;
+  public User $inviter;
+  public function __construct(public ProjectInvitation $invitation)
   {
-    $this->project = $project;
+    $this->invitation = $invitation;
+    $this->project = $invitation->project;
+    $this->inviter = $invitation->inviter;
   }
 
   /**
@@ -38,9 +42,10 @@ class UserInvitedToProject extends Notification
   public function toMail(object $notifiable): MailMessage
   {
     return (new MailMessage)
-      ->line('The introduction to the notification.')
-      ->action('Notification Action', url('/'))
-      ->line('Thank you for using our application!');
+      ->subject('You have been invited to join the project.')
+      ->markdown('emails.project-invitation', [
+        'invitation' => $this->invitation,
+      ]);
   }
 
   /**
@@ -51,8 +56,8 @@ class UserInvitedToProject extends Notification
   public function toArray(object $notifiable): array
   {
     return [
-      'message' => 'You have been invited to join the project: ' . $this->project->title . '.',
-      'project_id' => $this->project->id,
+      'message' => 'You have been invited to join the project: ' . $this->invitation->project->title . '.',
+      'project_id' => $this->invitation->project->id,
 
     ];
   }
