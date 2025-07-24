@@ -14,27 +14,21 @@ import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ProjectPermissions } from '@/Components/ProjectPermissions'
 
-const ProjectView = ({ projectDB = [], page = 'overview' }) => {
+const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const [project, setProject] = useState({ ...projectDB })
   const [isEditing, setIsEditing] = useState(false)
   const [newTitle, setNewTitle] = useState(project.title)
 
+  // Inception States
   const [activeMenu, setActiveMenu] = useState(
     () => localStorage.getItem('activeMenu') || 'All',
   )
-
   const [menuItems, setMenuItems] = useState([
     {
       label: 'All',
       value: true,
       tooltip:
-        'Visualize todos os itens do projeto, incluindo histórias, personas, objetivos e jornadas.',
-    },
-    {
-      label: 'Stories',
-      value: false,
-      tooltip:
-        'Histórias de usuários e requisitos do sistema que detalham funcionalidades e necessidades do projeto.',
+        'Visualize todos os itens do projeto, incluindo personas, objetivos e jornadas.',
     },
     {
       label: 'Personas',
@@ -56,11 +50,81 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
     },
   ])
 
+  // Story Discovery States
+  const [activeStoryDiscoveryMenu, setActiveStoryDiscoveryMenu] = useState(
+    () => localStorage.getItem('activeStoryDiscoveryMenu') || 'Stories',
+  )
+  const [storyDiscoveryMenuItems, setStoryDiscoveryMenuItems] = useState([
+    {
+      label: 'Stories',
+      value: true,
+      tooltip:
+        'Histórias de usuários e requisitos do sistema que detalham funcionalidades e necessidades do projeto.',
+    },
+    {
+      label: 'Matriz de Priorização',
+      value: false,
+      tooltip: 'Matriz para priorizar as histórias de usuário.',
+    },
+    {
+      label: 'Product Backlog',
+      value: false,
+      tooltip: 'Backlog do produto.',
+    },
+    {
+      label: 'Change Log',
+      value: false,
+      tooltip: 'Registro de mudanças.',
+    },
+  ])
+
+  // Refining States
+  const [activeRefiningMenu, setActiveRefiningMenu] = useState(
+    () => localStorage.getItem('activeRefiningMenu') || 'Epic Stories',
+  )
+  const [refiningMenuItems, setRefiningMenuItems] = useState([
+    {
+      label: 'Epic Stories',
+      value: true,
+      tooltip: 'Histórias épicas.',
+    },
+    {
+      label: 'Business Rules',
+      value: false,
+      tooltip: 'Regras de negócio.',
+    },
+    {
+      label: 'Use Scenarios',
+      value: false,
+      tooltip: 'Cenários de uso.',
+    },
+  ])
+
+  // Modeling States
+  const [activeModelingMenu, setActiveModelingMenu] = useState(
+    () => localStorage.getItem('activeModelingMenu') || 'Overall Model',
+  )
+  const [modelingMenuItems, setModelingMenuItems] = useState([
+    {
+      label: 'Overall Model',
+      value: true,
+      tooltip: 'Modelo geral.',
+    },
+    {
+      label: 'Internal and External Interfaces',
+      value: false,
+      tooltip: 'Interfaces internas e externas.',
+    },
+    {
+      label: 'Storyboards',
+      value: false,
+      tooltip: 'Storyboards.',
+    },
+  ])
+
   const updateProjectTitle = () => {
     setProject({ ...project, title: newTitle })
-
     setIsEditing(false)
-
     router.patch(route('project.update', project.id), {
       title: newTitle,
     })
@@ -74,7 +138,6 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
           'X-Requested-With': 'XMLHttpRequest',
         },
       })
-
       const data = await response.json()
       if (response.ok) {
         setProject(data.project)
@@ -91,38 +154,59 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
     }
   }
 
-  //Usa o websocket para obter o valor mais recente do projeto
+  // Websocket for project updates
   useEcho(`project.${project.id}`, 'ProjectUpdated', (e) => {
     getUpdatedProject(e.project_id)
   })
-  //Altera o menu ativo
+
+  // Effect for Inception menu
   useEffect(() => {
-    const updatedMenuItems = menuItems.map((item, i) => {
-      if (item.label === activeMenu) {
-        return {
-          ...item,
-          value: true,
-        }
-      }
-      return {
-        ...item,
-        value: false,
-      }
-    })
+    const updatedMenuItems = menuItems.map((item) => ({
+      ...item,
+      value: item.label === activeMenu,
+    }))
     setMenuItems(updatedMenuItems)
     localStorage.setItem('activeMenu', activeMenu)
   }, [activeMenu])
+
+  // Effect for Story Discovery menu
+  useEffect(() => {
+    const updatedMenuItems = storyDiscoveryMenuItems.map((item) => ({
+      ...item,
+      value: item.label === activeStoryDiscoveryMenu,
+    }))
+    setStoryDiscoveryMenuItems(updatedMenuItems)
+    localStorage.setItem('activeStoryDiscoveryMenu', activeStoryDiscoveryMenu)
+  }, [activeStoryDiscoveryMenu])
+
+  // Effect for Refining menu
+  useEffect(() => {
+    const updatedMenuItems = refiningMenuItems.map((item) => ({
+      ...item,
+      value: item.label === activeRefiningMenu,
+    }))
+    setRefiningMenuItems(updatedMenuItems)
+    localStorage.setItem('activeRefiningMenu', activeRefiningMenu)
+  }, [activeRefiningMenu])
+
+  // Effect for Modeling menu
+  useEffect(() => {
+    const updatedMenuItems = modelingMenuItems.map((item) => ({
+      ...item,
+      value: item.label === activeModelingMenu,
+    }))
+    setModelingMenuItems(updatedMenuItems)
+    localStorage.setItem('activeModelingMenu', activeModelingMenu)
+  }, [activeModelingMenu])
 
   useEffect(() => {
     // console.log(project?.goal_sketches)
   }, [project])
 
-  const renderContent = () => {
+  const renderInceptionContent = () => {
     switch (activeMenu) {
       case 'All':
         return <MainView project={project} setProject={setProject} />
-      case 'Stories':
-        return <Stories project={project} setProject={setProject} />
       case 'Personas':
         return <Personas project={project} setProject={setProject} />
       case 'Goals':
@@ -133,6 +217,84 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
         return null
     }
   }
+
+  const PrioritizationMatrix = () => (
+    <div className="w-full text-center p-4">
+      Matriz de Priorização Content
+    </div>
+  )
+
+  const ProductBacklog = () => (
+    <div className="w-full text-center p-4">Product Backlog Content</div>
+  )
+
+  const ChangeLog = () => (
+    <div className="w-full text-center p-4">Change Log Content</div>
+  )
+
+  const renderStoryDiscoveryContent = () => {
+    switch (activeStoryDiscoveryMenu) {
+      case 'Stories':
+        return <Stories project={project} setProject={setProject} />
+      case 'Matriz de Priorização':
+        return <PrioritizationMatrix />
+      case 'Product Backlog':
+        return <ProductBacklog />
+      case 'Change Log':
+        return <ChangeLog />
+      default:
+        return null
+    }
+  }
+
+  const EpicStories = () => (
+    <div className="w-full text-center p-4">Epic Stories Content</div>
+  )
+  const BusinessRules = () => (
+    <div className="w-full text-center p-4">Business Rules Content</div>
+  )
+  const UseScenarios = () => (
+    <div className="w-full text-center p-4">Use Scenarios Content</div>
+  )
+
+  const renderRefiningContent = () => {
+    switch (activeRefiningMenu) {
+      case 'Epic Stories':
+        return <EpicStories />
+      case 'Business Rules':
+        return <BusinessRules />
+      case 'Use Scenarios':
+        return <UseScenarios />
+      default:
+        return null
+    }
+  }
+
+  const OverallModel = () => (
+    <div className="w-full text-center p-4">Overall Model Content</div>
+  )
+  const Interfaces = () => (
+    <div className="w-full text-center p-4">
+      Internal and External Interfaces Content
+    </div>
+  )
+  const Storyboards = () => (
+    <div className="w-full text-center p-4">Storyboards Content</div>
+  )
+
+  const renderModelingContent = () => {
+    switch (activeModelingMenu) {
+      case 'Overall Model':
+        return <OverallModel />
+      case 'Internal and External Interfaces':
+        return <Interfaces />
+      case 'Storyboards':
+        return <Storyboards />
+      default:
+        return null
+    }
+  }
+
   return (
     <div className="project-view flex flex-col items-center justify-start px-1 w-full text-foreground">
       <div
@@ -149,8 +311,10 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
         >
           <div className="flex gap-4 items-center justify-start w-full">
             <TabsList>
-              <TabsTrigger value="overview">OverView</TabsTrigger>
-              <TabsTrigger value="product-vision">Product Vision</TabsTrigger>
+              <TabsTrigger value="inception">Inception</TabsTrigger>
+              <TabsTrigger value="story-discovery">Story Discovery</TabsTrigger>
+              <TabsTrigger value="refining">Refining</TabsTrigger>
+              <TabsTrigger value="modeling">Modeling</TabsTrigger>
             </TabsList>
             {/* title and change title button  */}
             <div
@@ -172,7 +336,7 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
                   {project.title}
                 </p>
               )}
-              {page === 'overview' && (
+              {page === 'inception' && (
                 <>
                   <button
                     onClick={() => setIsEditing(!isEditing)}
@@ -186,11 +350,31 @@ const ProjectView = ({ projectDB = [], page = 'overview' }) => {
               )}
             </div>
           </div>
-          <TabsContent value="overview">
+          <TabsContent value="inception">
             <NavMenu menuItems={menuItems} setActiveMenu={setActiveMenu} />
-            {renderContent()}
+            {renderInceptionContent()}
           </TabsContent>
-          <TabsContent value="product-vision">Product Vision.</TabsContent>
+          <TabsContent value="story-discovery">
+            <NavMenu
+              menuItems={storyDiscoveryMenuItems}
+              setActiveMenu={setActiveStoryDiscoveryMenu}
+            />
+            {renderStoryDiscoveryContent()}
+          </TabsContent>
+          <TabsContent value="refining">
+            <NavMenu
+              menuItems={refiningMenuItems}
+              setActiveMenu={setActiveRefiningMenu}
+            />
+            {renderRefiningContent()}
+          </TabsContent>
+          <TabsContent value="modeling">
+            <NavMenu
+              menuItems={modelingMenuItems}
+              setActiveMenu={setActiveModelingMenu}
+            />
+            {renderModelingContent()}
+          </TabsContent>
         </Tabs>
       </div>
     </div>

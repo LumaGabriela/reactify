@@ -196,7 +196,7 @@ const LeftMenu = () => {
                               router.get(
                                 route('project.show', {
                                   project: project.id,
-                                  page: 'overview',
+                                  page: 'inception',
                                 }),
                               )
                             }
@@ -204,12 +204,12 @@ const LeftMenu = () => {
                               'justify-start w-full text-left h-8 font-normal',
                               route().current('project.show') &&
                                 isCurrentProject &&
-                                route().params.page === 'overview'
+                                route().params.page === 'inception'
                                 ? 'text-foreground bg-primary'
                                 : 'text-muted-foreground',
                             )}
                           >
-                            Overview
+                            Inception
                           </Button>
                           <Button
                             variant="secondary"
@@ -217,7 +217,7 @@ const LeftMenu = () => {
                               router.get(
                                 route('project.show', {
                                   project: project.id,
-                                  page: 'product-vision',
+                                  page: 'story-discovery',
                                 }),
                               )
                             }
@@ -225,12 +225,12 @@ const LeftMenu = () => {
                               'justify-start w-full text-left h-8 font-normal',
                               route().current('project.show') &&
                                 isCurrentProject &&
-                                route().params.page === 'product-vision'
+                                route().params.page === 'story-discovery'
                                 ? 'text-foreground bg-primary'
                                 : 'text-muted-foreground',
                             )}
                           >
-                            Product Vision
+                            Story Discovery
                           </Button>
                           <Button
                             variant="secondary"
@@ -238,7 +238,7 @@ const LeftMenu = () => {
                               router.get(
                                 route('project.show', {
                                   project: project.id,
-                                  page: 'overall-model',
+                                  page: 'refining',
                                 }),
                               )
                             }
@@ -246,12 +246,33 @@ const LeftMenu = () => {
                               'justify-start w-full text-left h-8 font-normal',
                               route().current('project.show') &&
                                 isCurrentProject &&
-                                route().params.page === 'overall-model'
+                                route().params.page === 'refining'
                                 ? 'text-foreground bg-primary'
                                 : 'text-muted-foreground',
                             )}
                           >
-                            Overall Model
+                            Refining
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            onClick={() =>
+                              router.get(
+                                route('project.show', {
+                                  project: project.id,
+                                  page: 'modeling',
+                                }),
+                              )
+                            }
+                            className={cn(
+                              'justify-start w-full text-left h-8 font-normal',
+                              route().current('project.show') &&
+                                isCurrentProject &&
+                                route().params.page === 'modeling'
+                                ? 'text-foreground bg-primary'
+                                : 'text-muted-foreground',
+                            )}
+                          >
+                            Modeling
                           </Button>
                         </div>
                       </AccordionContent>
