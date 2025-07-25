@@ -456,4 +456,5 @@ const Home = ({ projects }) => {
 }
 
 Home.layout = (page) => <MainLayout children={page} />
+
 export default Home
