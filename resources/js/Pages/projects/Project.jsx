@@ -608,9 +608,118 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     }
   }
 
-  const OverallModel = () => (
-    <div className="w-full text-center p-4">Overall Model Content</div>
-  )
+  const OverallModel = () => {
+    const modelData = [
+      {
+        title: 'Filme',
+        attributes: [
+          'Ficha Técnica',
+          'Média de notas dos usuários',
+          'Resenhas e comentários dos usuários',
+        ],
+        relations: ['Categoria de Filme', 'Legenda'],
+      },
+      {
+        title: 'Legenda',
+        attributes: ['Idioma', 'Cor', 'Tamanho'],
+        relations: ['Filme', 'Player de Vídeo'],
+      },
+      {
+        title: 'Player de Vídeo',
+        attributes: [
+          'Controle de resolução',
+          'Controle de volume',
+          'Botão iniciar/pausar',
+          'Botão avançar vídeo',
+          'Botão retroceder vídeo',
+          'Botão tela cheia',
+        ],
+        relations: ['Filme', 'Legenda'],
+      },
+      {
+        title: 'Categoria de Filme',
+        attributes: [
+          'Gênero de filme',
+          'Ano de lançamento',
+          'Mais assistidos',
+          'Maiores notas',
+        ],
+        relations: ['Filme', 'Administrador'],
+      },
+      {
+        title: 'Usuário',
+        attributes: [
+          'Editar perfil',
+          'Seguir usuário',
+          'Fazer requisição',
+          'ID de usuário',
+          'Playlists',
+          'Resenhas',
+          'Notas',
+          'Seguidores',
+        ],
+        relations: ['Cadastro', 'Perfil de Usuário', 'Assinatura', 'Doação'],
+      },
+      {
+        title: 'Perfil de Usuário',
+        attributes: [
+          'Foto de perfil',
+          'Nome de usuário',
+          'ID usuário',
+          'Biografia do usuário',
+          'Últimos filmes assistidos',
+          'Filmes favoritos',
+          'Últimas resenhas ou comentários',
+        ],
+        relations: ['Usuário', 'Cadastro'],
+      },
+      {
+        title: 'Cadastro',
+        attributes: ['E-mail', 'Senha', 'CPF', 'Nome de usuário', 'ID de usuário'],
+        relations: ['Usuário'],
+      },
+      {
+        title: 'Assinatura',
+        attributes: ['Plano', 'Forma de Pagamento'],
+        relations: ['Usuário', 'Cadastro'],
+      },
+    ]
+
+    return (
+      <div className="p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {modelData.map((item, index) => (
+            <div
+              key={index}
+              className="bg-card border border-border rounded-lg shadow-lg flex flex-col"
+            >
+              <h3 className="text-lg font-semibold bg-muted text-foreground p-3 rounded-t-lg border-b">
+                {item.title}
+              </h3>
+              <div className="flex flex-grow">
+                <div className="w-2/3 p-3">
+                  <ul className="list-disc list-inside text-sm space-y-1">
+                    {item.attributes.map((attr, i) => (
+                      <li key={i}>{attr}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="w-1/3 bg-muted/50 p-3 border-l rounded-r-lg flex flex-col justify-center">
+                  <ul className="text-sm space-y-1">
+                    {item.relations.map((rel, i) => (
+                      <li key={i} className="font-medium">
+                        {rel}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
   const Interfaces = () => (
     <div className="w-full text-center p-4">
       Internal and External Interfaces Content
