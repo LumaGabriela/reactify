@@ -32,6 +32,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { ProjectPermissions } from '@/Components/ProjectPermissions'
 
 const ProjectView = ({ projectDB = [], page = 'inception' }) => {
@@ -758,6 +765,89 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     )
   }
   const Interfaces = () => {
+    const modelData = [
+      {
+        id: 'C01',
+        title: 'Filme',
+        attributes: [
+          'Ficha Técnica',
+          'Média de notas dos usuários',
+          'Resenhas e comentários dos usuários',
+        ],
+        relations: ['Categoria de Filme', 'Legenda'],
+      },
+      {
+        id: 'C02',
+        title: 'Legenda',
+        attributes: ['Idioma', 'Cor', 'Tamanho'],
+        relations: ['Filme', 'Player de Vídeo'],
+      },
+      {
+        id: 'C03',
+        title: 'Player de Vídeo',
+        attributes: [
+          'Controle de resolução',
+          'Controle de volume',
+          'Botão iniciar/pausar',
+          'Botão avançar vídeo',
+          'Botão retroceder vídeo',
+          'Botão tela cheia',
+        ],
+        relations: ['Filme', 'Legenda'],
+      },
+      {
+        id: 'C04',
+        title: 'Categoria de Filme',
+        attributes: [
+          'Gênero de filme',
+          'Ano de lançamento',
+          'Mais assistidos',
+          'Maiores notas',
+        ],
+        relations: ['Filme', 'Administrador'],
+      },
+      {
+        id: 'C05',
+        title: 'Usuário',
+        attributes: [
+          'Editar perfil',
+          'Seguir usuário',
+          'Fazer requisição',
+          'ID de usuário',
+          'Playlists',
+          'Resenhas',
+          'Notas',
+          'Seguidores',
+        ],
+        relations: ['Cadastro', 'Perfil de Usuário', 'Assinatura', 'Doação'],
+      },
+      {
+        id: 'C06',
+        title: 'Perfil de Usuário',
+        attributes: [
+          'Foto de perfil',
+          'Nome de usuário',
+          'ID usuário',
+          'Biografia do usuário',
+          'Últimos filmes assistidos',
+          'Filmes favoritos',
+          'Últimas resenhas ou comentários',
+        ],
+        relations: ['Usuário', 'Cadastro'],
+      },
+      {
+        id: 'C07',
+        title: 'Cadastro',
+        attributes: ['E-mail', 'Senha', 'CPF', 'Nome de usuário', 'ID de usuário'],
+        relations: ['Usuário'],
+      },
+      {
+        id: 'C08',
+        title: 'Assinatura',
+        attributes: ['Plano', 'Forma de Pagamento'],
+        relations: ['Usuário', 'Cadastro'],
+      },
+    ]
     const internalInterfaces = [
       {
         title: 'Interface de Exibição de Filmes',
@@ -790,31 +880,55 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       },
     ]
 
-    const InterfaceCard = ({ data }) => (
-      <div
-        className="border bg-card text-card-foreground rounded-lg shadow-md p-4 flex flex-col justify-between text-left"
-      >
-        <div>
-          <h4 className="font-bold text-sm mb-2">{data.title}</h4>
-          <p>
-            <span className="font-bold text-sm">Input: </span>
-            <span className="text-sm text-muted-foreground "> {data.input}</span>
-          </p>
-          <p>
-            <span className="font-bold text-sm">Output: </span>
-            <span className="text-sm text-muted-foreground "> {data.output} </span>
-          </p>
+    const InterfaceCard = ({ data }) => {
+      const relationIds = data.relations ? data.relations.split('^') : []
+      const relatedClasses = relationIds.map(id => modelData.find(item => item.id === id)).filter(Boolean);
+
+      return (
+        <div
+          className="border bg-card text-card-foreground rounded-lg shadow-md p-4 flex flex-col justify-between text-left"
+        >
+          <div>
+            <h4 className="font-bold text-sm mb-2">{data.title}</h4>
+            <p>
+              <span className="font-bold text-sm">Input: </span>
+              <span className="text-sm text-muted-foreground "> {data.input}</span>
+            </p>
+            <p>
+              <span className="font-bold text-sm">Output: </span>
+              <span className="text-sm text-muted-foreground "> {data.output} </span>
+            </p>
+          </div>
+          <div className="flex justify-between items-center mt-4">
+            <span className="border border-foreground/50 px-2 py-1 text-sm rounded">
+              {data.id}
+            </span>
+            {data.relations && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="link" className="text-sm font-semibold">{data.relations}</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Classes Relacionadas</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4">
+                    {relatedClasses.map(classData => (
+                      <div key={classData.id} className="border p-4 rounded-lg">
+                        <h4 className="font-bold">{classData.id}: {classData.title}</h4>
+                        <ul className="list-disc list-inside mt-2">
+                          {classData.attributes.map((attr, i) => <li key={i}>{attr}</li>)}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         </div>
-        <div className="flex justify-between items-center mt-4">
-          <span className="border border-foreground/50 px-2 py-1 text-sm rounded">
-            {data.id}
-          </span>
-          {data.relations && (
-            <span className="text-sm font-semibold">{data.relations}</span>
-          )}
-        </div>
-      </div>
-    )
+      )
+    }
 
     return (
       <div className="p-4">
