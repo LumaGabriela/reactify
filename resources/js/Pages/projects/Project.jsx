@@ -251,15 +251,39 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const ProductBacklog = () => {
     const initialBoard = {
       productBacklog: [
-        { id: 'PB-1', title: 'Implementar autenticação de usuário' },
-        { id: 'PB-2', title: 'Criar painel de controle do usuário' },
-        { id: 'PB-3', title: 'Desenvolver funcionalidade de upload de arquivos' },
+        {
+          id: 'US03',
+          title: 'Ordenar Livros',
+          cd: 'US02',
+        },
+        {
+          id: 'US04',
+          title: 'Leitor de Livros',
+          cd: 'US02',
+        },
+        {
+          id: 'US05',
+          title: 'Disponibilizar opções de Personalização',
+          cd: 'US04',
+        },
+        {
+          id: 'US06',
+          title: 'Comprar Livros',
+        },
       ],
       sprintBacklog: [
-        { id: 'SB-1', title: 'Refatorar componente de header' },
-        { id: 'SB-2', title: 'Corrigir bug na validação de formulário' },
+        {
+          id: 'US02',
+          title: 'Apresentar Lista de Livros Pessoais',
+          cd: 'US01',
+        },
       ],
-      delivered: [{ id: 'D-1', title: 'Configurar ambiente de desenvolvimento' }],
+      delivered: [
+        {
+          id: 'US01',
+          title: 'Upload de Livro Digital',
+        },
+      ],
     }
 
     const [board, setBoard] = useState(initialBoard)
@@ -284,9 +308,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               {board[columnId].map((card) => (
                 <div
                   key={card.id}
-                  className="bg-card p-3 rounded-md shadow-sm text-sm text-foreground"
+                  className="bg-card p-3 rounded-md shadow-sm text-foreground text-sm"
                 >
-                  {card.title}
+                  <p className="font-semibold">{card.id}</p>
+                  <p>{card.title}</p>
+                  {card.cd && <p className="text-sm text-muted-foreground">Cd: {card.cd}</p>}
                 </div>
               ))}
             </div>
@@ -772,11 +798,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
           <h4 className="font-bold text-sm mb-2">{data.title}</h4>
           <p>
             <span className="font-bold text-sm">Input: </span>
-            <span className="text-sm"> {data.input}</span>
+            <span className="text-sm text-muted-foreground "> {data.input}</span>
           </p>
           <p>
             <span className="font-bold text-sm">Output: </span>
-            <span className="text-sm"> {data.output} </span>
+            <span className="text-sm text-muted-foreground "> {data.output} </span>
           </p>
         </div>
         <div className="flex justify-between items-center mt-4">
