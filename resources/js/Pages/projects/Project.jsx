@@ -441,7 +441,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     return (
       <div className="p-4">
         <div className="bg-card border border-primary rounded-lg p-4 mb-6 shadow-lg">
-          <h3 className="text-xl font-bold text-primary mb-2">
+          <h3 className="text-sm font-bold text-primary mb-2">
             {epicStory.id}
           </h3>
           <p className="text-foreground text-sm">{epicStory.description}</p>
@@ -485,7 +485,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     return (
       <div className="p-4">
         <div className="bg-card border border-primary rounded-lg p-4 mb-6 shadow-lg">
-          <h3 className="text-xl font-bold text-primary mb-2">
+          <h3 className="text-sm font-bold text-primary mb-2">
             {businessRules.id}
           </h3>
           <p className="text-foreground text-sm">{businessRules.description}</p>
@@ -539,7 +539,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
             className="bg-card border border-border rounded-lg p-4 mb-6 shadow-lg"
           >
             <div className="bg-muted p-4 rounded-lg mb-4">
-              <p className="font-semibold text-sm text-xl font-bold text-primary">
+              <p className="font-semibold text-sm font-bold text-primary">
                 {scenarioData.id}
               </p>
               <p className="font-semibold text-sm">
@@ -611,6 +611,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const OverallModel = () => {
     const modelData = [
       {
+        id: 'C01',
         title: 'Filme',
         attributes: [
           'Ficha Técnica',
@@ -620,11 +621,13 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         relations: ['Categoria de Filme', 'Legenda'],
       },
       {
+        id: 'C02',
         title: 'Legenda',
         attributes: ['Idioma', 'Cor', 'Tamanho'],
         relations: ['Filme', 'Player de Vídeo'],
       },
       {
+        id: 'C03',
         title: 'Player de Vídeo',
         attributes: [
           'Controle de resolução',
@@ -637,6 +640,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         relations: ['Filme', 'Legenda'],
       },
       {
+        id: 'C04',
         title: 'Categoria de Filme',
         attributes: [
           'Gênero de filme',
@@ -647,6 +651,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         relations: ['Filme', 'Administrador'],
       },
       {
+        id: 'C05',
         title: 'Usuário',
         attributes: [
           'Editar perfil',
@@ -661,6 +666,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         relations: ['Cadastro', 'Perfil de Usuário', 'Assinatura', 'Doação'],
       },
       {
+        id: 'C06',
         title: 'Perfil de Usuário',
         attributes: [
           'Foto de perfil',
@@ -674,11 +680,13 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         relations: ['Usuário', 'Cadastro'],
       },
       {
+        id: 'C07',
         title: 'Cadastro',
         attributes: ['E-mail', 'Senha', 'CPF', 'Nome de usuário', 'ID de usuário'],
         relations: ['Usuário'],
       },
       {
+        id: 'C08',
         title: 'Assinatura',
         attributes: ['Plano', 'Forma de Pagamento'],
         relations: ['Usuário', 'Cadastro'],
@@ -688,14 +696,17 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     return (
       <div className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {modelData.map((item, index) => (
+          {modelData.map((item) => (
             <div
-              key={index}
+              key={item.id}
               className="bg-card border border-border rounded-lg shadow-lg flex flex-col"
             >
-              <h3 className="text-lg font-semibold bg-muted text-foreground p-3 rounded-t-lg border-b">
-                {item.title}
-              </h3>
+              <div className="flex justify-between items-center bg-muted text-foreground p-3 rounded-t-lg border-b">
+                <h3 className="text-lg font-semibold">{item.title}</h3>
+                <span className="text-sm font-bold text-muted-foreground">
+                  {item.id}
+                </span>
+              </div>
               <div className="flex flex-grow">
                 <div className="w-2/3 p-3">
                   <ul className="list-disc list-inside text-sm space-y-1">
@@ -720,11 +731,83 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       </div>
     )
   }
-  const Interfaces = () => (
-    <div className="w-full text-center p-4">
-      Internal and External Interfaces Content
-    </div>
-  )
+  const Interfaces = () => {
+    const internalInterfaces = [
+      {
+        title: 'Interface de Exibição de Filmes',
+        input: 'seleção de exibição de um filme do catálogo',
+        output: 'exibição do filme',
+        id: 'INTERFACE INTERNA 01',
+        relations: 'C01^C03',
+      },
+    ]
+
+    const externalInterfaces = [
+      {
+        title: 'Interface de Integração com Instagram',
+        input: 'permissão de acesso à conta de usuário.',
+        output:
+          'publicação de “story” no perfil do usuário, publicação de “post” no perfil do usuário.',
+        id: 'INTERFACE EXTERNA 01',
+      },
+      {
+        title: 'Interface de Integração com a Receita Federal',
+        input: 'CPF do usuário.',
+        output: 'validação do CPF, validação de dados pessoais.',
+        id: 'INTERFACE EXTERNA 02',
+      },
+      {
+        title: 'Interface de Integração com os Correios',
+        input: 'CEP do usuário.',
+        output: 'endereço do usuário.',
+        id: 'INTERFACE EXTERNA 03',
+      },
+    ]
+
+    const InterfaceCard = ({ data }) => (
+      <div
+        className="border bg-card text-card-foreground rounded-lg shadow-md p-4 flex flex-col justify-between text-left"
+      >
+        <div>
+          <h4 className="font-bold text-sm mb-2">{data.title}</h4>
+          <p>
+            <span className="font-bold text-sm">Input: </span>
+            <span className="text-sm"> {data.input}</span>
+          </p>
+          <p>
+            <span className="font-bold text-sm">Output: </span>
+            <span className="text-sm"> {data.output} </span>
+          </p>
+        </div>
+        <div className="flex justify-between items-center mt-4">
+          <span className="border border-foreground/50 px-2 py-1 text-sm rounded">
+            {data.id}
+          </span>
+          {data.relations && (
+            <span className="text-sm font-semibold">{data.relations}</span>
+          )}
+        </div>
+      </div>
+    )
+
+    return (
+      <div className="p-4">
+        <h3 className="text-2xl font-bold mb-4">Interfaces Internas</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {internalInterfaces.map((item, index) => (
+            <InterfaceCard key={index} data={item} />
+          ))}
+        </div>
+
+        <h3 className="text-2xl font-bold mb-4">Interfaces Externas</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {externalInterfaces.map((item, index) => (
+            <InterfaceCard key={index} data={item} />
+          ))}
+        </div>
+      </div>
+    )
+  }
   const Storyboards = () => (
     <div className="w-full text-center p-4">Storyboards Content</div>
   )
