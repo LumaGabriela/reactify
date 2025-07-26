@@ -382,6 +382,18 @@ const Stories = ({ project, setProject }) => {
 
   return (
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
+      <div className="col-span-2">
+        <Button
+          variant="link"
+          onClick={() =>
+            router.get(
+              route('project.show', { project: project.id, page: 'backlog' }),
+            )
+          }
+        >
+          Go to Product Backlog
+        </Button>
+      </div>
       {showAiModal && (
         <div
           className={`

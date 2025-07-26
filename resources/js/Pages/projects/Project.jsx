@@ -11,7 +11,21 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { PenLine, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { ProjectPermissions } from '@/Components/ProjectPermissions'
 
 const ProjectView = ({ projectDB = [], page = 'inception' }) => {
@@ -65,11 +79,6 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       label: 'Matriz de Priorização',
       value: false,
       tooltip: 'Matriz para priorizar as histórias de usuário.',
-    },
-    {
-      label: 'Product Backlog',
-      value: false,
-      tooltip: 'Backlog do produto.',
     },
     {
       label: 'Change Log',
@@ -176,7 +185,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       value: item.label === activeStoryDiscoveryMenu,
     }))
     setStoryDiscoveryMenuItems(updatedMenuItems)
-    localStorage.setItem('activeStoryDiscoveryMenu', activeStoryDiscoveryMenu)
+    localStorage.setItem('activeStoryDiscoveryMenu', activeStoryDiscoveryMenu) 
   }, [activeStoryDiscoveryMenu])
 
   // Effect for Refining menu
@@ -220,17 +229,177 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
 
   const PrioritizationMatrix = () => (
     <div className="w-full text-center p-4">
-      Matriz de Priorização Content
+      <Button
+        variant="link"
+        onClick={() =>
+          router.get(
+            route('project.show', { project: project.id, page: 'backlog' }),
+          )
+        }
+      >
+        Go to Product Backlog
+      </Button>
     </div>
   )
 
-  const ProductBacklog = () => (
-    <div className="w-full text-center p-4">Product Backlog Content</div>
-  )
+  const ProductBacklog = () => {
+    const initialBoard = {
+      productBacklog: [
+        { id: 'PB-1', title: 'Implementar autenticação de usuário' },
+        { id: 'PB-2', title: 'Criar painel de controle do usuário' },
+        { id: 'PB-3', title: 'Desenvolver funcionalidade de upload de arquivos' },
+      ],
+      sprintBacklog: [
+        { id: 'SB-1', title: 'Refatorar componente de header' },
+        { id: 'SB-2', title: 'Corrigir bug na validação de formulário' },
+      ],
+      delivered: [{ id: 'D-1', title: 'Configurar ambiente de desenvolvimento' }],
+    }
 
-  const ChangeLog = () => (
-    <div className="w-full text-center p-4">Change Log Content</div>
-  )
+    const [board, setBoard] = useState(initialBoard)
+
+    const columnTitles = {
+      productBacklog: 'Product Backlog',
+      sprintBacklog: 'Sprint Backlog',
+      delivered: 'Delivered',
+    }
+
+    return (
+      <div className="flex space-x-4 p-4 min-h-[500px]">
+        {Object.keys(board).map((columnId) => (
+          <div
+            key={columnId}
+            className="w-1/3 bg-muted rounded-lg p-3 flex flex-col"
+          >
+            <h2 className="text-lg font-bold mb-4 text-foreground px-1">
+              {columnTitles[columnId]}
+            </h2>
+            <div className="space-y-3">
+              {board[columnId].map((card) => (
+                <div
+                  key={card.id}
+                  className="bg-card p-3 rounded-md shadow-sm text-sm text-foreground"
+                >
+                  {card.title}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  const ChangeLog = () => {
+    const mockData = [
+      {
+        numero: 1,
+        dataSolicitacao: '2024-07-26',
+        responsavel: 'Ana',
+        descricao: 'Implementar login com Google',
+        impacto: 'US-101',
+        novas: 'US-104, US-105',
+        esforco: 5,
+      },
+      {
+        numero: 2,
+        dataSolicitacao: '2024-07-25',
+        responsavel: 'Carlos',
+        descricao: 'Criar página de perfil do usuário',
+        impacto: 'US-102',
+        novas: '',
+        esforco: 8,
+      },
+      {
+        numero: 3,
+        dataSolicitacao: '2024-07-24',
+        responsavel: 'Beatriz',
+        descricao: 'Desenvolver funcionalidade de busca',
+        impacto: 'US-103',
+        novas: 'US-106',
+        esforco: 13,
+      },
+    ]
+
+    return (
+      <div className="p-2">
+        <div className="w-full text-center p-4">
+          <Button
+            variant="link"
+            onClick={() =>
+              router.get(
+                route('project.show', { project: project.id, page: 'backlog' }),
+              )
+            }
+          >
+            Go to Product Backlog
+          </Button>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead
+                rowSpan={2}
+                className="text-center"
+              >
+                Número
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="text-center"
+              >
+                Data da Solicitação
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="text-center"
+              >
+                Responsável
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="text-center"
+              >
+                Descrição
+              </TableHead>
+              <TableHead
+                colSpan={2}
+                className="text-center"
+              >
+                User Story
+              </TableHead>
+              <TableHead
+                rowSpan={2}
+                className="text-center"
+              >
+                Esforço
+              </TableHead>
+            </TableRow>
+            <TableRow>
+              <TableHead className="text-center">Impacto</TableHead>
+              <TableHead className="text-center">Novas</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockData.map((item) => (
+              <TableRow key={item.numero}>
+                <TableCell className="text-center">{item.numero}</TableCell>
+                <TableCell className="text-center">
+                  {item.dataSolicitacao}
+                </TableCell>
+                <TableCell className="text-center">{item.responsavel}</TableCell>
+                <TableCell>{item.descricao}</TableCell>
+                <TableCell className="text-center">{item.impacto}</TableCell>
+                <TableCell className="text-center">{item.novas}</TableCell>
+                <TableCell className="text-center">{item.esforco}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+      </div>
+    )
+  }
 
   const renderStoryDiscoveryContent = () => {
     switch (activeStoryDiscoveryMenu) {
@@ -238,8 +407,6 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         return <Stories project={project} setProject={setProject} />
       case 'Matriz de Priorização':
         return <PrioritizationMatrix />
-      case 'Product Backlog':
-        return <ProductBacklog />
       case 'Change Log':
         return <ChangeLog />
       default:
@@ -247,9 +414,53 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     }
   }
 
-  const EpicStories = () => (
-    <div className="w-full text-center p-4">Epic Stories Content</div>
-  )
+  const EpicStories = () => {
+    const epicStory = {
+      id: 'US10',
+      title: 'Gerenciamento de Perfil de Usuário',
+      description:
+        'Como usuário, quero poder gerenciar meu perfil para que eu possa manter minhas informações atualizadas e personalizar minha experiência.',
+      userStories: [
+        {
+          id: 'US10.1',
+          title: 'Como usuário, quero poder editar minhas informações básicas.',
+        },
+        {
+          id: 'US10.2',
+          title: 'Como usuário, quero poder alterar minha senha.',
+        },
+        {
+          id: 'US10.3',
+          title: 'Como usuário, quero poder carregar uma foto de perfil.',
+        },
+      ],
+    }
+
+    return (
+      <div className="p-4">
+        <div className="bg-card border border-primary rounded-lg p-4 mb-6 shadow-lg">
+          <h3 className="text-xl font-bold text-primary mb-2">
+            {epicStory.id}
+          </h3>
+          <p className="text-foreground">{epicStory.description}</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {epicStory.userStories.map((story, index) => (
+            <div
+              key={story.id}
+              className="bg-muted rounded-lg p-4 border border-border"
+            >
+              <h4 className="font-semibold text-foreground mb-1 text-sm">
+                {story.id}
+              </h4>
+              <p className="text-sm text-muted-foreground">{story.title}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
   const BusinessRules = () => (
     <div className="w-full text-center p-4">Business Rules Content</div>
   )
@@ -315,6 +526,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               <TabsTrigger value="story-discovery">Story Discovery</TabsTrigger>
               <TabsTrigger value="refining">Refining</TabsTrigger>
               <TabsTrigger value="modeling">Modeling</TabsTrigger>
+              <TabsTrigger value="backlog">Product Backlog</TabsTrigger>
             </TabsList>
             {/* title and change title button  */}
             <div
@@ -374,6 +586,9 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               setActiveMenu={setActiveModelingMenu}
             />
             {renderModelingContent()}
+          </TabsContent>
+          <TabsContent value="backlog">
+            <ProductBacklog />
           </TabsContent>
         </Tabs>
       </div>

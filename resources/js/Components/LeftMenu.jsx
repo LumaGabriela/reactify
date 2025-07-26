@@ -274,6 +274,27 @@ const LeftMenu = () => {
                           >
                             Modeling
                           </Button>
+                          <Button
+                            variant="secondary"
+                            onClick={() =>
+                              router.get(
+                                route('project.show', {
+                                  project: project.id,
+                                  page: 'backlog',
+                                }),
+                              )
+                            }
+                            className={cn(
+                              'justify-start w-full text-left h-8 font-normal',
+                              route().current('project.show') &&
+                                isCurrentProject &&
+                                route().params.page === 'backlog'
+                                ? 'text-foreground bg-primary'
+                                : 'text-muted-foreground',
+                            )}
+                          >
+                            Product Backlog
+                          </Button>
                         </div>
                       </AccordionContent>
                     </AccordionItem>
