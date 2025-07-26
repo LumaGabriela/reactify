@@ -44,17 +44,7 @@ const Login = ({ status, canResetPassword }) => {
               Log in com Google
             </a>
           </Button>
-          <Button
-            className="w-full"
-            onClick={() =>
-              router.post(route('welcome-email.store'), {
-                email: 'lumagabriela3331@gmail.com',
-                name: 'Luma Gabriela',
-              })
-            }
-          >
-            Enviar e-mail
-          </Button>
+
           <div className="flex items-center justify-between w-full">
             <Separator className="w-[45%]" />
             <p className="flex items-center justify-center">or</p>
