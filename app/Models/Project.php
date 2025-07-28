@@ -59,4 +59,9 @@ class Project extends Model
   {
     return $this->belongsToMany(User::class, 'user_project')->withPivot('role')->withTimestamps();
   }
+
+  public function overallModel()
+  {
+    return $this->hasOne(OverallModel::class);
+  }
 }
