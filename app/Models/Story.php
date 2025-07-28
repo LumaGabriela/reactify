@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StoryBacklogStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,11 +14,22 @@ class Story extends Model
     'id',
     'title',
     'type',
-    'project_id'
+    'project_id',
+    'sprint_id',
+    'backlog_status',
+  ];
+
+  protected $casts = [
+      'backlog_status' => StoryBacklogStatus::class,
   ];
 
   public function project()
   {
     return $this->belongsTo(Project::class);
+  }
+
+  public function sprint()
+  {
+      return $this->belongsTo(Sprint::class);
   }
 }
