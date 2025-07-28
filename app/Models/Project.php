@@ -69,4 +69,9 @@ class Project extends Model
   {
       return $this->hasMany(Sprint::class);
   }
+
+  public function changeRequests()
+  {
+      return $this->hasMany(ChangeRequest::class);
+  }
 }

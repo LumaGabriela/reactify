@@ -32,4 +32,11 @@ class Story extends Model
   {
       return $this->belongsTo(Sprint::class);
   }
+
+  public function changeRequests()
+  {
+      return $this->belongsToMany(ChangeRequest::class, 'change_request_story')
+          ->withPivot('impact_type')
+          ->withTimestamps();
+  }
 }
