@@ -12,12 +12,7 @@ import { PenLine, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Table,
   TableBody,
@@ -198,7 +193,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       value: item.label === activeStoryDiscoveryMenu,
     }))
     setStoryDiscoveryMenuItems(updatedMenuItems)
-    localStorage.setItem('activeStoryDiscoveryMenu', activeStoryDiscoveryMenu) 
+    localStorage.setItem('activeStoryDiscoveryMenu', activeStoryDiscoveryMenu)
   }, [activeStoryDiscoveryMenu])
 
   // Effect for Refining menu
@@ -319,7 +314,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
                 >
                   <p className="font-semibold">{card.id}</p>
                   <p>{card.title}</p>
-                  {card.cd && <p className="text-sm text-muted-foreground">Cd: {card.cd}</p>}
+                  {card.cd && (
+                    <p className="text-sm text-muted-foreground">
+                      Cd: {card.cd}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
@@ -377,40 +376,22 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead
-                rowSpan={2}
-                className="text-center"
-              >
+              <TableHead rowSpan={2} className="text-center">
                 Número
               </TableHead>
-              <TableHead
-                rowSpan={2}
-                className="text-center"
-              >
+              <TableHead rowSpan={2} className="text-center">
                 Data da Solicitação
               </TableHead>
-              <TableHead
-                rowSpan={2}
-                className="text-center"
-              >
+              <TableHead rowSpan={2} className="text-center">
                 Responsável
               </TableHead>
-              <TableHead
-                rowSpan={2}
-                className="text-center"
-              >
+              <TableHead rowSpan={2} className="text-center">
                 Descrição
               </TableHead>
-              <TableHead
-                colSpan={2}
-                className="text-center"
-              >
+              <TableHead colSpan={2} className="text-center">
                 User Story
               </TableHead>
-              <TableHead
-                rowSpan={2}
-                className="text-center"
-              >
+              <TableHead rowSpan={2} className="text-center">
                 Esforço
               </TableHead>
             </TableRow>
@@ -426,7 +407,9 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
                 <TableCell className="text-center">
                   {item.dataSolicitacao}
                 </TableCell>
-                <TableCell className="text-center">{item.responsavel}</TableCell>
+                <TableCell className="text-center">
+                  {item.responsavel}
+                </TableCell>
                 <TableCell>{item.descricao}</TableCell>
                 <TableCell className="text-center">{item.impacto}</TableCell>
                 <TableCell className="text-center">{item.novas}</TableCell>
@@ -435,7 +418,6 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
             ))}
           </TableBody>
         </Table>
-
       </div>
     )
   }
@@ -462,12 +444,14 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       userStories: [
         {
           id: 'US10.1',
-          title: 'Eu como Leon Cardoso. quero uma seção no painel de controle administrativo que gere gráficos ou tabelas com os dados do fluxo de visitas à plataforma para consultar o fluxo de visitas à plataforma.',
+          title:
+            'Eu como Leon Cardoso. quero uma seção no painel de controle administrativo que gere gráficos ou tabelas com os dados do fluxo de visitas à plataforma para consultar o fluxo de visitas à plataforma.',
         },
         {
           id: 'US10.2',
-          title: 'Eu como Leon Cardoso quero uma seção no painel de controle administrativo que exibe o número de acessos totais e uma média aritmética de acessos diários para consultar o fluxo de visitas à plataforma.',
-        }
+          title:
+            'Eu como Leon Cardoso quero uma seção no painel de controle administrativo que exibe o número de acessos totais e uma média aritmética de acessos diários para consultar o fluxo de visitas à plataforma.',
+        },
       ],
     }
 
@@ -499,19 +483,20 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const BusinessRules = () => {
     const businessRules = {
       id: 'US10',
-      description:
-        'Esta é uma User Story',
+      description: 'Esta é uma User Story',
       userStories: [
         {
           id_rn: 'RN01',
-          title: 'Esta é uma regra de negócio identificada através da User Story US10.',
-          id_us: 'US10'
+          title:
+            'Esta é uma regra de negócio identificada através da User Story US10.',
+          id_us: 'US10',
         },
         {
           id_rn: 'RN02',
-          title: 'Esta é outra regra de negócio identificada através da User Story US10',
-          id_us: 'US10'
-        }
+          title:
+            'Esta é outra regra de negócio identificada através da User Story US10',
+          id_us: 'US10',
+        },
       ],
     }
 
@@ -535,7 +520,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               </h4>
               <p className="text-sm text-muted-foreground">{story.title}</p>
               <br></br>
-               <h4 className="font-semibold text-foreground mb-1 text-sm">
+              <h4 className="font-semibold text-foreground mb-1 text-sm">
                 {story.id_us}
               </h4>
             </div>
@@ -575,9 +560,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               <p className="font-semibold text-sm font-bold text-primary">
                 {scenarioData.id}
               </p>
-              <p className="font-semibold text-sm">
-                {scenarioData.userStory}
-              </p>
+              <p className="font-semibold text-sm">{scenarioData.userStory}</p>
             </div>
 
             <Accordion
@@ -715,7 +698,13 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       {
         id: 'C07',
         title: 'Cadastro',
-        attributes: ['E-mail', 'Senha', 'CPF', 'Nome de usuário', 'ID de usuário'],
+        attributes: [
+          'E-mail',
+          'Senha',
+          'CPF',
+          'Nome de usuário',
+          'ID de usuário',
+        ],
         relations: ['Usuário'],
       },
       {
@@ -732,13 +721,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
           {modelData.map((item) => (
             <div
               key={item.id}
-              className="bg-card border border-border rounded-lg shadow-lg flex flex-col"
+              className="bg-card border border-border rounded-lg shadow-lg flex flex-col text-muted-foreground"
             >
-              <div className="flex justify-between items-center bg-muted text-foreground p-3 rounded-t-lg border-b">
+              <div className="flex justify-between items-center text-foreground bg-muted p-3 rounded-t-lg border-border border-b">
                 <h3 className="text-lg font-semibold">{item.title}</h3>
-                <span className="text-sm font-bold text-muted-foreground">
-                  {item.id}
-                </span>
+                <span className="text-sm font-bold ">{item.id}</span>
               </div>
               <div className="flex flex-grow">
                 <div className="w-2/3 p-3">
@@ -748,7 +735,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
                     ))}
                   </ul>
                 </div>
-                <div className="w-1/3 bg-muted/50 p-3 border-l rounded-r-lg flex flex-col justify-center">
+                <div className="w-1/3 bg-muted/50 p-3 border-l border-border rounded-r-lg flex flex-col justify-center">
                   <ul className="text-sm space-y-1">
                     {item.relations.map((rel, i) => (
                       <li key={i} className="font-medium">
@@ -838,7 +825,13 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       {
         id: 'C07',
         title: 'Cadastro',
-        attributes: ['E-mail', 'Senha', 'CPF', 'Nome de usuário', 'ID de usuário'],
+        attributes: [
+          'E-mail',
+          'Senha',
+          'CPF',
+          'Nome de usuário',
+          'ID de usuário',
+        ],
         relations: ['Usuário'],
       },
       {
@@ -854,7 +847,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         input: 'seleção de exibição de um filme do catálogo',
         output: 'exibição do filme',
         id: 'INTERFACE INTERNA 01',
-        relations: 'C01^C03',
+        relations: 'C01-C03',
       },
     ]
 
@@ -881,43 +874,55 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     ]
 
     const InterfaceCard = ({ data }) => {
-      const relationIds = data.relations ? data.relations.split('^') : []
-      const relatedClasses = relationIds.map(id => modelData.find(item => item.id === id)).filter(Boolean);
+      const relationIds = data.relations ? data.relations.split('-') : []
+      const relatedClasses = relationIds
+        .map((id) => modelData.find((item) => item.id === id))
+        .filter(Boolean)
 
       return (
-        <div
-          className="border bg-card text-card-foreground rounded-lg shadow-md p-4 flex flex-col justify-between text-left"
-        >
+        <div className="border border-border bg-card text-card-foreground rounded-lg shadow-md p-4 flex flex-col justify-between text-left">
           <div>
             <h4 className="font-bold text-sm mb-2">{data.title}</h4>
             <p>
               <span className="font-bold text-sm">Input: </span>
-              <span className="text-sm text-muted-foreground "> {data.input}</span>
+              <span className="text-sm text-muted-foreground ">
+                {' '}
+                {data.input}
+              </span>
             </p>
             <p>
               <span className="font-bold text-sm">Output: </span>
-              <span className="text-sm text-muted-foreground "> {data.output} </span>
+              <span className="text-sm text-muted-foreground ">
+                {' '}
+                {data.output}{' '}
+              </span>
             </p>
           </div>
           <div className="flex justify-between items-center mt-4">
-            <span className="border border-foreground/50 px-2 py-1 text-sm rounded">
+            <Button variant="secondary" className="">
               {data.id}
-            </span>
+            </Button>
             {data.relations && (
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="link" className="text-sm font-semibold">{data.relations}</Button>
+                  <Button variant="outline" className="text-sm font-semibold">
+                    {data.relations}
+                  </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Classes Relacionadas</DialogTitle>
                   </DialogHeader>
                   <div className="grid gap-4">
-                    {relatedClasses.map(classData => (
+                    {relatedClasses.map((classData) => (
                       <div key={classData.id} className="border p-4 rounded-lg">
-                        <h4 className="font-bold">{classData.id}: {classData.title}</h4>
+                        <h4 className="font-bold">
+                          {classData.id}: {classData.title}
+                        </h4>
                         <ul className="list-disc list-inside mt-2">
-                          {classData.attributes.map((attr, i) => <li key={i}>{attr}</li>)}
+                          {classData.attributes.map((attr, i) => (
+                            <li key={i}>{attr}</li>
+                          ))}
                         </ul>
                       </div>
                     ))}
