@@ -1,11 +1,14 @@
 import { Head, Link } from '@inertiajs/react'
 import { route } from 'ziggy-js'
+import { Particles } from '@/components/magicui/particles'
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
   return (
     <>
       <Head title="Welcome to Reactify" />
+
       <div className="min-h-screen bg-background text-foreground">
+        <Particles className="absolute inset-0 w-full h-full" />
         <div className="relative flex min-h-screen flex-col items-center justify-center selection:bg-primary/20">
           {/* Header */}
           <header className="absolute top-0 w-full px-6 py-6 flex justify-between items-center">
@@ -40,11 +43,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
           {/* Hero Section */}
           <div className="flex flex-col items-center text-center py-32 px-6">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              Gerencie seus Projetos com <span className="text-primary">Reactify</span>
+              Gerencie seus Projetos com{' '}
+              <span className="text-primary">Reactify</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-3xl">
-              Accelerate your React development with our powerful toolkit. Create, manage, and deploy React applications
-              faster than ever before.
+              Accelerate your React development with our powerful toolkit.
+              Create, manage, and deploy React applications faster than ever
+              before.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-16">
               <Link
@@ -71,11 +76,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 },
                 {
                   title: 'Real-Time Updates',
-                  description: 'Get instant updates and live reloading during development for faster iteration.',
+                  description:
+                    'Get instant updates and live reloading during development for faster iteration.',
                 },
                 {
                   title: 'Cloud Deployment',
-                  description: 'Deploy your applications to the cloud with one click and scale effortlessly.',
+                  description:
+                    'Deploy your applications to the cloud with one click and scale effortlessly.',
                 },
               ].map((feature) => (
                 <div
@@ -83,7 +90,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                   className="bg-card text-card-foreground backdrop-blur-lg p-6 rounded-xl border border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 shadow-sm hover:shadow-md"
                 >
                   <div className="text-primary text-2xl mb-4">✨</div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                  <h3 className="text-xl font-semibold mb-2">
+                    {feature.title}
+                  </h3>
                   <p className="text-muted-foreground">{feature.description}</p>
                 </div>
               ))}

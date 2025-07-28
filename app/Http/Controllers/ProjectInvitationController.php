@@ -6,9 +6,7 @@ use App\Models\Project;
 use App\Models\ProjectInvitation;
 use App\Models\User;
 use App\Notifications\UserInvitedToProject;
-use App\Mail\ProjectInvitationMail;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use App\Services\InvitationService;
@@ -20,7 +18,6 @@ class ProjectInvitationController extends Controller
   {
 
     $validated = $request->validate([
-      // 'email' => 'required|email|exists:users,email',
       'email' => 'required|email',
       'role' => 'required|in:member,admin,viewer'
     ]);
@@ -65,7 +62,7 @@ class ProjectInvitationController extends Controller
     if ($invitedUser) {
       Notification::send($invitedUser, new UserInvitedToProject($invitation));
     } else {
-      Mail::to($validated['email'])->send(new ProjectInvitationMail($invitation));
+      Notification::route('mail', $validated['email'])->notify(new UserInvitedToProject($invitation));
     }
 
     return back()->with(['message' => 'Invitation sent successfully', 'status' => 'success']);

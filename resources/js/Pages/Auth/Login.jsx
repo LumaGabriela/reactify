@@ -5,11 +5,11 @@ import PrimaryButton from '@/Components/PrimaryButton'
 import TextInput from '@/Components/TextInput'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import GuestLayout from '@/Layouts/GuestLayout'
+import MainLayout from '@/Layouts/MainLayout'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react'
 import { Computer } from 'lucide-react'
 
-export default function Login({ status, canResetPassword }) {
+const Login = ({ status, canResetPassword }) => {
   const { data, setData, post, processing, errors, reset } = useForm({
     email: '',
     password: '',
@@ -22,9 +22,8 @@ export default function Login({ status, canResetPassword }) {
       onFinish: () => reset('password'),
     })
   }
-  console.log(usePage().props)
   return (
-    <GuestLayout>
+    <>
       <Head title="Log in" />
       <div className="bg-card border border-border p-8 rounded-xl w-full max-w-md shadow-lg">
         {status && (
@@ -35,39 +34,25 @@ export default function Login({ status, canResetPassword }) {
         <div className="mb-6 text-center flex flex-col gap-4">
           <Button className="w-full">
             <Computer />
-            <a
-              disabled={processing}
-              href={'/auth/github/redirect'}
-            >
+            <a disabled={processing} href={'/auth/github/redirect'}>
               Log in com GitHub
             </a>
           </Button>
           <Button className="w-full">
             <Computer />
-            <a
-              disabled={processing}
-              href={'/auth/google/redirect'}
-            >
+            <a disabled={processing} href={'/auth/google/redirect'}>
               Log in com Google
             </a>
           </Button>
-          <Button
-            className="w-full"
-            onClick={() => router.post(route('welcome-email.store'), {email: 'lumagabriela3331@gmail.com', name: 'Luma Gabriela'})}
-          >
-            Enviar e-mail
-          </Button>
+
           <div className="flex items-center justify-between w-full">
-            <Separator className='w-[45%]'/>
+            <Separator className="w-[45%]" />
             <p className="flex items-center justify-center">or</p>
-            <Separator className='w-[45%]'/>
+            <Separator className="w-[45%]" />
           </div>
         </div>
 
-        <form
-          onSubmit={submit}
-          className="space-y-6"
-        >
+        <form onSubmit={submit} className="space-y-6">
           <div>
             <InputLabel
               htmlFor="email"
@@ -121,7 +106,9 @@ export default function Login({ status, canResetPassword }) {
                 onChange={(e) => setData('remember', e.target.checked)}
                 className="border-input text-primary focus:ring-primary focus:ring-offset-0 rounded"
               />
-              <span className="ml-2 text-sm text-foreground select-none">Remember me</span>
+              <span className="ml-2 text-sm text-foreground select-none">
+                Remember me
+              </span>
             </label>
           </div>
 
@@ -156,6 +143,10 @@ export default function Login({ status, canResetPassword }) {
           </p>
         </div>
       </div>
-    </GuestLayout>
+    </>
   )
 }
+
+Login.layout = (page) => <MainLayout children={page} />
+
+export default Login

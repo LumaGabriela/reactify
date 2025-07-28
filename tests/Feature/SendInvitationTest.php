@@ -2,13 +2,37 @@
 
 use App\Models\User;
 use App\Models\Project;
-use App\Models\ProjectInvitation;
 use App\Notifications\UserInvitedToProject;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
-test('sending REAL project invitation notification', function () {
+test('sending REAL project invitation notification to unregistered user', function () {
+  $owner = User::factory()->create();
+  $userToInvite = "lumagabriela3331@gmail.com";
+  $project = Project::factory()->create();
+  $project->users()->attach($owner->id, ['role' => 'admin']);
 
+  $response = $this
+    ->actingAs($owner)
+    ->from(route('dashboard'))
+    ->post(route('projects.invitations.store', $project->id), [
+      'email' => $userToInvite,
+      'role' => 'member',
+    ]);
+
+  $response
+    ->assertSessionHas('status', 'success')
+    ->assertSessionHas('message', 'Invitation sent successfully')
+    ->assertRedirect(route('dashboard'));
+
+  //testa o armazenamento do convite no banco de dados
+  $this
+    ->assertDatabaseHas('project_invitations', [
+      'email' => $userToInvite,
+      'project_id' => $project->id,
+      'role' => 'member',
+    ]);
+});
+test('sending REAL project invitation notification to registered user', function () {
   $owner = User::factory()->create();
   $userToInvite = User::factory()->create();
   $project = Project::factory()->create();
@@ -40,7 +64,7 @@ test('sending REAL project invitation notification', function () {
     ]);
 });
 
-test('sending FAKE project invitation notification ', function () {
+test('sending FAKE project invitation notification to registered user', function () {
   Notification::fake();
   // 2. Crie os dados necessários para este teste específico.
   $owner = User::factory()->create();
@@ -64,11 +88,9 @@ test('sending FAKE project invitation notification ', function () {
       $this->assertContains('database', $channels, 'o canal de banco de dados nao foi usado');
 
       $mailData = $notification->toMail($userToInvite);
-      // dump($mailData);
-
+      $this->assertEquals($mailData->markdown, 'emails.project-invitation');
       $dbData = $notification->toArray($userToInvite);
-      // dump($dbData);
-
+      $this->assertEquals($dbData['project_id'], $project->id);
       return true;
     }
   );

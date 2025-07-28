@@ -60,8 +60,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import MainLayout from '@/Layouts/MainLayout'
+import { MagicCard } from '@/components/magicui/magic-card'
 
-const Dashboard = ({ projects = [] }) => {
+const Dashboard = ({}) => {
+  const props = usePage().props
+  const projects = props.auth.projects || []
   const [currentProjects, setCurrentProjects] = useState(projects)
   const [activeFilter, setActiveFilter] = useState('Todos')
   const commandInputRef = React.useRef(null)
@@ -76,8 +79,6 @@ const Dashboard = ({ projects = [] }) => {
     day: 'numeric',
     year: 'numeric',
   }).format(today)
-
-  const props = usePage().props
 
   const [taskFilters, setTaskFilters] = useState([
     { name: 'Todos', active: true },
@@ -208,10 +209,17 @@ const Dashboard = ({ projects = [] }) => {
         <div className=" flex flex-col w-1/2">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="default" className="h-full max-h-[100px] ">
-                Criar Projeto
+              <Button variant="default" className="h-full max-h-[100px] p-0">
+                <MagicCard
+                  gradientColor=" oklch(0.5549 0.2547 282.7136)"
+                  gradientFrom=" oklch(0.5549 0.2547 282.7136)"
+                  gradientTo="oklch(0.7482 0.1235 244.7492)"
+                  className="rounded h-full w-full flex p-2 items-center justify-center bg-primary text-foreground text-2xl"
+                >
+                  Criar Projeto
+                </MagicCard>
               </Button>
-            </DialogTrigger>{' '}
+            </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <form className="space-y-4" onSubmit={createProject}>
                 <DialogHeader>
@@ -306,16 +314,6 @@ const Dashboard = ({ projects = [] }) => {
         <p className="font-semibold text-lg mb-4 text-foreground">
           Task Overview
         </p>
-        <Button
-          onClick={() => {
-            router.post(route('projects.invitations.store', 1), {
-              email: 'lumagabriela1333@gmail.com',
-              role: 'member',
-            })
-          }}
-        >
-          Butao
-        </Button>
 
         <div className="flex space-x-2 mb-6">
           {taskFilters.map((filter, index) => (
@@ -456,4 +454,5 @@ const Home = ({ projects }) => {
 }
 
 Home.layout = (page) => <MainLayout children={page} />
+
 export default Home
