@@ -74,4 +74,9 @@ class Project extends Model
   {
       return $this->hasMany(ChangeRequest::class);
   }
+
+  public function systemInterfaces()
+  {
+      return $this->hasMany(SystemInterface::class);
+  }
 }
