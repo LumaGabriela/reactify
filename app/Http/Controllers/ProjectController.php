@@ -45,7 +45,7 @@ class ProjectController extends Controller
 
     return Inertia::render('Home');
   }
-  public function show(Project $project, string $page = 'overview')
+  public function show(Project $project, string $page = 'inception')
   {
     $user = Auth::user();
 
