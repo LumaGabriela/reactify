@@ -1,4 +1,4 @@
-const OverallModel = () => {
+const OverallModel = ({ project, setProject }) => {
   const modelData = [
     {
       id: 'C01',

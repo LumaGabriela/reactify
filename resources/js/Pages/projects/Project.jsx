@@ -231,9 +231,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       case 'Stories':
         return <Stories project={project} setProject={setProject} />
       case 'Matriz de Priorização':
-        return <PrioritizationMatrix />
+        return (
+          <PrioritizationMatrix project={project} setProject={setProject} />
+        )
       case 'Change Log':
-        return <ChangeLog />
+        return <ChangeLog project={project} setProject={setProject} />
       default:
         return null
     }
@@ -242,11 +244,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const renderRefiningContent = () => {
     switch (activeRefiningMenu) {
       case 'Epic Stories':
-        return <EpicStories />
+        return <EpicStories project={project} setProject={setProject} />
       case 'Business Rules':
-        return <BusinessRules />
+        return <BusinessRules project={project} setProject={setProject} />
       case 'Use Scenarios':
-        return <UseScenarios />
+        return <UseScenarios project={project} setProject={setProject} />
       default:
         return null
     }
@@ -255,11 +257,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const renderModelingContent = () => {
     switch (activeModelingMenu) {
       case 'Overall Model':
-        return <OverallModel />
+        return <OverallModel project={project} setProject={setProject} />
       case 'Internal and External Interfaces':
-        return <Interfaces />
+        return <Interfaces project={project} setProject={setProject} />
       case 'Storyboards':
-        return <Storyboards />
+        return <Storyboards project={project} setProject={setProject} />
       default:
         return null
     }
@@ -347,7 +349,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
             {renderModelingContent()}
           </TabsContent>
           <TabsContent value="backlog">
-            <ProductBacklog />
+            <ProductBacklog project={project} setProject={setProject} />
           </TabsContent>
         </Tabs>
       </div>

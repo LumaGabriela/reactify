@@ -1,4 +1,4 @@
-const EpicStories = () => {
+const EpicStories = ({ project, setProject }) => {
   const epicStory = {
     id: 'US10',
     title: 'Gerenciamento de Perfil de Usuário',

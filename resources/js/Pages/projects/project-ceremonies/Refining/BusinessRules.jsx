@@ -1,4 +1,4 @@
-const BusinessRules = () => {
+const BusinessRules = ({ project, setProject }) => {
   const businessRules = {
     id: 'US10',
     description: 'Esta é uma User Story',

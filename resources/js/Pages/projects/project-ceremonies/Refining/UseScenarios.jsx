@@ -1,4 +1,4 @@
-const UseScenarios = () => {
+const UseScenarios = ({ project, setProject }) => {
   const scenarios = [
     {
       id: 'US14',

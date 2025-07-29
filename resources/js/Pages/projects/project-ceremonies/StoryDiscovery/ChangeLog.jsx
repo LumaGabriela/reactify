@@ -1,4 +1,4 @@
-const ChangeLog = () => {
+const ChangeLog = ({ project, setProject }) => {
   const mockData = [
     {
       numero: 1,

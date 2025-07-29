@@ -1,4 +1,4 @@
-const ProductBacklog = () => {
+const ProductBacklog = ({ project, setProject }) => {
   const initialBoard = {
     productBacklog: [
       {

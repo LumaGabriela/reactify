@@ -1,4 +1,4 @@
-const Interfaces = () => {
+const Interfaces = ({ project, setProject }) => {
   const modelData = [
     {
       id: 'C01',
