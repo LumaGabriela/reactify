@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProductCanvasController;
+use App\Http\Controllers\OverallModelController;
 use App\Http\Controllers\WelcomeEmailController;
 use App\Http\Controllers\ProjectPermissionController;
 use App\Http\Controllers\ProjectInvitationController;
@@ -78,6 +79,13 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::delete('/{story}', [StoryController::class, 'destroy'])->name('story.delete');
   });
 
+  //   Rotas para OverallModel
+  Route::prefix('overall')->group(function () {
+    Route::post('/', [OverallModelController::class, 'store'])->name('overall.store');
+    Route::patch('/{overall}', [OverallModelController::class, 'update'])->name('overall.update');
+    Route::delete('/{overall}', [OverallModelController::class, 'destroy'])->name('overall.delete');
+  });
+
   //Rotas para goals
   Route::prefix('goal')->group(function () {
     Route::post('/', [GoalController::class, 'store'])->name('goal.store');
@@ -131,7 +139,7 @@ Route::get('/', function () {
   ->middleware('guest')
   ->name('welcome');
 
-require __DIR__ . '/auth.php';
+
 
 // API routes that need session authentication
 Route::prefix('api')
@@ -150,3 +158,5 @@ Route::prefix('api')
       'api.projects.permissions.removeMember'
     );
   });
+
+require __DIR__ . '/auth.php';
