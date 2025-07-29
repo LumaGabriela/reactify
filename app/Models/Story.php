@@ -17,6 +17,7 @@ class Story extends Model
     'project_id',
     'sprint_id',
     'backlog_status',
+    'parent_id',
   ];
 
   protected $casts = [
@@ -48,5 +49,21 @@ class Story extends Model
       return $this->belongsToMany(ChangeRequest::class, 'change_request_story')
           ->withPivot('impact_type')
           ->withTimestamps();
+  }
+
+  /**
+   * Get the parent story (the epic).
+   */
+  public function parent()
+  {
+      return $this->belongsTo(Story::class, 'parent_id');
+  }
+
+  /**
+   * Get the child stories.
+   */
+  public function children()
+  {
+      return $this->hasMany(Story::class, 'parent_id');
   }
 }
