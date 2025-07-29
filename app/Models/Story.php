@@ -38,6 +38,11 @@ class Story extends Model
       return $this->hasMany(BusinessRule::class);
   }
 
+  public function usageScenarios()
+  {
+      return $this->hasMany(UsageScenario::class);
+  }
+
   public function changeRequests()
   {
       return $this->belongsToMany(ChangeRequest::class, 'change_request_story')
