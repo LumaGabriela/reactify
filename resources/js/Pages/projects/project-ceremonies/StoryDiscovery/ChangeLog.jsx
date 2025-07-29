@@ -1,3 +1,5 @@
+import { router } from '@inertiajs/react'
+
 const ChangeLog = ({ project, setProject }) => {
   const mockData = [
     {
