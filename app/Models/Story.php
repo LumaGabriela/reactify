@@ -33,6 +33,11 @@ class Story extends Model
       return $this->belongsTo(Sprint::class);
   }
 
+  public function businessRules()
+  {
+      return $this->hasMany(BusinessRule::class);
+  }
+
   public function changeRequests()
   {
       return $this->belongsToMany(ChangeRequest::class, 'change_request_story')
