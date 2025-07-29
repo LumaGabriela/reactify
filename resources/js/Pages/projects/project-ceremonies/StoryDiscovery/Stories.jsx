@@ -1,11 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Sparkles, X, Pencil, Info, Check, LoaderCircle, Trash, ChevronsUp, Minus } from 'lucide-react'
+import {
+  Plus,
+  Sparkles,
+  X,
+  Pencil,
+  Info,
+  Check,
+  LoaderCircle,
+  Trash,
+  ChevronsUp,
+  Minus,
+} from 'lucide-react'
 import { router } from '@inertiajs/react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import TextareaAutosize from 'react-textarea-autosize'
-import { Popover, PopoverArrow, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Popover,
+  PopoverArrow,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { Card, CardContent } from '@/components/ui/card'
 import axios from 'axios'
 import { toast } from 'sonner'
@@ -91,12 +107,16 @@ const StoryItem = ({
                 />
               </div>
             ) : (
-              <p className="m-0 text-sm text-foreground break-words w-full">{story.title}</p>
+              <p className="m-0 text-sm text-foreground break-words w-full">
+                {story.title}
+              </p>
             )}
           </div>
 
           <div className="flex items-center gap-1">
-            {isTemporary && <LoaderCircle className="text-primary animate-spin" />}
+            {isTemporary && (
+              <LoaderCircle className="text-primary animate-spin" />
+            )}
 
             {isEditing ? (
               <>
@@ -170,7 +190,8 @@ const Stories = ({ project, setProject }) => {
   const [showAiModal, setShowAiModal] = useState(false)
   const [isModalMinimized, setIsModalMinimized] = useState(false)
 
-  const isTemporary = (story) => typeof story.id === 'string' && story.id.startsWith('temp-')
+  const isTemporary = (story) =>
+    typeof story.id === 'string' && story.id.startsWith('temp-')
 
   const generateStories = async () => {
     setIsGenerating(true)
@@ -199,10 +220,14 @@ const Stories = ({ project, setProject }) => {
         if (errorData.status === 'warning') {
           toast.warning(errorData.message)
         } else {
-          toast.error(errorData.message || 'Ocorreu um erro desconhecido no servidor.')
+          toast.error(
+            errorData.message || 'Ocorreu um erro desconhecido no servidor.',
+          )
         }
       } else {
-        toast.error('Não foi possível conectar ao servidor. Verifique sua internet.')
+        toast.error(
+          'Não foi possível conectar ao servidor. Verifique sua internet.',
+        )
       }
     } finally {
       setIsGenerating(false)
@@ -211,18 +236,24 @@ const Stories = ({ project, setProject }) => {
 
   const toggleStorySelection = (index) => {
     setAiGeneratedStories((prev) =>
-      prev.map((story, i) => (i === index ? { ...story, selected: !story.selected } : story))
+      prev.map((story, i) =>
+        i === index ? { ...story, selected: !story.selected } : story,
+      ),
     )
   }
 
   const toggleAllStories = () => {
     const allSelected = aiGeneratedStories.every((story) => story.selected)
-    setAiGeneratedStories((prev) => prev.map((story) => ({ ...story, selected: !allSelected })))
+    setAiGeneratedStories((prev) =>
+      prev.map((story) => ({ ...story, selected: !allSelected })),
+    )
   }
 
   const confirmGeneratedStories = () => {
     const selectedStories = aiGeneratedStories.filter((story) => story.selected)
-    const remainingStories = aiGeneratedStories.filter((story) => !story.selected)
+    const remainingStories = aiGeneratedStories.filter(
+      (story) => !story.selected,
+    )
 
     if (selectedStories.length === 0) {
       toast.warning('Selecione pelo menos uma story para adicionar.')
@@ -254,7 +285,9 @@ const Stories = ({ project, setProject }) => {
         preserveState: true,
         preserveScroll: true,
         onSuccess: () => {
-          toast.success(`${selectedStories.length} storie(s) adicionada(s) com sucesso!`)
+          toast.success(
+            `${selectedStories.length} storie(s) adicionada(s) com sucesso!`,
+          )
           setAiGeneratedStories(remainingStories)
           if (remainingStories.length === 0) {
             setShowAiModal(false)
@@ -268,11 +301,13 @@ const Stories = ({ project, setProject }) => {
             const storiesToAddIds = storiesToAdd.map((s) => s.id)
             return {
               ...prevProject,
-              stories: prevProject.stories.filter((s) => !storiesToAddIds.includes(s.id)),
+              stories: prevProject.stories.filter(
+                (s) => !storiesToAddIds.includes(s.id),
+              ),
             }
           })
         },
-      }
+      },
     )
   }
 
@@ -314,7 +349,7 @@ const Stories = ({ project, setProject }) => {
         type: 'user',
         project_id: project.id,
       },
-      { preserveState: true, preserveScroll: true }
+      { preserveState: true, preserveScroll: true },
     )
   }
 
@@ -328,7 +363,7 @@ const Stories = ({ project, setProject }) => {
                 title: editValue,
                 updated_at: new Date().toISOString(),
               }
-            : s
+            : s,
         )
 
         setProject({ ...project, stories: updatedStories })
@@ -355,7 +390,7 @@ const Stories = ({ project, setProject }) => {
               type: newType,
               updated_at: new Date().toISOString(),
             }
-          : s
+          : s,
       )
 
       setProject({ ...project, stories: updatedStories })
@@ -416,7 +451,11 @@ const Stories = ({ project, setProject }) => {
                   onClick={() => setIsModalMinimized(!isModalMinimized)}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  {isModalMinimized ? <ChevronsUp size={20} /> : <Minus size={20} />}
+                  {isModalMinimized ? (
+                    <ChevronsUp size={20} />
+                  ) : (
+                    <Minus size={20} />
+                  )}
                 </Button>
                 <Button
                   onClick={cancelGeneratedStories}
@@ -431,13 +470,16 @@ const Stories = ({ project, setProject }) => {
               <>
                 <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-muted rounded-lg flex-shrink-0">
                   <span className="text-foreground font-medium">
-                    {aiGeneratedStories.filter((j) => j.selected).length} de {aiGeneratedStories.length} selecionadas
+                    {aiGeneratedStories.filter((j) => j.selected).length} de{' '}
+                    {aiGeneratedStories.length} selecionadas
                   </span>
                   <Button
                     onClick={toggleAllStories}
                     className="px-3 py-1 bg-primary hover:bg-primary/90 text-primary-foreground text-sm rounded transition-colors"
                   >
-                    {aiGeneratedStories.every((story) => story.selected) ? 'Desmarcar Todas' : 'Selecionar Todas'}
+                    {aiGeneratedStories.every((story) => story.selected)
+                      ? 'Desmarcar Todas'
+                      : 'Selecionar Todas'}
                   </Button>
                 </div>
 
@@ -461,18 +503,26 @@ const Stories = ({ project, setProject }) => {
                           />
                           <Badge
                             className={`border-none text-primary-foreground font-bold ${
-                              story.type === 'system' ? 'bg-secondary' : 'bg-primary'
+                              story.type === 'system'
+                                ? 'bg-secondary'
+                                : 'bg-primary'
                             }`}
                           >
                             {story.type === 'system' ? 'SS' : 'US'}
                           </Badge>
-                          <span className="text-sm text-foreground">{story.title}</span>
+                          <span className="text-sm text-foreground">
+                            {story.title}
+                          </span>
                           <div
                             className={`w-5 h-5 rounded-md flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
-                              story.selected ? 'bg-primary border-primary/80' : 'bg-muted-foreground border-border'
+                              story.selected
+                                ? 'bg-primary border-primary/80'
+                                : 'bg-muted-foreground border-border'
                             } `}
                           >
-                            {story.selected && <Check className="w-4 h-4 text-primary-foreground" />}
+                            {story.selected && (
+                              <Check className="w-4 h-4 text-primary-foreground" />
+                            )}
                           </div>
                         </label>
                       </div>
@@ -490,13 +540,13 @@ const Stories = ({ project, setProject }) => {
                   <Button
                     onClick={confirmGeneratedStories}
                     className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center"
-                    disabled={aiGeneratedStories.filter((j) => j.selected).length === 0}
+                    disabled={
+                      aiGeneratedStories.filter((j) => j.selected).length === 0
+                    }
                   >
-                    <Check
-                      className="mr-2"
-                      size={16}
-                    />
-                    Confirmar e Adicionar ({aiGeneratedStories.filter((j) => j.selected).length})
+                    <Check className="mr-2" size={16} />
+                    Confirmar e Adicionar (
+                    {aiGeneratedStories.filter((j) => j.selected).length})
                   </Button>
                 </div>
               </>
@@ -507,28 +557,26 @@ const Stories = ({ project, setProject }) => {
 
       <div className="flex flex-col gap-2 ">
         <Popover>
-          <PopoverTrigger
-            asChild
-            className=""
-          >
+          <PopoverTrigger asChild className="">
             <Button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
               <Badge
                 variant="outline"
                 className="bg-purple-600 border-0 text-primary-foreground"
               >
-                {project?.stories?.filter((story) => story.type === 'user').length}
+                {
+                  project?.stories?.filter((story) => story.type === 'user')
+                    .length
+                }
               </Badge>{' '}
               User Stories
-              <Info
-                className="text-muted-foreground"
-                size={18}
-              />
+              <Info className="text-muted-foreground" size={18} />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="bg-popover text-popover-foreground ">
-            As histórias de usuário focam nas necessidades dos usuários do aplicativo, como a criação de contas para
-            acessar o sistema, a gestão de playlists para organizar músicas e outras funcionalidades voltadas para a
-            experiência do usuário.
+            As histórias de usuário focam nas necessidades dos usuários do
+            aplicativo, como a criação de contas para acessar o sistema, a
+            gestão de playlists para organizar músicas e outras funcionalidades
+            voltadas para a experiência do usuário.
             <PopoverArrow className="fill-popover" />
           </PopoverContent>
         </Popover>
@@ -568,35 +616,38 @@ const Stories = ({ project, setProject }) => {
               criar get da tela de edição update e delete dos psr
             </div>
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center text-foreground">E</div>
-              <span className="ml-2 text-muted-foreground text-sm">Eduardo Rodrigues</span>
+              <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center text-foreground">
+                E
+              </div>
+              <span className="ml-2 text-muted-foreground text-sm">
+                Eduardo Rodrigues
+              </span>
             </div>
           </div>
         )}
       </div>
       <div className="flex flex-col gap-2 ">
         <Popover>
-          <PopoverTrigger
-            asChild
-            className=""
-          >
+          <PopoverTrigger asChild className="">
             <Button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
               <Badge
                 variant="outline"
                 className="bg-orange-600 border-0 text-primary-foreground"
               >
-                {project?.stories?.filter((story) => story.type === 'system').length}
+                {
+                  project?.stories?.filter((story) => story.type === 'system')
+                    .length
+                }
               </Badge>{' '}
               System Stories
-              <Info
-                className="text-muted-foreground"
-                size={18}
-              />
+              <Info className="text-muted-foreground" size={18} />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="bg-popover text-popover-foreground ">
-            As histórias de sistema abordam funcionalidades administrativas e técnicas, como o gerenciamento de usuários
-            para controle de acesso e outras tarefas que garantem o funcionamento e a manutenção do sistema.
+            As histórias de sistema abordam funcionalidades administrativas e
+            técnicas, como o gerenciamento de usuários para controle de acesso e
+            outras tarefas que garantem o funcionamento e a manutenção do
+            sistema.
             <PopoverArrow className="fill-popover" />
           </PopoverContent>
         </Popover>
@@ -629,13 +680,10 @@ const Stories = ({ project, setProject }) => {
 
       <div className="col-span-2 flex gap-2">
         <Button
-          className="flex items-center justify-center flex-1 py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors rounded shadow-md"
+          className="flex items-center justify-center flex-1 py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors shadow-md"
           onClick={addNewStory}
         >
-          <Plus
-            size={18}
-            className="mr-2"
-          />
+          <Plus size={18} className="mr-2" />
           <span>Nova story</span>
         </Button>
 
@@ -655,10 +703,7 @@ const Stories = ({ project, setProject }) => {
             </>
           ) : (
             <>
-              <Sparkles
-                size={18}
-                className="mr-2"
-              />
+              <Sparkles size={18} className="mr-2" />
               <span>Gerar com IA</span>
             </>
           )}
@@ -671,8 +716,10 @@ const Stories = ({ project, setProject }) => {
               />
             </PopoverTrigger>
             <PopoverContent className="bg-popover text-popover-foreground ">
-              Esta função utiliza IA para gerar Users Stories baseadas nos Objetivos das Personas e Journeys do Produto
-              e gerar System Stories baseadas nas Restrições do Produto e Goals do tipo Constraint(CG).
+              Esta função utiliza IA para gerar Users Stories baseadas nos
+              Objetivos das Personas e Journeys do Produto e gerar System
+              Stories baseadas nas Restrições do Produto e Goals do tipo
+              Constraint(CG).
               <PopoverArrow className="fill-popover" />
             </PopoverContent>
           </Popover>

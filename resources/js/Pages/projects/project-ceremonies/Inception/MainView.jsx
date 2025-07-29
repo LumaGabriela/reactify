@@ -15,14 +15,18 @@ import {
   X,
   Save,
 } from 'lucide-react'
-import ProgressIcon from '../../Components/ProgressIcon' // Assuming this component is adapted
+import ProgressIcon from '@/Components/ProgressIcon'
 import { format } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import TextareaAutosize from 'react-textarea-autosize'
 
 // Helper to map variants to Tailwind classes
@@ -105,7 +109,7 @@ const ExpandableCard = ({
         col === 2 ? 'col-span-2' : '',
         expanded ? 'row-span-2' : '',
         isEditing ? 'ring-2 ring-ring' : '',
-        variantClasses.split(' ')[0] // Applies the border color class
+        variantClasses.split(' ')[0], // Applies the border color class
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -118,7 +122,9 @@ const ExpandableCard = ({
               size={20}
               className={cn('mr-2 flex-shrink-0', variantClasses.split(' ')[1])} // Applies the text color class
             />
-            <h3 className="text-card-foreground font-bold text-lg m-0 truncate">{title}</h3>
+            <h3 className="text-card-foreground font-bold text-lg m-0 truncate">
+              {title}
+            </h3>
           </div>
 
           {/* Action Buttons */}
@@ -147,7 +153,7 @@ const ExpandableCard = ({
                 onClick={() => setIsEditing(true)}
                 className={cn(
                   'text-muted-foreground hover:text-foreground transition-colors',
-                  isHovered || !hasContent ? 'opacity-100' : 'opacity-0'
+                  isHovered || !hasContent ? 'opacity-100' : 'opacity-0',
                 )}
                 title="Edit content"
               >
@@ -171,7 +177,9 @@ const ExpandableCard = ({
                   className="w-full resize-none bg-background text-foreground rounded-md p-3 border border-border focus:border-primary focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
                   disabled={isSaving}
                 />
-                <div className="text-xs text-muted-foreground/80 mt-2">Ctrl+Enter to save • Esc to cancel</div>
+                <div className="text-xs text-muted-foreground/80 mt-2">
+                  Ctrl+Enter to save • Esc to cancel
+                </div>
               </div>
             ) : (
               <>
@@ -179,13 +187,14 @@ const ExpandableCard = ({
                   <div
                     className={cn(
                       'whitespace-pre-wrap break-words leading-relaxed',
-                      !expanded && needsExpansion && 'overflow-hidden'
+                      !expanded && needsExpansion && 'overflow-hidden',
                     )}
                     style={{
                       display: '-webkit-box',
                       WebkitLineClamp: !expanded && needsExpansion ? 4 : 'none',
                       WebkitBoxOrient: 'vertical',
-                      overflow: !expanded && needsExpansion ? 'hidden' : 'visible',
+                      overflow:
+                        !expanded && needsExpansion ? 'hidden' : 'visible',
                     }}
                   >
                     {content}
@@ -228,7 +237,9 @@ const ExpandableCard = ({
 }
 
 const MainView = ({ project = {}, setProject }) => {
-  const [productCanvas, setProductCanvas] = useState(project?.product_canvas || {})
+  const [productCanvas, setProductCanvas] = useState(
+    project?.product_canvas || {},
+  )
   const [date, setDate] = useState()
 
   // This function would be updated to save the new content
@@ -251,13 +262,20 @@ const MainView = ({ project = {}, setProject }) => {
               <Clock size={16} className="mr-1" />
               <span>Updated: {new Date().toLocaleDateString()}</span>
               <span className="mx-2">•</span>
-              <span className="px-3 py-1 rounded-full text-xs font-medium bg-success/20 text-success">Active</span>
+              <span className="px-3 py-1 rounded-full text-xs font-medium bg-success/20 text-success">
+                Active
+              </span>
             </div>
             <div className="text-left mt-2">
-              <div className="text-muted-foreground text-sm mb-1">Conclusion</div>
+              <div className="text-muted-foreground text-sm mb-1">
+                Conclusion
+              </div>
               <div className="flex items-center">
                 <div className="w-32 h-2 bg-muted rounded-full mr-2">
-                  <div className="h-2 bg-success rounded-full transition-all duration-500" style={{ width: '68%' }} />
+                  <div
+                    className="h-2 bg-success rounded-full transition-all duration-500"
+                    style={{ width: '68%' }}
+                  />
                 </div>
                 <span className="text-sm font-medium">68%</span>
               </div>
@@ -270,14 +288,22 @@ const MainView = ({ project = {}, setProject }) => {
               <PopoverTrigger asChild>
                 <Button
                   variant={'outline'}
-                  className={cn('w-44 justify-start text-left font-normal', !date && 'text-muted-foreground')}
+                  className={cn(
+                    'w-44 justify-start text-left font-normal',
+                    !date && 'text-muted-foreground',
+                  )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {date ? format(date, 'PPP') : <span>Set deadline</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  initialFocus
+                />
               </PopoverContent>
             </Popover>
           </div>
@@ -326,7 +352,7 @@ const MainView = ({ project = {}, setProject }) => {
           />
         </div>
       </div>
-      
+
       {/* Main Dashboard - Responsive Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <ExpandableCard
@@ -343,7 +369,9 @@ const MainView = ({ project = {}, setProject }) => {
           variant="warning"
           icon={CheckCircle}
           placeholder="How does the project solve the problems?"
-          onContentUpdate={(content) => updateProductCanvas('solutions', content)}
+          onContentUpdate={(content) =>
+            updateProductCanvas('solutions', content)
+          }
         />
         <ExpandableCard
           title="Involved Personas"
@@ -351,7 +379,9 @@ const MainView = ({ project = {}, setProject }) => {
           variant="success"
           icon={Users}
           placeholder="Who are the main users?"
-          onContentUpdate={(content) => updateProductCanvas('personas', content)}
+          onContentUpdate={(content) =>
+            updateProductCanvas('personas', content)
+          }
         />
         <ExpandableCard
           title="Restrictions"
@@ -359,7 +389,9 @@ const MainView = ({ project = {}, setProject }) => {
           variant="accent"
           icon={Slash}
           placeholder="What are the project's limitations?"
-          onContentUpdate={(content) => updateProductCanvas('restrictions', content)}
+          onContentUpdate={(content) =>
+            updateProductCanvas('restrictions', content)
+          }
         />
         <ExpandableCard
           title="Is"
@@ -367,7 +399,9 @@ const MainView = ({ project = {}, setProject }) => {
           variant="info"
           icon={Check}
           placeholder="What this product IS..."
-          onContentUpdate={(content) => updateProductCanvas('product_is', content)}
+          onContentUpdate={(content) =>
+            updateProductCanvas('product_is', content)
+          }
         />
         <ExpandableCard
           title="Is Not"
@@ -375,7 +409,9 @@ const MainView = ({ project = {}, setProject }) => {
           variant="secondary"
           icon={X}
           placeholder="What this product IS NOT..."
-          onContentUpdate={(content) => updateProductCanvas('product_is_not', content)}
+          onContentUpdate={(content) =>
+            updateProductCanvas('product_is_not', content)
+          }
         />
       </div>
     </div>
