@@ -6,6 +6,7 @@ use App\Enums\InterfaceType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class SystemInterface extends Model
 {
@@ -39,5 +40,13 @@ class SystemInterface extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    /**
+     * The CRC cards that are associated with the interface.
+     */
+    public function crcCards(): BelongsToMany
+    {
+        return $this->belongsToMany(CrcCard::class, 'crc_card_system_interface');
     }
 }

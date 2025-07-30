@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class CrcCard extends Model
 {
@@ -23,6 +24,14 @@ class CrcCard extends Model
     public function collaborators()
     {
         return $this->belongsToMany(CrcCard::class, 'crc_card_collaborator', 'crc_card_id', 'collaborator_id');
+    }
+
+    /**
+     * The system interfaces that are associated with the CRC card.
+     */
+    public function systemInterfaces(): BelongsToMany
+    {
+        return $this->belongsToMany(SystemInterface::class, 'crc_card_system_interface');
     }
 }
 
