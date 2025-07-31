@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\OverallModel;
+use App\Models\CrcCard;
 use Illuminate\Support\Facades\Log;
 
 class OverallModelController extends Controller
@@ -16,13 +16,13 @@ class OverallModelController extends Controller
       'status' => 'required|boolean'
     ]);
 
-    OverallModel::create($validated);
+    CrcCard::create($validated);
 
     Log::info('OverallModel created', $validated);
     return back();
   }
 
-  public function update(Request $request, OverallModel $model)
+  public function update(Request $request, CrcCard $model)
   {
 
     $validated = $request->validate([
@@ -38,7 +38,7 @@ class OverallModelController extends Controller
     return back();
   }
 
-  public function destroy(OverallModel $model)
+  public function destroy(CrcCard $model)
   {
     $model->delete();
 
