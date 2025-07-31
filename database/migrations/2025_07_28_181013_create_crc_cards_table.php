@@ -13,9 +13,10 @@ return new class extends Migration
   {
     Schema::create('crc_cards', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('overall_model_id')->constrained()->onDelete('cascade');
+      $table->foreignId('project_id')->constrained()->onDelete('cascade');
+      $table->string('class');
       $table->jsonb('collaborators');
-      $table->jsonb('responsibilities');
+      $table->jsonb('responsabilities');
       $table->timestamps();
     });
   }

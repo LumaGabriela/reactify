@@ -4,33 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CrcCard extends Model
 {
   use HasFactory;
 
   protected $fillable = [
-    'overall_model_id',
+    'class',
     'collaborators',
     'responsabilities',
   ];
 
-  public function overallModel()
-  {
-    return $this->belongsTo(OverallModel::class);
-  }
+  protected $casts = [
+    'collaborators' => 'array',
+    'responsabilities' => 'array',
+  ];
 
-  public function collaborators()
+  public function project(): BelongsTo
   {
-    return $this->belongsToMany(CrcCard::class, 'crc_card_collaborator', 'crc_card_id', 'collaborator_id');
-  }
-
-  /**
-   * The system interfaces that are associated with the CRC card.
-   */
-  public function systemInterfaces(): BelongsToMany
-  {
-    return $this->belongsToMany(SystemInterface::class, 'crc_card_system_interface');
+    return $this->belongsTo(Project::class);
   }
 }
