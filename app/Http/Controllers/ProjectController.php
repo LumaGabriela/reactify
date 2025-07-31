@@ -20,7 +20,7 @@ class ProjectController extends Controller
   public function getUpdatedProject(Project $project)
   {
     return response()->json([
-      'project' => $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas']),
+      'project' => $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards']),
     ]);
   }
 
@@ -53,7 +53,7 @@ class ProjectController extends Controller
       abort(403, 'Acesso não autorizado a este projeto.');
     }
 
-    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas']);
+    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards']);
 
     return Inertia::render('projects/Project', [
       'project' => $project,

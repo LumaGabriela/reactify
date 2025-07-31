@@ -60,23 +60,23 @@ class Project extends Model
     return $this->belongsToMany(User::class, 'user_project')->withPivot('role')->withTimestamps();
   }
 
-  public function overallModel()
+  public function crc_cards()
   {
-    return $this->hasOne(OverallModel::class);
+    return $this->hasMany(CrcCard::class);
   }
 
   public function sprints()
   {
-      return $this->hasMany(Sprint::class);
+    return $this->hasMany(Sprint::class);
   }
 
   public function changeRequests()
   {
-      return $this->hasMany(ChangeRequest::class);
+    return $this->hasMany(ChangeRequest::class);
   }
 
   public function systemInterfaces()
   {
-      return $this->hasMany(SystemInterface::class);
+    return $this->hasMany(SystemInterface::class);
   }
 }
