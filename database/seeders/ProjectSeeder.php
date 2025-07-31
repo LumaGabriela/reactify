@@ -135,7 +135,7 @@ class ProjectSeeder extends Seeder
       [
         "title" => "Atendimento às leis de direitos autorais e relacionadas à conteúdo em domínio público.",
         "type" => "cg",
-        "priority" => "urgent",
+        "priority" => "medium",
         "project_id" => $projectId,
         "created_at" => now(),
         "updated_at" => now(),
@@ -143,7 +143,7 @@ class ProjectSeeder extends Seeder
       [
         "title" => "Atendimento às leis de proteção do consumidor.",
         "type" => "cg",
-        "priority" => "urgent",
+        "priority" => "medium",
         "project_id" => $projectId,
         "created_at" => now(),
         "updated_at" => now(),
@@ -151,7 +151,7 @@ class ProjectSeeder extends Seeder
       [
         "title" => "Conformidade com padrões de segurança da informação.",
         "type" => "cg",
-        "priority" => "urgent",
+        "priority" => "low",
         "project_id" => $projectId,
         "created_at" => now(),
         "updated_at" => now(),
@@ -159,7 +159,7 @@ class ProjectSeeder extends Seeder
       [
         "title" => "Atendimento às leis de proteção de dados pessoais.",
         "type" => "cg",
-        "priority" => "urgent",
+        "priority" => "low",
         "project_id" => $projectId,
         "created_at" => now(),
         "updated_at" => now(),
@@ -167,7 +167,7 @@ class ProjectSeeder extends Seeder
       [
         "title" => "Assegurar que a plataforma funcione adequadamente nos navegadores web baseados no Chromium, Opera, Safari e Mozilla Firefox.",
         "type" => "cg",
-        "priority" => "urgent",
+        "priority" => "high",
         "project_id" => $projectId,
         "created_at" => now(),
         "updated_at" => now(),

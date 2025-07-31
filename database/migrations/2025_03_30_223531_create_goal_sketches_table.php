@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->id();
             $table->string(column: "title");
             $table->enum("type", ["bg", "cg"]);
-            $table->enum("priority", ["low", "med", "high", "urgent"]);
+            $table->enum("priority", ["low", "medium", "high"]);
             $table
                 ->foreignId("project_id")
                 ->constrained("projects")

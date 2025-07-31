@@ -23,7 +23,7 @@ class UpdateGoalRequest extends FormRequest
     return [
       'title' => 'nullable|string:max:255',
       'type' => 'nullable|in:cg,bg',
-      'priority' => 'nullable|in:low,medium,high,urgent',
+      'priority' => 'nullable|in:low,medium,high',
     ];
   }
 

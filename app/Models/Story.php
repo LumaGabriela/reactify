@@ -18,6 +18,8 @@ class Story extends Model
     'sprint_id',
     'backlog_status',
     'parent_id',
+    'value',
+    'complexity',
   ];
 
   protected $casts = [

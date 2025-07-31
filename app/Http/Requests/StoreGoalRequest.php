@@ -24,7 +24,7 @@ class StoreGoalRequest extends FormRequest
         return [
             'title' => 'required|string',
             'type' => 'required|in:bg,cg',
-            'priority' => 'required|in:low,med,high,urgent',
+            'priority' => 'required|in:low,medium,high',
             'project_id' => 'required|exists:projects,id'
         ];
     }

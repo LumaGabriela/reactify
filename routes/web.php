@@ -13,6 +13,7 @@ use App\Http\Controllers\WelcomeEmailController;
 use App\Http\Controllers\ProjectPermissionController;
 use App\Http\Controllers\ProjectInvitationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PrioritizationMatrixController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
@@ -62,6 +63,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::get('/dashboard', [ProjectController::class, 'index'])->name('dashboard');
   //rotas para projetos
   Route::prefix('project')->group(function () {
+    // Route for saving the state of the Prioritization Matrix for a project
+    Route::patch('/{project}/prioritization-matrix', [PrioritizationMatrixController::class, 'update']);
     Route::post('/create', [ProjectController::class, 'store'])->name('project.store');
     Route::get('/{project}/{page?}', [ProjectController::class, 'show'])->name('project.show');
     Route::patch('/{project}/members/add', [ProjectController::class, 'addNewMember'])->name('project.users.add');
