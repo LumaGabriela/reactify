@@ -16,7 +16,7 @@ import EpicStories from './project-ceremonies/Refining/EpicStories.jsx'
 import BusinessRules from './project-ceremonies/Refining/BusinessRules.jsx'
 import UseScenarios from './project-ceremonies/Refining/UseScenarios.jsx'
 //modeling
-import OverallModel from './project-ceremonies/Modeling/OverallModel.jsx'
+import OverallModel from './project-ceremonies/Modeling/OverallModel'
 import Interfaces from './project-ceremonies/Modeling/Interfaces.jsx'
 import Storyboards from './project-ceremonies/Modeling/Storyboards.jsx'
 //

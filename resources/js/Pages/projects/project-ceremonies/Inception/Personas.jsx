@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { X, Plus, Edit, Trash, UserCircle2, Check, Info } from "lucide-react"
-import { router } from "@inertiajs/react"
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { X, Plus, Edit, Trash, UserCircle2, Check, Info } from 'lucide-react'
+import { router } from '@inertiajs/react'
+import MotionDivOptions from '@/Components/MotionDivOptions'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from '@/components/ui/popover'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,9 +19,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Separator } from "@/components/ui/separator"
-import TextareaAutosize from "react-textarea-autosize"
+} from '@/components/ui/alert-dialog'
+import { Separator } from '@/components/ui/separator'
+import TextareaAutosize from 'react-textarea-autosize'
 
 const PersonaItem = ({
   item,
@@ -38,7 +36,7 @@ const PersonaItem = ({
   const [isHovered, setIsHovered] = useState(false)
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       onSave()
     }
@@ -54,7 +52,7 @@ const PersonaItem = ({
         <div className="flex flex-col w-full items-center gap-2">
           <TextareaAutosize
             ref={textareaRef}
-            value={editValue || ""}
+            value={editValue || ''}
             onChange={onValueChange}
             onKeyDown={handleKeyDown}
             className="flex-1 resize-none rounded-md border bg-input p-2 text-sm transition-colors duration-200 focus-visible:ring-1 focus-visible:ring-ring"
@@ -82,40 +80,20 @@ const PersonaItem = ({
       ) : (
         <p
           className={`text-sm text-muted-foreground pr-4 ${
-            !item ? "italic text-muted-foreground/50" : ""
+            !item ? 'italic text-muted-foreground/50' : ''
           }`}
         >
-          {item || "Clique em editar para adicionar"}
+          {item || 'Clique em editar para adicionar'}
         </p>
       )}
 
-      <AnimatePresence>
-        {isHovered && !isEditing && (
-          <motion.div
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute right-2 -translate-y-1/2 flex items-center rounded-md bg-card border shadow-lg"
-          >
-            <Button
-              variant="motiondiv"
-              size="icon"
-              onClick={onEdit}
-            >
-              <Edit className="size-4" />
-            </Button>
-            <Button
-              variant="motiondiv"
-              size="icon"
-              className="text-destructive/80 hover:text-destructive"
-              onClick={onDelete}
-            >
-              <Trash className="size-4" />
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <MotionDivOptions
+        isHovered={isHovered}
+        isEditing={isEditing}
+        // isTemporary={isTemporary}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
     </div>
   )
 }
@@ -127,21 +105,21 @@ const Personas = ({ project, setProject }) => {
     field: null,
     itemIndex: null,
   })
-  const [editValue, setEditValue] = useState("")
+  const [editValue, setEditValue] = useState('')
   const [deleteConfirmItem, setDeleteConfirmItem] = useState({
     personaId: null,
     field: null,
     itemIndex: null,
   })
   const [editingPersona, setEditingPersona] = useState(null)
-  const [editPersonaName, setEditPersonaName] = useState("")
+  const [editPersonaName, setEditPersonaName] = useState('')
   const [deleteConfirmPersona, setDeleteConfirmPersona] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const personaFieldVariants = {
-    profile: { text: "text-primary" },
-    expectations: { text: "text-blue-400" },
-    goals: { text: "text-green-400" },
+    profile: { text: 'text-primary' },
+    expectations: { text: 'text-blue-400' },
+    goals: { text: 'text-green-400' },
   }
 
   const startEditField = (personaId, field, itemIndex) => {
@@ -169,19 +147,19 @@ const Personas = ({ project, setProject }) => {
     setIsSubmitting(true)
 
     const newPersona = {
-      name: "Nova Persona",
+      name: 'Nova Persona',
       profile: [],
       expectations: [],
       goals: [],
       project_id: project.id,
     }
 
-    router.post("/persona", newPersona, {
+    router.post('/persona', newPersona, {
       preserveState: true,
       preserveScroll: true,
       onSuccess: (page) => {
         const createdPersona = page.props.project.personas.find(
-          (p) => !project.personas.find((existingP) => existingP.id === p.id)
+          (p) => !project.personas.find((existingP) => existingP.id === p.id),
         )
 
         if (createdPersona) {
@@ -193,7 +171,7 @@ const Personas = ({ project, setProject }) => {
         setIsSubmitting(false)
       },
       onError: (errors) => {
-        console.error("Erro ao criar persona:", errors)
+        console.error('Erro ao criar persona:', errors)
         setIsSubmitting(false)
       },
     })
@@ -204,7 +182,9 @@ const Personas = ({ project, setProject }) => {
     if (personaId === null || !project.personas) return
 
     const updatedPersonas = project.personas.map((persona) =>
-      persona.id === personaId ? { ...persona, name: editPersonaName } : persona
+      persona.id === personaId
+        ? { ...persona, name: editPersonaName }
+        : persona,
     )
 
     setProject({ ...project, personas: updatedPersonas })
@@ -227,7 +207,7 @@ const Personas = ({ project, setProject }) => {
     updatedArray[itemIndex] = editValue
 
     const updatedPersonas = project.personas.map((p) =>
-      p.id === personaId ? { ...p, [field]: updatedArray } : p
+      p.id === personaId ? { ...p, [field]: updatedArray } : p,
     )
 
     setProject({ ...project, personas: updatedPersonas })
@@ -252,11 +232,11 @@ const Personas = ({ project, setProject }) => {
     updatedArray.splice(itemIndex, 1)
 
     if (updatedArray.length === 0) {
-      updatedArray.push("")
+      updatedArray.push('')
     }
 
     const updatedPersonas = project.personas.map((p) =>
-      p.id === personaId ? { ...p, [field]: updatedArray } : p
+      p.id === personaId ? { ...p, [field]: updatedArray } : p,
     )
 
     setProject({ ...project, personas: updatedPersonas })
@@ -273,7 +253,7 @@ const Personas = ({ project, setProject }) => {
     if (deleteConfirmPersona === null || !project.personas) return
 
     const updatedPersonas = project.personas.filter(
-      (persona) => persona.id !== deleteConfirmPersona
+      (persona) => persona.id !== deleteConfirmPersona,
     )
 
     setDeleteConfirmPersona(null)
@@ -292,10 +272,10 @@ const Personas = ({ project, setProject }) => {
     const persona = project.personas.find((p) => p.id === personaId)
     if (!persona) return
 
-    const updatedArray = [...persona[field], ""]
+    const updatedArray = [...persona[field], '']
 
     const updatedPersonas = project.personas.map((p) =>
-      p.id === personaId ? { ...p, [field]: updatedArray } : p
+      p.id === personaId ? { ...p, [field]: updatedArray } : p,
     )
 
     setProject({ ...project, personas: updatedPersonas })
@@ -309,12 +289,12 @@ const Personas = ({ project, setProject }) => {
 
   const getFieldTitle = (field) => {
     switch (field) {
-      case "profile":
-        return "Perfil"
-      case "expectations":
-        return "Expectativas"
-      case "goals":
-        return "Objetivos"
+      case 'profile':
+        return 'Perfil'
+      case 'expectations':
+        return 'Expectativas'
+      case 'goals':
+        return 'Objetivos'
       default:
         return field
     }
@@ -349,11 +329,8 @@ const Personas = ({ project, setProject }) => {
           disabled={isSubmitting}
           className="!w-1/2 sm:w-auto bg-primary hover:bg-primary/90"
         >
-          <Plus
-            size={18}
-            className="mr-2"
-          />
-          {isSubmitting ? "Criando..." : "Nova Persona"}
+          <Plus size={18} className="mr-2" />
+          {isSubmitting ? 'Criando...' : 'Nova Persona'}
         </Button>
       </div>
 
@@ -374,7 +351,7 @@ const Personas = ({ project, setProject }) => {
                       value={editPersonaName}
                       onChange={(e) => setEditPersonaName(e.target.value)}
                       onKeyUp={(e) => {
-                        if (e.key === "Enter") saveEditPersona()
+                        if (e.key === 'Enter') saveEditPersona()
                       }}
                       className="text-xl font-bold"
                       autoFocus
@@ -413,7 +390,7 @@ const Personas = ({ project, setProject }) => {
               </CardHeader>
 
               <CardContent className="persona grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
-                {["profile", "expectations", "goals"].map((field) => (
+                {['profile', 'expectations', 'goals'].map((field) => (
                   <div
                     key={field}
                     className="flex flex-col gap-2 p-3 rounded-lg bg-card border-border border-2"
@@ -470,10 +447,7 @@ const Personas = ({ project, setProject }) => {
           ))
       ) : (
         <div className="col-span-1 flex flex-col items-center justify-center p-10 bg-muted/50 border-dashed border rounded-lg text-center">
-          <UserCircle2
-            size={40}
-            className="mb-4 text-primary"
-          />
+          <UserCircle2 size={40} className="mb-4 text-primary" />
           <h3 className="text-xl font-semibold">Nenhuma persona definida</h3>
           <p className="text-muted-foreground mt-2">
             Crie sua primeira persona para mapear os usuários do seu projeto.

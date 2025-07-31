@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Plus, Info, Check, Pencil, X, Trash, LoaderCircle } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import React, { useState, useEffect, useRef } from 'react'
+import { Plus, Info, Check, X, Trash, LoaderCircle } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
   PopoverArrow,
-} from "@/components/ui/popover"
-import TextareaAutosize from "react-textarea-autosize"
-import { router } from "@inertiajs/react"
-import { cn } from "@/lib/utils"
+} from '@/components/ui/popover'
+import TextareaAutosize from 'react-textarea-autosize'
+import { router } from '@inertiajs/react'
+import { cn } from '@/lib/utils'
+import MotionDivOptions from '@/Components/MotionDivOptions'
 
 // --- NOVO COMPONENTE: GoalItem ---
 const GoalItem = ({
@@ -38,7 +38,7 @@ const GoalItem = ({
   const [isHovered, setIsHovered] = useState(false)
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       onSave()
     }
@@ -62,8 +62,8 @@ const GoalItem = ({
                 <PopoverTrigger disabled={isTemporary}>
                   <Badge
                     className={cn(
-                      "border-transparent text-white font-bold cursor-pointer",
-                      typeColors.find((c) => c.title === goal.type)?.color
+                      'border-transparent text-white font-bold cursor-pointer',
+                      typeColors.find((c) => c.title === goal.type)?.color,
                     )}
                   >
                     {goal.type.toUpperCase()}
@@ -78,7 +78,7 @@ const GoalItem = ({
                         className="h-auto p-2 justify-start hover:bg-accent"
                         onClick={() => onChangeGoalType(goal.id, type.title)}
                       >
-                        <Badge className={cn("w-full text-white", type.color)}>
+                        <Badge className={cn('w-full text-white', type.color)}>
                           {type.title.toUpperCase()}
                         </Badge>
                       </Button>
@@ -93,8 +93,9 @@ const GoalItem = ({
                 <PopoverTrigger disabled={isTemporary}>
                   <Badge
                     className={cn(
-                      "border-transparent text-white font-bold cursor-pointer",
-                      priorityColors.find((c) => c.title === goal.priority)?.color
+                      'border-transparent text-white font-bold cursor-pointer',
+                      priorityColors.find((c) => c.title === goal.priority)
+                        ?.color,
                     )}
                   >
                     {goal.priority.toUpperCase()}
@@ -109,7 +110,7 @@ const GoalItem = ({
                         className="h-auto p-2 justify-start hover:bg-accent"
                         onClick={() => onChangeGoalPriority(goal.id, p.title)}
                       >
-                        <Badge className={cn("w-full text-white", p.color)}>
+                        <Badge className={cn('w-full text-white', p.color)}>
                           {p.title.toUpperCase()}
                         </Badge>
                       </Button>
@@ -161,53 +162,31 @@ const GoalItem = ({
         </CardContent>
       </Card>
 
-      {/* Hover Actions */}
-      <AnimatePresence>
-        {isHovered && !isEditing && !isTemporary && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 10 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="absolute right-2 top-4 -translate-y-1 flex items-center rounded-md bg-card border border-border shadow-lg"
-          >
-            <Button
-              variant="motiondiv" // Assuming 'motiondiv' is a custom variant you've defined
-              size="icon"
-              className="text-muted-foreground hover:text-foreground"
-              onClick={onEdit}
-            >
-              <Pencil />
-            </Button>
-            <Button
-              variant="motiondiv"
-              size="icon"
-              className="text-destructive/80 hover:text-destructive"
-              onClick={onDelete}
-            >
-              <Trash />
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <MotionDivOptions
+        isHovered={isHovered}
+        isEditing={isEditing}
+        isTemporary={isTemporary}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
     </div>
   )
 }
 const Goals = ({ project, setProject }) => {
   const typeColors = [
-    { color: "!bg-orange-600", title: "bg" },
-    { color: "!bg-purple-600", title: "cg" },
+    { color: '!bg-orange-600', title: 'bg' },
+    { color: '!bg-purple-600', title: 'cg' },
   ]
   const priorityColors = [
-    { color: "!bg-red-600", title: "high" },
-    { color: "!bg-yellow-600", title: "med" },
-    { color: "!bg-green-600", title: "low" },
-    { color: "!bg-pink-600", title: "urgent" },
+    { color: '!bg-red-600', title: 'high' },
+    { color: '!bg-yellow-600', title: 'med' },
+    { color: '!bg-green-600', title: 'low' },
+    { color: '!bg-pink-600', title: 'urgent' },
   ]
   // Estado para controlar qual goal está sendo editada
   const [editingId, setEditingId] = useState(null)
   // Estado para armazenar o valor temporário durante a edição
-  const [editValue, setEditValue] = useState("")
+  const [editValue, setEditValue] = useState('')
 
   const textareaRef = useRef(null)
   // Estado para controlar qual goal está com o seletor de tipo aberto
@@ -218,7 +197,7 @@ const Goals = ({ project, setProject }) => {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
 
   const isTemporary = (goal) =>
-    typeof goal.id === "string" && goal.id.startsWith("temp-")
+    typeof goal.id === 'string' && goal.id.startsWith('temp-')
 
   // Função para lidar com mudanças no input
   const handleInputChange = (e) => {
@@ -267,22 +246,22 @@ const Goals = ({ project, setProject }) => {
         ...(project.goal_sketches || []),
         {
           id: `temp-${Date.now()}`,
-          title: "New Goal",
-          type: "bg",
-          priority: "med",
+          title: 'New Goal',
+          type: 'bg',
+          priority: 'med',
         },
       ],
     })
 
     router.post(
-      route("goal.store"),
+      route('goal.store'),
       {
-        title: "New Goal",
-        type: "bg",
-        priority: "med",
+        title: 'New Goal',
+        type: 'bg',
+        priority: 'med',
         project_id: project.id,
       },
-      { preserveState: true, preserveScroll: true }
+      { preserveState: true, preserveScroll: true },
     )
   }
 
@@ -298,11 +277,11 @@ const Goals = ({ project, setProject }) => {
                 title: editValue,
                 updated_at: new Date().toISOString(),
               }
-            : g
+            : g,
         )
         setProject({ ...project, goal_sketches: updatedGoals })
 
-        router.patch(route("goal.update", goal.id), {
+        router.patch(route('goal.update', goal.id), {
           title: editValue,
         })
       }
@@ -326,12 +305,12 @@ const Goals = ({ project, setProject }) => {
               type: newType,
               updated_at: new Date().toISOString(),
             }
-          : g
+          : g,
       )
 
       setProject({ ...project, goal_sketches: updatedGoals })
 
-      router.patch(route("goal.update", goalId), {
+      router.patch(route('goal.update', goalId), {
         type: newType,
       })
     }
@@ -350,12 +329,12 @@ const Goals = ({ project, setProject }) => {
               priority: newPriority,
               updated_at: new Date().toISOString(),
             }
-          : g
+          : g,
       )
 
       setProject({ ...project, goal_sketches: updatedGoals })
 
-      router.patch(route("goal.update", goalId), {
+      router.patch(route('goal.update', goalId), {
         priority: newPriority,
       })
     }
@@ -365,13 +344,12 @@ const Goals = ({ project, setProject }) => {
   // Função para excluir a goal
   const deleteGoal = (goalId) => {
     const updatedGoals = (project.goal_sketches || []).filter(
-      (g) => g.id !== goalId
+      (g) => g.id !== goalId,
     )
     setProject({ ...project, goal_sketches: updatedGoals })
     setDeleteConfirmId(null) // Fecha o diálogo de confirmação
-    router.delete(route("goal.delete", goalId))
+    router.delete(route('goal.delete', goalId))
   }
-
 
   return (
     <div className="goalSketches rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
@@ -380,8 +358,9 @@ const Goals = ({ project, setProject }) => {
         <Popover>
           <PopoverTrigger asChild>
             <Button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
-              <Badge className={cn("border-0", typeColors[1].color)}>
-                {project?.goal_sketches?.filter((goal) => goal.type === "cg").length || 0}
+              <Badge className={cn('border-0', typeColors[1].color)}>
+                {project?.goal_sketches?.filter((goal) => goal.type === 'cg')
+                  .length || 0}
               </Badge>
               Constraint Goals
               <Info className="text-muted-foreground" size={18} />
@@ -392,9 +371,10 @@ const Goals = ({ project, setProject }) => {
             <PopoverArrow className="fill-popover" />
           </PopoverContent>
         </Popover>
-        {project.goal_sketches?.filter((goal) => goal.type === "cg").length > 0 ? (
+        {project.goal_sketches?.filter((goal) => goal.type === 'cg').length >
+        0 ? (
           project.goal_sketches
-            .filter((goal) => goal.type === "cg")
+            .filter((goal) => goal.type === 'cg')
             .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
             .map((goal) => (
               <GoalItem
@@ -422,10 +402,26 @@ const Goals = ({ project, setProject }) => {
         ) : (
           <Card className="bg-card p-4 shadow-md">
             <div className="flex items-center mb-2 gap-2">
-              <Badge className={cn("text-white", typeColors.find(c => c.title === "cg")?.color)}>CG</Badge>
-              <Badge className={cn("text-white", priorityColors.find(c => c.title === "med")?.color)}>MED</Badge>
+              <Badge
+                className={cn(
+                  'text-white',
+                  typeColors.find((c) => c.title === 'cg')?.color,
+                )}
+              >
+                CG
+              </Badge>
+              <Badge
+                className={cn(
+                  'text-white',
+                  priorityColors.find((c) => c.title === 'med')?.color,
+                )}
+              >
+                MED
+              </Badge>
             </div>
-            <p className="text-foreground text-sm font-medium">Example of a constraint goal...</p>
+            <p className="text-foreground text-sm font-medium">
+              Example of a constraint goal...
+            </p>
           </Card>
         )}
       </div>
@@ -435,8 +431,9 @@ const Goals = ({ project, setProject }) => {
         <Popover>
           <PopoverTrigger asChild>
             <Button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
-              <Badge className={cn("border-0", typeColors[0].color)}>
-                {project?.goal_sketches?.filter((goal) => goal.type === "bg").length || 0}
+              <Badge className={cn('border-0', typeColors[0].color)}>
+                {project?.goal_sketches?.filter((goal) => goal.type === 'bg')
+                  .length || 0}
               </Badge>
               Business Goals
               <Info className="text-muted-foreground" size={18} />
@@ -448,33 +445,33 @@ const Goals = ({ project, setProject }) => {
           </PopoverContent>
         </Popover>
         {project.goal_sketches
-          ?.filter((goal) => goal.type === "bg")
+          ?.filter((goal) => goal.type === 'bg')
           .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
           .map((goal) => (
-             <GoalItem
-                key={goal.id}
-                goal={goal}
-                isTemporary={isTemporary(goal)}
-                isEditing={editingId === goal.id}
-                editValue={editValue}
-                onValueChange={handleInputChange}
-                onEdit={() => editGoal(goal)}
-                onSave={() => editGoal(goal)}
-                onCancel={() => setEditingId(null)}
-                onDelete={() => deleteGoal(goal.id)}
-                textareaRef={editingId === goal.id ? textareaRef : null}
-                typeSelectId={typeSelectId}
-                onToggleTypeSelect={() => toggleTypeSelect(goal.id)}
-                typeColors={typeColors}
-                onChangeGoalType={changeGoalType}
-                prioritySelectId={prioritySelectId}
-                onTogglePrioritySelect={() => togglePrioritySelect(goal.id)}
-                priorityColors={priorityColors}
-                onChangeGoalPriority={changeGoalPriority}
-              />
+            <GoalItem
+              key={goal.id}
+              goal={goal}
+              isTemporary={isTemporary(goal)}
+              isEditing={editingId === goal.id}
+              editValue={editValue}
+              onValueChange={handleInputChange}
+              onEdit={() => editGoal(goal)}
+              onSave={() => editGoal(goal)}
+              onCancel={() => setEditingId(null)}
+              onDelete={() => deleteGoal(goal.id)}
+              textareaRef={editingId === goal.id ? textareaRef : null}
+              typeSelectId={typeSelectId}
+              onToggleTypeSelect={() => toggleTypeSelect(goal.id)}
+              typeColors={typeColors}
+              onChangeGoalType={changeGoalType}
+              prioritySelectId={prioritySelectId}
+              onTogglePrioritySelect={() => togglePrioritySelect(goal.id)}
+              priorityColors={priorityColors}
+              onChangeGoalPriority={changeGoalPriority}
+            />
           ))}
       </div>
-      
+
       {/* --- "New Goal" Button --- */}
       <Button
         className="col-span-2 flex items-center justify-center w-full py-1 bg-card hover:bg-accent text-primary rounded-lg transition-colors shadow-md"

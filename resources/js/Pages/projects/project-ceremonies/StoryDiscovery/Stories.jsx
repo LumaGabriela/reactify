@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import MotionDivOptions from '@/Components/MotionDivOptions'
 import {
   Plus,
   Sparkles,
   X,
-  Pencil,
   Info,
   Check,
   LoaderCircle,
@@ -61,12 +61,12 @@ const StoryItem = ({
     >
       <Card className="bg-card border-0 transition-all duration-300 ease-in-out">
         <CardContent className="p-2 flex items-center justify-between gap-2">
-          <div className="flex flex-col items-start gap-2 flex-1 min-w-0">
+          <div className="flex flex-col items-start justify-between gap-2 flex-1 min-w-0">
             <Popover
               open={typeSelectId === story.id}
               onOpenChange={onToggleTypeSelect}
             >
-              <PopoverTrigger>
+              <PopoverTrigger className="flex">
                 <Badge
                   variant="outline"
                   className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
@@ -141,37 +141,15 @@ const StoryItem = ({
               <div className="size-7" />
             )}
           </div>
+          <MotionDivOptions
+            isHovered={isHovered}
+            isEditing={isEditing}
+            isTemporary={isTemporary}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
         </CardContent>
       </Card>
-
-      <AnimatePresence>
-        {isHovered && !isEditing && !isTemporary && (
-          <motion.div
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute right-2 top-4 -translate-y-1 flex items-center rounded-md bg-card border border-border shadow-lg"
-          >
-            <Button
-              variant="motiondiv"
-              size="icon"
-              className="text-muted-foreground hover:text-foreground"
-              onClick={onEdit}
-            >
-              <Pencil className="size-4" />
-            </Button>
-            <Button
-              variant="motiondiv"
-              size="icon"
-              className="text-destructive/80 hover:text-destructive"
-              onClick={onDelete}
-            >
-              <Trash className="size-4" />
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }

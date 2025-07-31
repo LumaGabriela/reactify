@@ -1,8 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { useSortable, arrayMove, SortableContext, rectSortingStrategy } from '@dnd-kit/sortable'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  useSortable,
+  arrayMove,
+  SortableContext,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { motion, AnimatePresence } from 'framer-motion'
+import MotionDivOptions from '@/Components/MotionDivOptions'
 import {
   X,
   Circle,
@@ -26,13 +37,25 @@ import { toast } from 'sonner'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger, PopoverArrow } from '@/components/ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverArrow,
+} from '@/components/ui/popover'
 import { Switch } from '@/components/ui/switch'
 import TextareaAutosize from 'react-textarea-autosize'
 import { cn } from '@/lib/utils'
 
 const SortableJourneyStepItem = (props) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: props.step.id })
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: props.step.id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -106,11 +129,15 @@ const JourneyStepItem = ({
                   autoFocus
                 />
               ) : (
-                <p className="m-0 text-sm text-foreground break-words w-full">{step.description || '...'}</p>
+                <p className="m-0 text-sm text-foreground break-words w-full">
+                  {step.description || '...'}
+                </p>
               )}
             </div>
           </div>
-          {step.is_touchpoint && !isEditing && <Circle size={16} className="fill-primary stroke-primary mt-1" />}
+          {step.is_touchpoint && !isEditing && (
+            <Circle size={16} className="fill-primary stroke-primary mt-1" />
+          )}
 
           <div className="flex items-center gap-1">
             {isEditing ? (
@@ -144,49 +171,13 @@ const JourneyStepItem = ({
         </CardContent>
       </Card>
 
-      <AnimatePresence>
-        {isHovered && !isEditing && (
-          <motion.div
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 10 }}
-            transition={{ duration: 0.2 }}
-            className="z-40 absolute top-3 right-3 flex items-center rounded-md bg-card/50 backdrop-blur-sm border border-border shadow-xl"
-          >
-            <Button
-              variant="motiondiv"
-              size="icon"
-              className="text-muted-foreground hover:text-foreground"
-              onClick={onEdit}
-            >
-              <Edit />
-            </Button>
-            <Popover open={showDeletePopover} onOpenChange={setShowDeletePopover}>
-              <PopoverTrigger asChild>
-                <Button variant="motiondiv" size="icon" className="text-destructive/80 hover:text-destructive">
-                  <Trash />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-56 bg-popover border-border text-popover-foreground">
-                <div className="space-y-4">
-                  <div className="space-y-1">
-                    <h4 className="font-medium leading-none">Confirm Deletion</h4>
-                    <p className="text-sm text-muted-foreground">Are you sure you want to delete this step?</p>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => setShowDeletePopover(false)}>
-                      Cancel
-                    </Button>
-                    <Button variant="destructive" size="sm" onClick={handleConfirmDelete}>
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <MotionDivOptions
+        isHovered={isHovered}
+        isEditing={isEditing}
+        isTemporary={isTemporary}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
 
       {!isLastStep && (
         <div className="absolute top-1/2 -right-3 translate-x-1 -translate-y-1/2 text-muted-foreground z-0">
@@ -239,7 +230,7 @@ const Journeys = ({ project, setProject }) => {
       activationConstraint: {
         distance: 14,
       },
-    })
+    }),
   )
 
   // Função que será chamada quando o arrasto terminar
@@ -270,7 +261,10 @@ const Journeys = ({ project, setProject }) => {
         headers: {
           'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+          'X-CSRF-TOKEN':
+            document
+              .querySelector('meta[name="csrf-token"]')
+              ?.getAttribute('content') || '',
         },
         body: JSON.stringify({
           project_id: project.id,
@@ -303,20 +297,28 @@ const Journeys = ({ project, setProject }) => {
   // Função para alternar seleção de uma journey
   const toggleJourneySelection = (index) => {
     setGeneratedJourneys((prev) =>
-      prev.map((journey, i) => (i === index ? { ...journey, selected: !journey.selected } : journey))
+      prev.map((journey, i) =>
+        i === index ? { ...journey, selected: !journey.selected } : journey,
+      ),
     )
   }
 
   // Função para selecionar/deselecionar todas as journeys
   const toggleAllJourneys = () => {
     const allSelected = generatedJourneys.every((journey) => journey.selected)
-    setGeneratedJourneys((prev) => prev.map((journey) => ({ ...journey, selected: !allSelected })))
+    setGeneratedJourneys((prev) =>
+      prev.map((journey) => ({ ...journey, selected: !allSelected })),
+    )
   }
 
   // Função para confirmar e adicionar as journeys selecionadas
   const confirmGeneratedJourneys = () => {
-    const selectedJourneys = generatedJourneys.filter((journey) => journey.selected)
-    const remainingJourneys = generatedJourneys.filter((journey) => !journey.selected)
+    const selectedJourneys = generatedJourneys.filter(
+      (journey) => journey.selected,
+    )
+    const remainingJourneys = generatedJourneys.filter(
+      (journey) => !journey.selected,
+    )
 
     if (selectedJourneys.length === 0) {
       toast.warning('Selecione pelo menos uma journey para adicionar.')
@@ -335,17 +337,21 @@ const Journeys = ({ project, setProject }) => {
     })
 
     // Adiciona as novas jornadas ao estado do projeto
-    const updatedProjectJourneys = project.journeys ? [...project.journeys, ...journeysToAdd] : [...journeysToAdd]
+    const updatedProjectJourneys = project.journeys
+      ? [...project.journeys, ...journeysToAdd]
+      : [...journeysToAdd]
     setProject({ ...project, journeys: updatedProjectJourneys })
 
     // Prepara os dados para o backend (sem os campos gerados localmente)
-    const journeysForBackend = selectedJourneys.map(({ id, created_at, project_id, selected, ...rest }) => ({
-      ...rest,
-      steps: rest.steps.map((step) => ({
-        description: step.description,
-        is_touchpoint: step.is_touchpoint || false,
-      })),
-    }))
+    const journeysForBackend = selectedJourneys.map(
+      ({ id, created_at, project_id, selected, ...rest }) => ({
+        ...rest,
+        steps: rest.steps.map((step) => ({
+          description: step.description,
+          is_touchpoint: step.is_touchpoint || false,
+        })),
+      }),
+    )
 
     // Persiste no backend
     router.post(
@@ -358,7 +364,9 @@ const Journeys = ({ project, setProject }) => {
         preserveState: true,
         preserveScroll: true,
         onSuccess: () => {
-          toast.success(`${selectedJourneys.length} journey(s) adicionada(s) com sucesso!`)
+          toast.success(
+            `${selectedJourneys.length} journey(s) adicionada(s) com sucesso!`,
+          )
           // Atualiza o estado do modal com as jornadas restantes
           setGeneratedJourneys(remainingJourneys)
 
@@ -371,7 +379,7 @@ const Journeys = ({ project, setProject }) => {
         onError: () => {
           toast.error('Ocorreu um erro ao adicionar as jornadas.')
         },
-      }
+      },
     )
   }
 
@@ -393,7 +401,9 @@ const Journeys = ({ project, setProject }) => {
 
   // Função para iniciar a edição de um step
   const startEditStep = (journeyId, stepIndex) => {
-    const step = project.journeys.find((j) => j.id === journeyId)?.steps?.[stepIndex] ?? null
+    const step =
+      project.journeys.find((j) => j.id === journeyId)?.steps?.[stepIndex] ??
+      null
     setEditingStep({ journeyId, stepIndex })
     setEditValue(step.description)
   }
@@ -412,7 +422,9 @@ const Journeys = ({ project, setProject }) => {
       steps: [],
     }
 
-    const updatedJourneys = project.journeys ? [...project.journeys, newJourney] : [newJourney]
+    const updatedJourneys = project.journeys
+      ? [...project.journeys, newJourney]
+      : [newJourney]
     setProject({ ...project, journeys: updatedJourneys })
 
     router.post(
@@ -422,7 +434,7 @@ const Journeys = ({ project, setProject }) => {
         steps: [],
         project_id: project.id,
       },
-      { preserveState: true, preserveScroll: true }
+      { preserveState: true, preserveScroll: true },
     )
 
     // Expandir a journey recém-criada (último índice)
@@ -433,7 +445,8 @@ const Journeys = ({ project, setProject }) => {
   const addNewStep = (JourneyId) => {
     console.log(project.journeys)
     if (!project.journeys) return
-    const currentSteps = project.journeys.find((journey) => journey.id === JourneyId)?.steps || []
+    const currentSteps =
+      project.journeys.find((journey) => journey.id === JourneyId)?.steps || []
     const newStep = {
       id: `step_${Date.now()}`,
       step: currentSteps.length + 1,
@@ -462,7 +475,9 @@ const Journeys = ({ project, setProject }) => {
     if (journeyId === null || !project.journeys) return
 
     const updatedJourneys = project.journeys.map((journey) =>
-      journey.id === journeyId ? { ...journey, title: editJourneyName } : journey
+      journey.id === journeyId
+        ? { ...journey, title: editJourneyName }
+        : journey,
     )
 
     setProject({ ...project, journeys: updatedJourneys })
@@ -480,9 +495,13 @@ const Journeys = ({ project, setProject }) => {
     const journey = project.journeys.find((j) => j.id === journeyId)
     if (!journey) return
     const updatedSteps = journey.steps.map((s, i) =>
-      i === stepIndex ? { ...s, description: description, is_touchpoint: isTouchpoint } : s
+      i === stepIndex
+        ? { ...s, description: description, is_touchpoint: isTouchpoint }
+        : s,
     )
-    const updatedJourneys = project.journeys.map((j) => (j.id === journeyId ? { ...j, steps: updatedSteps } : j))
+    const updatedJourneys = project.journeys.map((j) =>
+      j.id === journeyId ? { ...j, steps: updatedSteps } : j,
+    )
     setProject({ ...project, journeys: updatedJourneys })
     cancelEditStep()
     router.patch(route('journey.update', journeyId), { steps: updatedSteps })
@@ -508,7 +527,9 @@ const Journeys = ({ project, setProject }) => {
       step: idx + 1,
     }))
 
-    const updatedJourneys = project.journeys.map((j) => (j.id === journeyId ? { ...j, steps: reorderedSteps } : j))
+    const updatedJourneys = project.journeys.map((j) =>
+      j.id === journeyId ? { ...j, steps: reorderedSteps } : j,
+    )
 
     setProject({ ...project, journeys: updatedJourneys })
 
@@ -521,7 +542,9 @@ const Journeys = ({ project, setProject }) => {
   const deleteJourney = (journeyIdToDelete) => {
     if (journeyIdToDelete === null) return
 
-    const updatedJourneys = project.journeys.filter((journey) => journey.id !== journeyIdToDelete)
+    const updatedJourneys = project.journeys.filter(
+      (journey) => journey.id !== journeyIdToDelete,
+    )
 
     if (expandedJourney === journeyIdToDelete) {
       setExpandedJourney(null)
@@ -544,7 +567,7 @@ const Journeys = ({ project, setProject }) => {
     }))
 
     const updatedJourneys = project.journeys.map((j) =>
-      j.id === journeyId ? { ...j, steps: newStepsWithCorrectOrder } : j
+      j.id === journeyId ? { ...j, steps: newStepsWithCorrectOrder } : j,
     )
     setProject({ ...project, journeys: updatedJourneys })
 
@@ -556,7 +579,7 @@ const Journeys = ({ project, setProject }) => {
       {
         preserveState: true,
         preserveScroll: true,
-      }
+      },
     )
   }
 
@@ -569,7 +592,7 @@ const Journeys = ({ project, setProject }) => {
             'transition-all duration-300 z-50',
             isModalMinimized
               ? 'fixed bottom-4 right-4 w-[400px]'
-              : 'fixed inset-0 bg-background/80 flex items-center justify-center'
+              : 'fixed inset-0 bg-background/80 flex items-center justify-center',
           )}
         >
           <div className="bg-card rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-border">
@@ -583,9 +606,16 @@ const Journeys = ({ project, setProject }) => {
                   onClick={() => setIsModalMinimized(!isModalMinimized)}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  {isModalMinimized ? <ChevronsUp size={20} /> : <Minus size={20} />}
+                  {isModalMinimized ? (
+                    <ChevronsUp size={20} />
+                  ) : (
+                    <Minus size={20} />
+                  )}
                 </button>
-                <button onClick={cancelGeneratedJourneys} className="text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={cancelGeneratedJourneys}
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <X size={24} />
                 </button>
               </div>
@@ -595,10 +625,13 @@ const Journeys = ({ project, setProject }) => {
               <>
                 <div className="flex items-center justify-between mx-6 mb-4 p-3 bg-accent rounded-lg flex-shrink-0">
                   <span className="text-accent-foreground font-medium">
-                    {generatedJourneys.filter((j) => j.selected).length} of {generatedJourneys.length} selected
+                    {generatedJourneys.filter((j) => j.selected).length} of{' '}
+                    {generatedJourneys.length} selected
                   </span>
                   <Button onClick={toggleAllJourneys} size="sm">
-                    {generatedJourneys.every((j) => j.selected) ? 'Deselect All' : 'Select All'}
+                    {generatedJourneys.every((j) => j.selected)
+                      ? 'Deselect All'
+                      : 'Select All'}
                   </Button>
                 </div>
                 <div className="flex-1 overflow-y-auto px-6 min-h-0">
@@ -608,24 +641,33 @@ const Journeys = ({ project, setProject }) => {
                         key={index}
                         className={cn(
                           'rounded-lg p-4 border-2 transition-colors',
-                          journey.selected ? 'bg-accent border-primary' : 'bg-muted/50 border-border'
+                          journey.selected
+                            ? 'bg-accent border-primary'
+                            : 'bg-muted/50 border-border',
                         )}
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="text-foreground font-medium">{journey.title}</h4>
+                          <h4 className="text-foreground font-medium">
+                            {journey.title}
+                          </h4>
                           <Switch
                             id={`journey-select-${index}`}
                             checked={journey.selected}
-                            onCheckedChange={() => toggleJourneySelection(index)}
+                            onCheckedChange={() =>
+                              toggleJourneySelection(index)
+                            }
                           />
                         </div>
                         <div className="space-y-2">
                           {journey.steps.map((step, stepIndex) => (
-                            <div key={stepIndex} className="flex items-center text-sm text-muted-foreground">
+                            <div
+                              key={stepIndex}
+                              className="flex items-center text-sm text-muted-foreground"
+                            >
                               <span
                                 className={cn(
                                   'text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2',
-                                  colors[index % colors.length].bg
+                                  colors[index % colors.length].bg,
                                 )}
                               >
                                 {stepIndex + 1}
@@ -650,10 +692,13 @@ const Journeys = ({ project, setProject }) => {
                   <Button
                     variant="success"
                     onClick={confirmGeneratedJourneys}
-                    disabled={generatedJourneys.filter((j) => j.selected).length === 0}
+                    disabled={
+                      generatedJourneys.filter((j) => j.selected).length === 0
+                    }
                   >
                     <Check className="mr-2" size={16} />
-                    Confirm and Add ({generatedJourneys.filter((j) => j.selected).length})
+                    Confirm and Add (
+                    {generatedJourneys.filter((j) => j.selected).length})
                   </Button>
                 </div>
               </>
@@ -667,7 +712,10 @@ const Journeys = ({ project, setProject }) => {
         project.journeys
           .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
           .map((journey, i) => (
-            <div key={i} className="bg-card rounded-lg shadow-md overflow-hidden border border-border">
+            <div
+              key={i}
+              className="bg-card rounded-lg shadow-md overflow-hidden border border-border"
+            >
               <div
                 className="flex items-center justify-between py-2 px-3 cursor-pointer bg-card hover:bg-accent/50 transition-colors"
                 onClick={() => toggleJourney(journey.id)}
@@ -686,7 +734,9 @@ const Journeys = ({ project, setProject }) => {
                       autoFocus
                     />
                   ) : (
-                    <h4 className="text-foreground font-medium m-0">{journey.title}</h4>
+                    <h4 className="text-foreground font-medium m-0">
+                      {journey.title}
+                    </h4>
                   )}
                 </div>
                 <div className="flex items-center">
@@ -732,9 +782,15 @@ const Journeys = ({ project, setProject }) => {
                     >
                       <div className="space-y-3">
                         <h4 className="font-medium">Delete Journey</h4>
-                        <p className="text-sm text-muted-foreground">Are you sure? All steps will be lost.</p>
+                        <p className="text-sm text-muted-foreground">
+                          Are you sure? All steps will be lost.
+                        </p>
                         <div className="flex justify-end gap-2">
-                          <Button variant="destructive" size="sm" onClick={() => deleteJourney(journey.id)}>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => deleteJourney(journey.id)}
+                          >
                             Delete
                           </Button>
                         </div>
@@ -744,7 +800,7 @@ const Journeys = ({ project, setProject }) => {
                   <ChevronRight
                     className={cn(
                       'text-foreground transition-transform',
-                      expandedJourney === journey.id && 'rotate-90'
+                      expandedJourney === journey.id && 'rotate-90',
                     )}
                     size={20}
                   />
@@ -759,26 +815,44 @@ const Journeys = ({ project, setProject }) => {
                       collisionDetection={closestCenter}
                       onDragEnd={(event) => handleDragEnd(event, journey.id)}
                     >
-                      <SortableContext items={journey.steps.map((s) => s.id)} strategy={rectSortingStrategy}>
+                      <SortableContext
+                        items={journey.steps.map((s) => s.id)}
+                        strategy={rectSortingStrategy}
+                      >
                         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center p-4">
                           {journey.steps.map((step, stepIndex) => {
                             const isCurrentlyEditing =
-                              editingStep.journeyId === journey.id && editingStep.stepIndex === stepIndex
+                              editingStep.journeyId === journey.id &&
+                              editingStep.stepIndex === stepIndex
                             return (
                               <SortableJourneyStepItem
                                 key={step.id}
                                 step={step}
                                 stepIndex={stepIndex}
-                                isLastStep={stepIndex === journey.steps.length - 1}
+                                isLastStep={
+                                  stepIndex === journey.steps.length - 1
+                                }
                                 color={colors[stepIndex % colors.length]}
                                 isEditing={isCurrentlyEditing}
-                                editValue={isCurrentlyEditing ? editValue : step.description}
-                                onValueChange={(e) => setEditValue(e.target.value)}
-                                onEdit={() => startEditStep(journey.id, stepIndex)}
+                                editValue={
+                                  isCurrentlyEditing
+                                    ? editValue
+                                    : step.description
+                                }
+                                onValueChange={(e) =>
+                                  setEditValue(e.target.value)
+                                }
+                                onEdit={() =>
+                                  startEditStep(journey.id, stepIndex)
+                                }
                                 onSave={saveEditStep}
                                 onCancel={cancelEditStep}
-                                onDelete={() => deleteStep(journey.id, stepIndex)}
-                                textareaRef={isCurrentlyEditing ? textareaRef : null}
+                                onDelete={() =>
+                                  deleteStep(journey.id, stepIndex)
+                                }
+                                textareaRef={
+                                  isCurrentlyEditing ? textareaRef : null
+                                }
                               />
                             )
                           })}
@@ -816,7 +890,9 @@ const Journeys = ({ project, setProject }) => {
         <div className="flex flex-col items-center justify-center p-6 bg-card rounded-lg text-muted-foreground border-2 border-dashed border-border">
           <Map size={40} className="mb-4 text-primary" />
           <p className="mb-2">No journeys defined yet.</p>
-          <p className="mb-4 text-sm">Create a new journey to map the user flow.</p>
+          <p className="mb-4 text-sm">
+            Create a new journey to map the user flow.
+          </p>
         </div>
       )}
 
@@ -845,7 +921,8 @@ const Journeys = ({ project, setProject }) => {
               />
             </PopoverTrigger>
             <PopoverContent className="bg-popover text-popover-foreground border-border">
-              This function uses AI to generate journeys based on the Goals defined in the Personas.
+              This function uses AI to generate journeys based on the Goals
+              defined in the Personas.
               <PopoverArrow className="fill-popover" />
             </PopoverContent>
           </Popover>
