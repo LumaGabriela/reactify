@@ -208,7 +208,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   }, [activeModelingMenu])
 
   useEffect(() => {
-    // console.log(project?.goal_sketches)
+    console.log(project?.crc_cards)
   }, [project])
 
   const renderInceptionContent = () => {

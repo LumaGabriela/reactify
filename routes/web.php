@@ -8,6 +8,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ProductCanvasController;
 use App\Http\Controllers\OverallModelController;
+use App\Http\Controllers\OverallModelClassController;
 use App\Http\Controllers\WelcomeEmailController;
 use App\Http\Controllers\ProjectPermissionController;
 use App\Http\Controllers\ProjectInvitationController;
@@ -84,6 +85,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/', [OverallModelController::class, 'store'])->name('overall.store');
     Route::patch('/{overall}', [OverallModelController::class, 'update'])->name('overall.update');
     Route::delete('/{overall}', [OverallModelController::class, 'destroy'])->name('overall.delete');
+  });
+
+  Route::prefix('overall-model-classes')->group(function () {
+    Route::post('/', [OverallModelClassController::class, 'store'])->name('overall-model-class.store');
+    Route::delete('/{overall_model_class}', [OverallModelClassController::class, 'destroy'])->name('overall-model-class.delete');
   });
 
   //Rotas para goals

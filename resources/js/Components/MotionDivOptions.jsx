@@ -7,6 +7,7 @@ const MotionDivOptions = ({
   isTemporary,
   onEdit,
   onDelete,
+  options = { edit: true, delete: true },
 }) => {
   return (
     <AnimatePresence>
@@ -18,22 +19,26 @@ const MotionDivOptions = ({
           transition={{ duration: 0.2 }}
           className="absolute right-2 top-4 -translate-y-1 flex items-center rounded-md bg-card border border-border shadow-lg"
         >
-          <Button
-            variant="motiondiv"
-            size="icon"
-            className="text-muted-foreground hover:text-foreground"
-            onClick={onEdit}
-          >
-            <Pencil className="size-4" />
-          </Button>
-          <Button
-            variant="motiondiv"
-            size="icon"
-            className="text-destructive/80 hover:text-destructive"
-            onClick={onDelete}
-          >
-            <Trash className="size-4" />
-          </Button>
+          {options.edit && (
+            <Button
+              variant="motiondiv"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={onEdit}
+            >
+              <Pencil className="size-4" />
+            </Button>
+          )}
+          {options.delete && (
+            <Button
+              variant="motiondiv"
+              size="icon"
+              className="text-destructive/80 hover:text-destructive"
+              onClick={onDelete}
+            >
+              <Trash className="size-4" />
+            </Button>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

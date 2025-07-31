@@ -64,6 +64,10 @@ class Project extends Model
   {
     return $this->hasMany(CrcCard::class);
   }
+  public function overall_model_classes()
+  {
+    return $this->hasMany(OverallModelClass::class);
+  }
 
   public function sprints()
   {

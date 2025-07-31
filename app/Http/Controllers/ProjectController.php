@@ -8,7 +8,6 @@ use App\Http\Requests\ProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\ProductCanvas;
 use App\Models\Project;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +19,7 @@ class ProjectController extends Controller
   public function getUpdatedProject(Project $project)
   {
     return response()->json([
-      'project' => $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards']),
+      'project' => $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes']),
     ]);
   }
 
@@ -41,8 +40,6 @@ class ProjectController extends Controller
   }
   public function index()
   {
-    $user = Auth::user();
-
     return Inertia::render('Home');
   }
   public function show(Project $project, string $page = 'inception')
@@ -53,7 +50,7 @@ class ProjectController extends Controller
       abort(403, 'Acesso não autorizado a este projeto.');
     }
 
-    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards']);
+    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes']);
 
     return Inertia::render('projects/Project', [
       'project' => $project,

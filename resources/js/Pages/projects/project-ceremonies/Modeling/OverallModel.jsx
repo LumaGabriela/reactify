@@ -3,7 +3,7 @@ import { router } from '@inertiajs/react'
 import MotionDivOptions from '@/Components/MotionDivOptions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Check, X, Edit } from 'lucide-react' // Importei o ícone Edit
+import { Plus, Check, X, Edit, Trash2 } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,8 +14,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { Badge } from '@/components/ui/badge'
+import { SelectTrigger } from '@/components/ui/select'
 
-// Componente Reutilizável: EditableListItem.js (sem alterações)
 const EditableListItem = ({
   item,
   isEditing,
@@ -25,22 +32,20 @@ const EditableListItem = ({
   onCancel,
   onEdit,
   onDelete,
+  options = [],
 }) => {
   const [isHovered, setIsHovered] = useState(false)
-  const inputRef = useRef(null)
+  const selectRef = useRef(null)
 
   useEffect(() => {
     if (isEditing) {
-      inputRef.current?.focus()
+      selectRef.current?.focus()
     }
   }, [isEditing])
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      onSave()
-    } else if (e.key === 'Escape') {
-      onCancel()
-    }
+    if (e.key === 'Enter') onSave()
+    else if (e.key === 'Escape') onCancel()
   }
 
   return (
@@ -51,14 +56,22 @@ const EditableListItem = ({
     >
       {isEditing ? (
         <div className="flex items-center gap-2 w-full">
-          <Input
-            ref={inputRef}
-            type="text"
+          <select
+            ref={selectRef}
             value={editValue}
             onChange={onValueChange}
             onKeyDown={handleKeyDown}
-            className="h-8 flex-1"
-          />
+            className="h-8 flex-1 w-full rounded-md border border-input bg-transparent px-2 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <option value="" disabled>
+              Selecione...
+            </option>
+            {options.map((option, index) => (
+              <option key={index} value={option.name}>
+                {option.name}
+              </option>
+            ))}
+          </select>
           <Button
             variant="ghost"
             size="icon"
@@ -91,7 +104,40 @@ const EditableListItem = ({
   )
 }
 
-// Componente CRCCard Atualizado
+// NOVO COMPONENTE: Específico para a lista de Colaboradores
+const CollaboratorItem = ({ item, onChange, onDelete, options = [] }) => {
+  const [isHovered, setIsHovered] = useState(false)
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative flex items-center w-full"
+    >
+      <Select
+        onValueChange={onChange}
+        className="h-8 flex-1 w-full rounded-md border border-input bg-transparent px-2 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue value={item} placeholder={item} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option, index) => (
+            <SelectItem key={index} value={option.name}>
+              {option.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <MotionDivOptions
+        isHovered={isHovered}
+        onDelete={onDelete}
+        options={{ edit: false, delete: true }} // Conforme solicitado
+      />
+    </div>
+  )
+}
+
 const CRCCard = ({
   card,
   project,
@@ -100,14 +146,15 @@ const CRCCard = ({
   setEditingField,
   editValue,
   setEditValue,
-  confirmDeleteItem,
-  // NOVAS PROPS PARA EDIÇÃO DO TÍTULO
+  handleDeleteListItem,
+  confirmDeleteCard,
   editingTitleId,
   startEditTitle,
   saveEditTitle,
   cancelEditTitle,
+  reusableClasses,
+  handleCollaboratorChange,
 }) => {
-  // NOVO ESTADO LOCAL para controlar o hover do cabeçalho
   const [isHeaderHovered, setIsHeaderHovered] = useState(false)
   const titleInputRef = useRef(null)
 
@@ -134,21 +181,21 @@ const CRCCard = ({
       c.id === cardId ? { ...c, [field]: updatedArray } : c,
     )
     setProject({ ...project, crc_cards: updatedCards })
-    // router.patch(
-    //   `/crc_cards/${cardId}`,
-    //   { [field]: updatedArray, project_id: project.id },
-    //   { preserveState: true, preserveScroll: true },
-    // )
+    // router.patch(...)
   }
 
   return (
-    <div className="relative group bg-card border border-border rounded-lg shadow-lg flex flex-col text-muted-foreground">
-      {/* LÓGICA DE EDIÇÃO DO TÍTULO ADICIONADA AQUI */}
+    <div className="relative group bg-card border border-border rounded-lg shadow-lg flex flex-col text-muted-foreground animate-fade-in">
       <div
         onMouseEnter={() => setIsHeaderHovered(true)}
         onMouseLeave={() => setIsHeaderHovered(false)}
         className="relative flex justify-between items-center text-foreground bg-muted p-3 rounded-t-lg border-border border-b"
       >
+        <MotionDivOptions
+          isHovered={isHeaderHovered}
+          onEdit={() => startEditTitle(card)}
+          onDelete={() => confirmDeleteCard(card.id)}
+        />
         {editingTitleId === card.id ? (
           <div className="flex items-center gap-2 w-full">
             <Input
@@ -180,19 +227,12 @@ const CRCCard = ({
           <>
             <h3 className="text-lg font-semibold">{card.class}</h3>
             <span className="text-sm font-bold ">{card.id}</span>
-            <MotionDivOptions
-              isHovered={isHeaderHovered}
-              onEdit={() => startEditTitle(card)}
-            />
           </>
         )}
       </div>
-
       <div className="flex flex-grow">
-        {/* Seção de Responsabilidades */}
         <div className="w-1/2 p-3 flex flex-col gap-1">
           <div className="flex justify-between items-center mb-1">
-            <span></span>
             <h4 className="font-semibold text-sm">Responsabilidades</h4>
             <Button
               variant="ghost"
@@ -219,15 +259,15 @@ const CRCCard = ({
               onCancel={() =>
                 setEditingField({ cardId: null, field: null, itemIndex: null })
               }
-              onDelete={() => confirmDeleteItem(card.id, 'responsabilities', i)}
+              onDelete={() =>
+                handleDeleteListItem(card.id, 'responsabilities', i)
+              }
+              options={reusableClasses}
             />
           ))}
         </div>
-
-        {/* Seção de Colaboradores */}
-        <div className="w-1/2 bg-muted/50 p-3 border-l border-border rounded-br-lg flex flex-col gap-1">
+        <div className="w-1/2 bg-muted/50 p-3 border-l border-border rounded-br-lg flex flex-col gap-2">
           <div className="flex justify-between items-center mb-1">
-            <span></span>
             <h4 className="font-semibold text-sm">Colaboradores</h4>
             <Button
               variant="ghost"
@@ -239,22 +279,12 @@ const CRCCard = ({
             </Button>
           </div>
           {card.collaborators.map((collab, i) => (
-            <EditableListItem
+            <CollaboratorItem
               key={`${card.id}-collab-${i}`}
               item={collab}
-              isEditing={
-                editingField.cardId === card.id &&
-                editingField.field === 'collaborators' &&
-                editingField.itemIndex === i
-              }
-              editValue={editValue}
-              onValueChange={(e) => setEditValue(e.target.value)}
-              onEdit={() => startEdit(card.id, 'collaborators', i)}
-              onSave={saveEditTitle}
-              onCancel={() =>
-                setEditingField({ cardId: null, field: null, itemIndex: null })
-              }
-              onDelete={() => confirmDeleteItem(card.id, 'collaborators', i)}
+              options={reusableClasses}
+              onChange={(e) => handleCollaboratorChange(e, card.id, i)}
+              onDelete={() => handleDeleteListItem(card.id, 'collaborators', i)}
             />
           ))}
         </div>
@@ -263,26 +293,35 @@ const CRCCard = ({
   )
 }
 
-// Componente Pai com toda a Lógica de Estado
 const OverallModel = ({ project, setProject }) => {
-  // Estado para editar itens da lista
   const [editingField, setEditingField] = useState({
     cardId: null,
     field: null,
     itemIndex: null,
   })
-
-  // NOVO ESTADO: para editar o título do card
   const [editingTitleId, setEditingTitleId] = useState(null)
-
   const [editValue, setEditValue] = useState('')
-  const [deleteConfirmItem, setDeleteConfirmItem] = useState({
-    cardId: null,
-    field: null,
-    itemIndex: null,
-  })
+  const [newReusableName, setNewReusableName] = useState('')
+  const [deleteConfirmCardId, setDeleteConfirmCardId] = useState(null)
 
-  // NOVAS FUNÇÕES: para o título do card
+  const handleAddReusableName = () => {
+    if (!newReusableName.trim()) return
+    const currentNames = project.overall_model_classes || []
+    const updatedNames = [...currentNames, { name: newReusableName.trim() }]
+    setProject({ ...project, overall_model_classes: updatedNames })
+    setNewReusableName('')
+    // router.post(...)
+  }
+
+  const handleDeleteReusableName = (indexToDelete) => {
+    const currentNames = project.overall_model_classes || []
+    const updatedNames = currentNames.filter(
+      (_, index) => index !== indexToDelete,
+    )
+    setProject({ ...project, overall_model_classes: updatedNames })
+    // router.patch(...)
+  }
+
   const startEditTitle = (card) => {
     setEditingTitleId(card.id)
     setEditValue(card.class)
@@ -295,36 +334,18 @@ const OverallModel = ({ project, setProject }) => {
 
   const saveEditTitle = () => {
     if (editingTitleId === null) return
-
-    // 1. Atualiza a UI Otimista
     const updatedCards = project.crc_cards.map((c) =>
       c.id === editingTitleId ? { ...c, class: editValue } : c,
     )
     setProject({ ...project, crc_cards: updatedCards })
-
-    // 2. Envia para o backend
-    // router.patch(
-    //   `/crc_cards/${editingTitleId}`,
-    //   {
-    //     class: editValue,
-    //     project_id: project.id,
-    //   },
-    //   {
-    //     preserveState: true,
-    //     preserveScroll: true,
-    //     onSuccess: () => {
-    //       cancelEditTitle() // Limpa o estado após sucesso
-    //     },
-    //   },
-    // )
+    cancelEditTitle()
+    // router.patch(...)
   }
 
-  // Funções existentes para os itens da lista
   const saveEditListItem = () => {
     const { cardId, field, itemIndex } = editingField
     if (cardId === null) return
     const card = project.crc_cards.find((c) => c.id === cardId)
-    if (!card) return
     const updatedArray = [...card[field]]
     updatedArray[itemIndex] = editValue
     const updatedCards = project.crc_cards.map((c) =>
@@ -332,35 +353,20 @@ const OverallModel = ({ project, setProject }) => {
     )
     setProject({ ...project, crc_cards: updatedCards })
     setEditingField({ cardId: null, field: null, itemIndex: null })
-    // router.patch(
-    //   `/crc_cards/${cardId}`,
-    //   { [field]: updatedArray, project_id: project.id },
-    //   { preserveState: true, preserveScroll: true },
-    // )
+    // router.patch(...)
   }
 
-  const handleDeleteItem = () => {
-    const { cardId, field, itemIndex } = deleteConfirmItem
-    if (cardId === null) return
+  const handleCollaboratorChange = (newValue, cardId, itemIndex) => {
     const card = project.crc_cards.find((c) => c.id === cardId)
-    const updatedArray = card[field].filter((_, i) => i !== itemIndex)
+    const updatedArray = [...card.collaborators]
+    updatedArray[itemIndex] = newValue
     const updatedCards = project.crc_cards.map((c) =>
-      c.id === cardId ? { ...c, [field]: updatedArray } : c,
+      c.id === cardId ? { ...c, collaborators: updatedArray } : c,
     )
     setProject({ ...project, crc_cards: updatedCards })
-    setDeleteConfirmItem({ cardId: null, field: null, itemIndex: null })
-    // router.patch(
-    //   `/crc_cards/${cardId}`,
-    //   { [field]: updatedArray, project_id: project.id },
-    //   { preserveState: true, preserveScroll: true },
-    // )
+    // router.patch(...)
   }
 
-  const confirmDeleteItem = (cardId, field, itemIndex) => {
-    setDeleteConfirmItem({ cardId, field, itemIndex })
-  }
-
-  // Uma função unificada para salvar, dependendo do que está em edição
   const handleSave = () => {
     if (editingTitleId) {
       saveEditTitle()
@@ -369,8 +375,80 @@ const OverallModel = ({ project, setProject }) => {
     }
   }
 
+  const handleDeleteListItem = (cardId, field, itemIndex) => {
+    const card = project.crc_cards.find((c) => c.id === cardId)
+    const updatedArray = card[field].filter((_, i) => i !== itemIndex)
+    const updatedCards = project.crc_cards.map((c) =>
+      c.id === cardId ? { ...c, [field]: updatedArray } : c,
+    )
+    setProject({ ...project, crc_cards: updatedCards })
+    // router.patch(...)
+  }
+
+  const confirmDeleteCard = (cardId) => {
+    setDeleteConfirmCardId(cardId)
+  }
+
+  const handleDeleteCard = () => {
+    if (deleteConfirmCardId === null) return
+    const updatedCards = project.crc_cards.filter(
+      (c) => c.id !== deleteConfirmCardId,
+    )
+    setProject({ ...project, crc_cards: updatedCards })
+    setDeleteConfirmCardId(null)
+    // router.delete(...)
+  }
+
   return (
-    <div className="p-4">
+    <div className="p-4 flex flex-col gap-6">
+      <Accordion
+        type="single"
+        collapsible
+        className="w-full bg-card border rounded-lg"
+      >
+        <AccordionItem value="item-1" className="border-b-0">
+          <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+            Banco de Classes
+          </AccordionTrigger>
+          <AccordionContent className="p-4 pt-0">
+            <div className="flex items-center gap-2 my-2">
+              <Input
+                placeholder="Adicionar nova classe ou colaborador..."
+                value={newReusableName}
+                onChange={(e) => setNewReusableName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddReusableName()}
+              />
+              <Button onClick={handleAddReusableName}>Salvar</Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(project.overall_model_classes || []).length > 0 ? (
+                (project.overall_model_classes || []).map(
+                  (model_class, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="flex items-center gap-2"
+                    >
+                      {model_class.name}
+                      <button
+                        onClick={() => handleDeleteReusableName(index)}
+                        className="rounded-full hover:bg-destructive/20"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </Badge>
+                  ),
+                )
+              ) : (
+                <p className="text-xs text-muted-foreground italic">
+                  Nenhum nome salvo ainda.
+                </p>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {project?.crc_cards?.map((card) => (
           <CRCCard
@@ -378,44 +456,39 @@ const OverallModel = ({ project, setProject }) => {
             card={card}
             project={project}
             setProject={setProject}
-            // Props para itens da lista
             editingField={editingField}
             setEditingField={setEditingField}
-            confirmDeleteItem={confirmDeleteItem}
-            // Props para o título do card
+            handleDeleteListItem={handleDeleteListItem}
+            confirmDeleteCard={confirmDeleteCard}
             editingTitleId={editingTitleId}
             startEditTitle={startEditTitle}
             saveEditTitle={handleSave}
             cancelEditTitle={cancelEditTitle}
-            // Props compartilhadas
             editValue={editValue}
             setEditValue={setEditValue}
+            reusableClasses={project?.overall_model_classes || []}
+            handleCollaboratorChange={handleCollaboratorChange}
           />
         ))}
       </div>
 
       <AlertDialog
-        open={deleteConfirmItem.cardId !== null}
-        onOpenChange={() =>
-          setDeleteConfirmItem({ cardId: null, field: null, itemIndex: null })
-        }
+        open={deleteConfirmCardId !== null}
+        onOpenChange={() => setDeleteConfirmCardId(null)}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            {' '}
-            <AlertDialogTitle>Excluir este item?</AlertDialogTitle>{' '}
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
             <AlertDialogDescription>
-              {' '}
-              Esta ação não pode ser desfeita.{' '}
-            </AlertDialogDescription>{' '}
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente o
+              card e todos os seus dados.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            {' '}
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>{' '}
-            <AlertDialogAction onClick={handleDeleteItem}>
-              {' '}
-              Sim, excluir{' '}
-            </AlertDialogAction>{' '}
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteCard}>
+              Sim, excluir card
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
