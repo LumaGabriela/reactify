@@ -4,7 +4,33 @@ import MotionDivOptions from '@/Components/MotionDivOptions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Plus, Check, X, Edit, Trash2 } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { Badge } from '@/components/ui/badge'
+// IMPORTAÇÕES FALTANDO ADICIONADAS
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
+// Componente para a lista de Responsabilidades (com Input)
 const EditableListItem = ({
   item,
   isEditing,
@@ -16,7 +42,7 @@ const EditableListItem = ({
   onDelete,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
-  const inputRef = useRef(null) // Alterado de volta para inputRef
+  const inputRef = useRef(null)
 
   useEffect(() => {
     if (isEditing) {
@@ -37,7 +63,6 @@ const EditableListItem = ({
     >
       {isEditing ? (
         <div className="flex items-center gap-2 w-full">
-          {/* Alterado de volta para Input de texto */}
           <Input
             ref={inputRef}
             type="text"
@@ -79,9 +104,10 @@ const EditableListItem = ({
   )
 }
 
-// Componente Específico para a lista de Colaboradores (sem alterações)
+// Componente para a lista de Colaboradores (com Select)
 const CollaboratorItem = ({ item, onChange, onDelete, options = [] }) => {
   const [isHovered, setIsHovered] = useState(false)
+
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
@@ -90,7 +116,7 @@ const CollaboratorItem = ({ item, onChange, onDelete, options = [] }) => {
     >
       <Select value={item} onValueChange={onChange}>
         <SelectTrigger className="h-8 flex-1 w-full">
-          <SelectValue placeholder={item} />
+          <SelectValue>{item || 'Selecione...'}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           {options.map((option, index) => (
@@ -165,11 +191,6 @@ const CRCCard = ({
         onMouseLeave={() => setIsHeaderHovered(false)}
         className="relative flex justify-between items-center text-foreground bg-muted p-3 rounded-t-lg border-border border-b"
       >
-        <MotionDivOptions
-          isHovered={isHeaderHovered}
-          onEdit={() => startEditTitle(card)}
-          onDelete={() => confirmDeleteCard(card.id)}
-        />
         {editingTitleId === card.id ? (
           <div className="flex items-center gap-2 w-full">
             <Input
@@ -201,6 +222,11 @@ const CRCCard = ({
           <>
             <h3 className="text-lg font-semibold">{card.class}</h3>
             <span className="text-sm font-bold ">{card.id}</span>
+            <MotionDivOptions
+              isHovered={isHeaderHovered}
+              onEdit={() => startEditTitle(card)}
+              onDelete={() => confirmDeleteCard(card.id)}
+            />
           </>
         )}
       </div>
