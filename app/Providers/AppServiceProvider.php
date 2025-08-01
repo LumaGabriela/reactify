@@ -7,11 +7,13 @@ use App\Observers\ProductCanvasObserver;
 use App\Observers\GoalSketchObserver;
 use App\Observers\PersonaObserver;
 use App\Observers\JourneyObserver;
+use App\Observers\CrcCardObserver;
 use App\Models\Story;
 use App\Models\ProductCanvas;
 use App\Models\Goal;
 use App\Models\Journey;
 use App\Models\Persona;
+use App\Models\CrcCard;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -36,5 +38,6 @@ class AppServiceProvider extends ServiceProvider
     Goal::observe(GoalSketchObserver::class);
     Persona::observe(PersonaObserver::class);
     Journey::observe(JourneyObserver::class);
+    CrcCard::observe(CrcCardObserver::class);
   }
 }

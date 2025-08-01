@@ -33,7 +33,7 @@ class ProjectController extends Controller
     $projects = Project::whereIn('id', $validated['ids'])->get();
 
     return response()->json([
-      'projects' => $projects->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas']),
+      'projects' => $projects->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes']),
       'message' => 'Projects updated successfully.',
       'status' => 'success',
     ]);
