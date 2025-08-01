@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { router } from '@inertiajs/react'
 import MotionDivOptions from '@/Components/MotionDivOptions'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Plus, Check, X, Edit, Trash2 } from 'lucide-react'
 
 const EditableListItem = ({
@@ -12,14 +14,13 @@ const EditableListItem = ({
   onCancel,
   onEdit,
   onDelete,
-  options = [],
 }) => {
   const [isHovered, setIsHovered] = useState(false)
-  const selectRef = useRef(null)
+  const inputRef = useRef(null) // Alterado de volta para inputRef
 
   useEffect(() => {
     if (isEditing) {
-      selectRef.current?.focus()
+      inputRef.current?.focus()
     }
   }, [isEditing])
 
@@ -36,22 +37,16 @@ const EditableListItem = ({
     >
       {isEditing ? (
         <div className="flex items-center gap-2 w-full">
-          <Select value={editValue} onValueChange={onValueChange}>
-            <SelectTrigger
-              ref={selectRef}
-              onKeyDown={handleKeyDown}
-              className="h-8 flex-1 w-full"
-            >
-              <SelectValue placeholder="Selecione..." />
-            </SelectTrigger>
-            <SelectContent>
-              {options.map((option, index) => (
-                <SelectItem key={index} value={option.name}>
-                  {option.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {/* Alterado de volta para Input de texto */}
+          <Input
+            ref={inputRef}
+            type="text"
+            value={editValue}
+            onChange={onValueChange}
+            onKeyDown={handleKeyDown}
+            className="h-8 flex-1"
+            autoFocus
+          />
           <Button
             variant="ghost"
             size="icon"
@@ -84,22 +79,18 @@ const EditableListItem = ({
   )
 }
 
-// NOVO COMPONENTE: Específico para a lista de Colaboradores
+// Componente Específico para a lista de Colaboradores (sem alterações)
 const CollaboratorItem = ({ item, onChange, onDelete, options = [] }) => {
   const [isHovered, setIsHovered] = useState(false)
-
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group relative flex items-center w-full"
     >
-      <Select
-        onValueChange={onChange}
-        className="h-8 flex-1 w-full rounded-md border border-input bg-transparent px-2 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue value={item} placeholder={item} />
+      <Select value={item} onValueChange={onChange}>
+        <SelectTrigger className="h-8 flex-1 w-full">
+          <SelectValue placeholder={item} />
         </SelectTrigger>
         <SelectContent>
           {options.map((option, index) => (
@@ -112,7 +103,7 @@ const CollaboratorItem = ({ item, onChange, onDelete, options = [] }) => {
       <MotionDivOptions
         isHovered={isHovered}
         onDelete={onDelete}
-        options={{ edit: false, delete: true }} // Conforme solicitado
+        options={{ edit: false, delete: true }}
       />
     </div>
   )
@@ -245,7 +236,6 @@ const CRCCard = ({
               onDelete={() =>
                 handleDeleteListItem(card.id, 'responsabilities', i)
               }
-              options={reusableClasses}
             />
           ))}
         </div>
@@ -266,7 +256,7 @@ const CRCCard = ({
               key={`${card.id}-collab-${i}`}
               item={collab}
               options={reusableClasses}
-              onChange={(e) => handleCollaboratorChange(e, card.id, i)}
+              onChange={(value) => handleCollaboratorChange(value, card.id, i)}
               onDelete={() => handleDeleteListItem(card.id, 'collaborators', i)}
             />
           ))}
@@ -303,11 +293,7 @@ const OverallModel = ({ project, setProject }) => {
     const currentNames = project.overall_model_classes || []
     const updatedNames = currentNames.filter((item) => item.id !== idToDelete)
     setProject({ ...project, overall_model_classes: updatedNames })
-    router.delete(
-      route('overall-model-class.destroy', {
-        id: idToDelete,
-      }),
-    )
+    router.delete(route('overall-model-class.destroy', { id: idToDelete }))
   }
 
   const startEditTitle = (card) => {
@@ -327,14 +313,9 @@ const OverallModel = ({ project, setProject }) => {
     )
     setProject({ ...project, crc_cards: updatedCards })
     cancelEditTitle()
-    router.patch(
-      route('overall-model-class.update', {
-        id: editingTitleId,
-      }),
-      {
-        class: editValue,
-      },
-    )
+    router.patch(route('overall-model-class.update', { id: editingTitleId }), {
+      class: editValue,
+    })
   }
 
   const saveEditListItem = () => {
@@ -348,15 +329,7 @@ const OverallModel = ({ project, setProject }) => {
     )
     setProject({ ...project, crc_cards: updatedCards })
     setEditingField({ cardId: null, field: null, itemIndex: null })
-    console.log(updatedCards)
-    // router.patch(
-    //   route('overall.update', {
-    //     id: cardId,
-    //   }),
-    //   {
-    //     collaborator: updatedArray,
-    //   },
-    // )
+    // router.patch(...)
   }
 
   const handleCollaboratorChange = (newValue, cardId, itemIndex) => {
@@ -367,14 +340,9 @@ const OverallModel = ({ project, setProject }) => {
       c.id === cardId ? { ...c, collaborators: updatedArray } : c,
     )
     setProject({ ...project, crc_cards: updatedCards })
-    router.patch(
-      route('overall.update', {
-        model: cardId,
-      }),
-      {
-        collaborators: updatedArray,
-      },
-    )
+    router.patch(route('overall.update', { model: cardId }), {
+      collaborators: updatedArray,
+    })
   }
 
   const handleSave = () => {
@@ -461,8 +429,8 @@ const OverallModel = ({ project, setProject }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {project?.crc_cards
-          ?.slice() // 1. Cria uma cópia rasa do array para não mutar o original
-          .sort((a, b) => a.id - b.id) // 2. Ordena pelo id em ordem crescente
+          ?.slice()
+          .sort((a, b) => a.id - b.id)
           .map((card) => (
             <CRCCard
               key={card.id}

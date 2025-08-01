@@ -149,6 +149,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       const data = await response.json()
       if (response.ok) {
         setProject(data.project)
+        console.log(data.project)
       }
     } catch (error) {
       toast.error(
@@ -208,7 +209,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   }, [activeModelingMenu])
 
   useEffect(() => {
-    console.log(project?.crc_cards)
+    // console.log(project?.crc_cards)
   }, [project])
 
   const renderInceptionContent = () => {
