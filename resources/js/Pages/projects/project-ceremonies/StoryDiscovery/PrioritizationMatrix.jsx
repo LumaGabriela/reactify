@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { router } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
+import axios from 'axios';
 import { toast } from 'sonner';
 
-// Helper to sort goals by priority, handling both 'med' and 'medium'
+// Helper to sort goals by priority
 const priorityOrder = { high: 1, medium: 2, med: 2, low: 3 };
 const sortGoals = (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority];
 
@@ -33,21 +32,14 @@ const MatrixCell = ({ children, onDrop, onDragOver }) => (
 );
 
 const PrioritizationMatrix = ({ project: initialProject }) => {
-  // --- DEBUGGING LINE ---
-  // Isso nos mostrará exatamente o que o servidor está enviando.
-  console.log('Dados recebidos do servidor:', initialProject);
-  // --- FIM DA DEBUGGING LINE ---
-
-  const [project, setProject] = useState(initialProject);
   const [stories, setStories] = useState(initialProject.stories || []);
-  const [isSaving, setIsSaving] = useState(false);
+  const [goals, setGoals] = useState([...(initialProject.goal_sketches || [])].sort(sortGoals));
 
   useEffect(() => {
-    setProject(initialProject);
     setStories(initialProject.stories || []);
+    setGoals([...(initialProject.goal_sketches || [])].sort(sortGoals));
   }, [initialProject]);
 
-  const goals = [...(project.goal_sketches || [])].sort(sortGoals);
   const complexities = ['low', 'medium', 'high'];
 
   const unprioritizedStories = stories.filter(
@@ -59,50 +51,46 @@ const PrioritizationMatrix = ({ project: initialProject }) => {
     e.dataTransfer.dropEffect = 'move';
   };
 
-  const handleDrop = (e, goalValue, complexityValue) => {
+  const handleDrop = (e, goalIndex, complexityValue) => {
     e.preventDefault();
     const storyId = parseInt(e.dataTransfer.getData('storyId'), 10);
     if (!storyId) return;
 
+    const storyToUpdate = stories.find((s) => s.id === storyId);
+    if (!storyToUpdate) return;
+
+    const originalState = [...stories];
+    
+    // Higher row (lower index) = higher business value
+    const businessValue = goalIndex !== null ? goals.length - 1 - goalIndex : null;
+
+    // Optimistic update
     setStories((prevStories) =>
       prevStories.map((story) =>
         story.id === storyId
-          ? { ...story, value: goalValue, complexity: complexityValue }
+          ? { ...story, value: businessValue, complexity: complexityValue }
           : story,
       ),
     );
-  };
 
-  const handleSave = () => {
-    setIsSaving(true);
-    router.patch(
-      `/project/${project.id}/prioritization-matrix`,
-      { stories },
-      {
-        preserveState: true,
-        preserveScroll: true,
-        onSuccess: (page) => {
-          setProject(page.props.project);
-          setStories(page.props.project.stories || []);
-          toast.success('Matriz de priorização salva com sucesso!');
-        },
-        onError: () => {
-          toast.error('Ocorreu um erro ao salvar a matriz.');
-        },
-        onFinish: () => {
-          setIsSaving(false);
-        },
-      },
-    );
+    axios.patch(`/api/stories/${storyId}/prioritize`, {
+        value: businessValue,
+        complexity: complexityValue,
+    })
+    .then(() => {
+        toast.success(`Estória "${storyToUpdate.title}" atualizada!`);
+    })
+    .catch(() => {
+        toast.error('Ocorreu um erro ao atualizar a estória.');
+        // Revert optimistic update on error
+        setStories(originalState);
+    });
   };
 
   return (
     <div className="p-4 md:p-6 lg:p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Matriz de Priorização</h1>
-        <Button onClick={handleSave} disabled={isSaving}>
-          {isSaving ? 'Salvando...' : 'Salvar Matriz'}
-        </Button>
       </div>
 
       <div className="flex gap-6">
@@ -139,21 +127,24 @@ const PrioritizationMatrix = ({ project: initialProject }) => {
                 <div className="font-semibold text-right pr-4">
                   {goal.title}
                 </div>
-                {complexities.map((complexity) => (
-                  <MatrixCell
-                    key={`${goal.id}-${complexity}`}
-                    onDrop={(e) => handleDrop(e, index, complexity)}
-                    onDragOver={handleDragOver}
-                  >
-                    {stories
-                      .filter(
-                        (s) => s.value === index && s.complexity === complexity,
-                      )
-                      .map((story) => (
-                        <StoryCard key={story.id} story={story} />
-                      ))}
-                  </MatrixCell>
-                ))}
+                {complexities.map((complexity) => {
+                  const cellValue = goals.length - 1 - index;
+                  return (
+                    <MatrixCell
+                      key={`${goal.id}-${complexity}`}
+                      onDrop={(e) => handleDrop(e, index, complexity)}
+                      onDragOver={handleDragOver}
+                    >
+                      {stories
+                        .filter(
+                          (s) => s.value === cellValue && s.complexity === complexity,
+                        )
+                        .map((story) => (
+                          <StoryCard key={story.id} story={story} />
+                        ))}
+                    </MatrixCell>
+                  );
+                })}
               </React.Fragment>
             ))}
           </div>

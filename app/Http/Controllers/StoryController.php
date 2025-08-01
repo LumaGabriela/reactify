@@ -6,6 +6,7 @@ use App\Models\Story;
 use App\Http\Requests\StoreStoryRequest;
 use App\Http\Requests\BulkStoreStoryRequest;
 use App\Http\Requests\UpdateStoryRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -48,6 +49,18 @@ class StoryController extends Controller
     Log::info('Story updated', ['id' => $story->id]);
 
     return back();
+  }
+
+  public function prioritize(Request $request, Story $story)
+  {
+    $validated = $request->validate([
+        'value' => 'nullable|integer',
+        'complexity' => 'nullable|string|max:255',
+    ]);
+
+    $story->update($validated);
+
+    return response()->json($story);
   }
 
   public function destroy(Story $story)
