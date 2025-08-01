@@ -1,27 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { router } from '@inertiajs/react'
 import MotionDivOptions from '@/Components/MotionDivOptions'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Plus, Check, X, Edit, Trash2 } from 'lucide-react'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
-import { SelectTrigger } from '@/components/ui/select'
 
 const EditableListItem = ({
   item,
@@ -56,22 +36,22 @@ const EditableListItem = ({
     >
       {isEditing ? (
         <div className="flex items-center gap-2 w-full">
-          <select
-            ref={selectRef}
-            value={editValue}
-            onChange={onValueChange}
-            onKeyDown={handleKeyDown}
-            className="h-8 flex-1 w-full rounded-md border border-input bg-transparent px-2 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <option value="" disabled>
-              Selecione...
-            </option>
-            {options.map((option, index) => (
-              <option key={index} value={option.name}>
-                {option.name}
-              </option>
-            ))}
-          </select>
+          <Select value={editValue} onValueChange={onValueChange}>
+            <SelectTrigger
+              ref={selectRef}
+              onKeyDown={handleKeyDown}
+              className="h-8 flex-1 w-full"
+            >
+              <SelectValue placeholder="Selecione..." />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((option, index) => (
+                <SelectItem key={index} value={option.name}>
+                  {option.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button
             variant="ghost"
             size="icon"
@@ -181,7 +161,10 @@ const CRCCard = ({
       c.id === cardId ? { ...c, [field]: updatedArray } : c,
     )
     setProject({ ...project, crc_cards: updatedCards })
-    // router.patch(...)
+    router.post(route('overall.store', { id: cardId }), {
+      [field]: field,
+      item: 'Novo item...',
+    })
   }
 
   return (
@@ -310,16 +293,21 @@ const OverallModel = ({ project, setProject }) => {
     const updatedNames = [...currentNames, { name: newReusableName.trim() }]
     setProject({ ...project, overall_model_classes: updatedNames })
     setNewReusableName('')
-    // router.post(...)
+    router.post(route('overall-model-class.store'), {
+      name: newReusableName,
+      project_id: project.id,
+    })
   }
 
-  const handleDeleteReusableName = (indexToDelete) => {
+  const handleDeleteReusableName = (idToDelete) => {
     const currentNames = project.overall_model_classes || []
-    const updatedNames = currentNames.filter(
-      (_, index) => index !== indexToDelete,
-    )
+    const updatedNames = currentNames.filter((item) => item.id !== idToDelete)
     setProject({ ...project, overall_model_classes: updatedNames })
-    // router.patch(...)
+    router.delete(
+      route('overall-model-class.destroy', {
+        id: idToDelete,
+      }),
+    )
   }
 
   const startEditTitle = (card) => {
@@ -339,7 +327,14 @@ const OverallModel = ({ project, setProject }) => {
     )
     setProject({ ...project, crc_cards: updatedCards })
     cancelEditTitle()
-    // router.patch(...)
+    router.patch(
+      route('overall-model-class.update', {
+        id: editingTitleId,
+      }),
+      {
+        class: editValue,
+      },
+    )
   }
 
   const saveEditListItem = () => {
@@ -353,7 +348,15 @@ const OverallModel = ({ project, setProject }) => {
     )
     setProject({ ...project, crc_cards: updatedCards })
     setEditingField({ cardId: null, field: null, itemIndex: null })
-    // router.patch(...)
+    console.log(updatedCards)
+    // router.patch(
+    //   route('overall.update', {
+    //     id: cardId,
+    //   }),
+    //   {
+    //     collaborator: updatedArray,
+    //   },
+    // )
   }
 
   const handleCollaboratorChange = (newValue, cardId, itemIndex) => {
@@ -364,7 +367,14 @@ const OverallModel = ({ project, setProject }) => {
       c.id === cardId ? { ...c, collaborators: updatedArray } : c,
     )
     setProject({ ...project, crc_cards: updatedCards })
-    // router.patch(...)
+    router.patch(
+      route('overall.update', {
+        model: cardId,
+      }),
+      {
+        collaborators: updatedArray,
+      },
+    )
   }
 
   const handleSave = () => {
@@ -396,7 +406,7 @@ const OverallModel = ({ project, setProject }) => {
     )
     setProject({ ...project, crc_cards: updatedCards })
     setDeleteConfirmCardId(null)
-    // router.delete(...)
+    router.delete(route('overall.destroy', { id: deleteConfirmCardId }))
   }
 
   return (
@@ -431,7 +441,7 @@ const OverallModel = ({ project, setProject }) => {
                     >
                       {model_class.name}
                       <button
-                        onClick={() => handleDeleteReusableName(index)}
+                        onClick={() => handleDeleteReusableName(model_class.id)}
                         className="rounded-full hover:bg-destructive/20"
                       >
                         <X className="size-3" />
@@ -450,26 +460,29 @@ const OverallModel = ({ project, setProject }) => {
       </Accordion>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {project?.crc_cards?.map((card) => (
-          <CRCCard
-            key={card.id}
-            card={card}
-            project={project}
-            setProject={setProject}
-            editingField={editingField}
-            setEditingField={setEditingField}
-            handleDeleteListItem={handleDeleteListItem}
-            confirmDeleteCard={confirmDeleteCard}
-            editingTitleId={editingTitleId}
-            startEditTitle={startEditTitle}
-            saveEditTitle={handleSave}
-            cancelEditTitle={cancelEditTitle}
-            editValue={editValue}
-            setEditValue={setEditValue}
-            reusableClasses={project?.overall_model_classes || []}
-            handleCollaboratorChange={handleCollaboratorChange}
-          />
-        ))}
+        {project?.crc_cards
+          ?.slice() // 1. Cria uma cópia rasa do array para não mutar o original
+          .sort((a, b) => a.id - b.id) // 2. Ordena pelo id em ordem crescente
+          .map((card) => (
+            <CRCCard
+              key={card.id}
+              card={card}
+              project={project}
+              setProject={setProject}
+              editingField={editingField}
+              setEditingField={setEditingField}
+              handleDeleteListItem={handleDeleteListItem}
+              confirmDeleteCard={confirmDeleteCard}
+              editingTitleId={editingTitleId}
+              startEditTitle={startEditTitle}
+              saveEditTitle={handleSave}
+              cancelEditTitle={cancelEditTitle}
+              editValue={editValue}
+              setEditValue={setEditValue}
+              reusableClasses={project?.overall_model_classes || []}
+              handleCollaboratorChange={handleCollaboratorChange}
+            />
+          ))}
       </div>
 
       <AlertDialog
