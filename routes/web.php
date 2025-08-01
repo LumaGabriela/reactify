@@ -86,13 +86,13 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   //   Rotas para OverallModel
   Route::prefix('overall')->group(function () {
     Route::post('/', [OverallModelController::class, 'store'])->name('overall.store');
-    Route::patch('/{overall}', [OverallModelController::class, 'update'])->name('overall.update');
-    Route::delete('/{overall}', [OverallModelController::class, 'destroy'])->name('overall.delete');
+    Route::patch('/{model}', [OverallModelController::class, 'update'])->name('overall.update');
+    Route::delete('/{model}', [OverallModelController::class, 'destroy'])->name('overall.destroy');
   });
 
   Route::prefix('overall-model-classes')->group(function () {
     Route::post('/', [OverallModelClassController::class, 'store'])->name('overall-model-class.store');
-    Route::delete('/{overall_model_class}', [OverallModelClassController::class, 'destroy'])->name('overall-model-class.delete');
+    Route::delete('/{overall_model_class}', [OverallModelClassController::class, 'destroy'])->name('overall-model-class.destroy');
   });
 
   //Rotas para goals
