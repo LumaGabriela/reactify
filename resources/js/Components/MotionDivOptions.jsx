@@ -17,7 +17,7 @@ const MotionDivOptions = ({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 10 }}
           transition={{ duration: 0.2 }}
-          className="absolute right-2 top-4 -translate-y-1 flex items-center rounded-md bg-card border border-border shadow-lg"
+          className="absolute right-0 top-0 flex items-center rounded-md bg-card border border-border shadow-lg"
         >
           {options.edit && (
             <Button

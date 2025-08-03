@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\OverallModelClass;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class OverallModelClassController extends Controller
 {
@@ -18,7 +19,7 @@ class OverallModelClassController extends Controller
 
     return back()->with(['status' => 'success', 'message' => 'Class created successfully']);
   }
-  public function delete(OverallModelClass $class)
+  public function destroy(OverallModelClass $class)
   {
     $class->delete();
 

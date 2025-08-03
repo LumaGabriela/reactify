@@ -1,34 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
 import { router } from '@inertiajs/react'
 import MotionDivOptions from '@/Components/MotionDivOptions'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Plus, Check, X, Edit, Trash2 } from 'lucide-react'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
-// IMPORTAÇÕES FALTANDO ADICIONADAS
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 
 // Componente para a lista de Responsabilidades (com Input)
 const EditableListItem = ({
@@ -59,35 +31,35 @@ const EditableListItem = ({
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex items-center min-h-[32px] rounded-md transition-colors hover:bg-muted/50 px-2"
+      className="group relative flex items-center min-h-[32px] rounded-md transition-colors p-0 border-border border"
     >
       {isEditing ? (
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center gap-2 w-full p-0">
           <Input
             ref={inputRef}
             type="text"
             value={editValue}
             onChange={onValueChange}
             onKeyDown={handleKeyDown}
-            className="h-8 flex-1"
+            className="h-8 flex-1 text-center p-0 bg-secondary"
             autoFocus
           />
-          <Button
+          {/* <Button
             variant="ghost"
             size="icon"
             className="size-7 text-green-500 hover:bg-green-500/10 hover:text-green-500"
             onClick={onSave}
           >
             <Check className="size-4" />
-          </Button>
-          <Button
+          </Button>*/}
+          {/* <Button
             variant="ghost"
             size="icon"
             className="size-7 text-destructive hover:bg-destructive/10 hover:text-destructive"
             onClick={onCancel}
           >
             <X className="size-4" />
-          </Button>
+          </Button>*/}
         </div>
       ) : (
         <>
@@ -201,7 +173,7 @@ const CRCCard = ({
               onKeyDown={handleTitleKeyDown}
               className="h-9 text-lg font-semibold flex-1"
             />
-            <Button
+            {/* <Button
               variant="ghost"
               size="icon"
               className="size-8 text-green-500 hover:bg-green-500/10 hover:text-green-500"
@@ -216,7 +188,7 @@ const CRCCard = ({
               onClick={cancelEditTitle}
             >
               <X className="size-5" />
-            </Button>
+            </Button>*/}
           </div>
         ) : (
           <>
@@ -339,7 +311,7 @@ const OverallModel = ({ project, setProject }) => {
     )
     setProject({ ...project, crc_cards: updatedCards })
     cancelEditTitle()
-    router.patch(route('overall-model-class.update', { id: editingTitleId }), {
+    router.patch(route('overall.update', { id: editingTitleId }), {
       class: editValue,
     })
   }

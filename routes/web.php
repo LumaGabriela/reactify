@@ -92,7 +92,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
   Route::prefix('overall-model-classes')->group(function () {
     Route::post('/', [OverallModelClassController::class, 'store'])->name('overall-model-class.store');
-    Route::delete('/{overall_model_class}', [OverallModelClassController::class, 'destroy'])->name('overall-model-class.destroy');
+    Route::delete('/{class}', [OverallModelClassController::class, 'destroy'])->name('overall-model-class.destroy');
   });
 
   //Rotas para goals
