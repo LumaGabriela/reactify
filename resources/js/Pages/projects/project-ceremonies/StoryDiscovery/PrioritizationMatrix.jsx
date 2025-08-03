@@ -1,134 +1,159 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { toast } from 'sonner'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { router } from '@inertiajs/react'
 
-// Helper to sort goals by priority
-const priorityOrder = { high: 1, medium: 2, med: 2, low: 3 };
-const sortGoals = (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority];
+// Helper para ordenar metas por prioridade (sem alterações)
+const priorityOrder = { high: 1, medium: 2, med: 2, low: 3 }
+const sortGoals = (a, b) =>
+  priorityOrder[a.priority] - priorityOrder[b.priority]
 
-// The component for a single draggable story
+// Componente para um único card de estória
+// Estilos refinados com classes do shadcn/ui e transições suaves
 const StoryCard = ({ story }) => (
   <div
     draggable
     onDragStart={(e) => {
-      e.dataTransfer.setData('storyId', story.id);
-      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('storyId', story.id)
+      e.dataTransfer.effectAllowed = 'move'
     }}
-    className="p-2 mb-2 bg-card border rounded-md shadow-sm cursor-grab active:cursor-grabbing"
+    className="p-2.5 mb-2 bg-card text-card-foreground border rounded-lg shadow-sm cursor-grab active:cursor-grabbing transition-all hover:shadow-md hover:bg-muted"
   >
-    <p className="text-sm font-medium">{story.title}</p>
+    <p className="text-sm font-medium leading-snug">{story.title}</p>
   </div>
-);
+)
 
-// The component for a single cell in the matrix
+// Componente para uma célula da matriz
+// Estilo atualizado para um visual de "dropzone" com borda tracejada
 const MatrixCell = ({ children, onDrop, onDragOver }) => (
   <div
     onDrop={onDrop}
     onDragOver={onDragOver}
-    className="h-32 p-2 border bg-muted/25 rounded-md overflow-y-auto"
+    className="h-40 p-2 border-2 border-dashed bg-muted/50 rounded-lg overflow-y-auto flex flex-col"
   >
     {children}
   </div>
-);
+)
 
 const PrioritizationMatrix = ({ project: initialProject }) => {
-  const [stories, setStories] = useState(initialProject.stories || []);
-  const [goals, setGoals] = useState([...(initialProject.goal_sketches || [])].sort(sortGoals));
+  const [stories, setStories] = useState(initialProject.stories || [])
+  const [goals, setGoals] = useState(
+    [...(initialProject.goal_sketches || [])].sort(sortGoals),
+  )
 
   useEffect(() => {
-    setStories(initialProject.stories || []);
-    setGoals([...(initialProject.goal_sketches || [])].sort(sortGoals));
-  }, [initialProject]);
+    setStories(initialProject.stories || [])
+    setGoals([...(initialProject.goal_sketches || [])].sort(sortGoals))
+  }, [initialProject])
 
-  const complexities = ['low', 'medium', 'high'];
-
+  const complexities = ['low', 'medium', 'high']
   const unprioritizedStories = stories.filter(
     (s) => s.value === null || s.complexity === null,
-  );
+  )
 
   const handleDragOver = (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+  }
 
   const handleDrop = (e, goalIndex, complexityValue) => {
-    e.preventDefault();
-    const storyId = parseInt(e.dataTransfer.getData('storyId'), 10);
-    if (!storyId) return;
+    e.preventDefault()
+    const storyId = parseInt(e.dataTransfer.getData('storyId'), 10)
+    if (!storyId) return
 
-    const storyToUpdate = stories.find((s) => s.id === storyId);
-    if (!storyToUpdate) return;
+    const storyToUpdate = stories.find((s) => s.id === storyId)
+    if (!storyToUpdate) return
 
-    const originalState = [...stories];
-    
-    // Higher row (lower index) = higher business value
-    const businessValue = goalIndex !== null ? goals.length - 1 - goalIndex : null;
+    const originalState = [...stories]
+    const businessValue =
+      goalIndex !== null ? goals.length - 1 - goalIndex : null
 
-    // Optimistic update
+    // Update otimista
     setStories((prevStories) =>
       prevStories.map((story) =>
         story.id === storyId
           ? { ...story, value: businessValue, complexity: complexityValue }
           : story,
       ),
-    );
+    )
+    router.patch(route('story.prioritize', storyId), {
+      value: businessValue,
+      complexity: complexityValue,
+    })
 
-    axios.patch(`/api/stories/${storyId}/prioritize`, {
-        value: businessValue,
-        complexity: complexityValue,
-    })
-    .then(() => {
-        toast.success(`Estória "${storyToUpdate.title}" atualizada!`);
-    })
-    .catch(() => {
-        toast.error('Ocorreu um erro ao atualizar a estória.');
-        // Revert optimistic update on error
-        setStories(originalState);
-    });
-  };
+    // axios
+    //   .patch(`/api/stories/${storyId}/prioritize`, {
+    //     value: businessValue,
+    //     complexity: complexityValue,
+    //   })
+    //   .then(() => {
+    //     toast.success(`Estória "${storyToUpdate.title}" priorizada!`)
+    //   })
+    //   .catch(() => {
+    //     toast.error('Ocorreu um erro ao atualizar a estória.')
+    //     setStories(originalState) // Reverte em caso de erro
+    //   })
+  }
 
   return (
-    <div className="p-4 md:p-6 lg:p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Matriz de Priorização</h1>
-      </div>
-
-      <div className="flex gap-6">
-        <div className="w-1/4">
-          <h2 className="text-lg font-semibold mb-4">Estórias Não Priorizadas</h2>
-          <div
-            className="p-2 border rounded-lg bg-slate-50 min-h-[400px]"
+    <div className="p-4 md:p-6 lg:p-8 text-foreground">
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Coluna de Estórias Não Priorizadas */}
+        <Card className="w-full lg:w-1/3 xl:w-1/4">
+          <CardHeader>
+            <CardTitle>Estórias para Priorizar</CardTitle>
+          </CardHeader>
+          <CardContent
             onDrop={(e) => handleDrop(e, null, null)}
             onDragOver={handleDragOver}
+            className="p-4 bg-muted/20 min-h-[200px] lg:min-h-[500px] rounded-b-lg"
           >
             {unprioritizedStories.length > 0 ? (
               unprioritizedStories.map((story) => (
                 <StoryCard key={story.id} story={story} />
               ))
             ) : (
-              <p className="text-sm text-muted-foreground text-center pt-4">
-                Nenhuma estória para priorizar.
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="w-3/4">
-          <div className="grid grid-cols-4 gap-x-4 gap-y-2 items-center">
-            <div></div>
-            {complexities.map((complexity) => (
-              <div key={complexity} className="text-center font-semibold capitalize">
-                {complexity}
+              <div className="flex items-center justify-center h-full">
+                <p className="text-sm text-muted-foreground text-center">
+                  Todas as estórias foram priorizadas.
+                </p>
               </div>
-            ))}
+            )}
+          </CardContent>
+        </Card>
 
+        {/* Matriz de Priorização */}
+        <div className="w-full lg:w-2/3 xl:w-3/4">
+          <div className="grid grid-cols-4 gap-4 items-center">
+            <span className="text-center font-semibold text-muted-foreground capitalize">
+              Goal
+            </span>
+            {complexities.map((complexity) => (
+              <h3
+                key={complexity}
+                className="text-center font-semibold text-muted-foreground capitalize"
+              >
+                {complexity}
+              </h3>
+            ))}
+            {/* Linhas da Matriz (Metas e Células) */}
             {goals.map((goal, index) => (
               <React.Fragment key={goal.id}>
-                <div className="font-semibold text-right pr-4">
-                  {goal.title}
+                <div className="font-semibold text-sm text-right pr-4 h-full flex items-center justify-end">
+                  <span className="text-center font-semibold text-muted-foreground capitalize">
+                    {goal.title}
+                  </span>
                 </div>
+
                 {complexities.map((complexity) => {
-                  const cellValue = goals.length - 1 - index;
+                  const cellValue = goals.length - 1 - index
                   return (
                     <MatrixCell
                       key={`${goal.id}-${complexity}`}
@@ -137,13 +162,15 @@ const PrioritizationMatrix = ({ project: initialProject }) => {
                     >
                       {stories
                         .filter(
-                          (s) => s.value === cellValue && s.complexity === complexity,
+                          (s) =>
+                            s.value === cellValue &&
+                            s.complexity === complexity,
                         )
                         .map((story) => (
                           <StoryCard key={story.id} story={story} />
                         ))}
                     </MatrixCell>
-                  );
+                  )
                 })}
               </React.Fragment>
             ))}
@@ -151,7 +178,7 @@ const PrioritizationMatrix = ({ project: initialProject }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PrioritizationMatrix;
+export default PrioritizationMatrix

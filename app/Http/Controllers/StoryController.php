@@ -54,13 +54,13 @@ class StoryController extends Controller
   public function prioritize(Request $request, Story $story)
   {
     $validated = $request->validate([
-        'value' => 'nullable|integer',
-        'complexity' => 'nullable|string|max:255',
+      'value' => 'nullable|integer',
+      'complexity' => 'nullable|string|max:255',
     ]);
 
     $story->update($validated);
 
-    return response()->json($story);
+    return back()->with(['status' => 'success', 'message' => 'Story prioritized successfully']);
   }
 
   public function destroy(Story $story)

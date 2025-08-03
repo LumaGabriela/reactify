@@ -80,6 +80,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/', [StoryController::class, 'store'])->name('story.store');
     Route::post('/bulk-store', [StoryController::class, 'bulk'])->name('story.bulk-store');
     Route::patch('/{story}', [StoryController::class, 'update'])->name('story.update');
+    Route::patch('/{story}/prioritize', [StoryController::class, 'prioritize'])->name('story.prioritize');
     Route::delete('/{story}', [StoryController::class, 'destroy'])->name('story.delete');
   });
 
