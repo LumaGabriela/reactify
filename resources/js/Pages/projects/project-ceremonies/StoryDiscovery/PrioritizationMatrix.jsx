@@ -1,15 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import { toast } from 'sonner'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 import { router } from '@inertiajs/react'
-
+import React from 'react'
 // Helper para ordenar metas por prioridade (sem alterações)
 const priorityOrder = { high: 1, medium: 2, med: 2, low: 3 }
 const sortGoals = (a, b) =>
@@ -87,19 +77,6 @@ const PrioritizationMatrix = ({ project: initialProject }) => {
       value: businessValue,
       complexity: complexityValue,
     })
-
-    // axios
-    //   .patch(`/api/stories/${storyId}/prioritize`, {
-    //     value: businessValue,
-    //     complexity: complexityValue,
-    //   })
-    //   .then(() => {
-    //     toast.success(`Estória "${storyToUpdate.title}" priorizada!`)
-    //   })
-    //   .catch(() => {
-    //     toast.error('Ocorreu um erro ao atualizar a estória.')
-    //     setStories(originalState) // Reverte em caso de erro
-    //   })
   }
 
   return (

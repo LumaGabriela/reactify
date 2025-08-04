@@ -1,6 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
 import { useEcho } from '@laravel/echo-react'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import {
   CheckCircle,
   Users,
@@ -10,64 +8,14 @@ import {
   EllipsisVertical,
 } from 'lucide-react'
 import { Link, router, usePage } from '@inertiajs/react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandShortcut,
-} from '@/components/ui/command'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogFooter,
-  DialogClose,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import MainLayout from '@/Layouts/MainLayout'
-import { MagicCard } from '@/components/magicui/magic-card'
 
 const Dashboard = ({}) => {
   const props = usePage().props
   const projects = props.auth.projects || []
   const [currentProjects, setCurrentProjects] = useState(projects)
   const [activeFilter, setActiveFilter] = useState('Todos')
-  const commandInputRef = React.useRef(null)
+  const commandInputRef = useRef(null)
   const today = new Date()
   const [newProject, setNewProject] = useState({
     title: '',
@@ -203,23 +151,27 @@ const Dashboard = ({}) => {
   })
 
   return (
-    <div className="bg-background text-white p-6 w-full mx-auto pt-16">
+    <div className="bg-background text-white p-6 w-full mx-auto ">
       {/* Header */}
       <div className="flex  justify-stretch items-stretch gap-2">
-        <div className=" flex flex-col w-1/2">
+        <div className=" flex flex-col w-1/5">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="default" className="h-full max-h-[100px] p-0">
-                <MagicCard
-                  gradientColor=" oklch(0.5549 0.2547 282.7136)"
-                  gradientFrom=" oklch(0.5549 0.2547 282.7136)"
-                  gradientTo="oklch(0.7482 0.1235 244.7492)"
-                  className="rounded h-full w-full flex p-2 items-center justify-center bg-primary text-foreground text-2xl"
-                >
-                  Criar Projeto
-                </MagicCard>
+              <Button
+                variant="default"
+                className="w-full h-full relative bg-muted text-foreground"
+              >
+                <ShineBorder
+                  borderWidth={2}
+                  shineColor={[
+                    'oklch(0.5497 0.2143 285.2157)',
+                    'oklch(0.6861 0.2061 14.9941)',
+                  ]}
+                />
+                Novo Projeto
               </Button>
             </DialogTrigger>
+
             <DialogContent className="sm:max-w-[425px]">
               <form className="space-y-4" onSubmit={createProject}>
                 <DialogHeader>
@@ -273,7 +225,7 @@ const Dashboard = ({}) => {
         </div>
         {/* command */}
 
-        <div className="relative w-1/2 flex flex-col justify-end">
+        <div className="relative w-4/5 flex flex-col justify-end">
           <Command className=" relative w-full md:min-w-[250px]">
             <CommandInput
               shortcut

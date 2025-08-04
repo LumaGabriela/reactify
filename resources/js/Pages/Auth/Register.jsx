@@ -2,7 +2,7 @@ import InputError from '@/Components/InputError'
 import InputLabel from '@/Components/InputLabel'
 import PrimaryButton from '@/Components/PrimaryButton'
 import TextInput from '@/Components/TextInput'
-import GuestLayout from '@/Layouts/GuestLayout'
+import MainLayout from '@/Layouts/MainLayout'
 import { Head, Link, useForm } from '@inertiajs/react'
 
 export default function Register() {
@@ -26,7 +26,7 @@ export default function Register() {
   }
   console.log(route())
   return (
-    <GuestLayout>
+    <>
       <Head title="Register" />
 
       <div className="bg-gray-2 p-8 rounded-xl shadow-xl w-full max-w-md">
@@ -127,6 +127,7 @@ export default function Register() {
           </div>
         </form>
       </div>
-    </GuestLayout>
+    </>
   )
 }
+Register.layout = (page) => <MainLayout children={page} />

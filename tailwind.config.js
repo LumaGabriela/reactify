@@ -22,38 +22,56 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
-        background: 'color-mix(in srgb, var(--background) calc(100% * <alpha-value>), transparent)',
-        foreground: 'color-mix(in srgb, var(--foreground) calc(100% * <alpha-value>), transparent)',
-        border: 'color-mix(in srgb, var(--border) calc(100% * <alpha-value>), transparent)',
-        input: 'color-mix(in srgb, var(--input) calc(100% * <alpha-value>), transparent)',
+        background:
+          'color-mix(in srgb, var(--background) calc(100% * <alpha-value>), transparent)',
+        foreground:
+          'color-mix(in srgb, var(--foreground) calc(100% * <alpha-value>), transparent)',
+        border:
+          'color-mix(in srgb, var(--border) calc(100% * <alpha-value>), transparent)',
+        input:
+          'color-mix(in srgb, var(--input) calc(100% * <alpha-value>), transparent)',
         ring: 'color-mix(in srgb, var(--ring) calc(100% * <alpha-value>), transparent)',
         card: {
-          DEFAULT: 'color-mix(in srgb, var(--card) calc(100% * <alpha-value>), transparent)',
-          foreground: 'color-mix(in srgb, var(--card-foreground) calc(100% * <alpha-value>), transparent)',
+          DEFAULT:
+            'color-mix(in srgb, var(--card) calc(100% * <alpha-value>), transparent)',
+          foreground:
+            'color-mix(in srgb, var(--card-foreground) calc(100% * <alpha-value>), transparent)',
         },
         popover: {
-          DEFAULT: 'color-mix(in srgb, var(--popover) calc(100% * <alpha-value>), transparent)',
-          foreground: 'color-mix(in srgb, var(--popover-foreground) calc(100% * <alpha-value>), transparent)',
+          DEFAULT:
+            'color-mix(in srgb, var(--popover) calc(100% * <alpha-value>), transparent)',
+          foreground:
+            'color-mix(in srgb, var(--popover-foreground) calc(100% * <alpha-value>), transparent)',
         },
         primary: {
-          DEFAULT: 'color-mix(in srgb, var(--primary) calc(100% * <alpha-value>), transparent)',
-          foreground: 'color-mix(in srgb, var(--primary-foreground) calc(100% * <alpha-value>), transparent)',
+          DEFAULT:
+            'color-mix(in srgb, var(--primary) calc(100% * <alpha-value>), transparent)',
+          foreground:
+            'color-mix(in srgb, var(--primary-foreground) calc(100% * <alpha-value>), transparent)',
         },
         secondary: {
-          DEFAULT: 'color-mix(in srgb, var(--secondary) calc(100% * <alpha-value>), transparent)',
-          foreground: 'color-mix(in srgb, var(--secondary-foreground) calc(100% * <alpha-value>), transparent)',
+          DEFAULT:
+            'color-mix(in srgb, var(--secondary) calc(100% * <alpha-value>), transparent)',
+          foreground:
+            'color-mix(in srgb, var(--secondary-foreground) calc(100% * <alpha-value>), transparent)',
         },
         muted: {
-          DEFAULT: 'color-mix(in srgb, var(--muted) calc(100% * <alpha-value>), transparent)',
-          foreground: 'color-mix(in srgb, var(--muted-foreground) calc(100% * <alpha-value>), transparent)',
+          DEFAULT:
+            'color-mix(in srgb, var(--muted) calc(100% * <alpha-value>), transparent)',
+          foreground:
+            'color-mix(in srgb, var(--muted-foreground) calc(100% * <alpha-value>), transparent)',
         },
         accent: {
-          DEFAULT: 'color-mix(in srgb, var(--accent) calc(100% * <alpha-value>), transparent)',
-          foreground: 'color-mix(in srgb, var(--accent-foreground) calc(100% * <alpha-value>), transparent)',
+          DEFAULT:
+            'color-mix(in srgb, var(--accent) calc(100% * <alpha-value>), transparent)',
+          foreground:
+            'color-mix(in srgb, var(--accent-foreground) calc(100% * <alpha-value>), transparent)',
         },
         destructive: {
-          DEFAULT: 'color-mix(in srgb, var(--destructive) calc(100% * <alpha-value>), transparent)',
-          foreground: 'color-mix(in srgb, var(--destructive-foreground) calc(100% * <alpha-value>), transparent)',
+          DEFAULT:
+            'color-mix(in srgb, var(--destructive) calc(100% * <alpha-value>), transparent)',
+          foreground:
+            'color-mix(in srgb, var(--destructive-foreground) calc(100% * <alpha-value>), transparent)',
         },
         chart: {
           1: 'color-mix(in srgb, var(--chart-1) calc(100% * <alpha-value>), transparent)',
@@ -104,12 +122,18 @@ export default {
             height: '0',
           },
         },
+        shine: {
+          '0%': { backgroundPosition: '0% 0%' },
+          '50%': { backgroundPosition: '100% 100%' },
+          to: { backgroundPosition: '0% 0%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        shine: 'shine 7s linear infinite',
       },
     },
   },
