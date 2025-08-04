@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -33,17 +32,6 @@ import {
 } from 'lucide-react'
 import { router } from '@inertiajs/react'
 import { toast } from 'sonner'
-
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  PopoverArrow,
-} from '@/components/ui/popover'
-import { Switch } from '@/components/ui/switch'
 import TextareaAutosize from 'react-textarea-autosize'
 import { cn } from '@/lib/utils'
 
@@ -98,11 +86,9 @@ const JourneyStepItem = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSave()
+    } else if (e.key === 'Escape') {
+      onCancel()
     }
-  }
-  const handleConfirmDelete = () => {
-    onDelete()
-    setShowDeletePopover(false)
   }
 
   return (
@@ -117,9 +103,9 @@ const JourneyStepItem = ({
 
       <Card className="w-full bg-card border-border transition-shadow hover:shadow-lg z-20">
         <CardContent className="flex flex-row items-start justify-between gap-2 p-2 min-h-[60px]">
-          <div className="flex items-center flex-1 min-w-0">
-            <div className="flex-1">
-              {isEditing ? (
+          <section className="flex items-center flex-1">
+            {isEditing ? (
+              <>
                 <TextareaAutosize
                   ref={textareaRef}
                   value={editValue}
@@ -128,53 +114,43 @@ const JourneyStepItem = ({
                   className="w-full text-sm border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal text-foreground focus-visible:outline-none focus-visible:ring-0"
                   autoFocus
                 />
-              ) : (
-                <p className="m-0 text-sm text-foreground break-words w-full">
-                  {step.description || '...'}
-                </p>
-              )}
-            </div>
-          </div>
-          {step.is_touchpoint && !isEditing && (
-            <Circle size={16} className="fill-primary stroke-primary mt-1" />
-          )}
-
-          <div className="flex items-center gap-1">
-            {isEditing ? (
-              <>
                 <Switch
                   id={`touchpoint-switch-${stepIndex}`}
                   checked={touchpointChecked}
                   onCheckedChange={setTouchpointChecked}
                 />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-7 text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
-                  onClick={onCancel}
-                >
-                  <X className="size-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-7 text-success/80 hover:bg-success/10 hover:text-success"
-                  onClick={handleSave}
-                >
-                  <Check />
-                </Button>
+                {/* <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-7 text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
+                    onClick={onCancel}
+                  >
+                    <X className="size-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-7 text-success/80 hover:bg-success/10 hover:text-success"
+                    onClick={handleSave}
+                  >
+                    <Check />
+                  </Button>*/}
               </>
             ) : (
-              <div />
+              <p className="m-0 text-sm text-foreground break-words w-full">
+                {step.description || 'Description...'}
+              </p>
             )}
-          </div>
+          </section>
+          {step.is_touchpoint && !isEditing && (
+            <Circle size={16} className="fill-primary stroke-primary mt-1" />
+          )}
         </CardContent>
       </Card>
 
       <MotionDivOptions
         isHovered={isHovered}
         isEditing={isEditing}
-        isTemporary={isTemporary}
         onEdit={onEdit}
         onDelete={onDelete}
       />
