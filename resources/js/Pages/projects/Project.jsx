@@ -149,7 +149,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       const data = await response.json()
       if (response.ok) {
         setProject(data.project)
-        console.log(data.project.priorizations)
+        // console.log(data.project.priorizations)
       }
     } catch (error) {
       toast.error(
@@ -159,7 +159,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
           error.message,
       )
     } finally {
-      console.log('Projeto atualizado com sucesso!')
+      // console.log('Projeto atualizado com sucesso!')
     }
   }
 

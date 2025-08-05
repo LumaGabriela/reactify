@@ -33,7 +33,9 @@ const StoryCard = ({ story }) => {
       style={style}
       {...listeners}
       {...attributes}
-      className="p-3 bg-primary/10 border border-primary/20 rounded-lg shadow-sm cursor-grab active:cursor-grabbing text-primary"
+      className={`
+        p-3 bg-primary/10 border border-primary/20 rounded-lg shadow-sm text-primary transition-opacity duration-300
+        ${story.isTemporary ? 'opacity-50 cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}`}
     >
       <p className="font-semibold text-sm">{story.story_title}</p>
     </div>
@@ -93,10 +95,6 @@ const PriorizationMatrix = ({ project }) => {
   )
 
   useEffect(() => {
-    // Esta função será executada após a renderização inicial
-    // e sempre que um dos itens no array de dependências mudar.
-    console.log("Prop 'project' mudou. Sincronizando a matriz...")
-
     const newMatrix = transformArrayToMatrixObject(
       project.priorizations,
       project.stories,
@@ -104,7 +102,7 @@ const PriorizationMatrix = ({ project }) => {
 
     // Atualiza o estado interno para refletir as novas props
     setPriorizationMatrix(newMatrix)
-  }, [project.priorizations, project.stories])
+  }, [project])
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -136,7 +134,13 @@ const PriorizationMatrix = ({ project }) => {
         (key) => newMatrix[key]?.story_id === draggedStory.id,
       )
       const draggedPrioritization = oldCellKey ? prevMatrix[oldCellKey] : null
+      if (draggedPrioritization && draggedPrioritization.isTemporary) {
+        console.warn(
+          'Ação bloqueada: A story está aguardando confirmação do servidor.',
+        )
 
+        return prevMatrix
+      }
       //adiciona o elemento de volta a lista
       if (String(over.id).startsWith('story-list') && draggedPrioritization) {
         //remove o elemento do banco de dados e da matriz
@@ -145,6 +149,11 @@ const PriorizationMatrix = ({ project }) => {
           route('priorization.destroy', {
             priorization: draggedPrioritization.id,
           }),
+          {
+            preserveState: true,
+            preserveScroll: true,
+            only: [],
+          },
         )
 
         return newMatrix
@@ -154,12 +163,11 @@ const PriorizationMatrix = ({ project }) => {
         const position = Number(over.id.split('-')[2])
         const occupant = prevMatrix[over.id]
 
-        if (occupant) {
-          console.log('celula ocupada')
-          return prevMatrix
-        }
+        if (occupant) return prevMatrix
+
         // se a story estiver em uma celula, atualiza a posicao
         if (draggedPrioritization) {
+          console.log(draggedPrioritization)
           router.patch(
             route('priorization.update', {
               priorization: draggedPrioritization.id,
@@ -167,6 +175,11 @@ const PriorizationMatrix = ({ project }) => {
             {
               priority: priority,
               position: position,
+            },
+            {
+              preserveState: true,
+              preserveScroll: true,
+              only: [],
             },
           )
         } else {
@@ -178,6 +191,7 @@ const PriorizationMatrix = ({ project }) => {
             position: position,
           })
         }
+        if (oldCellKey) delete newMatrix[oldCellKey]
         // Constrói o novo objeto com a estrutura desejada
         newMatrix[over.id] = {
           id: draggedPrioritization?.id || `temp-${Date.now()}`,
@@ -185,6 +199,7 @@ const PriorizationMatrix = ({ project }) => {
           story_title: draggedStory.title,
           priority: priority,
           position: position,
+          isTemporary: !draggedPrioritization,
         }
         return newMatrix
       }
