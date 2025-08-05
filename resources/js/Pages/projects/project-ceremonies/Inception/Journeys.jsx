@@ -212,7 +212,7 @@ const Journeys = ({ project, setProject }) => {
   // Função que será chamada quando o arrasto terminar
   const handleDragEnd = (event, journeyId) => {
     const { active, over } = event
-
+    console.log(active, over)
     if (over && active.id !== over.id) {
       const journey = project.journeys.find((j) => j.id === journeyId)
       const steps = journey.steps

@@ -13,7 +13,7 @@ use App\Http\Controllers\WelcomeEmailController;
 use App\Http\Controllers\ProjectPermissionController;
 use App\Http\Controllers\ProjectInvitationController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PrioritizationMatrixController;
+use App\Http\Controllers\PriorizationController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
@@ -64,7 +64,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   //rotas para projetos
   Route::prefix('project')->group(function () {
     // Route for saving the state of the Prioritization Matrix for a project
-    Route::patch('/{project}/prioritization-matrix', [PrioritizationMatrixController::class, 'update']);
     Route::post('/create', [ProjectController::class, 'store'])->name('project.store');
     Route::get('/{project}/{page?}', [ProjectController::class, 'show'])->name('project.show');
     Route::patch('/{project}/members/add', [ProjectController::class, 'addNewMember'])->name('project.users.add');
@@ -94,6 +93,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::prefix('overall-model-classes')->group(function () {
     Route::post('/', [OverallModelClassController::class, 'store'])->name('overall-model-class.store');
     Route::delete('/{class}', [OverallModelClassController::class, 'destroy'])->name('overall-model-class.destroy');
+  });
+  Route::prefix('priorizations')->group(function () {
+    Route::post('/', [PriorizationController::class, 'store'])->name('priorization.store');
+    Route::patch('/{priorization}', [PriorizationController::class, 'update'])->name('priorization.update');
+    Route::delete('/{priorization}', [PriorizationController::class, 'destroy'])->name('priorization.destroy');
   });
 
   //Rotas para goals

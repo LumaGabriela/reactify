@@ -9,7 +9,7 @@ import Journeys from './project-ceremonies/Inception/Journeys'
 import Goals from './project-ceremonies/Inception/Goals'
 // story discovery
 import Stories from './project-ceremonies/StoryDiscovery/Stories'
-import PrioritizationMatrix from './project-ceremonies/StoryDiscovery/PrioritizationMatrix.jsx'
+import PriorizationMatrix from './project-ceremonies/StoryDiscovery/PriorizationMatrix.jsx'
 import ChangeLog from './project-ceremonies/StoryDiscovery/ChangeLog.jsx'
 // refining
 import EpicStories from './project-ceremonies/Refining/EpicStories.jsx'
@@ -232,9 +232,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       case 'Stories':
         return <Stories project={project} setProject={setProject} />
       case 'Matriz de Priorização':
-        return (
-          <PrioritizationMatrix project={project} setProject={setProject} />
-        )
+        return <PriorizationMatrix project={project} setProject={setProject} />
       case 'Change Log':
         return <ChangeLog project={project} setProject={setProject} />
       default:
