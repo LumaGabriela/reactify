@@ -3,20 +3,19 @@
 namespace App\Observers;
 
 use App\Events\ProjectUpdated;
-use App\Models\Priorization;
-use Illuminate\Support\Facades\Log;
+use App\Models\Prioritization;
 
-class PriorizationObserver
+class PrioritizationObserver
 {
   /**
    * Handle the Story "created" event.
    */
-  public function created(Priorization $matrix): void
+  public function created(Prioritization $matrix): void
   {
     $this->updateProject($matrix);
   }
 
-  public function updated(Priorization $matrix): void
+  public function updated(Prioritization $matrix): void
   {
     $this->updateProject($matrix);
   }
@@ -24,7 +23,7 @@ class PriorizationObserver
   /**
    * Handle the Story "deleted" event.
    */
-  public function deleted(Priorization $matrix): void
+  public function deleted(Prioritization $matrix): void
   {
     $this->updateProject($matrix);
   }
@@ -32,7 +31,7 @@ class PriorizationObserver
   /**
    * Handle the Story "restored" event.
    */
-  public function restored(Priorization $matrix): void
+  public function restored(Prioritization $matrix): void
   {
     $this->updateProject($matrix);
   }
@@ -40,7 +39,7 @@ class PriorizationObserver
   /**
    * Método privado para atualizar o projeto
    */
-  private function updateProject(Priorization $matrix): void
+  private function updateProject(Prioritization $matrix): void
   {
     // Verifica se a história está relacionada a um projeto
     if ($matrix->project) {

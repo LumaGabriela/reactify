@@ -68,9 +68,9 @@ class Project extends Model
   {
     return $this->hasMany(OverallModelClass::class);
   }
-  public function priorizations()
+  public function prioritizations()
   {
-    return $this->hasMany(Priorization::class);
+    return $this->hasMany(Prioritization::class);
   }
   public function sprints()
   {

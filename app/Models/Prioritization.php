@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Priorization extends Model
+class Prioritization extends Model
 {
   protected $fillable = ['story_id', 'project_id', 'position', 'priority'];
 

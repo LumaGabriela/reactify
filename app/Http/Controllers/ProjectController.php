@@ -19,7 +19,7 @@ class ProjectController extends Controller
   public function getUpdatedProject(Project $project)
   {
     return response()->json([
-      'project' => $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'priorizations']),
+      'project' => $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations']),
     ]);
   }
 
@@ -33,7 +33,7 @@ class ProjectController extends Controller
     $projects = Project::whereIn('id', $validated['ids'])->get();
 
     return response()->json([
-      'projects' => $projects->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'priorizations']),
+      'projects' => $projects->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations']),
       'message' => 'Projects updated successfully.',
       'status' => 'success',
     ]);
@@ -50,7 +50,7 @@ class ProjectController extends Controller
       abort(403, 'Acesso não autorizado a este projeto.');
     }
 
-    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'priorizations']);
+    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations']);
 
     return Inertia::render('projects/Project', [
       'project' => $project,

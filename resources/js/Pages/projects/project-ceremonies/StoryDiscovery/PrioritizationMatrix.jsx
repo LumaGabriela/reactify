@@ -70,8 +70,10 @@ const DroppableCell = ({ id, children, className = '' }) => {
 }
 
 // Função auxiliar para transformar o array da API em nosso objeto de estado
-const transformArrayToMatrixObject = (priorizations, allProjectStories) => {
-  return priorizations.reduce((matrix, item) => {
+const transformArrayToMatrixObject = (prioritizations, allProjectStories) => {
+  if (!prioritizations || !allProjectStories) return {}
+
+  return prioritizations.reduce((matrix, item) => {
     const cellId = `cell-${item.priority}-${item.position}`
     const storyDetails = allProjectStories.find((s) => s.id === item.story_id)
 
@@ -89,19 +91,19 @@ const transformArrayToMatrixObject = (priorizations, allProjectStories) => {
     return matrix
   }, {})
 }
-const PriorizationMatrix = ({ project }) => {
-  const [priorizationMatrix, setPriorizationMatrix] = useState(() =>
-    transformArrayToMatrixObject(project.priorizations, project.stories),
+const PrioritizationMatrix = ({ project }) => {
+  const [prioritizationMatrix, setPrioritizationMatrix] = useState(() =>
+    transformArrayToMatrixObject(project?.prioritizations, project?.stories),
   )
 
   useEffect(() => {
     const newMatrix = transformArrayToMatrixObject(
-      project.priorizations,
+      project.prioritizations,
       project.stories,
     )
 
     // Atualiza o estado interno para refletir as novas props
-    setPriorizationMatrix(newMatrix)
+    setPrioritizationMatrix(newMatrix)
   }, [project])
 
   const sensors = useSensors(
@@ -111,12 +113,12 @@ const PriorizationMatrix = ({ project }) => {
 
   const unassignedStories = useMemo(() => {
     const assignedStoryIds = new Set(
-      Object.values(priorizationMatrix)
+      Object.values(prioritizationMatrix)
         .filter(Boolean)
         .map((story) => story.story_id),
     )
     return project.stories.filter((story) => !assignedStoryIds.has(story.id))
-  }, [project.stories, priorizationMatrix])
+  }, [project.stories, prioritizationMatrix])
 
   const handleDragEnd = (event) => {
     const { active, over } = event
@@ -128,7 +130,7 @@ const PriorizationMatrix = ({ project }) => {
     )
     if (!draggedStory) return
 
-    setPriorizationMatrix((prevMatrix) => {
+    setPrioritizationMatrix((prevMatrix) => {
       const newMatrix = { ...prevMatrix }
       const oldCellKey = Object.keys(newMatrix).find(
         (key) => newMatrix[key]?.story_id === draggedStory.id,
@@ -146,8 +148,8 @@ const PriorizationMatrix = ({ project }) => {
         //remove o elemento do banco de dados e da matriz
         if (oldCellKey) delete newMatrix[oldCellKey]
         router.delete(
-          route('priorization.destroy', {
-            priorization: draggedPrioritization.id,
+          route('prioritization.destroy', {
+            prioritization: draggedPrioritization.id,
           }),
           {
             preserveState: true,
@@ -169,8 +171,8 @@ const PriorizationMatrix = ({ project }) => {
         if (draggedPrioritization) {
           console.log(draggedPrioritization)
           router.patch(
-            route('priorization.update', {
-              priorization: draggedPrioritization.id,
+            route('prioritization.update', {
+              prioritization: draggedPrioritization.id,
             }),
             {
               priority: priority,
@@ -184,7 +186,7 @@ const PriorizationMatrix = ({ project }) => {
           )
         } else {
           //se nao estiver, adiciona em uma celula
-          router.post(route('priorization.store'), {
+          router.post(route('prioritization.store'), {
             story_id: draggedStory.id,
             project_id: project.id,
             priority: priority,
@@ -207,11 +209,6 @@ const PriorizationMatrix = ({ project }) => {
       return prevMatrix
     })
   }
-
-  // Este useEffect que você adicionou é perfeito para depurar a nova estrutura
-  useEffect(() => {
-    // console.log(priorizationMatrix)
-  }, [priorizationMatrix])
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
@@ -268,7 +265,7 @@ const PriorizationMatrix = ({ project }) => {
                 <div className="space-y-3">
                   {Array.from({ length: GRID_ROWS }).map((_, rowIndex) => {
                     const cellId = `cell-${priority}-${rowIndex}`
-                    const storyInCell = priorizationMatrix[cellId]
+                    const storyInCell = prioritizationMatrix[cellId]
                     return (
                       <DroppableCell key={cellId} id={cellId}>
                         {storyInCell ? (
@@ -292,4 +289,4 @@ const PriorizationMatrix = ({ project }) => {
   )
 }
 
-export default PriorizationMatrix
+export default PrioritizationMatrix

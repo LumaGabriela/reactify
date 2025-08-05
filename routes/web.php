@@ -13,7 +13,7 @@ use App\Http\Controllers\WelcomeEmailController;
 use App\Http\Controllers\ProjectPermissionController;
 use App\Http\Controllers\ProjectInvitationController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PriorizationController;
+use App\Http\Controllers\PrioritizationController;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\Registered;
 use App\Models\User;
@@ -94,10 +94,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/', [OverallModelClassController::class, 'store'])->name('overall-model-class.store');
     Route::delete('/{class}', [OverallModelClassController::class, 'destroy'])->name('overall-model-class.destroy');
   });
-  Route::prefix('priorizations')->group(function () {
-    Route::post('/', [PriorizationController::class, 'store'])->name('priorization.store');
-    Route::patch('/{priorization}', [PriorizationController::class, 'update'])->name('priorization.update');
-    Route::delete('/{priorization}', [PriorizationController::class, 'destroy'])->name('priorization.destroy');
+  Route::prefix('prioritizations')->group(function () {
+    Route::post('/', [PrioritizationController::class, 'store'])->name('prioritization.store');
+    Route::patch('/{prioritization}', [PrioritizationController::class, 'update'])->name('prioritization.update');
+    Route::delete('/{prioritization}', [PrioritizationController::class, 'destroy'])->name('prioritization.destroy');
   });
 
   //Rotas para goals
