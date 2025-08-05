@@ -149,7 +149,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       const data = await response.json()
       if (response.ok) {
         setProject(data.project)
-        console.log(data.project)
+        console.log(data.project.priorizations)
       }
     } catch (error) {
       toast.error(

@@ -24,8 +24,8 @@ class PriorizationController extends Controller
   public function update(Request $request, Priorization $priorization)
   {
     $validatedData = $request->validate([
-      'story_id' => 'required|integer',
-      'story_title' => 'required|string',
+      // 'project_id' => 'required|exists:projects,id',
+      // 'story_id' => 'required|exists:stories,id',
       'priority' => 'required|string',
       'position' => 'required|integer',
     ]);

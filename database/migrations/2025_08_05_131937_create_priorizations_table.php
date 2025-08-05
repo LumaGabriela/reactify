@@ -15,7 +15,7 @@ return new class extends Migration
       $table->id();
       $table->foreignId('project_id')->constrained()->onDelete('cascade');
       $table->foreignId('story_id')->constrained()->onDelete('cascade');
-      $table->unique(['project_id', 'story_id']);
+      // $table->unique(['project_id', 'story_id']);
       $table->unique(['project_id', 'story_id', 'priority', 'position']);
       $table->integer('position');
       $table->string('priority');

@@ -17,7 +17,7 @@ const GRID_ROWS = 8
 const StoryCard = ({ story }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
-      id: `story-${story.id}`,
+      id: `story-${story.story_id}`,
       data: { story },
     })
 
@@ -35,7 +35,7 @@ const StoryCard = ({ story }) => {
       {...attributes}
       className="p-3 bg-primary/10 border border-primary/20 rounded-lg shadow-sm cursor-grab active:cursor-grabbing text-primary"
     >
-      <p className="font-semibold text-sm">{story.title}</p>
+      <p className="font-semibold text-sm">{story.story_title}</p>
     </div>
   )
 }
@@ -75,8 +75,9 @@ const transformArrayToMatrixObject = (priorizations, allProjectStories) => {
 
     if (storyDetails) {
       matrix[cellId] = {
-        id: storyDetails.id,
-        title: storyDetails.title,
+        id: item.id,
+        story_id: storyDetails.id,
+        story_title: storyDetails.title,
         project_id: storyDetails.project_id,
         priority: item.priority,
         position: item.position,
@@ -91,6 +92,20 @@ const PriorizationMatrix = ({ project }) => {
     transformArrayToMatrixObject(project.priorizations, project.stories),
   )
 
+  useEffect(() => {
+    // Esta função será executada após a renderização inicial
+    // e sempre que um dos itens no array de dependências mudar.
+    console.log("Prop 'project' mudou. Sincronizando a matriz...")
+
+    const newMatrix = transformArrayToMatrixObject(
+      project.priorizations,
+      project.stories,
+    )
+
+    // Atualiza o estado interno para refletir as novas props
+    setPriorizationMatrix(newMatrix)
+  }, [project.priorizations, project.stories])
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor),
@@ -100,12 +115,12 @@ const PriorizationMatrix = ({ project }) => {
     const assignedStoryIds = new Set(
       Object.values(priorizationMatrix)
         .filter(Boolean)
-        .map((story) => story.id),
+        .map((story) => story.story_id),
     )
     return project.stories.filter((story) => !assignedStoryIds.has(story.id))
   }, [project.stories, priorizationMatrix])
 
-  function handleDragEnd(event) {
+  const handleDragEnd = (event) => {
     const { active, over } = event
     console.log(active, over)
     if (!over) return
@@ -118,39 +133,63 @@ const PriorizationMatrix = ({ project }) => {
     setPriorizationMatrix((prevMatrix) => {
       const newMatrix = { ...prevMatrix }
       const oldCellKey = Object.keys(newMatrix).find(
-        (key) => newMatrix[key]?.id === draggedStory.id,
+        (key) => newMatrix[key]?.story_id === draggedStory.id,
       )
-      if (oldCellKey) {
-        delete newMatrix[oldCellKey]
-      }
+      const draggedPrioritization = oldCellKey ? prevMatrix[oldCellKey] : null
 
-      // --- PONTO CENTRAL DA MUDANÇA ---
-      if (String(over.id).startsWith('cell-')) {
-        // Extrai a prioridade do ID da célula (ex: 'cell-Alta-2' -> 'Alta')
+      //adiciona o elemento de volta a lista
+      if (String(over.id).startsWith('story-list') && draggedPrioritization) {
+        //remove o elemento do banco de dados e da matriz
+        if (oldCellKey) delete newMatrix[oldCellKey]
+        router.delete(
+          route('priorization.destroy', {
+            priorization: draggedPrioritization.id,
+          }),
+        )
+
+        return newMatrix
+      } else if (String(over.id).startsWith('cell-')) {
+        //lida com a adicao de stories nas celulas
         const priority = over.id.split('-')[1]
         const position = Number(over.id.split('-')[2])
+        const occupant = prevMatrix[over.id]
+
+        if (occupant) {
+          console.log('celula ocupada')
+          return prevMatrix
+        }
+        // se a story estiver em uma celula, atualiza a posicao
+        if (draggedPrioritization) {
+          router.patch(
+            route('priorization.update', {
+              priorization: draggedPrioritization.id,
+            }),
+            {
+              priority: priority,
+              position: position,
+            },
+          )
+        } else {
+          //se nao estiver, adiciona em uma celula
+          router.post(route('priorization.store'), {
+            story_id: draggedStory.id,
+            project_id: project.id,
+            priority: priority,
+            position: position,
+          })
+        }
         // Constrói o novo objeto com a estrutura desejada
         newMatrix[over.id] = {
-          id: draggedStory.id,
-          title: draggedStory.title,
+          id: draggedPrioritization?.id || `temp-${Date.now()}`,
+          story_id: draggedStory.id,
+          story_title: draggedStory.title,
           priority: priority,
           position: position,
         }
-
-        router.post(route('priorization.store'), {
-          story_id: draggedStory.id,
-          project_id: project.id,
-          priority: priority,
-          position: position,
-        })
-      } else if (over.id === 'story-list') {
-        const deletedCell = project.priorizations.find(
-          (cell) => cell.story_id === draggedStory.id,
-        )
-        router.delete(route('priorization.destroy', deletedCell.id))
+        return newMatrix
       }
 
-      return newMatrix
+      return prevMatrix
     })
   }
 
@@ -172,9 +211,13 @@ const PriorizationMatrix = ({ project }) => {
               className="space-y-2 p-3 bg-card text-card-foreground border rounded-xl shadow-sm min-h-[200px]"
             >
               {unassignedStories.length > 0 ? (
-                unassignedStories.map((story) => (
-                  <StoryCard key={story.id} story={story} />
-                ))
+                unassignedStories.map((story) => {
+                  const unassignedStory = {
+                    story_id: story.id,
+                    story_title: story.title,
+                  }
+                  return <StoryCard key={story.id} story={unassignedStory} />
+                })
               ) : (
                 <p className="text-sm text-muted-foreground p-2">
                   Todas as stories foram priorizadas.
