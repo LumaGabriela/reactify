@@ -16,6 +16,7 @@ return new class extends Migration
       $table->foreignId('project_id')->constrained()->onDelete('cascade');
       $table->string('name')->unique();
       $table->string('color');
+      $table->unsignedInteger('order_column');
       $table->timestamps();
     });
   }

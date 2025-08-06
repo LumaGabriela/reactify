@@ -95,9 +95,24 @@ class ProjectSeeder extends Seeder
     ]);
     //criar prioridades para matriz
     DB::table('matrix_priorities')->insert([
-      ['name' => 'Baixa', 'color' => '#00FF00', 'project_id' => $projectId],
-      ['name' => 'Média', 'color' => '#FFFF00', 'project_id' => $projectId],
-      ['name' => 'Alta', 'color' => '#FF0000', 'project_id' => $projectId],
+      [
+        'name' => 'Baixa',
+        'color' => '#00FF00',
+        'project_id' => $projectId,
+        'order_column' => 1
+      ],
+      [
+        'name' => 'Média',
+        'color' => '#FFFF00',
+        'project_id' => $projectId,
+        'order_column' => 2
+      ],
+      [
+        'name' => 'Alta',
+        'color' => '#FF0000',
+        'project_id' => $projectId,
+        'order_column' => 3
+      ],
     ]);
     // Vincular Usuários ao Projeto
     DB::table("user_project")->insert([

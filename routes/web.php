@@ -100,7 +100,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   });
   Route::prefix('matrix-priorities')->group(function () {
     Route::post('/', [MatrixPriorityController::class, 'store'])->name('matrix-priority.store');
+    Route::patch('/util/reorder', [MatrixPriorityController::class, 'reorder'])->name('matrix-priority.reorder');
     Route::patch('/{priority}', [MatrixPriorityController::class, 'update'])->name('matrix-priority.update');
+
     Route::delete('/{priority}', [MatrixPriorityController::class, 'destroy'])->name('matrix-priority.destroy');
   });
 

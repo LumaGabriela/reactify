@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MatrixPriority;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MatrixPriorityController extends Controller
 {
@@ -13,6 +14,7 @@ class MatrixPriorityController extends Controller
       'name' => 'required|string',
       'color' => 'required|string',
       'project_id' => 'required|exists:projects,id',
+      'order_column' => 'required|integer'
     ]);
 
     $priority = MatrixPriority::create($validatedData);
@@ -36,5 +38,23 @@ class MatrixPriorityController extends Controller
     $priority->delete();
 
     return back()->with(['message' => 'Priority deleted successfully', 'status' => 'success']);
+  }
+  public function reorder(Request $request)
+  {
+    $request->validate([
+      'priorities' => 'required|array',
+      'priorities.*.id' => 'required|exists:matrix_priorities,id',
+      'priorities.*.order' => 'required|integer',
+    ]);
+
+    DB::transaction(function () use ($request) {
+      foreach ($request->priorities as $priorityData) {
+        MatrixPriority::where('id', $priorityData['id'])
+          ->update(['order_column' => $priorityData['order']]);
+      }
+    });
+
+    // Retorna uma resposta vazia, pois o frontend já atualizou a UI.
+    return back()->with(['message' => 'Priorities reordered successfully', 'status' => 'success']);
   }
 }

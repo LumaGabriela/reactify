@@ -1,37 +1,79 @@
-import React, { useState } from 'react' // Adicionado useState
+import React, { useState } from 'react'
 import { router } from '@inertiajs/react'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetTrigger,
-  SheetFooter,
-} from '@/components/ui/sheet' // Importações do ShadCN
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
 import { Trash2 } from 'lucide-react'
 
-// Subcomponente para editar uma prioridade existente
+// --- NOVO: Lista de cores predefinidas ---
+const PREDEFINED_COLORS = [
+  '#ef4444',
+  '#f97316',
+  '#eab308',
+  '#84cc16',
+  '#22c55e',
+  '#14b8a6',
+  '#06b6d4',
+  '#3b82f6',
+  '#8b5cf6',
+  '#d946ef',
+  '#ec4899',
+  '#78716c',
+  '#a3a3a3',
+  '#ffffff',
+  '#000000',
+]
+
+// --- NOVO: Componente reutilizável para o seletor de cores ---
+const ColorPickerPopover = ({ value, onChange, disabled = false }) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleColorSelect = (color) => {
+    onChange(color) // Atualiza o estado no componente pai
+    setIsOpen(false) // Fecha o popover após a seleção
+  }
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="w-10 h-10 p-0" disabled={disabled}>
+          {/* O div interno mostra a cor selecionada */}
+          <div
+            className="w-8 h-8 rounded-md border"
+            style={{ backgroundColor: value }}
+          />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-2">
+        <div className="grid grid-cols-5 gap-2">
+          {PREDEFINED_COLORS.map((color) => (
+            <button
+              key={color}
+              onClick={() => handleColorSelect(color)}
+              className="w-6 h-6 rounded-full border transform hover:scale-110 transition-transform"
+              style={{ backgroundColor: color }}
+              aria-label={`Select color ${color}`}
+            />
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+// Subcomponente para editar uma prioridade existente (MODIFICADO)
 const PriorityEditForm = ({ priority }) => {
-  // Gerencia o estado dos inputs manualmente com useState
   const [name, setName] = useState(priority.name)
   const [color, setColor] = useState(priority.color)
   const [isProcessing, setIsProcessing] = useState(false)
 
   function handleSubmit(e) {
     e.preventDefault()
-    setIsProcessing(true) // Inicia o estado de processamento
+    setIsProcessing(true)
 
     router.patch(
       route('matrix-priority.update', { priority: priority.id }),
-      { name, color }, // Passa os dados do estado
+      { name, color },
       {
         preserveScroll: true,
-        onFinish: () => setIsProcessing(false), // Finaliza o processamento
+        onFinish: () => setIsProcessing(false),
       },
     )
   }
@@ -59,13 +101,11 @@ const PriorityEditForm = ({ priority }) => {
         />
       </div>
       <div className="grid gap-1.5">
-        <Label htmlFor={`color-${priority.id}`}>Cor</Label>
-        <Input
-          id={`color-${priority.id}`}
-          type="color"
-          className="p-1"
+        <Label>Cor</Label>
+        {/* --- ALTERAÇÃO: Substituímos o Input pelo nosso novo componente --- */}
+        <ColorPickerPopover
           value={color}
-          onChange={(e) => setColor(e.target.value)}
+          onChange={setColor}
           disabled={isProcessing}
         />
       </div>
@@ -85,9 +125,8 @@ const PriorityEditForm = ({ priority }) => {
   )
 }
 
-// Componente principal do Sheet
+// Componente principal do Sheet (MODIFICADO)
 const EditPriorities = ({ priorities, projectId }) => {
-  // Gerencia o estado do novo formulário manualmente
   const [newName, setNewName] = useState('')
   const [newColor, setNewColor] = useState('#ffffff')
   const [isStoring, setIsStoring] = useState(false)
@@ -98,11 +137,10 @@ const EditPriorities = ({ priorities, projectId }) => {
 
     router.post(
       route('matrix-priority.store'),
-      { name: newName, color: newColor, project_id: projectId }, // Passa os dados do estado
+      { name: newName, color: newColor, project_id: projectId },
       {
         preserveScroll: true,
         onSuccess: () => {
-          // Reseta os campos manualmente
           setNewName('')
           setNewColor('#ffffff')
         },
@@ -151,13 +189,11 @@ const EditPriorities = ({ priorities, projectId }) => {
                 />
               </div>
               <div className="grid gap-1.5">
-                <Label htmlFor="new-color">Cor</Label>
-                <Input
-                  id="new-color"
-                  type="color"
-                  className="p-1"
+                <Label>Cor</Label>
+                {/* --- ALTERAÇÃO: Substituímos o Input pelo nosso novo componente --- */}
+                <ColorPickerPopover
                   value={newColor}
-                  onChange={(e) => setNewColor(e.target.value)}
+                  onChange={setNewColor}
                   disabled={isStoring}
                 />
               </div>

@@ -8,13 +8,52 @@ import {
   useDraggable,
   useDroppable,
 } from '@dnd-kit/core'
+import {
+  SortableContext,
+  useSortable,
+  arrayMove,
+  horizontalListSortingStrategy, // Estratégia para colunas horizontais
+} from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { router } from '@inertiajs/react'
 import EditPriorities from './EditPriorities'
 
-const PRIORITIES = ['Baixa', 'Média', 'Alta', 'Crítica']
 const GRID_ROWS = 8
 
+const SortablePriorityColumn = ({ priority, children }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: priority.id, data: { type: 'column' } })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.7 : 1,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="bg-muted p-2 gap-2 rounded-xl flex flex-col"
+    >
+      <Badge
+        {...attributes}
+        {...listeners} // O 'handle' para arrastar será o Badge
+        style={{ background: priority.color, touchAction: 'none' }}
+        className="mb-4 px-3 w-full text-center flex items-center justify-center cursor-grab active:cursor-grabbing"
+      >
+        {priority.name}
+      </Badge>
+      {children}
+    </div>
+  )
+}
 const StoryCard = ({ story }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
@@ -96,7 +135,11 @@ const PrioritizationMatrix = ({ project }) => {
   const [prioritizationMatrix, setPrioritizationMatrix] = useState(() =>
     transformArrayToMatrixObject(project?.prioritizations, project?.stories),
   )
-  console.log(prioritizationMatrix)
+  // --- NOVO: Estado local para a ordem das prioridades ---
+  const [orderedPriorities, setOrderedPriorities] = useState(
+    // Garante que a ordenação inicial vinda do backend (com a nova coluna) seja respeitada
+    project.matrix_priorities.sort((a, b) => a.order_column - b.order_column),
+  )
   useEffect(() => {
     const newMatrix = transformArrayToMatrixObject(
       project.prioritizations,
@@ -123,93 +166,128 @@ const PrioritizationMatrix = ({ project }) => {
 
   const handleDragEnd = (event) => {
     const { active, over } = event
-    console.log(active, over)
     if (!over) return
+    console.log(active.data)
+    // --- LÓGICA PARA REORDENAR COLUNAS ---
+    if (
+      active.data.current?.type === 'column' &&
+      over.data.current?.type === 'column'
+    ) {
+      if (active.id !== over.id) {
+        setOrderedPriorities((priorities) => {
+          const oldIndex = priorities.findIndex((p) => p.id === active.id)
+          const newIndex = priorities.findIndex((p) => p.id === over.id)
+          const newOrder = arrayMove(priorities, oldIndex, newIndex)
 
-    const draggedStory = project.stories.find(
-      (story) => `story-${story.id}` === active.id,
-    )
-    if (!draggedStory) return
+          // Envia a nova ordem para o backend
+          const payload = newOrder.map((p, index) => ({
+            id: p.id,
+            order: index, // A nova ordem é o próprio índice do array
+          }))
 
-    setPrioritizationMatrix((prevMatrix) => {
-      const newMatrix = { ...prevMatrix }
-      const oldCellKey = Object.keys(newMatrix).find(
-        (key) => newMatrix[key]?.story_id === draggedStory.id,
-      )
-      const draggedPrioritization = oldCellKey ? prevMatrix[oldCellKey] : null
-      if (draggedPrioritization && draggedPrioritization.isTemporary) {
-        console.warn(
-          'Ação bloqueada: A story está aguardando confirmação do servidor.',
-        )
-
-        return prevMatrix
-      }
-      //adiciona o elemento de volta a lista
-      if (String(over.id).startsWith('story-list') && draggedPrioritization) {
-        //remove o elemento do banco de dados e da matriz
-        if (oldCellKey) delete newMatrix[oldCellKey]
-        router.delete(
-          route('prioritization.destroy', {
-            prioritization: draggedPrioritization.id,
-          }),
-          {
-            preserveState: true,
-            preserveScroll: true,
-            only: [],
-          },
-        )
-
-        return newMatrix
-      } else if (String(over.id).startsWith('cell-')) {
-        //lida com a adicao de stories nas celulas
-        const priority = over.id.split('-')[1]
-        const position = Number(over.id.split('-')[2])
-        const occupant = prevMatrix[over.id]
-
-        if (occupant) return prevMatrix
-
-        // se a story estiver em uma celula, atualiza a posicao
-        if (draggedPrioritization) {
-          console.log(draggedPrioritization)
           router.patch(
-            route('prioritization.update', {
+            route('matrix-priority.reorder'),
+            { priorities: payload },
+            {
+              preserveState: true,
+              preserveScroll: true,
+            },
+          )
+
+          return newOrder
+        })
+      }
+      return
+    } else if (active.data.current?.story?.story_id) {
+      const draggedStory = project.stories.find(
+        (story) => `story-${story.id}` === active.id,
+      )
+      if (!draggedStory) return
+
+      setPrioritizationMatrix((prevMatrix) => {
+        const newMatrix = { ...prevMatrix }
+        const oldCellKey = Object.keys(newMatrix).find(
+          (key) => newMatrix[key]?.story_id === draggedStory.id,
+        )
+        const draggedPrioritization = oldCellKey ? prevMatrix[oldCellKey] : null
+        if (draggedPrioritization && draggedPrioritization.isTemporary) {
+          console.warn(
+            'Ação bloqueada: A story está aguardando confirmação do servidor.',
+          )
+
+          return prevMatrix
+        }
+        //adiciona o elemento de volta a lista
+        if (String(over.id).startsWith('story-list') && draggedPrioritization) {
+          //remove o elemento do banco de dados e da matriz
+          if (oldCellKey) delete newMatrix[oldCellKey]
+          router.delete(
+            route('prioritization.destroy', {
               prioritization: draggedPrioritization.id,
             }),
-            {
-              priority_id: priority,
-              position: position,
-            },
             {
               preserveState: true,
               preserveScroll: true,
               only: [],
             },
           )
-        } else {
-          //se nao estiver, adiciona em uma celula
-          router.post(route('prioritization.store'), {
+
+          return newMatrix
+        } else if (String(over.id).startsWith('cell-')) {
+          //lida com a adicao de stories nas celulas
+          const priority = over.id.split('-')[1]
+          const position = Number(over.id.split('-')[2])
+          const occupant = prevMatrix[over.id]
+
+          if (occupant) return prevMatrix
+
+          // se a story estiver em uma celula, atualiza a posicao
+          if (draggedPrioritization) {
+            console.log(draggedPrioritization)
+            router.patch(
+              route('prioritization.update', {
+                prioritization: draggedPrioritization.id,
+              }),
+              {
+                priority_id: priority,
+                position: position,
+              },
+              {
+                preserveState: true,
+                preserveScroll: true,
+                only: [],
+              },
+            )
+          } else {
+            //se nao estiver, adiciona em uma celula
+            router.post(route('prioritization.store'), {
+              story_id: draggedStory.id,
+              project_id: project.id,
+              priority_id: priority,
+              position: position,
+            })
+          }
+          if (oldCellKey) delete newMatrix[oldCellKey]
+          // Constrói o novo objeto com a estrutura desejada
+          newMatrix[over.id] = {
+            id: draggedPrioritization?.id || `temp-${Date.now()}`,
             story_id: draggedStory.id,
-            project_id: project.id,
+            story_title: draggedStory.title,
             priority_id: priority,
             position: position,
-          })
+            isTemporary: !draggedPrioritization,
+          }
+          return newMatrix
         }
-        if (oldCellKey) delete newMatrix[oldCellKey]
-        // Constrói o novo objeto com a estrutura desejada
-        newMatrix[over.id] = {
-          id: draggedPrioritization?.id || `temp-${Date.now()}`,
-          story_id: draggedStory.id,
-          story_title: draggedStory.title,
-          priority_id: priority,
-          position: position,
-          isTemporary: !draggedPrioritization,
-        }
-        return newMatrix
-      }
 
-      return prevMatrix
-    })
+        return prevMatrix
+      })
+    }
   }
+  const priorityIds = useMemo(
+    () => orderedPriorities.map((p) => p.id),
+    [orderedPriorities],
+  )
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
@@ -266,38 +344,33 @@ const PrioritizationMatrix = ({ project }) => {
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {project.matrix_priorities.map((priority) => (
-              <div
-                key={priority.name}
-                className="bg-muted p-2 gap-2 rounded-xl"
-              >
-                <Badge
-                  style={{ background: priority.color }}
-                  className="mb-4 px-3 w-full text-center flex items-center justify-center"
-                >
-                  {priority.name}
-                </Badge>
-
-                <div className="space-y-3">
-                  {Array.from({ length: GRID_ROWS }).map((_, rowIndex) => {
-                    const cellId = `cell-${priority.id}-${rowIndex}`
-                    const storyInCell = prioritizationMatrix[cellId]
-
-                    return (
-                      <DroppableCell key={cellId} id={cellId}>
-                        {storyInCell ? (
-                          <StoryCard story={storyInCell} />
-                        ) : (
-                          <div className="h-12 w-full flex items-center justify-center text-muted-foreground text-xs">
-                            Vazio
-                          </div>
-                        )}
-                      </DroppableCell>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
+            <SortableContext
+              items={priorityIds}
+              strategy={horizontalListSortingStrategy}
+            >
+              {orderedPriorities.map((priority) => (
+                // --- MODIFICADO: Usamos o novo componente SortablePriorityColumn ---
+                <SortablePriorityColumn key={priority.id} priority={priority}>
+                  <div className="space-y-3">
+                    {Array.from({ length: GRID_ROWS }).map((_, rowIndex) => {
+                      const cellId = `cell-${priority.id}-${rowIndex}`
+                      const storyInCell = prioritizationMatrix[cellId]
+                      return (
+                        <DroppableCell key={cellId} id={cellId}>
+                          {storyInCell ? (
+                            <StoryCard story={storyInCell} />
+                          ) : (
+                            <div className="h-12 w-full flex items-center justify-center text-muted-foreground text-xs">
+                              Vazio
+                            </div>
+                          )}
+                        </DroppableCell>
+                      )
+                    })}
+                  </div>
+                </SortablePriorityColumn>
+              ))}
+            </SortableContext>
           </div>
         </main>
       </div>
