@@ -10,6 +10,7 @@ import {
 } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { router } from '@inertiajs/react'
+import EditPriorities from './EditPriorities'
 
 const PRIORITIES = ['Baixa', 'Média', 'Alta', 'Crítica']
 const GRID_ROWS = 8
@@ -74,7 +75,7 @@ const transformArrayToMatrixObject = (prioritizations, allProjectStories) => {
   if (!prioritizations || !allProjectStories) return {}
 
   return prioritizations.reduce((matrix, item) => {
-    const cellId = `cell-${item.priority}-${item.position}`
+    const cellId = `cell-${item.priority_id}-${item.position}`
     const storyDetails = allProjectStories.find((s) => s.id === item.story_id)
 
     if (storyDetails) {
@@ -83,7 +84,7 @@ const transformArrayToMatrixObject = (prioritizations, allProjectStories) => {
         story_id: storyDetails.id,
         story_title: storyDetails.title,
         project_id: storyDetails.project_id,
-        priority: item.priority,
+        priority_id: item.priority_id,
         position: item.position,
       }
     }
@@ -95,7 +96,7 @@ const PrioritizationMatrix = ({ project }) => {
   const [prioritizationMatrix, setPrioritizationMatrix] = useState(() =>
     transformArrayToMatrixObject(project?.prioritizations, project?.stories),
   )
-
+  console.log(prioritizationMatrix)
   useEffect(() => {
     const newMatrix = transformArrayToMatrixObject(
       project.prioritizations,
@@ -175,7 +176,7 @@ const PrioritizationMatrix = ({ project }) => {
               prioritization: draggedPrioritization.id,
             }),
             {
-              priority: priority,
+              priority_id: priority,
               position: position,
             },
             {
@@ -189,7 +190,7 @@ const PrioritizationMatrix = ({ project }) => {
           router.post(route('prioritization.store'), {
             story_id: draggedStory.id,
             project_id: project.id,
-            priority: priority,
+            priority_id: priority,
             position: position,
           })
         }
@@ -199,7 +200,7 @@ const PrioritizationMatrix = ({ project }) => {
           id: draggedPrioritization?.id || `temp-${Date.now()}`,
           story_id: draggedStory.id,
           story_title: draggedStory.title,
-          priority: priority,
+          priority_id: priority,
           position: position,
           isTemporary: !draggedPrioritization,
         }
@@ -256,20 +257,35 @@ const PrioritizationMatrix = ({ project }) => {
         </aside>
 
         <main className="flex-1">
+          {/* botao para editar prioridades*/}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">Matriz de Priorização</h2>
+            <EditPriorities
+              priorities={project.matrix_priorities}
+              projectId={project.id}
+            />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {PRIORITIES.map((priority) => (
-              <div key={priority} className="bg-muted p-3 rounded-xl">
-                <h3 className="font-bold text-center text-md mb-4 text-muted-foreground uppercase tracking-wider">
-                  {priority}
-                </h3>
+            {project.matrix_priorities.map((priority) => (
+              <div
+                key={priority.name}
+                className="bg-muted p-2 gap-2 rounded-xl"
+              >
+                <Badge
+                  style={{ background: priority.color }}
+                  className="mb-4 px-3 w-full text-center flex items-center justify-center"
+                >
+                  {priority.name}
+                </Badge>
+
                 <div className="space-y-3">
                   {Array.from({ length: GRID_ROWS }).map((_, rowIndex) => {
-                    const cellId = `cell-${priority}-${rowIndex}`
+                    const cellId = `cell-${priority.id}-${rowIndex}`
                     const storyInCell = prioritizationMatrix[cellId]
+
                     return (
                       <DroppableCell key={cellId} id={cellId}>
                         {storyInCell ? (
-                          // Isso ainda funciona porque storyInCell tem as chaves 'id' e 'title'
                           <StoryCard story={storyInCell} />
                         ) : (
                           <div className="h-12 w-full flex items-center justify-center text-muted-foreground text-xs">

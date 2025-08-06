@@ -10,6 +10,7 @@ class ProjectSeeder extends Seeder
 {
   public function run(): void
   {
+
     // Criar User Role (admin) se não existir
     $adminRole = DB::table("user_roles")->where("name", "admin")->first();
 
@@ -92,7 +93,12 @@ class ProjectSeeder extends Seeder
       "created_at" => now(),
       "updated_at" => now(),
     ]);
-
+    //criar prioridades para matriz
+    DB::table('matrix_priorities')->insert([
+      ['name' => 'Baixa', 'color' => '#00FF00', 'project_id' => $projectId],
+      ['name' => 'Média', 'color' => '#FFFF00', 'project_id' => $projectId],
+      ['name' => 'Alta', 'color' => '#FF0000', 'project_id' => $projectId],
+    ]);
     // Vincular Usuários ao Projeto
     DB::table("user_project")->insert([
       [

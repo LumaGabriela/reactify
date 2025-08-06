@@ -14,11 +14,10 @@ use App\Http\Controllers\ProjectPermissionController;
 use App\Http\Controllers\ProjectInvitationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PrioritizationController;
+use App\Http\Controllers\MatrixPriorityController;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Auth\Events\Registered;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -98,6 +97,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/', [PrioritizationController::class, 'store'])->name('prioritization.store');
     Route::patch('/{prioritization}', [PrioritizationController::class, 'update'])->name('prioritization.update');
     Route::delete('/{prioritization}', [PrioritizationController::class, 'destroy'])->name('prioritization.destroy');
+  });
+  Route::prefix('matrix-priorities')->group(function () {
+    Route::post('/', [MatrixPriorityController::class, 'store'])->name('matrix-priority.store');
+    Route::patch('/{priority}', [MatrixPriorityController::class, 'update'])->name('matrix-priority.update');
+    Route::delete('/{priority}', [MatrixPriorityController::class, 'destroy'])->name('matrix-priority.destroy');
   });
 
   //Rotas para goals

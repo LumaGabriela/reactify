@@ -11,15 +11,12 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('prioritizations', function (Blueprint $table) {
+    Schema::create('matrix_priorities', function (Blueprint $table) {
       $table->id();
       $table->foreignId('project_id')->constrained()->onDelete('cascade');
-      $table->foreignId('story_id')->constrained()->onDelete('cascade');
-      $table->foreignId('priority_id')->constrained('matrix_priorities')->onDelete('cascade');
-      $table->unique(['project_id', 'story_id', 'priority_id', 'position']);
-      $table->integer('position');
+      $table->string('name')->unique();
+      $table->string('color');
       $table->timestamps();
-      $table->softDeletes();
     });
   }
 
@@ -28,6 +25,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('priorizations');
+    Schema::dropIfExists('matrix_priorities');
   }
 };

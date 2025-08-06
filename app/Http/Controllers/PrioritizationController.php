@@ -12,7 +12,7 @@ class PrioritizationController extends Controller
     $validatedData = $request->validate([
       'project_id' => 'required|exists:projects,id',
       'story_id' => 'required|exists:stories,id',
-      'priority' => 'required|string',
+      'priority_id' => 'required|exists:matrix_priorities,id',
       'position' => 'required|integer',
     ]);
 
@@ -24,7 +24,7 @@ class PrioritizationController extends Controller
   public function update(Request $request, Prioritization $prioritization)
   {
     $validatedData = $request->validate([
-      'priority' => 'required|string',
+      'priority_id' => 'required|exists:matrix_priorities,id',
       'position' => 'required|integer',
     ]);
 

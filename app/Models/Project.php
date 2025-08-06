@@ -37,6 +37,8 @@ class Project extends Model
     return $this->hasOne(ProductCanvas::class);
   }
 
+
+
   public function personas()
   {
     return $this->hasMany(Persona::class);
@@ -71,6 +73,10 @@ class Project extends Model
   public function prioritizations()
   {
     return $this->hasMany(Prioritization::class);
+  }
+  public function matrix_priorities()
+  {
+    return $this->hasMany(MatrixPriority::class);
   }
   public function sprints()
   {
