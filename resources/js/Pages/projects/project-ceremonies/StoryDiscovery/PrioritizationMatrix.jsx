@@ -16,11 +16,14 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { router } from '@inertiajs/react'
+import { Plus } from 'lucide-react' // ADICIONE ESTA LINHA
 import EditPriorities from './EditPriorities'
+//...
 
 const GRID_ROWS = 8
 
-const SortablePriorityColumn = ({ priority, children }) => {
+// SUBSTITUA O COMPONENTE INTEIRO POR ESTE
+const SortablePriorityColumn = ({ priority, children, itemCount }) => {
   const {
     attributes,
     listeners,
@@ -33,28 +36,42 @@ const SortablePriorityColumn = ({ priority, children }) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.7 : 1,
+    opacity: isDragging ? 0.8 : 1,
+    backgroundColor: priority.color + '44',
   }
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-muted p-2 gap-2 rounded-xl flex flex-col"
+      className="rounded-md flex flex-col h-full"
     >
-      <Badge
+      {/* Cabeçalho da Coluna (agora é a área de arrastar) */}
+      <div
         {...attributes}
-        {...listeners} // O 'handle' para arrastar será o Badge
-        style={{ background: priority.color, touchAction: 'none' }}
-        className="mb-4 px-3 w-full text-center flex items-center justify-center cursor-grab active:cursor-grabbing"
+        {...listeners}
+        className="flex items-center justify-between p-3 cursor-grab active:cursor-grabbing"
+        style={{ touchAction: 'none' }}
       >
-        {priority.name}
-      </Badge>
-      {children}
+        <section
+          style={{ backgroundColor: priority.color + '77' }}
+          className="flex items-center justify-between px-3 py-1 gap-2 rounded-md w-full text-background"
+        >
+          <span
+            className="w-2.5 h-2.5 rounded-full"
+            style={{ backgroundColor: priority.color }}
+          />
+          <span className="font-semibold text-sm ">{priority.name}</span>
+          <span className="text-sm font-medium ">{itemCount}</span>
+        </section>
+      </div>
+
+      {/* Área de Conteúdo (Cards) */}
+      <div className="px-2 space-y-2 flex-1">{children}</div>
     </div>
   )
 }
-const StoryCard = ({ story }) => {
+const StoryCard = ({ story, priority = null }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: `story-${story.story_id}`,
@@ -65,6 +82,7 @@ const StoryCard = ({ story }) => {
     transform: CSS.Transform.toString(transform),
     opacity: isDragging ? 0.5 : 1,
     touchAction: 'none',
+    backgroundColor: priority || 'transparent',
   }
 
   return (
@@ -74,17 +92,17 @@ const StoryCard = ({ story }) => {
       {...listeners}
       {...attributes}
       className={`
-        p-3 bg-primary/10 border border-primary/20 rounded-lg shadow-sm text-primary transition-opacity duration-300
+        flex items-center justify-center p-3 bg-transparent text-background border border-border rounded-md shadow-sm  transition-opacity duration-300 min-h-[60px]
         ${story.isTemporary ? 'opacity-50 cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}`}
     >
-      <p className="font-semibold text-sm">{story.story_title}</p>
+      <p className="font-semibold text-xs">{story.story_title}</p>
     </div>
   )
 }
 
 const GoalCard = ({ goal }) => {
   return (
-    <div className="p-3 bg-accent/10 border border-accent/20 rounded-lg text-accent-foreground">
+    <div className="p-3 bg-accent/10 border border-accent/20 rounded-md text-accent-foreground">
       <p className="font-semibold text-sm">{goal.title}</p>
     </div>
   )
@@ -100,7 +118,7 @@ const DroppableCell = ({ id, children, className = '' }) => {
       ref={setNodeRef}
       className={`
         min-h-[60px] flex flex-col justify-center rounded-md transition-all duration-150
-        ${isOver ? 'outline-2 outline-offset-2 outline-primary' : 'outline-1 outline-dashed outline-border'}
+
         ${className}
       `}
     >
@@ -167,8 +185,6 @@ const PrioritizationMatrix = ({ project }) => {
   const handleDragEnd = (event) => {
     const { active, over } = event
     if (!over) return
-    console.log(active.data)
-    // --- LÓGICA PARA REORDENAR COLUNAS ---
     if (
       active.data.current?.type === 'column' &&
       over.data.current?.type === 'column'
@@ -243,7 +259,6 @@ const PrioritizationMatrix = ({ project }) => {
 
           // se a story estiver em uma celula, atualiza a posicao
           if (draggedPrioritization) {
-            console.log(draggedPrioritization)
             router.patch(
               route('prioritization.update', {
                 prioritization: draggedPrioritization.id,
@@ -348,28 +363,38 @@ const PrioritizationMatrix = ({ project }) => {
               items={priorityIds}
               strategy={horizontalListSortingStrategy}
             >
-              {orderedPriorities.map((priority) => (
-                // --- MODIFICADO: Usamos o novo componente SortablePriorityColumn ---
-                <SortablePriorityColumn key={priority.id} priority={priority}>
-                  <div className="space-y-3">
-                    {Array.from({ length: GRID_ROWS }).map((_, rowIndex) => {
-                      const cellId = `cell-${priority.id}-${rowIndex}`
-                      const storyInCell = prioritizationMatrix[cellId]
-                      return (
-                        <DroppableCell key={cellId} id={cellId}>
-                          {storyInCell ? (
-                            <StoryCard story={storyInCell} />
-                          ) : (
-                            <div className="h-12 w-full flex items-center justify-center text-muted-foreground text-xs">
-                              Vazio
-                            </div>
-                          )}
-                        </DroppableCell>
-                      )
-                    })}
-                  </div>
-                </SortablePriorityColumn>
-              ))}
+              {orderedPriorities.map((priority) => {
+                // --- ADIÇÃO: Calcula a contagem de itens para esta prioridade ---
+                const itemCount = Object.values(prioritizationMatrix).filter(
+                  (story) => story && story.priority_id == priority.id,
+                ).length
+                return (
+                  <SortablePriorityColumn
+                    key={priority.id}
+                    priority={priority}
+                    itemCount={itemCount}
+                  >
+                    <div className="space-y-3">
+                      {Array.from({ length: GRID_ROWS }).map((_, rowIndex) => {
+                        const cellId = `cell-${priority.id}-${rowIndex}`
+                        const storyInCell = prioritizationMatrix[cellId]
+                        return (
+                          <DroppableCell key={cellId} id={cellId}>
+                            {storyInCell ? (
+                              <StoryCard
+                                story={storyInCell}
+                                priority={priority.color}
+                              />
+                            ) : (
+                              <div className="h-12 w-full flex items-center justify-center "></div>
+                            )}
+                          </DroppableCell>
+                        )
+                      })}
+                    </div>
+                  </SortablePriorityColumn>
+                )
+              })}
             </SortableContext>
           </div>
         </main>
