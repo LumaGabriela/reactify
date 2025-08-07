@@ -50,11 +50,7 @@ class ProjectController extends Controller
       abort(403, 'Acesso não autorizado a este projeto.');
     }
 
-    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations', 'matrix_priorities',         'sprints' => function($query) {
-            $query->with(['stories' => function($storyQuery) {
-                $storyQuery->withPivot(['kanban_status', 'position']);
-            }]);
-        }, ]);
+    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations', 'matrix_priorities', 'sprints.stories']);
 
     return Inertia::render('projects/Project', [
       'project' => $project,
