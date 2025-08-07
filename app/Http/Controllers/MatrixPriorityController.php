@@ -10,12 +10,16 @@ class MatrixPriorityController extends Controller
 {
   public function store(Request $request)
   {
+
     $validatedData = $request->validate([
-      'name' => 'required|string',
-      'color' => 'required|string',
+      'name'       => 'required|string|max:255',
+      'color'      => 'required|string|max:7',
       'project_id' => 'required|exists:projects,id',
-      'order_column' => 'required|integer'
     ]);
+
+    $nextOrder = MatrixPriority::where('project_id', $validatedData['project_id'])->count();
+
+    $validatedData['order_column'] = $nextOrder;
 
     $priority = MatrixPriority::create($validatedData);
 

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MatrixPriority extends Model
 {
-  protected $fillable = ['name', 'color', 'project_id'];
+  protected $fillable = ['name', 'color', 'project_id', 'order_column'];
 
   public function prioritizations()
   {
