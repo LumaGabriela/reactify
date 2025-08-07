@@ -37,7 +37,7 @@ const SortablePriorityColumn = ({ priority, children, itemCount }) => {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.8 : 1,
-    backgroundColor: priority.color + '44',
+    backgroundColor: priority.color + '33',
   }
 
   return (
@@ -54,11 +54,11 @@ const SortablePriorityColumn = ({ priority, children, itemCount }) => {
         style={{ touchAction: 'none' }}
       >
         <section
-          style={{ backgroundColor: priority.color + '77' }}
+          style={{ backgroundColor: priority.color + '66' }}
           className="flex items-center justify-between px-3 py-1 gap-2 rounded-md w-full text-background"
         >
           <span
-            className="w-2.5 h-2.5 rounded-full"
+            className="size-2.5 rounded-full"
             style={{ backgroundColor: priority.color }}
           />
           <span className="font-semibold text-sm ">{priority.name}</span>
@@ -67,7 +67,7 @@ const SortablePriorityColumn = ({ priority, children, itemCount }) => {
       </div>
 
       {/* Área de Conteúdo (Cards) */}
-      <div className="px-2 space-y-2 flex-1">{children}</div>
+      <div className="px-2 gap-1 flex-1">{children}</div>
     </div>
   )
 }
@@ -82,7 +82,7 @@ const StoryCard = ({ story, priority = null }) => {
     transform: CSS.Transform.toString(transform),
     opacity: isDragging ? 0.5 : 1,
     touchAction: 'none',
-    backgroundColor: priority || 'transparent',
+    backgroundColor: priority + '66',
   }
 
   return (
@@ -92,7 +92,7 @@ const StoryCard = ({ story, priority = null }) => {
       {...listeners}
       {...attributes}
       className={`
-        flex items-center justify-center p-3 bg-transparent text-background border border-border rounded-md shadow-sm  transition-opacity duration-300 min-h-[60px]
+        flex items-center justify-center p-2 text-background border border-border rounded-md shadow-sm  transition-opacity duration-300 min-h-[60px]
         ${story.isTemporary ? 'opacity-50 cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}`}
     >
       <p className="font-semibold text-xs">{story.story_title}</p>
@@ -112,13 +112,13 @@ const DroppableCell = ({ id, children, className = '' }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: id,
   })
-
+  console.log(isOver)
   return (
     <div
       ref={setNodeRef}
       className={`
-        min-h-[60px] flex flex-col justify-center rounded-md transition-all duration-150
-
+        min-h-[60px] flex flex-col justify-center rounded-md transition-all duration-150 border border-accent
+        ${isOver ? ' bg-card/60' : ''}
         ${className}
       `}
     >
@@ -352,7 +352,6 @@ const PrioritizationMatrix = ({ project }) => {
         <main className="flex-1">
           {/* botao para editar prioridades*/}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Matriz de Priorização</h2>
             <EditPriorities
               priorities={project.matrix_priorities}
               projectId={project.id}
