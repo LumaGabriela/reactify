@@ -324,6 +324,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               )}
             </div>
           </div>
+
           <TabsContent value="inception">
             <NavMenu menuItems={menuItems} setActiveMenu={setActiveMenu} />
             {renderInceptionContent()}

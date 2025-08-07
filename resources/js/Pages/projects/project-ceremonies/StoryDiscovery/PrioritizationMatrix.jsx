@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react' // Adicionado useEffect
+import { darkenColor } from '@/lib/utils'
 import {
   DndContext,
   PointerSensor,
@@ -16,11 +16,9 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { router } from '@inertiajs/react'
-import { Plus } from 'lucide-react' // ADICIONE ESTA LINHA
 import EditPriorities from './EditPriorities'
-//...
 
-const GRID_ROWS = 8
+const GRID_ROWS = 9
 
 // SUBSTITUA O COMPONENTE INTEIRO POR ESTE
 const SortablePriorityColumn = ({ priority, children, itemCount }) => {
@@ -32,12 +30,11 @@ const SortablePriorityColumn = ({ priority, children, itemCount }) => {
     transition,
     isDragging,
   } = useSortable({ id: priority.id, data: { type: 'column' } })
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.8 : 1,
-    backgroundColor: priority.color + '33',
+    backgroundColor: darkenColor(priority.color, 0.3),
   }
 
   return (
@@ -54,11 +51,11 @@ const SortablePriorityColumn = ({ priority, children, itemCount }) => {
         style={{ touchAction: 'none' }}
       >
         <section
-          style={{ backgroundColor: priority.color + '66' }}
-          className="flex items-center justify-between px-3 py-1 gap-2 rounded-md w-full text-background"
+          style={{ backgroundColor: darkenColor(priority.color, 0.4) }}
+          className="flex items-center justify-between px-3 py-1 gap-2 rounded-md w-full text-slate-100"
         >
           <span
-            className="size-2.5 rounded-full"
+            className="size-3 rounded-full"
             style={{ backgroundColor: priority.color }}
           />
           <span className="font-semibold text-sm ">{priority.name}</span>
@@ -67,7 +64,7 @@ const SortablePriorityColumn = ({ priority, children, itemCount }) => {
       </div>
 
       {/* Área de Conteúdo (Cards) */}
-      <div className="px-2 gap-1 flex-1">{children}</div>
+      <div className="p-2 gap-1 flex-1">{children}</div>
     </div>
   )
 }
@@ -82,7 +79,7 @@ const StoryCard = ({ story, priority = null }) => {
     transform: CSS.Transform.toString(transform),
     opacity: isDragging ? 0.5 : 1,
     touchAction: 'none',
-    backgroundColor: priority + '66',
+    backgroundColor: priority?.color ? darkenColor(priority.color, 0.5) : '',
   }
 
   return (
@@ -92,32 +89,59 @@ const StoryCard = ({ story, priority = null }) => {
       {...listeners}
       {...attributes}
       className={`
-        flex items-center justify-center p-2 text-background border border-border rounded-md shadow-sm  transition-opacity duration-300 min-h-[60px]
+        flex items-center justify-center p-2 text-xs font-normal text-foreground ${priority ? 'text-slate-50' : 'border border-border'}  rounded-md shadow-sm  transition-opacity duration-300 min-h-[60px]
         ${story.isTemporary ? 'opacity-50 cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}`}
     >
-      <p className="font-semibold text-xs">{story.story_title}</p>
+      <p className=" ">{story.story_title}</p>
     </div>
   )
 }
 
 const GoalCard = ({ goal }) => {
   return (
-    <div className="p-3 bg-accent/10 border border-accent/20 rounded-md text-accent-foreground">
-      <p className="font-semibold text-sm">{goal.title}</p>
+    <div className="p-3  border border-border rounded-md text-foreground text-xs font-normal">
+      <p className=" ">{goal.title}</p>
     </div>
   )
 }
-
+const GoalsSheet = ({ goals }) => {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">Consultar Goals</Button>
+      </SheetTrigger>
+      <SheetContent
+        side="left"
+        className="w-[350px] sm:w-[400px] overflow-y-auto"
+      >
+        <SheetHeader>
+          <SheetTitle>Metas do Projeto</SheetTitle>
+          <SheetDescription>
+            Estas são as metas e objetivos que guiam a priorização das stories.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="py-4 space-y-3">
+          {goals.length > 0 ? (
+            goals.map((goal) => <GoalCard key={goal.id} goal={goal} />)
+          ) : (
+            <p className="text-sm text-muted-foreground p-2">
+              Nenhuma meta definida.
+            </p>
+          )}
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
 const DroppableCell = ({ id, children, className = '' }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: id,
   })
-  console.log(isOver)
   return (
     <div
       ref={setNodeRef}
       className={`
-        min-h-[60px] flex flex-col justify-center rounded-md transition-all duration-150 border border-accent
+        min-h-[60px] flex flex-col justify-center rounded-md transition-all duration-150 border border-slate-900/30
         ${isOver ? ' bg-card/60' : ''}
         ${className}
       `}
@@ -309,12 +333,12 @@ const PrioritizationMatrix = ({ project }) => {
       <div className="flex flex-col lg:flex-row gap-8 p-4 md:p-6 bg-background text-foreground min-h-screen">
         <aside className="lg:w-1/4 xl:w-1/5 space-y-8">
           <section>
-            <h2 className="text-lg font-bold mb-3 text-muted-foreground">
+            <h2 className="text-lg font-bold mb-2 text-muted-foreground">
               Stories
             </h2>
             <DroppableCell
               id="story-list"
-              className="space-y-2 p-3 bg-card text-card-foreground border rounded-xl shadow-sm min-h-[200px]"
+              className="gap-2 p-2 bg-card text-card-foreground border rounded-xl shadow-sm min-h-[200px]"
             >
               {unassignedStories.length > 0 ? (
                 unassignedStories.map((story) => {
@@ -331,32 +355,17 @@ const PrioritizationMatrix = ({ project }) => {
               )}
             </DroppableCell>
           </section>
-          <section>
-            <h2 className="text-lg font-bold mb-3 text-muted-foreground">
-              Metas (Goals)
-            </h2>
-            <div className="space-y-2 p-3 bg-card text-card-foreground border rounded-xl shadow-sm">
-              {project.goal_sketches.length > 0 ? (
-                project.goal_sketches.map((goal) => (
-                  <GoalCard key={goal.id} goal={goal} />
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground p-2">
-                  Nenhuma meta definida.
-                </p>
-              )}
-            </div>
-          </section>
         </aside>
 
         <main className="flex-1">
           {/* botao para editar prioridades*/}
-          <div className="flex justify-between items-center mb-6">
+          <section className="w-full flex gap-3 justify-start items-center mb-6 relative">
+            <GoalsSheet goals={project.goal_sketches} />
             <EditPriorities
               priorities={project.matrix_priorities}
               projectId={project.id}
             />
-          </div>
+          </section>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <SortableContext
               items={priorityIds}
@@ -382,7 +391,7 @@ const PrioritizationMatrix = ({ project }) => {
                             {storyInCell ? (
                               <StoryCard
                                 story={storyInCell}
-                                priority={priority.color}
+                                priority={priority}
                               />
                             ) : (
                               <div className="h-12 w-full flex items-center justify-center "></div>
