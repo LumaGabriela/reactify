@@ -1,38 +1,61 @@
 <?php
-
+// app/Models/Sprint.php
 namespace App\Models;
 
-use App\Enums\SprintStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Sprint extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    protected $table = 'sprints';
 
     protected $fillable = [
-        'project_id',
         'name',
-        'goal',
-        'status',
         'start_date',
         'end_date',
+        'status',
+        'project_id',
+        'user_id'
     ];
 
     protected $casts = [
-        'status' => SprintStatus::class,
         'start_date' => 'date',
         'end_date' => 'date',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Relacionamento many-to-many com Stories
+    public function stories()
+    {
+        return $this->belongsToMany(Story::class, 'story_sprint')
+                    ->withPivot('kanban_status', 'position')
+                    ->withTimestamps();
+    }
 
     public function project()
     {
         return $this->belongsTo(Project::class);
     }
-
-    public function stories()
+    
+    // Scope para sprints ativas
+    public function scopeActive($query)
     {
-        return $this->hasMany(Story::class);
+        return $query->where('status', 'active');
     }
-}
 
+    // Scope para sprints em planejamento
+    public function scopePlanning($query)
+    {
+        return $query->where('status', 'planning');
+    }
+
+    
+}

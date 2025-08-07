@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->text("title");
             $table->enum("type", ["user", "system"]); // Tipo fixo
+            $table->enum('status', ['draft', 'prioritized', 'in_progress', 'done'])->default('draft');
             $table
                 ->foreignId("project_id")
                 ->constrained("projects")

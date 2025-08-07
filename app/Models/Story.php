@@ -15,15 +15,9 @@ class Story extends Model
     'title',
     'type',
     'project_id',
-    'sprint_id',
-    'backlog_status',
     'parent_id',
     'value',
     'complexity',
-  ];
-
-  protected $casts = [
-      'backlog_status' => StoryBacklogStatus::class,
   ];
 
   public function project()
@@ -31,9 +25,16 @@ class Story extends Model
     return $this->belongsTo(Project::class);
   }
 
-  public function sprint()
+  public function sprints()
   {
-      return $this->belongsTo(Sprint::class);
+      return $this->belongsToMany(Sprint::class, 'story_sprint')
+                  ->withPivot(['kanban_status', 'position'])
+                  ->withTimestamps();
+  }
+
+  public function currentSprint()
+  {
+      return $this->sprints()->where('status', 'active')->first();
   }
 
   public function businessRules()
@@ -68,4 +69,6 @@ class Story extends Model
   {
       return $this->hasMany(Story::class, 'parent_id');
   }
+
+  
 }

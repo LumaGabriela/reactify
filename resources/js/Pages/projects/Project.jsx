@@ -27,6 +27,8 @@ import { toast } from 'sonner'
 
 import MainLayout from '@/Layouts/MainLayout'
 
+import Sprint from './project-ceremonies/Sprint/Sprint'
+
 const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const [project, setProject] = useState({ ...projectDB })
   const [isEditing, setIsEditing] = useState(false)
@@ -289,6 +291,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               <TabsTrigger value="refining">Refining</TabsTrigger>
               <TabsTrigger value="modeling">Modeling</TabsTrigger>
               <TabsTrigger value="backlog">Product Backlog</TabsTrigger>
+              <TabsTrigger value="sprint">Sprint</TabsTrigger>
             </TabsList>
             {/* title and change title button  */}
             <div
@@ -352,6 +355,9 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
           </TabsContent>
           <TabsContent value="backlog">
             <ProductBacklog project={project} setProject={setProject} />
+          </TabsContent>
+          <TabsContent value="sprint">
+            <Sprint project={project} setProject={setProject} />
           </TabsContent>
         </Tabs>
       </div>

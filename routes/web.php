@@ -15,6 +15,7 @@ use App\Http\Controllers\ProjectInvitationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PrioritizationController;
 use App\Http\Controllers\MatrixPriorityController;
+use App\Http\Controllers\SprintController;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -88,6 +89,13 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{model}', [OverallModelController::class, 'update'])->name('overall.update');
     Route::delete('/{model}', [OverallModelController::class, 'destroy'])->name('overall.destroy');
   });
+
+  Route::post('/sprints', [SprintController::class, 'store'])->name('sprint.store');
+  Route::post('/sprints/{sprint}/add-stories', [SprintController::class, 'addStories'])->name('sprint.add-stories');
+  Route::delete('/sprints/{sprint}/stories/{story}', [SprintController::class, 'removeStory'])->name('sprint.remove-story');
+  Route::patch('/sprints/{sprint}/kanban', [SprintController::class, 'updateStoryKanbanStatus'])->name('sprint.update-kanban');
+  Route::delete('/sprints/{sprint}', [SprintController::class, 'destroy'])->name('sprint.destroy');
+  Route::get('/sprints/{sprint}', [SprintController::class, 'show'])->name('sprint.show');
 
   Route::prefix('overall-model-classes')->group(function () {
     Route::post('/', [OverallModelClassController::class, 'store'])->name('overall-model-class.store');

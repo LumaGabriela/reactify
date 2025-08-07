@@ -4,8 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use App\Enums\SprintStatus;
-
 return new class extends Migration
 {
     /**
@@ -17,11 +15,15 @@ return new class extends Migration
             $table->id();
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->text('goal')->nullable();
-            $table->string('status')->default(SprintStatus::PLANEJADO->value);
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->enum('status', ['planning', 'active', 'completed'])->default('planning');
             $table->timestamps();
+            $table->softDeletes();
+
+            // Índices para performance
+            $table->index(['project_id', 'status']);
+            $table->index(['start_date', 'end_date']);
         });
     }
 

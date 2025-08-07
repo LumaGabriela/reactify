@@ -63,6 +63,40 @@ class StoryController extends Controller
     return back()->with(['status' => 'success', 'message' => 'Story prioritized successfully']);
   }
 
+  public function addToSprint(Request $request, Story $story)
+  {
+      $validated = $request->validate([
+          'sprint_id' => 'required|exists:sprints,id',
+          'kanban_status' => 'sometimes|in:todo,in_progress,review,done',
+          'position' => 'sometimes|integer|min:0'
+      ]);
+
+      $story->sprints()->attach($validated['sprint_id'], [
+          'kanban_status' => $validated['kanban_status'] ?? 'todo',
+          'position' => $validated['position'] ?? 0
+      ]);
+
+      return back()->with(['status' => 'success', 'message' => 'Story added to sprint']);
+  }
+
+  public function removeFromSprint(Story $story, $sprintId)
+  {
+      $story->sprints()->detach($sprintId);
+      return back()->with(['status' => 'success', 'message' => 'Story removed from sprint']);
+  }
+
+  public function updateKanbanStatus(Request $request, Story $story, $sprintId)
+  {
+      $validated = $request->validate([
+          'kanban_status' => 'required|in:todo,in_progress,review,done',
+          'position' => 'sometimes|integer|min:0'
+      ]);
+
+      $story->sprints()->updateExistingPivot($sprintId, $validated);
+
+      return back()->with(['status' => 'success', 'message' => 'Kanban status updated']);
+  }
+
   public function destroy(Story $story)
   {
     $story->delete();
@@ -70,4 +104,6 @@ class StoryController extends Controller
     Log::warning('Story deleted', ['id' => $story->id]);
     return back();
   }
+
+
 }

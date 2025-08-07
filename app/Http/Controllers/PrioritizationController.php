@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Story;
 use App\Models\Prioritization;
 
 class PrioritizationController extends Controller
@@ -17,6 +18,8 @@ class PrioritizationController extends Controller
     ]);
 
     $prioritization = Prioritization::create($validatedData);
+
+    Story::where('id', $validatedData['story_id'])->update(['status' => 'prioritized']);
 
     return back()->with(['message' => 'Prioritization matrix created successfully', 'status' => 'success']);
   }
@@ -35,6 +38,8 @@ class PrioritizationController extends Controller
 
   public function destroy(Prioritization $prioritization)
   {
+    Story::where('id', $prioritization->story_id)->update(['status' => 'draft']);
+
     $prioritization->delete();
 
     return back()->with(['message' => 'Prioritization matrix deleted successfully', 'status' => 'success']);
