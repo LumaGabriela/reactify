@@ -90,12 +90,15 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::delete('/{model}', [OverallModelController::class, 'destroy'])->name('overall.destroy');
   });
 
-  Route::post('/sprints', [SprintController::class, 'store'])->name('sprint.store');
-  Route::post('/sprints/{sprint}/add-stories', [SprintController::class, 'addStories'])->name('sprint.add-stories');
-  Route::delete('/sprints/{sprint}/stories/{story}', [SprintController::class, 'removeStory'])->name('sprint.remove-story');
-  Route::patch('/sprints/{sprint}/kanban', [SprintController::class, 'updateStoryKanbanStatus'])->name('sprint.update-kanban');
-  Route::delete('/sprints/{sprint}', [SprintController::class, 'destroy'])->name('sprint.destroy');
-  Route::get('/sprints/{sprint}', [SprintController::class, 'show'])->name('sprint.show');
+  // Rotas para sprints
+  Route::prefix('sprint')->group(function () {
+    Route::post('/', [SprintController::class, 'store'])->name('sprint.store');
+    Route::get('/{sprint}', [SprintController::class, 'show'])->name('sprint.show');
+    Route::post('/{sprint}/add-stories', [SprintController::class, 'addStories'])->name('sprint.add-stories');
+    Route::patch('/{sprint}/kanban', [SprintController::class, 'updateStoryKanbanStatus'])->name('sprint.update-kanban');
+    Route::delete('/{sprint}/stories/{story}', [SprintController::class, 'removeStory'])->name('sprint.remove-story');
+    Route::delete('/{sprint}', [SprintController::class, 'destroy'])->name('sprint.destroy');
+  });
 
   Route::prefix('overall-model-classes')->group(function () {
     Route::post('/', [OverallModelClassController::class, 'store'])->name('overall-model-class.store');
