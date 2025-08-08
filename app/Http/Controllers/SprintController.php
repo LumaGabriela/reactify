@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sprint;
+use App\Models\Story;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
