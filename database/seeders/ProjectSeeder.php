@@ -352,5 +352,39 @@ class ProjectSeeder extends Seeder
 
     // 3. Inserir todos os CRC Cards no banco de dados com uma única query
     DB::table('crc_cards')->insert($crcCardsToInsert);
+
+
+    
+  // Adicione este código no final do método run() do ProjectSeeder, antes do fechamento da função
+
+  DB::table("sprints")->insert([
+    [
+      "project_id" => $projectId,
+      "name" => "Sprint 1 - Configuração Inicial",
+      "start_date" => now()->format('Y-m-d'),
+      "end_date" => now()->addWeeks(2)->format('Y-m-d'),
+      "status" => "planning",
+      "created_at" => now(),
+      "updated_at" => now(),
+    ],
+    [
+      "project_id" => $projectId,
+      "name" => "Sprint 2 - Desenvolvimento Core",
+      "start_date" => now()->addWeeks(2)->addDay()->format('Y-m-d'),
+      "end_date" => now()->addWeeks(4)->format('Y-m-d'),
+      "status" => "completed",
+      "created_at" => now(),
+      "updated_at" => now(),
+    ],
+    [
+      "project_id" => $projectId,
+      "name" => "Sprint 3 - Refinamentos e Testes",
+      "start_date" => now()->addWeeks(4)->addDay()->format('Y-m-d'),
+      "end_date" => now()->addWeeks(6)->format('Y-m-d'),
+      "status" => "active",
+      "created_at" => now(),
+      "updated_at" => now(),
+    ],
+  ]);
   }
 }

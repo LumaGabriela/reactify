@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('sprint_id')->constrained()->onDelete('cascade');
             $table->enum('kanban_status', ['todo', 'in_progress', 'testing', 'done'])->default('todo');
             $table->integer('position')->default(0);
-            $table->timestamp('started_at')->nullable();
-            $table->timestamp('completed_at')->nullable();
+            //$table->timestamp('start_date')->nullable();
+            //$table->timestamp('end_date')->nullable();
             $table->timestamps();
 
 
