@@ -14,7 +14,6 @@ const Sprint = ({ project, setProject }) => {
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [view, setView] = useState('list')
 
-  // ✅ Usar sprints diretamente do projeto - sem estado local desnecessário
   const sprints = project?.sprints || []
 
   const handleCreateSprint = (e) => {
@@ -32,10 +31,8 @@ const Sprint = ({ project, setProject }) => {
     router.post(route('sprint.store'), sprintData, {
       preserveState: true,
       preserveScroll: true,
-      // ✅ Usar callback padrão do projeto ao invés de reload manual
       onSuccess: (page) => {
         setShowCreateForm(false)
-        // Atualizar o projeto via setProject (padrão do projeto)
         if (page.props.project) {
           setProject(page.props.project)
         }
@@ -51,7 +48,7 @@ const Sprint = ({ project, setProject }) => {
   }
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 p-4">
       {/* Header */}
       <Card>
         <CardHeader>
@@ -61,7 +58,7 @@ const Sprint = ({ project, setProject }) => {
               <Tabs value={view} onValueChange={setView}>
                 <TabsList>
                   <TabsTrigger value="list">Sprint List</TabsTrigger>
-                  <TabsTrigger value="kanban" disabled={!activeSprint}>
+                  <TabsTrigger value="kanban" disabled={!activeSprint || activeSprint.status !== 'active'}>
                     Kanban Board
                   </TabsTrigger>
                 </TabsList>

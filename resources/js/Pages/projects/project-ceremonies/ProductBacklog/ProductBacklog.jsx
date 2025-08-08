@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2 } from 'lucide-react';
 
 const ProductBacklog = ({ project, setProject }) => {
-  // ✅ Estado local para refletir mudanças imediatas
   const [localProject, setLocalProject] = useState(project);
   const [selectedStories, setSelectedStories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +17,7 @@ const ProductBacklog = ({ project, setProject }) => {
     setLocalProject(project);
   }, [project]);
 
-  // ✅ Usar localProject ao invés de project
+
   const { productBacklogStories, sprintBacklogStories, deliveredStories } = useMemo(() => {
     const stories = localProject?.stories || [];
     const sprints = localProject?.sprints || [];
@@ -74,7 +73,7 @@ const ProductBacklog = ({ project, setProject }) => {
 
     setIsLoading(true);
     
-    // ✅ Atualizar estado local ANTES da requisição
+
     setLocalProject(prevProject => {
       const updatedProject = { ...prevProject };
       const targetSprint = updatedProject.sprints.find(s => s.id === sprintId);
@@ -96,7 +95,6 @@ const ProductBacklog = ({ project, setProject }) => {
         setIsLoading(false);
         toast.success('Stories moved to sprint successfully!');
         
-        // ✅ Sincronizar com dados do servidor
         if (page.props.project) {
           setProject(page.props.project);
           setLocalProject(page.props.project);
@@ -108,7 +106,7 @@ const ProductBacklog = ({ project, setProject }) => {
         toast.error('Failed to move stories to sprint');
         console.error('Error:', errors);
         
-        // ✅ Reverter estado local em caso de erro
+
         setLocalProject(project);
       }
     });

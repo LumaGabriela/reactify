@@ -3,7 +3,9 @@ import { router } from '@inertiajs/react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Play, Square, Calendar, Trash2, Eye } from 'lucide-react'
+import { Play, Square, Calendar, Trash2, Eye, Info } from 'lucide-react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+
 
 const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject }) => {
 
@@ -80,9 +82,16 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
   }
 
   const getStatusIcon = (status) => {
-    return status === 'active' ? 
-      <Play className="w-4 h-4" /> : 
-      <Square className="w-4 h-4" />
+    switch (status) {
+      case 'active':
+        return <Play className="w-4 h-4 text-green-600" />
+      case 'completed':
+        return <Square className="w-4 h-4 text-gray-600" />
+      case 'planning':
+        return <Calendar className="w-4 h-4 text-blue-600" />
+      default:
+        return <Square className="w-4 h-4 text-gray-400" />
+    }
   }
 
   if (sprints.length === 0) {
@@ -112,11 +121,31 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                   variant="outline"
                   size="sm"
                   onClick={() => handleViewKanban(sprint)}
-                  disabled={sprint.status !== 'active' && sprint.status !== 'planning'}
+                  disabled={sprint.status !== 'active'}
                 >
                   <Eye className="w-4 h-4 mr-2" />
-                  Ver Kanban
+                  Sprint Kanban
                 </Button>
+                
+                {sprint.status !== 'active' && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="sm" className="p-1">
+                        <Info className="w-4 h-4 text-muted-foreground" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Kanban não disponível</h4>
+                        <p className="text-sm text-muted-foreground">
+                          O Kanban board só pode ser acessado quando a sprint está com status <strong>"Ativa"</strong>.
+                          Esta sprint está com status: <Badge variant="outline" className="ml-1">{sprint.status === 'planning' ? 'Planejada' : sprint.status === 'completed' ? 'Concluída' : sprint.status}</Badge>
+                        </p>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+                
                 <Button 
                   variant="destructive"
                   size="sm"
@@ -145,7 +174,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
               </div>
               
               <Badge variant={getStatusColor(sprint.status)} className="capitalize">
-                {sprint.status === 'planning' ? 'Planejamento' : 
+                {sprint.status === 'planning' ? 'Planejada' : 
                  sprint.status === 'active' ? 'Ativa' : 
                  sprint.status === 'completed' ? 'Concluída' : sprint.status}
               </Badge>
