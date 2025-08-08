@@ -1,12 +1,12 @@
-// resources/js/Pages/Project/project-ceremonies/Sprint/SprintList.jsx
 import { router } from '@inertiajs/react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Play, Check, Calendar, Trash2, Eye, Info, Edit } from 'lucide-react'
+import { Play, Check, Calendar, Trash2, Eye, Info, Edit, CheckCircle } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
@@ -21,6 +21,34 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
     { value: 'active', label: 'Ativa', description: 'Sprint em execução' },
     { value: 'completed', label: 'Concluída', description: 'Sprint finalizada' }
   ]
+
+  // Separar sprints por status
+  const sprintsByStatus = {
+    planning: sprints.filter(sprint => sprint.status === 'planning'),
+    active: sprints.filter(sprint => sprint.status === 'active'),
+    completed: sprints.filter(sprint => sprint.status === 'completed')
+  }
+
+  const statusConfig = {
+    planning: {
+      title: 'Sprints Planejadas',
+      icon: <Calendar className="w-5 h-5 text-blue-600" />,
+      color: 'text-blue-600',
+      count: sprintsByStatus.planning.length
+    },
+    active: {
+      title: 'Sprints Ativas',
+      icon: <Play className="w-5 h-5 text-green-600" />,
+      color: 'text-green-600',
+      count: sprintsByStatus.active.length
+    },
+    completed: {
+      title: 'Sprints Concluídas',
+      icon: <CheckCircle className="w-5 h-5 text-gray-600" />,
+      color: 'text-gray-600',
+      count: sprintsByStatus.completed.length
+    }
+  }
 
   const handleStatusChange = (sprint, newStatus) => {
     if (sprint.status === newStatus) return
@@ -38,8 +66,8 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
     router.patch(route('sprint.update', sprint.id), { 
       status: newStatus,
       name: sprint.name,
-      start_date: sprint.start_date.split('T')[0], 
-      end_date: sprint.end_date.split('T')[0] 
+      start_date: sprint.start_date.split('T')[0],
+      end_date: sprint.end_date.split('T')[0]
     }, {
       preserveState: true,
       preserveScroll: true,
@@ -197,6 +225,181 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
     }
   }
 
+  const renderSprintCard = (sprint) => (
+    <Card key={sprint.id}>
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          {editingSprint === sprint.id ? (
+            <div className="flex items-center gap-2 flex-1">
+              <Input
+                value={editForm.name}
+                onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                className="max-w-xs"
+              />
+            </div>
+          ) : (
+            <CardTitle className="flex items-center gap-2">
+              {getStatusIcon(sprint.status)}
+              {sprint.name}
+            </CardTitle>
+          )}
+          
+          <div className="flex gap-2 items-center">
+            {editingSprint === sprint.id ? (
+              <>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSaveEdit(sprint.id)}
+                >
+                  Salvar
+                </Button>
+                <Button 
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCancelEdit}
+                >
+                  Cancelar
+                </Button>
+              </>
+            ) : (
+              <>
+                {/* Select de Status */}
+                <Select 
+                  value={sprint.status} 
+                  onValueChange={(value) => handleStatusChange(sprint, value)}
+                >
+                  <SelectTrigger className="w-28">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleViewKanban(sprint)}
+                  disabled={sprint.status !== 'active'}
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Kanban
+                </Button>
+                
+                {sprint.status !== 'active' && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="sm" className="p-1">
+                        <Info className="w-4 h-4 text-muted-foreground" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Kanban não disponível</h4>
+                        <div className="text-sm text-muted-foreground">
+                          O Kanban board só pode ser acessado quando a sprint está com status <strong>"Ativa"</strong>.
+                          Esta sprint está com status: <Badge variant="outline" className="ml-1">{sprint.status === 'planning' ? 'Planejada' : sprint.status === 'completed' ? 'Concluída' : sprint.status}</Badge>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+                
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleEditSprint(sprint)}
+                  disabled={sprint.status === 'completed'}
+                >
+                  <Edit className="w-4 h-4" />
+                </Button>
+                
+                <Button 
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDeleteSprint(sprint)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent>
+        {editingSprint === sprint.id ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Data de Início</label>
+                <Input
+                  type="date"
+                  value={editForm.start_date}
+                  onChange={(e) => setEditForm({...editForm, start_date: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Data de Fim</label>
+                <Input
+                  type="date"
+                  value={editForm.end_date}
+                  onChange={(e) => setEditForm({...editForm, end_date: e.target.value})}
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 flex-wrap">
+            <div className="flex items-center gap-1">
+              <Calendar className="w-4 h-4" />
+              <span className="font-medium">
+                {formatDate(sprint.start_date)} até {formatDate(sprint.end_date)}
+              </span>
+              <span className="text-xs bg-muted px-2 py-1 rounded">
+                {getSprintDuration(sprint.start_date, sprint.end_date)}
+              </span>
+              {isSprintOverdue(sprint.end_date, sprint.status) && (
+                <Badge variant="destructive" className="text-xs">
+                  Atrasada
+                </Badge>
+              )}
+            </div>
+            
+            <Badge variant={getStatusColor(sprint.status)} className="capitalize">
+              {sprint.status === 'planning' ? 'Planejada' : 
+              sprint.status === 'active' ? 'Ativa' : 
+              sprint.status === 'completed' ? 'Concluída' : sprint.status}
+            </Badge>
+            
+            <span>
+              Stories: {sprint.stories ? sprint.stories.length : 0}
+            </span>
+          </div>
+        )}
+        
+        {/* Stories da sprint - só mostra quando não está editando */}
+        {editingSprint !== sprint.id && sprint.stories && sprint.stories.length > 0 && (
+          <div className="pt-4 border-t">
+            <h4 className="text-sm font-medium mb-2">Stories nesta sprint:</h4>
+            <div className="flex flex-wrap gap-2">
+              {sprint.stories.map(story => (
+                <Badge key={story.id} variant="secondary">
+                  US{story.id} - {story.title.substring(0, 30)}...
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+
   if (sprints.length === 0) {
     return (
       <Card>
@@ -211,180 +414,38 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
 
   return (
     <div className="space-y-4">
-      {sprints.map((sprint) => (
-        <Card key={sprint.id}>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              {editingSprint === sprint.id ? (
-                <div className="flex items-center gap-2 flex-1">
-                  <Input
-                    value={editForm.name}
-                    onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                    className="max-w-xs"
-                  />
-                </div>
-              ) : (
-                <CardTitle className="flex items-center gap-2">
-                  {getStatusIcon(sprint.status)}
-                  {sprint.name}
-                </CardTitle>
-              )}
-              
-              <div className="flex gap-2 items-center">
-                {editingSprint === sprint.id ? (
-                  <>
-                    <Button 
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleSaveEdit(sprint.id)}
-                    >
-                      Salvar
-                    </Button>
-                    <Button 
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleCancelEdit}
-                    >
-                      Cancelar
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    {/* Select de Status */}
-                    <Select 
-                      value={sprint.status} 
-                      onValueChange={(value) => handleStatusChange(sprint, value)}
-                    >
-                      <SelectTrigger className="w-28">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {statusOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    <Button 
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewKanban(sprint)}
-                      disabled={sprint.status !== 'active'}
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Kanban
-                    </Button>
-                    
-                    {sprint.status !== 'active' && (
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button variant="ghost" size="sm" className="p-1">
-                            <Info className="w-4 h-4 text-muted-foreground" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-80">
-                          <div className="space-y-2">
-                            <h4 className="font-medium">Kanban não disponível</h4>
-                            <p className="text-sm text-muted-foreground">
-                              O Kanban board só pode ser acessado quando a sprint está com status <strong>"Ativa"</strong>.
-                              Esta sprint está com status: <Badge variant="outline" className="ml-1">{sprint.status === 'planning' ? 'Planejada' : sprint.status === 'completed' ? 'Concluída' : sprint.status}</Badge>
-                            </p>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    )}
-                    
-                    <Button 
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEditSprint(sprint)}
-                      disabled={sprint.status === 'completed'}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    
-                    <Button 
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteSprint(sprint)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            {editingSprint === sprint.id ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Data de Início</label>
-                    <Input
-                      type="date"
-                      value={editForm.start_date}
-                      onChange={(e) => setEditForm({...editForm, start_date: e.target.value})}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Data de Fim</label>
-                    <Input
-                      type="date"
-                      value={editForm.end_date}
-                      onChange={(e) => setEditForm({...editForm, end_date: e.target.value})}
-                    />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 flex-wrap">
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  <span className="font-medium">
-                    {formatDate(sprint.start_date)} até {formatDate(sprint.end_date)}
-                  </span>
-                  <span className="text-xs bg-muted px-2 py-1 rounded">
-                    {getSprintDuration(sprint.start_date, sprint.end_date)}
-                  </span>
-                  {isSprintOverdue(sprint.end_date, sprint.status) && (
-                    <Badge variant="destructive" className="text-xs">
-                      Atrasada
-                    </Badge>
-                  )}
-                </div>
-                
-                <Badge variant={getStatusColor(sprint.status)} className="capitalize">
-                  {sprint.status === 'planning' ? 'Planejada' : 
-                  sprint.status === 'active' ? 'Ativa' : 
-                  sprint.status === 'completed' ? 'Concluída' : sprint.status}
-                </Badge>
-                
-                <span>
-                  Stories: {sprint.stories ? sprint.stories.length : 0}
+      <Accordion type="multiple" defaultValue={['planning', 'active', 'completed']} className="w-full">
+        {Object.entries(statusConfig).map(([status, config]) => (
+          <AccordionItem key={status} value={status}>
+            <AccordionTrigger className="hover:no-underline">
+              <div className="flex items-center gap-3">
+                {config.icon}
+                <span className={`font-semibold ${config.color}`}>
+                  {config.title}
                 </span>
+                <Badge variant="secondary" className="ml-2">
+                  {config.count}
+                </Badge>
               </div>
-            )}
-            
-            {/* Stories da sprint - só mostra quando não está editando */}
-            {editingSprint !== sprint.id && sprint.stories && sprint.stories.length > 0 && (
-              <div className="pt-4 border-t">
-                <h4 className="text-sm font-medium mb-2">Stories nesta sprint:</h4>
-                <div className="flex flex-wrap gap-2">
-                  {sprint.stories.map(story => (
-                    <Badge key={story.id} variant="secondary">
-                      US{story.id} - {story.title.substring(0, 30)}...
-                    </Badge>
-                  ))}
+            </AccordionTrigger>
+            <AccordionContent className="pt-4">
+              {sprintsByStatus[status].length === 0 ? (
+                <Card>
+                  <CardContent className="text-center py-6">
+                    <p className="text-muted-foreground">
+                      Nenhuma sprint {status === 'planning' ? 'planejada' : status === 'active' ? 'ativa' : 'concluída'} encontrada.
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-4">
+                  {sprintsByStatus[status].map(sprint => renderSprintCard(sprint))}
                 </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      ))}
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
 
       {/* Alert Dialog para confirmação de mudança de status */}
       <AlertDialog 
@@ -394,30 +455,32 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar mudança de status</AlertDialogTitle>
-            <AlertDialogDescription>
-              {statusChangeDialog.sprint && statusChangeDialog.newStatus && (
-                <div className="space-y-2">
-                  <p>
-                    Deseja alterar o status da sprint "<strong>{statusChangeDialog.sprint.name}</strong>" de{' '}
-                    <Badge variant="outline">
-                      {statusOptions.find(s => s.value === statusChangeDialog.sprint.status)?.label}
-                    </Badge>{' '}
-                    para{' '}
-                    <Badge variant="outline">
-                      {statusOptions.find(s => s.value === statusChangeDialog.newStatus)?.label}
-                    </Badge>
-                    ?
-                  </p>
-                  
-                  {getStatusWarning(statusChangeDialog.sprint.status, statusChangeDialog.newStatus) && (
-                    <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
-                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                        {getStatusWarning(statusChangeDialog.sprint.status, statusChangeDialog.newStatus)}
-                      </p>
+            <AlertDialogDescription asChild>
+              <div>
+                {statusChangeDialog.sprint && statusChangeDialog.newStatus && (
+                  <div className="space-y-2">
+                    <div>
+                      Deseja alterar o status da sprint "<strong>{statusChangeDialog.sprint.name}</strong>" de{' '}
+                      <Badge variant="outline">
+                        {statusOptions.find(s => s.value === statusChangeDialog.sprint.status)?.label}
+                      </Badge>{' '}
+                      para{' '}
+                      <Badge variant="outline">
+                        {statusOptions.find(s => s.value === statusChangeDialog.newStatus)?.label}
+                      </Badge>
+                      ?
                     </div>
-                  )}
-                </div>
-              )}
+                    
+                    {getStatusWarning(statusChangeDialog.sprint.status, statusChangeDialog.newStatus) && (
+                      <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
+                        <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                          {getStatusWarning(statusChangeDialog.sprint.status, statusChangeDialog.newStatus)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
