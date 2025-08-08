@@ -98,6 +98,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{sprint}/kanban', [SprintController::class, 'updateStoryKanbanStatus'])->name('sprint.update-kanban');
     Route::delete('/{sprint}/stories/{story}', [SprintController::class, 'removeStory'])->name('sprint.remove-story');
     Route::delete('/{sprint}', [SprintController::class, 'destroy'])->name('sprint.destroy');
+    Route::patch('/sprint/{sprint}', [SprintController::class, 'update'])->name('sprint.update');
+
   });
 
   Route::prefix('overall-model-classes')->group(function () {

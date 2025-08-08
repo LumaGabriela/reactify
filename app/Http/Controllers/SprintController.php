@@ -128,6 +128,25 @@ class SprintController extends Controller
         ]);
     }
 
+    public function update(Request $request, Sprint $sprint)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        $sprint->update($validated);
+
+        // Recarregar o projeto com relacionamentos
+        $project = $sprint->project->load(['sprints.stories', 'stories']);
+
+        return redirect()->back()->with([
+            'project' => $project,
+            'message' => 'Sprint atualizada com sucesso!'
+        ]);
+    }
+
     public function destroy(Sprint $sprint)
     {
         // Antes de deletar, retorna todas as stories para o product backlog

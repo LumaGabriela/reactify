@@ -165,7 +165,6 @@ const KanbanBoard = ({ sprint, project, setView, updateProject }) => {
           <div className="flex items-center gap-4">
             <Button variant="outline" onClick={() => setView('list')}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar para Sprints
             </Button>
           </div>
         </CardHeader>
@@ -186,7 +185,6 @@ const KanbanBoard = ({ sprint, project, setView, updateProject }) => {
           <div className="flex items-center gap-4">
             <Button variant="outline" onClick={() => setView('list')}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar para Sprints
             </Button>
             <CardTitle>{sprint.name} - Kanban Board</CardTitle>
             <Badge variant="outline">
