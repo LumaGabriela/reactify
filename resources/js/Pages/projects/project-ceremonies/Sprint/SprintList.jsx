@@ -12,7 +12,6 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
       router.delete(route('sprint.destroy', sprint.id), {
         preserveState: true,
         preserveScroll: true,
-        // ✅ Usar callback para atualizar projeto
         onSuccess: (page) => {
           if (page.props.project) {
             updateProject(page.props.project)
@@ -28,6 +27,43 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
   const handleViewKanban = (sprint) => {
     setActiveSprint(sprint)
     setView('kanban')
+  }
+
+  const formatDate = (dateString) => {
+    if (!dateString) return ''
+    
+    const dateOnly = dateString.split('T')[0]
+    const [year, month, day] = dateOnly.split('-')
+    
+    return `${day}/${month}/${year}`
+  }
+
+  const getSprintDuration = (startDate, endDate) => {
+    if (!startDate || !endDate) return ''
+    
+    const startOnly = startDate.split('T')[0]
+    const endOnly = endDate.split('T')[0]
+    
+    const start = new Date(startOnly + 'T00:00:00')
+    const end = new Date(endOnly + 'T00:00:00')
+    
+    const diffTime = Math.abs(end - start)
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1 // +1 para incluir ambos os dias
+    
+    return `${diffDays} dias`
+  }
+
+  const isSprintOverdue = (endDate, status) => {
+    if (!endDate || status === 'completed') return false
+    
+    const today = new Date()
+    const todayString = today.getFullYear() + '-' + 
+                       String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                       String(today.getDate()).padStart(2, '0')
+    
+    const endOnly = endDate.split('T')[0]
+    
+    return todayString > endOnly && status === 'active'
   }
 
   const getStatusColor = (status) => {
@@ -92,14 +128,28 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
             </div>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 flex-wrap">
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
-                {sprint.start_date} - {sprint.end_date}
+                <span className="font-medium">
+                  {formatDate(sprint.start_date)} até {formatDate(sprint.end_date)}
+                </span>
+                <span className="text-xs bg-muted px-2 py-1 rounded">
+                  {getSprintDuration(sprint.start_date, sprint.end_date)}
+                </span>
+                {isSprintOverdue(sprint.end_date, sprint.status) && (
+                  <Badge variant="destructive" className="text-xs">
+                    Atrasada
+                  </Badge>
+                )}
               </div>
+              
               <Badge variant={getStatusColor(sprint.status)} className="capitalize">
-                {sprint.status}
+                {sprint.status === 'planning' ? 'Planejamento' : 
+                 sprint.status === 'active' ? 'Ativa' : 
+                 sprint.status === 'completed' ? 'Concluída' : sprint.status}
               </Badge>
+              
               <span>
                 Stories: {sprint.stories ? sprint.stories.length : 0}
               </span>
