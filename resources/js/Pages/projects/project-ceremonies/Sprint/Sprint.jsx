@@ -98,6 +98,7 @@ const Sprint = ({ project, setProject }) => {
                   <Input 
                     type="date" 
                     name="start_date"
+                    min={new Date().toISOString().split('T')[0]}
                     defaultValue={new Date().toISOString().split('T')[0]}
                     required 
                   />
@@ -107,6 +108,7 @@ const Sprint = ({ project, setProject }) => {
                   <Input 
                     type="date" 
                     name="end_date"
+                    min={new Date().toISOString().split('T')[0]}
                     defaultValue={new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
                     required 
                   />
