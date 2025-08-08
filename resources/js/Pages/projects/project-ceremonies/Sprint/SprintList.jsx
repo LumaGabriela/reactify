@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Play, Check, Calendar, Trash2, Eye, Info, Edit } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
@@ -12,6 +14,65 @@ import { toast } from 'sonner'
 const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject }) => {
   const [editingSprint, setEditingSprint] = useState(null)
   const [editForm, setEditForm] = useState({})
+  const [statusChangeDialog, setStatusChangeDialog] = useState({ open: false, sprint: null, newStatus: null })
+
+  const statusOptions = [
+    { value: 'planning', label: 'Planejada', description: 'Sprint em fase de planejamento' },
+    { value: 'active', label: 'Ativa', description: 'Sprint em execução' },
+    { value: 'completed', label: 'Concluída', description: 'Sprint finalizada' }
+  ]
+
+  const handleStatusChange = (sprint, newStatus) => {
+    if (sprint.status === newStatus) return
+
+    setStatusChangeDialog({
+      open: true,
+      sprint: sprint,
+      newStatus: newStatus
+    })
+  }
+
+  const confirmStatusChange = () => {
+    const { sprint, newStatus } = statusChangeDialog
+    
+    router.patch(route('sprint.update', sprint.id), { 
+      status: newStatus,
+      name: sprint.name,
+      start_date: sprint.start_date.split('T')[0], 
+      end_date: sprint.end_date.split('T')[0] 
+    }, {
+      preserveState: true,
+      preserveScroll: true,
+      onSuccess: (page) => {
+        if (page.props.project) {
+          updateProject(page.props.project)
+        }
+        toast.success(`Status da sprint alterado para "${statusOptions.find(s => s.value === newStatus)?.label}"`)
+        setStatusChangeDialog({ open: false, sprint: null, newStatus: null })
+      },
+      onError: (errors) => {
+        console.error('Erro ao alterar status da sprint:', errors)
+        toast.error('Erro ao alterar status da sprint. Tente novamente.')
+        setStatusChangeDialog({ open: false, sprint: null, newStatus: null })
+      }
+    })
+  }
+
+  const getStatusWarning = (currentStatus, newStatus) => {
+    if (currentStatus === 'active' && newStatus === 'planning') {
+      return 'Atenção: Voltar uma sprint ativa para planejamento pode afetar o progresso das stories no Kanban.'
+    }
+    if (currentStatus === 'completed' && newStatus !== 'completed') {
+      return 'Atenção: Alterar o status de uma sprint concluída pode afetar relatórios e métricas.'
+    }
+    if (newStatus === 'active') {
+      return 'Esta sprint ficará disponível no Kanban Board para movimentação das stories.'
+    }
+    if (newStatus === 'completed') {
+      return 'Esta ação marcará a sprint como finalizada. Stories não concluídas precisarão ser movidas para outras sprints.'
+    }
+    return null
+  }
 
   const handleEditSprint = (sprint) => {
     setEditingSprint(sprint.id)
@@ -23,7 +84,11 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
   }
 
   const handleSaveEdit = (sprintId) => {
-    router.patch(route('sprint.update', sprintId), editForm, {
+    router.patch(route('sprint.update', sprintId), {
+      name: editForm.name,
+      start_date: editForm.start_date,
+      end_date: editForm.end_date
+    }, {
       preserveState: true,
       preserveScroll: true,
       onSuccess: (page) => {
@@ -36,7 +101,6 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
       onError: (errors) => {
         console.error('Erro ao editar sprint:', errors)
         toast.error('Erro ao atualizar sprint. Tente novamente.')
-
       }
     })
   }
@@ -55,9 +119,11 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
           if (page.props.project) {
             updateProject(page.props.project)
           }
+          toast.success('Sprint deletada com sucesso!')
         },
         onError: (errors) => {
           console.error('Erro ao deletar sprint:', errors)
+          toast.error('Erro ao deletar sprint. Tente novamente.')
         }
       })
     }
@@ -87,7 +153,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
     const end = new Date(endOnly + 'T00:00:00')
     
     const diffTime = Math.abs(end - start)
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1 // +1 para incluir ambos os dias
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1
     
     return `${diffDays} dias`
   }
@@ -164,7 +230,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                 </CardTitle>
               )}
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 {editingSprint === sprint.id ? (
                   <>
                     <Button 
@@ -184,6 +250,23 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                   </>
                 ) : (
                   <>
+                    {/* Select de Status */}
+                    <Select 
+                      value={sprint.status} 
+                      onValueChange={(value) => handleStatusChange(sprint, value)}
+                    >
+                      <SelectTrigger className="w-28">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {statusOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
                     <Button 
                       variant="outline"
                       size="sm"
@@ -191,7 +274,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                       disabled={sprint.status !== 'active'}
                     >
                       <Eye className="w-4 h-4 mr-2" />
-                      Sprint Kanban
+                      Kanban
                     </Button>
                     
                     {sprint.status !== 'active' && (
@@ -244,7 +327,6 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                     <Input
                       type="date"
                       value={editForm.start_date}
-                      min={new Date().toISOString().split('T')[0]}
                       onChange={(e) => setEditForm({...editForm, start_date: e.target.value})}
                     />
                   </div>
@@ -253,7 +335,6 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                     <Input
                       type="date"
                       value={editForm.end_date}
-                      min={new Date().toISOString().split('T')[0]}
                       onChange={(e) => setEditForm({...editForm, end_date: e.target.value})}
                     />
                   </div>
@@ -304,6 +385,49 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
           </CardContent>
         </Card>
       ))}
+
+      {/* Alert Dialog para confirmação de mudança de status */}
+      <AlertDialog 
+        open={statusChangeDialog.open} 
+        onOpenChange={(open) => !open && setStatusChangeDialog({ open: false, sprint: null, newStatus: null })}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar mudança de status</AlertDialogTitle>
+            <AlertDialogDescription>
+              {statusChangeDialog.sprint && statusChangeDialog.newStatus && (
+                <div className="space-y-2">
+                  <p>
+                    Deseja alterar o status da sprint "<strong>{statusChangeDialog.sprint.name}</strong>" de{' '}
+                    <Badge variant="outline">
+                      {statusOptions.find(s => s.value === statusChangeDialog.sprint.status)?.label}
+                    </Badge>{' '}
+                    para{' '}
+                    <Badge variant="outline">
+                      {statusOptions.find(s => s.value === statusChangeDialog.newStatus)?.label}
+                    </Badge>
+                    ?
+                  </p>
+                  
+                  {getStatusWarning(statusChangeDialog.sprint.status, statusChangeDialog.newStatus) && (
+                    <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
+                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                        {getStatusWarning(statusChangeDialog.sprint.status, statusChangeDialog.newStatus)}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmStatusChange}>
+              Confirmar Alteração
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

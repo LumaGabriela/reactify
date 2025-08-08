@@ -148,7 +148,7 @@ const ProductBacklog = ({ project, setProject }) => {
                 <p className="text-sm text-muted-foreground">
                   {selectedStories.length} stories selected
                 </p>
-                {localProject.sprints?.filter(s => s.status === 'planning' || s.status === 'active').map(sprint => (
+                {localProject.sprints?.filter(s => s.status === 'planning').map(sprint => (
                   <Button
                     key={sprint.id}
                     onClick={() => moveToSprint(sprint.id)}
