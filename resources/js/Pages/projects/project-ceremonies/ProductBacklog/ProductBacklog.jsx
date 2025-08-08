@@ -17,7 +17,6 @@ const ProductBacklog = ({ project, setProject }) => {
     setLocalProject(project);
   }, [project]);
 
-
   const { productBacklogStories, sprintBacklogStories, deliveredStories } = useMemo(() => {
     const stories = localProject?.stories || [];
     const sprints = localProject?.sprints || [];
@@ -73,7 +72,6 @@ const ProductBacklog = ({ project, setProject }) => {
 
     setIsLoading(true);
     
-
     setLocalProject(prevProject => {
       const updatedProject = { ...prevProject };
       const targetSprint = updatedProject.sprints.find(s => s.id === sprintId);
@@ -87,7 +85,7 @@ const ProductBacklog = ({ project, setProject }) => {
       return updatedProject;
     });
     
-    router.post(route('sprint.add-stories', sprintId), {
+    router.post(route('sprint-stories.store', sprintId), {
       story_ids: selectedStories
     }, {
       onSuccess: (page) => {
@@ -106,7 +104,6 @@ const ProductBacklog = ({ project, setProject }) => {
         toast.error('Failed to move stories to sprint');
         console.error('Error:', errors);
         
-
         setLocalProject(project);
       }
     });

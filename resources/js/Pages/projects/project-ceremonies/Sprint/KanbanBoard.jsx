@@ -52,7 +52,7 @@ const KanbanBoard = ({ sprint, project, setView, updateProject }) => {
       )
     )
 
-    router.patch(route('sprint.update-kanban', sprint.id), {
+    router.patch(route('sprint-stories.update', sprint.id), {
       story_id: storyId,
       kanban_status: newStatus
     }, {

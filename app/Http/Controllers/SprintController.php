@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sprint;
-use App\Models\Story;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
 
 class SprintController extends Controller
 {
@@ -56,78 +54,6 @@ class SprintController extends Controller
         ]);
     }
 
-    // Adicionar stories à sprint (mover do Product Backlog para Sprint Backlog)
-    public function addStories(Request $request, Sprint $sprint)
-    {
-        $validated = $request->validate([
-            'story_ids' => 'required|array',
-            'story_ids.*' => 'exists:stories,id'
-        ]);
-
-        foreach ($validated['story_ids'] as $storyId) {
-            // Verifica se a story já está na sprint
-            if (!$sprint->stories()->where('story_id', $storyId)->exists()) {
-                $sprint->stories()->attach($storyId, [
-                    'kanban_status' => 'todo',
-                    'position' => 0
-                ]);
-
-                // Atualiza o status da story
-                Story::where('id', $storyId)->update([
-                    'status' => 'in_progress'
-                ]);
-            }
-        }
-
-        return back()->with([
-            'message' => 'Stories added to sprint successfully',
-            'status' => 'success'
-        ]);
-    }
-
-    // Remover story da sprint
-    public function removeStory(Sprint $sprint, $storyId)
-    {
-        $sprint->stories()->detach($storyId);
-        
-        // Retorna a story para o product backlog
-        Story::where('id', $storyId)->update([
-            'status' => 'prioritized'
-        ]);
-
-        return back()->with([
-            'message' => 'Story removed from sprint',
-            'status' => 'success'
-        ]);
-    }
-
-    // Atualizar status no Kanban
-    public function updateStoryKanbanStatus(Request $request, Sprint $sprint)
-    {
-        $validated = $request->validate([
-            'story_id' => 'required|exists:stories,id',
-            'kanban_status' => 'required|in:todo,in_progress,testing,done',
-            'position' => 'sometimes|integer|min:0'
-        ]);
-
-        $sprint->stories()->updateExistingPivot($validated['story_id'], [
-            'kanban_status' => $validated['kanban_status'],
-            'position' => $validated['position'] ?? 0
-        ]);
-
-        // Se a story foi movida para "done", considere atualizar o status
-        if ($validated['kanban_status'] === 'done') {
-            Story::where('id', $validated['story_id'])->update([
-                'status' => 'done'
-            ]);
-        }
-
-        return back()->with([
-            'message' => 'Story status updatedd',
-            'status' => 'success'
-        ]);
-    }
-
     public function update(Request $request, Sprint $sprint)
     {
         $validated = $request->validate([
@@ -143,7 +69,6 @@ class SprintController extends Controller
 
         return redirect()->back()->with([
             'project' => $project,
-            'message' => 'Sprint atualizada com sucesso!'
         ]);
     }
 

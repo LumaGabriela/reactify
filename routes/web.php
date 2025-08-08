@@ -16,6 +16,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PrioritizationController;
 use App\Http\Controllers\MatrixPriorityController;
 use App\Http\Controllers\SprintController;
+use App\Http\Controllers\StorySprintController;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -92,14 +93,19 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
   // Rotas para sprints
   Route::prefix('sprint')->group(function () {
-    Route::post('/', [SprintController::class, 'store'])->name('sprint.store');
-    Route::get('/{sprint}', [SprintController::class, 'show'])->name('sprint.show');
-    Route::post('/{sprint}/add-stories', [SprintController::class, 'addStories'])->name('sprint.add-stories');
-    Route::patch('/{sprint}/kanban', [SprintController::class, 'updateStoryKanbanStatus'])->name('sprint.update-kanban');
-    Route::delete('/{sprint}/stories/{story}', [SprintController::class, 'removeStory'])->name('sprint.remove-story');
-    Route::delete('/{sprint}', [SprintController::class, 'destroy'])->name('sprint.destroy');
-    Route::patch('/sprint/{sprint}', [SprintController::class, 'update'])->name('sprint.update');
+      Route::post('/', [SprintController::class, 'store'])->name('sprint.store');
+      Route::get('/{sprint}', [SprintController::class, 'show'])->name('sprint.show');
+      Route::patch('/{sprint}', [SprintController::class, 'update'])->name('sprint.update');
+      Route::delete('/{sprint}', [SprintController::class, 'destroy'])->name('sprint.destroy');
+  });
 
+  Route::prefix('sprint-stories')->group(function () {
+      Route::post('/{sprint}/add-stories', [StorySprintController::class, 'store'])->name('sprint-stories.store');
+      Route::delete('/{sprint}/stories/{story}', [StorySprintController::class, 'destroy'])->name('sprint-stories.destroy');
+      Route::patch('/{sprint}/update', [StorySprintController::class, 'update'])->name('sprint-stories.update');
+      Route::patch('/{sprint}/reorder', [StorySprintController::class, 'reorder'])->name('sprint-stories.reorder');
+      Route::get('/{sprint}/available', [StorySprintController::class, 'available'])->name('sprint-stories.available');
+      Route::post('/{fromSprint}/move-to/{toSprint}', [StorySprintController::class, 'move'])->name('sprint-stories.move');
   });
 
   Route::prefix('overall-model-classes')->group(function () {

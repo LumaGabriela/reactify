@@ -22,8 +22,11 @@ return new class extends Migration
             $table->softDeletes();
 
             // Índices para performance
-            $table->index(['project_id', 'status']);
-            $table->index(['start_date', 'end_date']);
+            // $table->index(['project_id', 'status']);
+            // $table->index(['start_date', 'end_date']);
+
+            // Constraint para garantir que end_date > start_date
+            // $table->index(['project_id', 'start_date', 'end_date']);
         });
     }
 

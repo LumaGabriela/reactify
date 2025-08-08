@@ -277,7 +277,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                 </div>
                 
                 <Badge variant={getStatusColor(sprint.status)} className="capitalize">
-                  {sprint.status === 'planning' ? 'Planejamento' : 
+                  {sprint.status === 'planning' ? 'Planejada' : 
                   sprint.status === 'active' ? 'Ativa' : 
                   sprint.status === 'completed' ? 'Concluída' : sprint.status}
                 </Badge>
