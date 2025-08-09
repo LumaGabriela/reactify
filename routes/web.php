@@ -103,9 +103,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::post('/{sprint}/add-stories', [StorySprintController::class, 'store'])->name('sprint-stories.store');
       Route::delete('/{sprint}/stories/{story}', [StorySprintController::class, 'destroy'])->name('sprint-stories.destroy');
       Route::patch('/{sprint}/update', [StorySprintController::class, 'update'])->name('sprint-stories.update');
-      Route::patch('/{sprint}/reorder', [StorySprintController::class, 'reorder'])->name('sprint-stories.reorder');
-      Route::get('/{sprint}/available', [StorySprintController::class, 'available'])->name('sprint-stories.available');
-      Route::post('/{fromSprint}/move-to/{toSprint}', [StorySprintController::class, 'move'])->name('sprint-stories.move');
   });
 
   Route::prefix('overall-model-classes')->group(function () {
