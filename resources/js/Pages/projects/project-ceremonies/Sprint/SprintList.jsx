@@ -15,7 +15,8 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
   const [editingSprint, setEditingSprint] = useState(null)
   const [editForm, setEditForm] = useState({})
   const [statusChangeDialog, setStatusChangeDialog] = useState({ open: false, sprint: null, newStatus: null })
-  const [confirmDelete, setConfirmDelete] = useState({ open: false, storyId: null, sprintId: null })
+  const [confirmDeleteStory, setConfirmDeleteStory] = useState({ open: false, storyId: null, sprintId: null })
+  const [confirmDeleteSprint, setConfirmDeleteSprint] = useState({ open: false, sprint: null })
 
   const statusOptions = [
     { value: 'planning', label: 'Planejada', description: 'Sprint em fase de planejamento' },
@@ -60,16 +61,15 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
           updateProject(page.props.project)
         }
         toast.success('Story removida da sprint com sucesso!')
-        setConfirmDelete({ open: false, storyId: null, sprintId: null })
+        setConfirmDeleteStory({ open: false, storyId: null, sprintId: null })
       },
       onError: (errors) => {
         console.error('Erro ao remover story:', errors)
         toast.error('Erro ao remover story. Tente novamente.')
-        setConfirmDelete({ open: false, storyId: null, sprintId: null })
+        setConfirmDeleteStory({ open: false, storyId: null, sprintId: null })
       }
     })
   }
-
 
   const handleStatusChange = (sprint, newStatus) => {
     if (sprint.status === newStatus) return
@@ -174,22 +174,28 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
   }
 
   const handleDeleteSprint = (sprint) => {
-    if (confirm('Tem certeza que deseja deletar esta sprint?')) {
-      router.delete(route('sprint.destroy', sprint.id), {
-        preserveState: true,
-        preserveScroll: true,
-        onSuccess: (page) => {
-          if (page.props.project) {
-            updateProject(page.props.project)
-          }
-          toast.success('Sprint deletada com sucesso!')
-        },
-        onError: (errors) => {
-          console.error('Erro ao deletar sprint:', errors)
-          toast.error('Erro ao deletar sprint. Tente novamente.')
+    setConfirmDeleteSprint({ open: true, sprint: sprint })
+  }
+
+  const removeSprint = () => {
+    const sprint = confirmDeleteSprint.sprint
+    
+    router.delete(route('sprint.destroy', sprint.id), {
+      preserveState: true,
+      preserveScroll: true,
+      onSuccess: (page) => {
+        if (page.props.project) {
+          updateProject(page.props.project)
         }
-      })
-    }
+        toast.success('Sprint deletada com sucesso!')
+        setConfirmDeleteSprint({ open: false, sprint: null })
+      },
+      onError: (errors) => {
+        console.error('Erro ao deletar sprint:', errors)
+        toast.error('Erro ao deletar sprint. Tente novamente.')
+        setConfirmDeleteSprint({ open: false, sprint: null })
+      }
+    })
   }
 
   const handleViewKanban = (sprint) => {
@@ -355,13 +361,57 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                   <Edit className="w-4 h-4" />
                 </Button>
                 
-                <Button 
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDeleteSprint(sprint)}
+                <Popover 
+                  open={confirmDeleteSprint.open && confirmDeleteSprint.sprint?.id === sprint.id}
+                  onOpenChange={(open) => {
+                    if (!open) {
+                      setConfirmDeleteSprint({ open: false, sprint: null })
+                    }
+                  }}
                 >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                  <PopoverTrigger asChild>
+                    <Button 
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeleteSprint(sprint)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80">
+                    <div className="space-y-3">
+                      <h4 className="font-medium">Deletar Sprint</h4>
+                      <div className="text-sm text-muted-foreground">
+                        <p>Tem certeza que deseja deletar a sprint "{sprint.name}"?</p>
+                        {sprint.stories && sprint.stories.length > 0 && (
+                          <p className="mt-2 text-yellow-600 dark:text-yellow-400">
+                            <strong>Atenção:</strong> Esta sprint possui {sprint.stories.length} story(s). 
+                            Elas retornarão para o Product Backlog.
+                          </p>
+                        )}
+                        <p className="mt-2 text-red-600 dark:text-red-400">
+                          <strong>Esta ação não pode ser desfeita.</strong>
+                        </p>
+                      </div>
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setConfirmDeleteSprint({ open: false, sprint: null })}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={removeSprint}
+                        >
+                          Deletar Sprint
+                        </Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </>
             )}
           </div>
@@ -447,10 +497,10 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                   
                   {sprint.status === 'planning' && (
                     <Popover 
-                      open={confirmDelete.open && confirmDelete.storyId === story.id}
+                      open={confirmDeleteStory.open && confirmDeleteStory.storyId === story.id}
                       onOpenChange={(open) => {
                         if (!open) {
-                          setConfirmDelete({ open: false, storyId: null, sprintId: null })
+                          setConfirmDeleteStory({ open: false, storyId: null, sprintId: null })
                         }
                       }}
                     >
@@ -458,7 +508,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setConfirmDelete({ open: true, storyId: story.id, sprintId: sprint.id })}
+                          onClick={() => setConfirmDeleteStory({ open: true, storyId: story.id, sprintId: sprint.id })}
                           className="text-destructive hover:text-destructive"
                         >
                           <Trash2 className="w-3 h-3" />
@@ -475,7 +525,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => setConfirmDelete({ open: false, storyId: null, sprintId: null })}
+                              onClick={() => setConfirmDeleteStory({ open: false, storyId: null, sprintId: null })}
                             >
                               Cancelar
                             </Button>
