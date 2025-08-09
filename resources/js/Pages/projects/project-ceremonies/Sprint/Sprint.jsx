@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Plus } from 'lucide-react'
 import SprintList from './SprintList'
 import KanbanBoard from './KanbanBoard'
+import { toast } from 'sonner'
 
 const Sprint = ({ project, setProject }) => {
   const [activeSprint, setActiveSprint] = useState(null)
@@ -39,6 +40,13 @@ const Sprint = ({ project, setProject }) => {
       },
       onError: (errors) => {
         console.error('Erro ao criar sprint:', errors)
+
+      const mensagens = Object.values(errors || {})
+        if (mensagens.length > 0) {
+          toast.warning(mensagens.join('\n'))
+        } else {
+          toast.error('Erro ao criar a sprint. Tente novamente.')
+        }
       }
     })
   }

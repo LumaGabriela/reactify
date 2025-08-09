@@ -53,6 +53,13 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
   const handleStatusChange = (sprint, newStatus) => {
     if (sprint.status === newStatus) return
 
+    if (newStatus === 'active' && (!sprint.stories || sprint.stories.length === 0)) {
+      toast.warning('Não é possível ativar uma sprint vazia. Adicione pelo menos uma story antes de prosseguir.', {
+        duration: 4000,
+      })
+      return
+    }
+
     setStatusChangeDialog({
       open: true,
       sprint: sprint,
@@ -85,7 +92,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
       if (mensagens.length > 0) {
         toast.warning(mensagens.join('\n'))
       } else {
-        toast.warning('Erro ao alterar status da sprint. Tente novamente.')
+        toast.error('Erro ao alterar status da sprint. Tente novamente.')
       }
 
       setStatusChangeDialog({ open: false, sprint: null, newStatus: null })
@@ -317,6 +324,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                   </Popover>
                 )}
                 
+                
                 <Button 
                   variant="outline"
                   size="sm"
@@ -349,6 +357,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                   type="date"
                   value={editForm.start_date}
                   min={new Date().toISOString().split('T')[0]}
+                  disabled={sprint.status === 'active'}
                   onChange={(e) => setEditForm({...editForm, start_date: e.target.value})}
                 />
               </div>
@@ -358,6 +367,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                   type="date"
                   value={editForm.end_date}
                   min={new Date().toISOString().split('T')[0]}
+                  disabled={sprint.status === 'active'}
                   onChange={(e) => setEditForm({...editForm, end_date: e.target.value})}
                 />
               </div>
