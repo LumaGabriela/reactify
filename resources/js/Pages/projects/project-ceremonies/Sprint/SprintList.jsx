@@ -15,6 +15,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
   const [editingSprint, setEditingSprint] = useState(null)
   const [editForm, setEditForm] = useState({})
   const [statusChangeDialog, setStatusChangeDialog] = useState({ open: false, sprint: null, newStatus: null })
+  const [confirmDelete, setConfirmDelete] = useState({ open: false, storyId: null, sprintId: null })
 
   const statusOptions = [
     { value: 'planning', label: 'Planejada', description: 'Sprint em fase de planejamento' },
@@ -49,6 +50,26 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
       count: sprintsByStatus.completed.length
     }
   }
+
+  const removeStoryFromSprint = (storyId, sprintId) => {
+    router.delete(route('sprint-stories.destroy', [sprintId, storyId]), {
+      preserveState: true,
+      preserveScroll: true,
+      onSuccess: (page) => {
+        if (page.props.project) {
+          updateProject(page.props.project)
+        }
+        toast.success('Story removida da sprint com sucesso!')
+        setConfirmDelete({ open: false, storyId: null, sprintId: null })
+      },
+      onError: (errors) => {
+        console.error('Erro ao remover story:', errors)
+        toast.error('Erro ao remover story. Tente novamente.')
+        setConfirmDelete({ open: false, storyId: null, sprintId: null })
+      }
+    })
+  }
+
 
   const handleStatusChange = (sprint, newStatus) => {
     if (sprint.status === newStatus) return
@@ -405,12 +426,73 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
         {/* Stories da sprint - só mostra quando não está editando */}
         {editingSprint !== sprint.id && sprint.stories && sprint.stories.length > 0 && (
           <div className="pt-4 border-t">
-            <h4 className="text-sm font-medium mb-2">Stories nesta sprint:</h4>
-            <div className="flex flex-wrap gap-2">
+            <h4 className="text-sm font-medium mb-3">Stories nesta sprint ({sprint.stories.length}):</h4>
+            <div className="space-y-2">
               {sprint.stories.map(story => (
-                <Badge key={story.id} variant="secondary">
-                  US{story.id} - {story.title.substring(0, 30)}...
-                </Badge>
+                <div key={story.id} className="flex items-center justify-between p-2 border rounded">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      US{story.id}
+                    </Badge>
+                    <span className="text-sm">{story.title}</span>
+                    {story.pivot?.kanban_status && (
+                      <Badge 
+                        variant={story.pivot.kanban_status === 'done' ? 'default' : 'secondary'} 
+                        className="text-xs"
+                      >
+                        {story.pivot.kanban_status.replace('_', ' ')}
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  {sprint.status === 'planning' && (
+                    <Popover 
+                      open={confirmDelete.open && confirmDelete.storyId === story.id}
+                      onOpenChange={(open) => {
+                        if (!open) {
+                          setConfirmDelete({ open: false, storyId: null, sprintId: null })
+                        }
+                      }}
+                    >
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setConfirmDelete({ open: true, storyId: story.id, sprintId: sprint.id })}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80">
+                        <div className="space-y-3">
+                          <h4 className="font-medium">Remover Story da Sprint</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Tem certeza que deseja remover a story "{story.title}" desta sprint? 
+                            <br/>Ela retornará para o Product Backlog.
+                          </p>
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setConfirmDelete({ open: false, storyId: null, sprintId: null })}
+                            >
+                              Cancelar
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => removeStoryFromSprint(story.id, sprint.id)}
+                            >
+                              Remover
+                            </Button>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                
+                </div>
               ))}
             </div>
           </div>
