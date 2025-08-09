@@ -79,10 +79,17 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
         setStatusChangeDialog({ open: false, sprint: null, newStatus: null })
       },
       onError: (errors) => {
-        console.error('Erro ao alterar status da sprint:', errors)
-        toast.error('Erro ao alterar status da sprint. Tente novamente.')
-        setStatusChangeDialog({ open: false, sprint: null, newStatus: null })
+      console.error('Erro ao alterar status da sprint:', errors)
+
+      const mensagens = Object.values(errors || {})
+      if (mensagens.length > 0) {
+        toast.warning(mensagens.join('\n'))
+      } else {
+        toast.warning('Erro ao alterar status da sprint. Tente novamente.')
       }
+
+      setStatusChangeDialog({ open: false, sprint: null, newStatus: null })
+    }
     })
   }
 
@@ -341,6 +348,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                 <Input
                   type="date"
                   value={editForm.start_date}
+                  min={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setEditForm({...editForm, start_date: e.target.value})}
                 />
               </div>
@@ -349,6 +357,7 @@ const SprintList = ({ sprints, setActiveSprint, setView, project, updateProject 
                 <Input
                   type="date"
                   value={editForm.end_date}
+                  min={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setEditForm({...editForm, end_date: e.target.value})}
                 />
               </div>
