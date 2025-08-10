@@ -15,7 +15,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
 
   return (
     <>
-      <div id="tab-menu" className="flex w-full">
+      <div id="tab-menu" className="flex w-full max-w-6xl">
         {menuItems.map((menuItem, index) => (
           <div
             key={index}
@@ -49,7 +49,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
         ))}
       </div>
 
-      <div className="relative h-0 w-full">
+      <div className="relative h-0 w-full max-w-6xl">
         {menuItems.map(
           (menuItem, index) =>
             menuItem.value && (

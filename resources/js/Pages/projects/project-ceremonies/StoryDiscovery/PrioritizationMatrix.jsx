@@ -7,6 +7,7 @@ import {
   useSensors,
   useDraggable,
   useDroppable,
+  DragOverlay,
 } from '@dnd-kit/core'
 import {
   SortableContext,
@@ -17,8 +18,6 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { router } from '@inertiajs/react'
 import EditPriorities from './EditPriorities'
-
-const GRID_ROWS = 9
 
 // SUBSTITUA O COMPONENTE INTEIRO POR ESTE
 const SortablePriorityColumn = ({ priority, children, itemCount }) => {
@@ -77,9 +76,9 @@ const StoryCard = ({ story, priority = null }) => {
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
     touchAction: 'none',
-    backgroundColor: priority?.color ? darkenColor(priority.color, 0.5) : '',
+    backgroundColor: priority?.color ? darkenColor(priority.color, 0.4) : '',
+    visibility: isDragging ? 'hidden' : 'visible',
   }
 
   return (
@@ -89,7 +88,7 @@ const StoryCard = ({ story, priority = null }) => {
       {...listeners}
       {...attributes}
       className={`
-        flex items-center justify-center p-2 text-xs font-normal text-foreground ${priority ? 'text-slate-50' : 'border border-border'}  rounded-md shadow-sm  transition-opacity duration-300 min-h-[60px]
+        flex flex-1 !max-w-xl items-center justify-center p-2 text-xs font-normal text-foreground ${priority ? 'text-slate-50' : 'border border-border'}  rounded-md shadow-sm  transition-opacity duration-300 min-h-[60px]
         ${story.isTemporary ? 'opacity-50 cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}`}
     >
       <p className=" ">{story.story_title}</p>
@@ -99,40 +98,31 @@ const StoryCard = ({ story, priority = null }) => {
 
 const GoalCard = ({ goal }) => {
   return (
-    <div className="p-3  border border-border rounded-md text-foreground text-xs font-normal">
-      <p className=" ">{goal.title}</p>
-    </div>
-  )
-}
-const GoalsSheet = ({ goals }) => {
-  return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="outline">Consultar Goals</Button>
-      </SheetTrigger>
-      <SheetContent
-        side="left"
-        className="w-[350px] sm:w-[400px] overflow-y-auto"
-      >
-        <SheetHeader>
-          <SheetTitle>Metas do Projeto</SheetTitle>
-          <SheetDescription>
-            Estas são as metas e objetivos que guiam a priorização das stories.
-          </SheetDescription>
-        </SheetHeader>
-        <div className="py-4 space-y-3">
-          {goals.length > 0 ? (
-            goals.map((goal) => <GoalCard key={goal.id} goal={goal} />)
-          ) : (
-            <p className="text-sm text-muted-foreground p-2">
-              Nenhuma meta definida.
-            </p>
-          )}
+    <Card className="bg-card border border-border transition-all duration-300 ease-in-out p-0 h-[150px] rounded-md">
+      <CardContent className="p-2 h-full flex flex-col gap-2">
+        {/* Linha dos Badges (agora estáticos) */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {/* Badge de Tipo */}
+            <Badge className="border-transparent text-white font-bold bg-orange-500">
+              {goal.type.toUpperCase()}
+            </Badge>
+
+            <Badge className="border-transparent text-white font-bold bg-orange-500">
+              {goal.priority.toUpperCase()}
+            </Badge>
+          </div>
         </div>
-      </SheetContent>
-    </Sheet>
+
+        {/* Área do Título (apenas exibição) */}
+        <p className="m-0 font-normal text-sm text-foreground break-words w-full min-h-[24px]">
+          {goal.title}
+        </p>
+      </CardContent>
+    </Card>
   )
 }
+
 const DroppableCell = ({ id, children, className = '' }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: id,
@@ -141,7 +131,7 @@ const DroppableCell = ({ id, children, className = '' }) => {
     <div
       ref={setNodeRef}
       className={`
-        min-h-[60px] flex flex-col justify-center rounded-md transition-all duration-150 border border-slate-900/30
+        min-h-[150px] flex flex-row justify-center rounded-md transition-all duration-150 border border-slate-900/30
         ${isOver ? ' bg-card/60' : ''}
         ${className}
       `}
@@ -174,6 +164,8 @@ const transformArrayToMatrixObject = (prioritizations, allProjectStories) => {
   }, {})
 }
 const PrioritizationMatrix = ({ project }) => {
+  const GRID_ROWS = project.goal_sketches.length || 4
+  const [activeItem, setActiveItem] = useState(null)
   const [prioritizationMatrix, setPrioritizationMatrix] = useState(() =>
     transformArrayToMatrixObject(project?.prioritizations, project?.stories),
   )
@@ -206,7 +198,13 @@ const PrioritizationMatrix = ({ project }) => {
     return project.stories.filter((story) => !assignedStoryIds.has(story.id))
   }, [project.stories, prioritizationMatrix])
 
+  const handleDragStart = (event) => {
+    const { active } = event
+    setActiveItem(active)
+  }
+
   const handleDragEnd = (event) => {
+    setActiveItem(null)
     const { active, over } = event
     if (!over) return
     if (
@@ -329,84 +327,126 @@ const PrioritizationMatrix = ({ project }) => {
   )
 
   return (
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-      <div className="flex flex-col lg:flex-row gap-8 p-4 md:p-6 bg-background text-foreground min-h-screen">
-        <aside className="lg:w-1/4 xl:w-1/5 space-y-8">
-          <section>
-            <h2 className="text-lg font-bold mb-2 text-muted-foreground">
-              Stories
-            </h2>
-            <DroppableCell
-              id="story-list"
-              className="gap-2 p-2 bg-card text-card-foreground border rounded-xl shadow-sm min-h-[200px]"
-            >
-              {unassignedStories.length > 0 ? (
-                unassignedStories.map((story) => {
-                  const unassignedStory = {
-                    story_id: story.id,
-                    story_title: story.title,
-                  }
-                  return <StoryCard key={story.id} story={unassignedStory} />
-                })
-              ) : (
-                <p className="text-sm text-muted-foreground p-2">
-                  Todas as stories foram priorizadas.
-                </p>
-              )}
-            </DroppableCell>
-          </section>
-        </aside>
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <main className="flex flex-col  gap-4 p-4 md:p-6 bg-background text-foreground min-h-screen">
+        <section className=" bg-card text-card-foreground border-0 rounded-xl shadow-sm  w-full max-w-6xl">
+          {' '}
+          <h2 className="text-lg font-bold my-2 text-muted-foreground">
+            Stories
+          </h2>
+          <DroppableCell
+            id="story-list"
+            className="grid grid-cols-5 gap-2 p-2  min-h-[200px] items-start"
+          >
+            {unassignedStories.length > 0 ? (
+              unassignedStories.map((story) => {
+                const unassignedStory = {
+                  story_id: story.id,
+                  story_title: story.title,
+                }
+                return <StoryCard key={story.id} story={unassignedStory} />
+              })
+            ) : (
+              <p className="text-sm text-muted-foreground p-2">
+                Todas as stories foram priorizadas.
+              </p>
+            )}
+          </DroppableCell>
+        </section>
 
-        <main className="flex-1">
+        <section className="flex-1">
           {/* botao para editar prioridades*/}
-          <section className="w-full flex gap-3 justify-start items-center mb-6 relative">
-            <GoalsSheet goals={project.goal_sketches} />
+          <div className="w-full flex gap-3 justify-start items-center mb-6 relative">
             <EditPriorities
               priorities={project.matrix_priorities}
               projectId={project.id}
             />
-          </section>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <SortableContext
-              items={priorityIds}
-              strategy={horizontalListSortingStrategy}
-            >
-              {orderedPriorities.map((priority) => {
-                // --- ADIÇÃO: Calcula a contagem de itens para esta prioridade ---
-                const itemCount = Object.values(prioritizationMatrix).filter(
-                  (story) => story && story.priority_id == priority.id,
-                ).length
-                return (
-                  <SortablePriorityColumn
-                    key={priority.id}
-                    priority={priority}
-                    itemCount={itemCount}
-                  >
-                    <div className="space-y-3">
-                      {Array.from({ length: GRID_ROWS }).map((_, rowIndex) => {
-                        const cellId = `cell-${priority.id}-${rowIndex}`
-                        const storyInCell = prioritizationMatrix[cellId]
-                        return (
-                          <DroppableCell key={cellId} id={cellId}>
-                            {storyInCell ? (
-                              <StoryCard
-                                story={storyInCell}
-                                priority={priority}
-                              />
-                            ) : (
-                              <div className="h-12 w-full flex items-center justify-center "></div>
-                            )}
-                          </DroppableCell>
-                        )
-                      })}
-                    </div>
-                  </SortablePriorityColumn>
-                )
-              })}
-            </SortableContext>
           </div>
-        </main>
-      </div>
+          <section className="flex gap-2 justify-between">
+            <aside className="flex flex-col w-[230px]  bg-card px-2 gap-3 rounded">
+              <span className="h-[49px] py-2">Goals</span>
+              {project.goal_sketches.map((goal) => (
+                <GoalCard key={goal.id} goal={goal}>
+                  {goal.title}
+                </GoalCard>
+              ))}
+            </aside>
+            <div className="flex-1 grid grid-flow-col auto-cols-[180px] gap-2 pr-2">
+              <SortableContext
+                items={priorityIds}
+                strategy={horizontalListSortingStrategy}
+              >
+                {orderedPriorities.map((priority) => {
+                  const itemCount = Object.values(prioritizationMatrix).filter(
+                    (story) => story && story.priority_id == priority.id,
+                  ).length
+                  return (
+                    <SortablePriorityColumn
+                      key={priority.id}
+                      priority={priority}
+                      itemCount={itemCount}
+                    >
+                      <div className="space-y-3">
+                        {Array.from({ length: GRID_ROWS }).map(
+                          (_, rowIndex) => {
+                            const cellId = `cell-${priority.id}-${rowIndex}`
+                            const storyInCell = prioritizationMatrix[cellId]
+                            return (
+                              <DroppableCell key={cellId} id={cellId}>
+                                {storyInCell ? (
+                                  <StoryCard
+                                    story={storyInCell}
+                                    priority={priority}
+                                  />
+                                ) : (
+                                  <div className="h-12 w-full flex items-center justify-center "></div>
+                                )}
+                              </DroppableCell>
+                            )
+                          },
+                        )}
+                      </div>
+                    </SortablePriorityColumn>
+                  )
+                })}
+              </SortableContext>
+            </div>
+          </section>
+        </section>
+      </main>
+      {/* overlay adicionado para manter estilo do card de story mesmo ao arrastar*/}
+      <DragOverlay>
+        {activeItem
+          ? (() => {
+              // Se estiver arrastando uma story
+              if (activeItem.data.current?.story) {
+                const cellKey = Object.keys(prioritizationMatrix).find(
+                  (key) =>
+                    prioritizationMatrix[key]?.story_id ===
+                    activeItem.data.current.story.story_id,
+                )
+                const priorityData = cellKey
+                  ? orderedPriorities.find(
+                      (p) => p.id == prioritizationMatrix[cellKey].priority_id,
+                    )
+                  : null
+
+                return (
+                  <StoryCard
+                    story={activeItem.data.current.story}
+                    priority={priorityData}
+                  />
+                )
+              }
+
+              return null
+            })()
+          : null}
+      </DragOverlay>
     </DndContext>
   )
 }
