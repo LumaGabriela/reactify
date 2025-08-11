@@ -163,17 +163,29 @@ const transformArrayToMatrixObject = (prioritizations, allProjectStories) => {
     return matrix
   }, {})
 }
-const PrioritizationMatrix = ({ project }) => {
+const PrioritizationMatrix = ({ project, setProject }) => {
   const GRID_ROWS = project.goal_sketches.length || 4
   const [activeItem, setActiveItem] = useState(null)
   const [prioritizationMatrix, setPrioritizationMatrix] = useState(() =>
     transformArrayToMatrixObject(project?.prioritizations, project?.stories),
   )
-  // --- NOVO: Estado local para a ordem das prioridades ---
+
   const [orderedPriorities, setOrderedPriorities] = useState(
-    // Garante que a ordenação inicial vinda do backend (com a nova coluna) seja respeitada
-    project.matrix_priorities.sort((a, b) => a.order_column - b.order_column),
+    // A inicialização ainda é útil para o primeiro render.
+    () =>
+      [...project.matrix_priorities].sort(
+        (a, b) => a.order_column - b.order_column,
+      ),
   )
+
+  useEffect(() => {
+    if (project && project.matrix_priorities) {
+      const newSortedPriorities = [...project.matrix_priorities].sort(
+        (a, b) => a.order_column - b.order_column,
+      )
+      setOrderedPriorities(newSortedPriorities)
+    }
+  }, [project])
   useEffect(() => {
     const newMatrix = transformArrayToMatrixObject(
       project.prioritizations,
@@ -225,7 +237,7 @@ const PrioritizationMatrix = ({ project }) => {
 
           router.patch(
             route('matrix-priority.reorder'),
-            { priorities: payload },
+            { priorities: payload, project_id: project.id },
             {
               preserveState: true,
               preserveScroll: true,
@@ -364,6 +376,8 @@ const PrioritizationMatrix = ({ project }) => {
             <EditPriorities
               priorities={project.matrix_priorities}
               projectId={project.id}
+              project={project}
+              setProject={setProject}
             />
           </div>
           <section className="flex gap-2 justify-between">

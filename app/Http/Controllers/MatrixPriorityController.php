@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\MatrixPriority;
 use Illuminate\Http\Request;
+use App\Events\ProjectUpdated;
+use App\Models\Project;
 use Illuminate\Support\Facades\DB;
 
 class MatrixPriorityController extends Controller
@@ -49,7 +51,9 @@ class MatrixPriorityController extends Controller
       'priorities' => 'required|array',
       'priorities.*.id' => 'required|exists:matrix_priorities,id',
       'priorities.*.order' => 'required|integer',
+      'project_id' => 'required|exists:projects,id',
     ]);
+    $project = Project::findOrFail($request->project_id);
 
     DB::transaction(function () use ($request) {
       foreach ($request->priorities as $priorityData) {
@@ -57,6 +61,8 @@ class MatrixPriorityController extends Controller
           ->update(['order_column' => $priorityData['order']]);
       }
     });
+
+    broadcast(new ProjectUpdated($project));
 
     // Retorna uma resposta vazia, pois o frontend já atualizou a UI.
     return back()->with(['message' => 'Priorities reordered successfully', 'status' => 'success']);

@@ -9,6 +9,7 @@ use App\Observers\PersonaObserver;
 use App\Observers\JourneyObserver;
 use App\Observers\CrcCardObserver;
 use App\Observers\PrioritizationObserver;
+use App\Observers\MatrixPriorityObserver;
 use App\Models\Story;
 use App\Models\ProductCanvas;
 use App\Models\Goal;
@@ -16,6 +17,7 @@ use App\Models\Journey;
 use App\Models\Persona;
 use App\Models\CrcCard;
 use App\Models\Prioritization;
+use App\Models\MatrixPriority;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -41,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
     Persona::observe(PersonaObserver::class);
     Journey::observe(JourneyObserver::class);
     CrcCard::observe(CrcCardObserver::class);
+    MatrixPriority::observe(MatrixPriorityObserver::class);
     Prioritization::observe(PrioritizationObserver::class);
   }
 }

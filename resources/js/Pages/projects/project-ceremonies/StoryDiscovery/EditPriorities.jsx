@@ -126,9 +126,7 @@ const ColorPickerPopover = ({ value, onChange, disabled = false }) => {
   )
 }
 
-// --- NOVO: Componente Popover para Edição Individual ---
-// Este componente substitui o antigo PriorityEditForm e encapsula toda a lógica de edição.
-const PriorityEditPopover = ({ priority, children }) => {
+const PriorityEditPopover = ({ priority, children, setProject }) => {
   const [name, setName] = useState(priority.name)
   const [color, setColor] = useState(priority.color)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -147,14 +145,19 @@ const PriorityEditPopover = ({ priority, children }) => {
   }
 
   function handleDelete() {
-    if (confirm('Tem certeza que deseja remover esta prioridade?')) {
-      router.delete(
-        route('matrix-priority.destroy', { priority: priority.id }),
-        {
-          preserveScroll: true,
-        },
-      )
-    }
+    setIsProcessing(true)
+    router.delete(route('matrix-priority.destroy', { priority: priority.id }), {
+      preserveScroll: true,
+      onFinish: () => {
+        setIsProcessing(false)
+        setProject((prev) => ({
+          ...prev,
+          matrix_priorities: prev.matrix_priorities.filter(
+            (p) => p.id !== priority.id,
+          ),
+        }))
+      },
+    })
   }
 
   return (
@@ -174,14 +177,35 @@ const PriorityEditPopover = ({ priority, children }) => {
           </div>
 
           {/* Ações */}
-          <Button
-            onClick={handleDelete}
-            variant="ghost"
-            className="w-full justify-start text-red-500 hover:text-red-500"
-            disabled={isProcessing}
-          >
-            <Trash2 className="mr-2 h-4 w-4" /> Excluir
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                type="button"
+                className="w-full justify-start text-red-500 hover:text-red-500"
+                disabled={isProcessing}
+              >
+                <Trash2 className="mr-2 h-4 w-4" /> Excluir
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Tem certeza que deseja excluir?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Essa ação não pode ser desfeita. Isso excluirá permanentemente
+                  a prioridade.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>
+                  Excluir
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <Button variant="ghost" className="w-full justify-start" disabled>
             <Bookmark className="mr-2 h-4 w-4" /> Definir como padrão
           </Button>
@@ -202,14 +226,12 @@ const PriorityEditPopover = ({ priority, children }) => {
   )
 }
 
-// --- ATUALIZADO: Componente principal do Sheet ---
-// Agora ele renderiza uma lista de botões que abrem o Popover de edição.
-const EditPriorities = ({ priorities, projectId }) => {
+const EditPriorities = ({ project, setProject, priorities, projectId }) => {
   const [newName, setNewName] = useState('')
   const [newColor, setNewColor] = useState('#ffffff')
   const [isStoring, setIsStoring] = useState(false)
   const [menuBottomPosition, setMenuBottomPosition] = useState('auto')
-  // --- PASSO 2: Medir a altura do elemento com useEffect ---
+
   useEffect(() => {
     // Função para medir e definir a posição
     const measurePosition = () => {
@@ -226,12 +248,10 @@ const EditPriorities = ({ priorities, projectId }) => {
     // Mede a posição assim que o componente é montado
     measurePosition()
 
-    // --- ALTERAÇÃO IMPORTANTE ---
-    // Adiciona listeners para recalcular ao redimensionar E ao rolar a página
     window.addEventListener('resize', measurePosition)
     window.addEventListener('scroll', measurePosition)
 
-    // Função de limpeza: remove AMBOS os listeners quando o componente é desmontado
+    // funcao de limpeza
     return () => {
       window.removeEventListener('resize', measurePosition)
       window.removeEventListener('scroll', measurePosition)
@@ -248,6 +268,19 @@ const EditPriorities = ({ priorities, projectId }) => {
         onSuccess: () => {
           setNewName('')
           setNewColor('#ffffff')
+          setProject((prev) => ({
+            ...prev,
+            matrix_priorities: [
+              ...prev.matrix_priorities,
+              {
+                id: `temp-${new Date().getTime()}`,
+                order_column: prev.matrix_priorities.length + 1,
+                name: newName,
+                color: newColor,
+                project_id: projectId,
+              },
+            ],
+          }))
         },
         onFinish: () => setIsStoring(false),
       },
@@ -279,7 +312,11 @@ const EditPriorities = ({ priorities, projectId }) => {
             </h4>
             {/* Mapeia as prioridades para botões que abrem o popover */}
             {priorities.map((p) => (
-              <PriorityEditPopover key={p.id} priority={p}>
+              <PriorityEditPopover
+                key={p.id}
+                priority={p}
+                setProject={setProject}
+              >
                 <Button
                   style={{
                     '--priority-color': darkenColor(p.color, 0.3),
