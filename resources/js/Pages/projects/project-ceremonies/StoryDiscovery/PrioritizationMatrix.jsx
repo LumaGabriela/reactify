@@ -124,20 +124,18 @@ const StoryCard = ({ story, priority = null, isDragOverlay = false }) => {
 
 const GoalCard = ({ goal }) => {
   return (
-    <Card className="bg-card border border-border transition-all duration-300 ease-in-out p-0 min-h-40 w-40 rounded-md">
-      <CardContent className="p-2 h-full flex flex-col gap-2">
+    <Card className="bg-card  border border-border transition-all duration-300 ease-in-out p-0 min-h-40 w-40 rounded-md">
+      <CardContent className="p-2 h-full text-xs flex flex-col gap-2">
         {/* Linha dos Badges (agora estáticos) */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {/* Badge de Tipo */}
-            <Badge className="border-transparent text-white font-bold bg-orange-500">
-              {goal.type.toUpperCase()}
-            </Badge>
+          {/* Badge de Tipo */}
+          <Badge className="border-transparent text-white font-bold bg-orange-500">
+            {goal.type.toUpperCase()}
+          </Badge>
 
-            <Badge className="border-transparent text-white font-bold bg-orange-500">
-              {goal.priority.toUpperCase()}
-            </Badge>
-          </div>
+          <Badge className="border-transparent text-white font-bold bg-orange-500">
+            {goal.priority.toUpperCase()}
+          </Badge>
         </div>
 
         {/* Área do Título (apenas exibição) */}

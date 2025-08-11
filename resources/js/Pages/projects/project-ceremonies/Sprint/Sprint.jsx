@@ -1,10 +1,4 @@
-// resources/js/Pages/Project/project-ceremonies/Sprint/Sprint.jsx
-import { useState, useEffect } from 'react'
 import { router } from '@inertiajs/react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Plus } from 'lucide-react'
 import SprintList from './SprintList'
 import KanbanBoard from './KanbanBoard'
@@ -20,13 +14,13 @@ const Sprint = ({ project, setProject }) => {
   const handleCreateSprint = (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
-    
+
     const sprintData = {
       name: formData.get('name'),
       start_date: formData.get('start_date'),
       end_date: formData.get('end_date'),
       project_id: project.id,
-      status: 'planning'
+      status: 'planning',
     }
 
     router.post(route('sprint.store'), sprintData, {
@@ -41,13 +35,13 @@ const Sprint = ({ project, setProject }) => {
       onError: (errors) => {
         console.error('Erro ao criar sprint:', errors)
 
-      const mensagens = Object.values(errors || {})
+        const mensagens = Object.values(errors || {})
         if (mensagens.length > 0) {
           toast.warning(mensagens.join('\n'))
         } else {
           toast.error('Erro ao criar a sprint. Tente novamente.')
         }
-      }
+      },
     })
   }
 
@@ -66,7 +60,10 @@ const Sprint = ({ project, setProject }) => {
               <Tabs value={view} onValueChange={setView}>
                 <TabsList>
                   <TabsTrigger value="list">Sprint List</TabsTrigger>
-                  <TabsTrigger value="kanban" disabled={!activeSprint || activeSprint.status !== 'active'}>
+                  <TabsTrigger
+                    value="kanban"
+                    disabled={!activeSprint || activeSprint.status !== 'active'}
+                  >
                     Kanban Board
                   </TabsTrigger>
                 </TabsList>
@@ -90,40 +87,42 @@ const Sprint = ({ project, setProject }) => {
             <form onSubmit={handleCreateSprint} className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Sprint Name</label>
-                <Input 
-                  type="text" 
+                <Input
+                  type="text"
                   name="name"
                   defaultValue={`Sprint ${sprints.length + 1}`}
-                  required 
+                  required
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Start Date</label>
-                  <Input 
-                    type="date" 
+                  <Input
+                    type="date"
                     name="start_date"
                     min={new Date().toISOString().split('T')[0]}
                     defaultValue={new Date().toISOString().split('T')[0]}
-                    required 
+                    required
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">End Date</label>
-                  <Input 
-                    type="date" 
+                  <Input
+                    type="date"
                     name="end_date"
                     min={new Date().toISOString().split('T')[0]}
-                    defaultValue={new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-                    required 
+                    defaultValue={
+                      new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+                        .toISOString()
+                        .split('T')[0]
+                    }
+                    required
                   />
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button type="submit">
-                  Create Sprint
-                </Button>
-                <Button 
+                <Button type="submit">Create Sprint</Button>
+                <Button
                   type="button"
                   variant="outline"
                   onClick={() => setShowCreateForm(false)}
@@ -138,16 +137,16 @@ const Sprint = ({ project, setProject }) => {
 
       {/* Content */}
       {view === 'list' ? (
-        <SprintList 
-          sprints={sprints} 
+        <SprintList
+          sprints={sprints}
           setActiveSprint={setActiveSprint}
           setView={setView}
           project={project}
           updateProject={updateProjectData}
         />
       ) : (
-        <KanbanBoard 
-          sprint={activeSprint} 
+        <KanbanBoard
+          sprint={activeSprint}
           project={project}
           setView={setView}
           updateProject={updateProjectData}
