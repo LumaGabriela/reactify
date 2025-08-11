@@ -18,6 +18,8 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { router } from '@inertiajs/react'
 import { storyVariants } from './Stories'
+import { typeColors as goalTypeColors } from '../Inception/Goals'
+import { priorityColors as goalPriorityColors } from '../Inception/Goals'
 import EditPriorities from './EditPriorities'
 
 const SortablePriorityColumn = ({ priority, children, itemCount }) => {
@@ -123,18 +125,25 @@ const StoryCard = ({ story, priority = null, isDragOverlay = false }) => {
 }
 
 const GoalCard = ({ goal }) => {
+  const selectedType = goalTypeColors[goal.type] || goalTypeColors.bg
+  const selectedPriority = goalTypeColors[goal.priority] || goalTypeColors.bg
+
+  console.log(selectedType)
   return (
     <Card className="bg-card  border border-border transition-all duration-300 ease-in-out p-0 min-h-40 w-40 rounded-md">
       <CardContent className="p-2 h-full text-xs flex flex-col gap-2">
-        {/* Linha dos Badges (agora estáticos) */}
-        <div className="flex items-center justify-between">
-          {/* Badge de Tipo */}
-          <Badge className="border-transparent text-white font-bold bg-orange-500">
-            {goal.type.toUpperCase()}
+        <div className="gap-2 flex w-full items-center justify-center">
+          <Badge
+            variant="outline"
+            className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedType.color}`}
+          >
+            {`${goal.type.toUpperCase()}${goal.id}`}
           </Badge>
-
-          <Badge className="border-transparent text-white font-bold bg-orange-500">
-            {goal.priority.toUpperCase()}
+          <Badge
+            variant="outline"
+            className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedPriority.color}`}
+          >
+            {`${goal.priority.toUpperCase()}`}
           </Badge>
         </div>
 
