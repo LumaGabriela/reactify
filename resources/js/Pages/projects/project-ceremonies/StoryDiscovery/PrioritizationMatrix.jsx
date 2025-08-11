@@ -131,7 +131,7 @@ const DroppableCell = ({ id, children, className = '' }) => {
     <div
       ref={setNodeRef}
       className={`
-        min-h-[150px] flex flex-row justify-center rounded-md transition-all duration-150 border border-slate-900/30
+        flex flex-row justify-center rounded-md transition-all duration-150 border border-slate-900/30
         ${isOver ? ' bg-card/60' : ''}
         ${className}
       `}
@@ -225,6 +225,25 @@ const PrioritizationMatrix = ({ project, setProject }) => {
     ) {
       if (active.id !== over.id) {
         setOrderedPriorities((priorities) => {
+          //busca as prioridades a serem ordenadas
+          const oldPriority = priorities.find((p) => p.id === active.id)
+          const newPriority = priorities.find((p) => p.id === over.id)
+
+          if (!oldPriority || !newPriority) {
+            console.error(
+              'Uma das prioridades não foi encontrada no estado. Abortando.',
+            )
+            return priorities
+          }
+          // impede que se ordene prioridades com id temporario
+          if (
+            String(oldPriority.id).startsWith('temp-') ||
+            String(newPriority.id).startsWith('temp-')
+          ) {
+            console.warn('Prioridade temporária não pode ser ordenada.')
+            return priorities
+          }
+
           const oldIndex = priorities.findIndex((p) => p.id === active.id)
           const newIndex = priorities.findIndex((p) => p.id === over.id)
           const newOrder = arrayMove(priorities, oldIndex, newIndex)
@@ -352,7 +371,7 @@ const PrioritizationMatrix = ({ project, setProject }) => {
           </h2>
           <DroppableCell
             id="story-list"
-            className="grid grid-cols-5 gap-2 p-2  min-h-[200px] items-start"
+            className="grid grid-cols-5 gap-2 p-2 items-start"
           >
             {unassignedStories.length > 0 ? (
               unassignedStories.map((story) => {
@@ -410,7 +429,11 @@ const PrioritizationMatrix = ({ project, setProject }) => {
                             const cellId = `cell-${priority.id}-${rowIndex}`
                             const storyInCell = prioritizationMatrix[cellId]
                             return (
-                              <DroppableCell key={cellId} id={cellId}>
+                              <DroppableCell
+                                key={cellId}
+                                id={cellId}
+                                className="min-h-[150px]"
+                              >
                                 {storyInCell ? (
                                   <StoryCard
                                     story={storyInCell}
