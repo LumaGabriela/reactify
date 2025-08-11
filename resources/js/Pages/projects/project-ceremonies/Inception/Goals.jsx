@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react'
 import { Plus, Info, Check, X, Trash, LoaderCircle } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  PopoverArrow,
-} from '@/components/ui/popover'
 import TextareaAutosize from 'react-textarea-autosize'
 import { router } from '@inertiajs/react'
 import { cn } from '@/lib/utils'
 import MotionDivOptions from '@/Components/MotionDivOptions'
 
-// --- NOVO COMPONENTE: GoalItem ---
+export const typeColors = {
+  bg: { color: '!bg-orange-600', title: 'bg' },
+  cg: { color: '!bg-purple-600', title: 'cg' },
+}
+export const priorityColors = {
+  high: { color: '!bg-red-600', title: 'high' },
+  med: { color: '!bg-yellow-600', title: 'med' },
+  low: { color: '!bg-green-600', title: 'low' },
+  urgent: { color: '!bg-pink-600', title: 'urgent' },
+}
 const GoalItem = ({
   goal,
   isTemporary,
@@ -28,11 +27,9 @@ const GoalItem = ({
   textareaRef,
   typeSelectId,
   onToggleTypeSelect,
-  typeColors,
   onChangeGoalType,
   prioritySelectId,
   onTogglePrioritySelect,
-  priorityColors,
   onChangeGoalPriority,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
@@ -43,6 +40,8 @@ const GoalItem = ({
       onSave()
     }
   }
+  const selectedType = typeColors[goal.type] || typeColors.bg
+  const selectedPriority = priorityColors[goal.priority] || priorityColors.med
 
   return (
     <div
@@ -63,7 +62,7 @@ const GoalItem = ({
                   <Badge
                     className={cn(
                       'border-transparent text-white font-bold cursor-pointer',
-                      typeColors.find((c) => c.title === goal.type)?.color,
+                      selectedType.color,
                     )}
                   >
                     {goal.type.toUpperCase()}
@@ -71,9 +70,9 @@ const GoalItem = ({
                 </PopoverTrigger>
                 <PopoverContent className="w-auto bg-popover border-border p-1">
                   <div className="flex flex-col gap-1">
-                    {typeColors.map((type) => (
+                    {Object.values(typeColors).map((type, i) => (
                       <Button
-                        key={type.title}
+                        key={i}
                         variant="ghost"
                         className="h-auto p-2 justify-start hover:bg-accent"
                         onClick={() => onChangeGoalType(goal.id, type.title)}
@@ -94,8 +93,7 @@ const GoalItem = ({
                   <Badge
                     className={cn(
                       'border-transparent text-white font-bold cursor-pointer',
-                      priorityColors.find((c) => c.title === goal.priority)
-                        ?.color,
+                      selectedPriority.color,
                     )}
                   >
                     {goal.priority.toUpperCase()}
@@ -103,15 +101,19 @@ const GoalItem = ({
                 </PopoverTrigger>
                 <PopoverContent className="w-auto bg-popover border-border p-1">
                   <div className="flex flex-col gap-1">
-                    {priorityColors.map((p) => (
+                    {Object.values(priorityColors).map((variant, i) => (
                       <Button
-                        key={p.title}
+                        key={i}
                         variant="ghost"
                         className="h-auto p-2 justify-start hover:bg-accent"
-                        onClick={() => onChangeGoalPriority(goal.id, p.title)}
+                        onClick={() =>
+                          onChangeGoalPriority(goal.id, variant.title)
+                        }
                       >
-                        <Badge className={cn('w-full text-white', p.color)}>
-                          {p.title.toUpperCase()}
+                        <Badge
+                          className={cn('w-full text-white', variant.color)}
+                        >
+                          {variant.title.toUpperCase()}
                         </Badge>
                       </Button>
                     ))}
@@ -173,16 +175,6 @@ const GoalItem = ({
   )
 }
 const Goals = ({ project, setProject }) => {
-  const typeColors = [
-    { color: '!bg-orange-600', title: 'bg' },
-    { color: '!bg-purple-600', title: 'cg' },
-  ]
-  const priorityColors = [
-    { color: '!bg-red-600', title: 'high' },
-    { color: '!bg-yellow-600', title: 'med' },
-    { color: '!bg-green-600', title: 'low' },
-    { color: '!bg-pink-600', title: 'urgent' },
-  ]
   // Estado para controlar qual goal está sendo editada
   const [editingId, setEditingId] = useState(null)
   // Estado para armazenar o valor temporário durante a edição
@@ -358,7 +350,7 @@ const Goals = ({ project, setProject }) => {
         <Popover>
           <PopoverTrigger asChild>
             <Button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
-              <Badge className={cn('border-0', typeColors[1].color)}>
+              <Badge className={cn('border-0', typeColors.bg.color)}>
                 {project?.goal_sketches?.filter((goal) => goal.type === 'cg')
                   .length || 0}
               </Badge>
@@ -391,11 +383,11 @@ const Goals = ({ project, setProject }) => {
                 textareaRef={editingId === goal.id ? textareaRef : null}
                 typeSelectId={typeSelectId}
                 onToggleTypeSelect={() => toggleTypeSelect(goal.id)}
-                typeColors={typeColors}
+                onChange
+                GoalType={changeGoalType}
                 onChangeGoalType={changeGoalType}
                 prioritySelectId={prioritySelectId}
                 onTogglePrioritySelect={() => togglePrioritySelect(goal.id)}
-                priorityColors={priorityColors}
                 onChangeGoalPriority={changeGoalPriority}
               />
             ))
@@ -431,7 +423,7 @@ const Goals = ({ project, setProject }) => {
         <Popover>
           <PopoverTrigger asChild>
             <Button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
-              <Badge className={cn('border-0', typeColors[0].color)}>
+              <Badge className={cn('border-0', typeColors.cg.color)}>
                 {project?.goal_sketches?.filter((goal) => goal.type === 'bg')
                   .length || 0}
               </Badge>
@@ -462,11 +454,9 @@ const Goals = ({ project, setProject }) => {
               textareaRef={editingId === goal.id ? textareaRef : null}
               typeSelectId={typeSelectId}
               onToggleTypeSelect={() => toggleTypeSelect(goal.id)}
-              typeColors={typeColors}
               onChangeGoalType={changeGoalType}
               prioritySelectId={prioritySelectId}
               onTogglePrioritySelect={() => togglePrioritySelect(goal.id)}
-              priorityColors={priorityColors}
               onChangeGoalPriority={changeGoalPriority}
             />
           ))}
