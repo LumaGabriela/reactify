@@ -350,7 +350,7 @@ const Goals = ({ project, setProject }) => {
         <Popover>
           <PopoverTrigger asChild>
             <Button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
-              <Badge className={cn('border-0', typeColors.bg.color)}>
+              <Badge className={cn('border-0', typeColors.cg.color)}>
                 {project?.goal_sketches?.filter((goal) => goal.type === 'cg')
                   .length || 0}
               </Badge>
@@ -423,7 +423,7 @@ const Goals = ({ project, setProject }) => {
         <Popover>
           <PopoverTrigger asChild>
             <Button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
-              <Badge className={cn('border-0', typeColors.cg.color)}>
+              <Badge className={cn('border-0', typeColors.bg.color)}>
                 {project?.goal_sketches?.filter((goal) => goal.type === 'bg')
                   .length || 0}
               </Badge>
