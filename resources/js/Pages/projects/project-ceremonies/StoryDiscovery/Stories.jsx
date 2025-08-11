@@ -13,18 +13,14 @@ import {
   Minus,
 } from 'lucide-react'
 import { router } from '@inertiajs/react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import TextareaAutosize from 'react-textarea-autosize'
-import {
-  Popover,
-  PopoverArrow,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { Card, CardContent } from '@/components/ui/card'
 import axios from 'axios'
 import { toast } from 'sonner'
+
+export const storyVariants = {
+  user: { bg: 'bg-purple-600', title: 'user' },
+  system: { bg: 'bg-orange-600', title: 'system' },
+}
 
 const StoryItem = ({
   story,
@@ -39,7 +35,6 @@ const StoryItem = ({
   textareaRef,
   typeSelectId,
   onToggleTypeSelect,
-  storyVariants,
   onChangeStoryType,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
@@ -105,21 +100,6 @@ const StoryItem = ({
                   className="w-full text-sm border-0 resize-none appearance-none overflow-hidden bg-transparent p-0 m-0 font-normal text-foreground focus-visible:outline-none focus-visible:ring-0"
                   autoFocus
                 />
-              </div>
-            ) : (
-              <p className="m-0 text-sm text-foreground break-words w-full">
-                {story.title}
-              </p>
-            )}
-          </div>
-
-          <div className="flex items-center gap-1">
-            {isTemporary && (
-              <LoaderCircle className="text-primary animate-spin" />
-            )}
-
-            {isEditing ? (
-              <>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -136,9 +116,17 @@ const StoryItem = ({
                 >
                   <Check className="size-4" />
                 </Button>
-              </>
+              </div>
             ) : (
-              <div className="size-7" />
+              <p className="m-0 text-sm text-foreground break-words w-full">
+                {story.title}
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1">
+            {isTemporary && (
+              <LoaderCircle className="text-primary animate-spin" />
             )}
           </div>
           <MotionDivOptions
@@ -155,10 +143,6 @@ const StoryItem = ({
 }
 
 const Stories = ({ project, setProject }) => {
-  const storyVariants = {
-    user: { bg: 'bg-purple-600', title: 'user' },
-    system: { bg: 'bg-orange-600', title: 'system' },
-  }
   const [editingId, setEditingId] = useState(null)
   const [editValue, setEditValue] = useState('')
   const textareaRef = useRef(null)
@@ -578,7 +562,6 @@ const Stories = ({ project, setProject }) => {
                   textareaRef={editingId === story.id ? textareaRef : null}
                   typeSelectId={typeSelectId}
                   onToggleTypeSelect={() => toggleTypeSelect(story.id)}
-                  storyVariants={storyVariants}
                   onChangeStoryType={changeStoryType}
                 />
               )
@@ -649,7 +632,6 @@ const Stories = ({ project, setProject }) => {
                   textareaRef={editingId === story.id ? textareaRef : null}
                   typeSelectId={typeSelectId}
                   onToggleTypeSelect={() => toggleTypeSelect(story.id)}
-                  storyVariants={storyVariants}
                   onChangeStoryType={changeStoryType}
                 />
               )

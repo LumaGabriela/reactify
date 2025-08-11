@@ -246,3 +246,8 @@ a {
 .animate-rotate-90-reverse {
   animation: rotate90reverse 0.3s ease-out forwards;
 }
+
+/* sobrepoe o cursor ao arrastar colunas de prioridade*/
+body:has([aria-pressed='true']) {
+  cursor: grabbing !important;
+}
