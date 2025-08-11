@@ -52,7 +52,10 @@ class Project extends Model
   {
     return $this->hasMany(Story::class);
   }
-
+  public function epic_stories()
+  {
+    return $this->hasMany(EpicStory::class);
+  }
   public function invitations(): HasMany
   {
     return $this->hasMany(ProjectInvitation::class);

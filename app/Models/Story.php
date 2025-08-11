@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Story extends Model
 {
   use SoftDeletes;
-  
+
   protected $fillable = [
     'id',
     'title',
@@ -24,34 +24,38 @@ class Story extends Model
   {
     return $this->belongsTo(Project::class);
   }
+  public function epicStories()
+  {
+    return $this->hasMany(EpicStory::class);
+  }
 
   public function sprints()
   {
-      return $this->belongsToMany(Sprint::class, 'story_sprint')
-                  ->withPivot(['kanban_status', 'position'])
-                  ->withTimestamps();
+    return $this->belongsToMany(Sprint::class, 'story_sprint')
+      ->withPivot(['kanban_status', 'position'])
+      ->withTimestamps();
   }
 
   public function currentSprint()
   {
-      return $this->sprints()->where('status', 'active')->first();
+    return $this->sprints()->where('status', 'active')->first();
   }
 
   public function businessRules()
   {
-      return $this->hasMany(BusinessRule::class);
+    return $this->hasMany(BusinessRule::class);
   }
 
   public function usageScenarios()
   {
-      return $this->hasMany(UsageScenario::class);
+    return $this->hasMany(UsageScenario::class);
   }
 
   public function changeRequests()
   {
-      return $this->belongsToMany(ChangeRequest::class, 'change_request_story')
-          ->withPivot('impact_type')
-          ->withTimestamps();
+    return $this->belongsToMany(ChangeRequest::class, 'change_request_story')
+      ->withPivot('impact_type')
+      ->withTimestamps();
   }
 
   /**
@@ -59,7 +63,7 @@ class Story extends Model
    */
   public function parent()
   {
-      return $this->belongsTo(Story::class, 'parent_id');
+    return $this->belongsTo(Story::class, 'parent_id');
   }
 
   /**
@@ -67,8 +71,6 @@ class Story extends Model
    */
   public function children()
   {
-      return $this->hasMany(Story::class, 'parent_id');
+    return $this->hasMany(Story::class, 'parent_id');
   }
-
-  
 }
