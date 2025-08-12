@@ -16,7 +16,9 @@ import { router } from '@inertiajs/react'
 import TextareaAutosize from 'react-textarea-autosize'
 import axios from 'axios'
 import { toast } from 'sonner'
-
+import InfoButton from '@/Components/InfoButton'
+import { tooltipInfo } from '@/lib/projectData'
+import GenerateIAButton from '@/Components/GenerateIAButton'
 export const storyVariants = {
   user: { bg: 'bg-purple-600', title: 'user' },
   system: { bg: 'bg-orange-600', title: 'system' },
@@ -518,30 +520,14 @@ const Stories = ({ project, setProject }) => {
       )}
 
       <div className="flex flex-col gap-2 ">
-        <Popover>
-          <PopoverTrigger asChild className="">
-            <Button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
-              <Badge
-                variant="outline"
-                className="bg-purple-600 border-0 text-primary-foreground"
-              >
-                {
-                  project?.stories?.filter((story) => story.type === 'user')
-                    .length
-                }
-              </Badge>{' '}
-              User Stories
-              <Info className="text-muted-foreground" size={18} />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="bg-popover text-popover-foreground ">
-            As histórias de usuário focam nas necessidades dos usuários do
-            aplicativo, como a criação de contas para acessar o sistema, a
-            gestão de playlists para organizar músicas e outras funcionalidades
-            voltadas para a experiência do usuário.
-            <PopoverArrow className="fill-popover" />
-          </PopoverContent>
-        </Popover>
+        <InfoButton
+          data={tooltipInfo.userStory}
+          badgeContent={
+            project?.stories?.filter((story) => story.type === 'user').length ||
+            0
+          }
+        />
+
         {project?.stories?.length > 0 ? (
           project?.stories
             .filter((story) => story.type === 'user')
@@ -588,30 +574,13 @@ const Stories = ({ project, setProject }) => {
         )}
       </div>
       <div className="flex flex-col gap-2 ">
-        <Popover>
-          <PopoverTrigger asChild className="">
-            <Button className=" flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
-              <Badge
-                variant="outline"
-                className="bg-orange-600 border-0 text-primary-foreground"
-              >
-                {
-                  project?.stories?.filter((story) => story.type === 'system')
-                    .length
-                }
-              </Badge>{' '}
-              System Stories
-              <Info className="text-muted-foreground" size={18} />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="bg-popover text-popover-foreground ">
-            As histórias de sistema abordam funcionalidades administrativas e
-            técnicas, como o gerenciamento de usuários para controle de acesso e
-            outras tarefas que garantem o funcionamento e a manutenção do
-            sistema.
-            <PopoverArrow className="fill-popover" />
-          </PopoverContent>
-        </Popover>
+        <InfoButton
+          data={tooltipInfo.systemStory}
+          badgeContent={
+            project?.stories?.filter((story) => story.type === 'system')
+              .length || 0
+          }
+        />
         {project?.stories?.length > 0 &&
           project?.stories
             .filter((story) => story.type === 'system')
@@ -638,52 +607,22 @@ const Stories = ({ project, setProject }) => {
             })}
       </div>
 
-      <div className="col-span-2 flex gap-2">
+      <div className="w-full col-span-2 flex gap-2">
         <Button
-          className="flex items-center justify-center flex-1 py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors shadow-md"
+          className="flex items-center justify-center w-1/2 py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors shadow-md"
           onClick={addNewStory}
         >
           <Plus size={18} className="mr-2" />
           <span>Nova story</span>
         </Button>
 
-        <Button
+        <GenerateIAButton
+          isGenerating={isGenerating}
           onClick={generateStories}
-          disabled={isGenerating}
-          className={`flex items-center justify-center flex-1 py-2 rounded-lg transition-colors shadow-md text-foreground ${
-            isGenerating
-              ? 'bg-muted cursor-not-allowed text-muted-foreground'
-              : 'bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground'
-          }`}
-        >
-          {isGenerating ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-muted-foreground border-t-transparent mr-2"></div>
-              Gerando...
-            </>
-          ) : (
-            <>
-              <Sparkles size={18} className="mr-2" />
-              <span>Gerar com IA</span>
-            </>
-          )}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Info
-                onClick={(e) => e.stopPropagation()}
-                className="text-muted-foreground mx-2 cursor-pointer"
-                size={15}
-              />
-            </PopoverTrigger>
-            <PopoverContent className="bg-popover text-popover-foreground ">
-              Esta função utiliza IA para gerar Users Stories baseadas nos
-              Objetivos das Personas e Journeys do Produto e gerar System
-              Stories baseadas nas Restrições do Produto e Goals do tipo
-              Constraint(CG).
-              <PopoverArrow className="fill-popover" />
-            </PopoverContent>
-          </Popover>
-        </Button>
+          tooltipTitle={tooltipInfo.aiGeneratedStory.title}
+          tooltipDesctiption={tooltipInfo.aiGeneratedStory.description}
+          className="w-1/2"
+        />
       </div>
     </div>
   )

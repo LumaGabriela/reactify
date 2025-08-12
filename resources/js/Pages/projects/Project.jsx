@@ -28,6 +28,7 @@ import { toast } from 'sonner'
 import MainLayout from '@/Layouts/MainLayout'
 
 import Sprint from './project-ceremonies/Sprint/Sprint'
+import { tooltipInfo } from '@/lib/projectData.js'
 
 const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const [project, setProject] = useState({ ...projectDB })
@@ -40,28 +41,24 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   )
   const [menuItems, setMenuItems] = useState([
     {
-      label: 'All',
+      label: 'ProductCanvas',
       value: true,
-      tooltip:
-        'Visualize todos os itens do projeto, incluindo personas, objetivos e jornadas.',
+      tooltip: tooltipInfo.productCanvas,
     },
     {
       label: 'Personas',
       value: false,
-      tooltip:
-        'Perfis representativos dos usuários do sistema, com expectativas, restrições e objetivos.',
+      tooltip: tooltipInfo.personas,
     },
     {
       label: 'Goals',
       value: false,
-      tooltip:
-        'Objetivos principais do projeto, indicando metas e resultados esperados.',
+      tooltip: tooltipInfo.goals,
     },
     {
       label: 'Journeys',
       value: false,
-      tooltip:
-        'Sequências de etapas (jornadas) que descrevem o caminho do usuário ou do administrador para atingir um objetivo no sistema.',
+      tooltip: tooltipInfo.journeys,
     },
   ])
 
@@ -73,18 +70,17 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     {
       label: 'Stories',
       value: true,
-      tooltip:
-        'Histórias de usuários e requisitos do sistema que detalham funcionalidades e necessidades do projeto.',
+      tooltip: tooltipInfo.stories,
     },
     {
       label: 'Matriz de Priorização',
       value: false,
-      tooltip: 'Matriz para priorizar as histórias de usuário.',
+      tooltip: tooltipInfo.prioritizationMatrix,
     },
     {
       label: 'Change Log',
       value: false,
-      tooltip: 'Registro de mudanças.',
+      tooltip: tooltipInfo.changeLog,
     },
   ])
 
@@ -96,17 +92,17 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     {
       label: 'Epic Stories',
       value: true,
-      tooltip: 'Histórias épicas.',
+      tooltip: tooltipInfo.epicStories,
     },
     {
       label: 'Business Rules',
       value: false,
-      tooltip: 'Regras de negócio.',
+      tooltip: tooltipInfo.businessRules,
     },
     {
       label: 'Use Scenarios',
       value: false,
-      tooltip: 'Cenários de uso.',
+      tooltip: tooltipInfo.useScenarios,
     },
   ])
 
@@ -118,17 +114,17 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     {
       label: 'Overall Model',
       value: true,
-      tooltip: 'Modelo geral.',
+      tooltip: tooltipInfo.overallModel,
     },
     {
       label: 'Internal and External Interfaces',
       value: false,
-      tooltip: 'Interfaces internas e externas.',
+      tooltip: tooltipInfo.interfaces,
     },
     {
       label: 'Storyboards',
       value: false,
-      tooltip: 'Storyboards.',
+      tooltip: tooltipInfo.storyboards,
     },
   ])
 

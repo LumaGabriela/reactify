@@ -41,7 +41,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
                 />
               </PopoverTrigger>
               <PopoverContent className="bg-background text-white ">
-                {menuItem.tooltip}
+                {menuItem.tooltip.description || 'Description'}
                 <PopoverArrow className="fill-background" />
               </PopoverContent>
             </Popover>

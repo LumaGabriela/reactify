@@ -3,7 +3,8 @@ import TextareaAutosize from 'react-textarea-autosize'
 import { router } from '@inertiajs/react'
 import { cn } from '@/lib/utils'
 import MotionDivOptions from '@/Components/MotionDivOptions'
-
+import { tooltipInfo } from '@/lib/projectData'
+import InfoButton from '@/Components/InfoButton'
 export const typeColors = {
   bg: { color: '!bg-orange-600', title: 'bg' },
   cg: { color: '!bg-purple-600', title: 'cg' },
@@ -346,23 +347,15 @@ const Goals = ({ project, setProject }) => {
   return (
     <div className="goalSketches rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
       {/* --- Column 1: Constraint Goals --- */}
+
       <div className="flex flex-col gap-2">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
-              <Badge className={cn('border-0', typeColors.cg.color)}>
-                {project?.goal_sketches?.filter((goal) => goal.type === 'cg')
-                  .length || 0}
-              </Badge>
-              Constraint Goals
-              <Info className="text-muted-foreground" size={18} />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="bg-popover text-popover-foreground border-border">
-            User stories focus on the needs of the application's users...
-            <PopoverArrow className="fill-popover" />
-          </PopoverContent>
-        </Popover>
+        <InfoButton
+          data={tooltipInfo.constraintGoal}
+          badgeContent={
+            project?.goal_sketches?.filter((goal) => goal.type === 'cg')
+              .length || 0
+          }
+        />
         {project.goal_sketches?.filter((goal) => goal.type === 'cg').length >
         0 ? (
           project.goal_sketches
@@ -420,22 +413,13 @@ const Goals = ({ project, setProject }) => {
 
       {/* --- Column 2: Business Goals --- */}
       <div className="flex flex-col gap-2">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button className="flex items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-accent transition-colors">
-              <Badge className={cn('border-0', typeColors.bg.color)}>
-                {project?.goal_sketches?.filter((goal) => goal.type === 'bg')
-                  .length || 0}
-              </Badge>
-              Business Goals
-              <Info className="text-muted-foreground" size={18} />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="bg-popover text-popover-foreground border-border">
-            User stories focus on the needs of the application's users...
-            <PopoverArrow className="fill-popover" />
-          </PopoverContent>
-        </Popover>
+        <InfoButton
+          data={tooltipInfo.businessGoal}
+          badgeContent={
+            project?.goal_sketches?.filter((goal) => goal.type === 'bg')
+              .length || 0
+          }
+        />
         {project.goal_sketches
           ?.filter((goal) => goal.type === 'bg')
           .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
