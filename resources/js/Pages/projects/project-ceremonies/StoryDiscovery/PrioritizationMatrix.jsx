@@ -148,7 +148,7 @@ const GoalCard = ({ goal }) => {
         </div>
 
         {/* Área do Título (apenas exibição) */}
-        <p className="m-0 font-normal text-sm text-foreground break-words w-full min-h-[24px]">
+        <p className="m-0 font-normal text-foreground break-words w-full min-h-[24px]">
           {goal.title}
         </p>
       </CardContent>
@@ -438,7 +438,7 @@ const PrioritizationMatrix = ({ project, setProject }) => {
         <section className="flex-1">
           <section className="flex gap-2 justify-between">
             <aside className="flex flex-col w-44 items-center bg-card  gap-2 rounded">
-              <span className="h-12 py-2">Goals</span>
+              <span className="h-12 py-2 mb-1">Goals</span>
               {project.goal_sketches.map((goal) => (
                 <GoalCard key={goal.id} goal={goal}>
                   {goal.title}
