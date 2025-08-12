@@ -23,3 +23,7 @@ export function darkenColor(hexColor, factor) {
 
   return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`
 }
+
+export function isTemporary(id) {
+  return String(id).startsWith('temp-')
+}
