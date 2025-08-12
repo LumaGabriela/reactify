@@ -37,11 +37,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
 
   // Inception States
   const [activeMenu, setActiveMenu] = useState(
-    () => localStorage.getItem('activeMenu') || 'All',
+    () => localStorage.getItem('activeMenu') || 'Product Canvas',
   )
   const [menuItems, setMenuItems] = useState([
     {
-      label: 'ProductCanvas',
+      label: 'Product Canvas',
       value: true,
       tooltip: tooltipInfo.productCanvas,
     },
@@ -212,7 +212,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
 
   const renderInceptionContent = () => {
     switch (activeMenu) {
-      case 'All':
+      case 'Product Canvas':
         return <MainView project={project} setProject={setProject} />
       case 'Personas':
         return <Personas project={project} setProject={setProject} />
