@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\StoryController;
+use App\Http\Controllers\EpicStoryController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\ProfileController;
@@ -84,6 +85,15 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::delete('/{story}', [StoryController::class, 'destroy'])->name('story.delete');
   });
 
+  // Rotas para epic stories
+  Route::prefix('epic')->group(function () {
+    Route::post('/', [EpicStoryController::class, 'store'])->name('epic-story.store');
+
+    Route::patch('/{story}', [EpicStoryController::class, 'update'])->name('epic-story.update');
+
+    Route::delete('/{story}', [EpicStoryController::class, 'destroy'])->name('epic-story.destroy');
+  });
+
   //   Rotas para OverallModel
   Route::prefix('overall')->group(function () {
     Route::post('/', [OverallModelController::class, 'store'])->name('overall.store');
@@ -93,16 +103,16 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
   // Rotas para sprints
   Route::prefix('sprint')->group(function () {
-      Route::post('/', [SprintController::class, 'store'])->name('sprint.store');
-      Route::get('/{sprint}', [SprintController::class, 'show'])->name('sprint.show');
-      Route::patch('/{sprint}', [SprintController::class, 'update'])->name('sprint.update');
-      Route::delete('/{sprint}', [SprintController::class, 'destroy'])->name('sprint.destroy');
+    Route::post('/', [SprintController::class, 'store'])->name('sprint.store');
+    Route::get('/{sprint}', [SprintController::class, 'show'])->name('sprint.show');
+    Route::patch('/{sprint}', [SprintController::class, 'update'])->name('sprint.update');
+    Route::delete('/{sprint}', [SprintController::class, 'destroy'])->name('sprint.destroy');
   });
 
   Route::prefix('sprint-stories')->group(function () {
-      Route::post('/{sprint}/add-stories', [StorySprintController::class, 'store'])->name('sprint-stories.store');
-      Route::delete('/{sprint}/stories/{story}', [StorySprintController::class, 'destroy'])->name('sprint-stories.destroy');
-      Route::patch('/{sprint}/update', [StorySprintController::class, 'update'])->name('sprint-stories.update');
+    Route::post('/{sprint}/add-stories', [StorySprintController::class, 'store'])->name('sprint-stories.store');
+    Route::delete('/{sprint}/stories/{story}', [StorySprintController::class, 'destroy'])->name('sprint-stories.destroy');
+    Route::patch('/{sprint}/update', [StorySprintController::class, 'update'])->name('sprint-stories.update');
   });
 
   Route::prefix('overall-model-classes')->group(function () {
