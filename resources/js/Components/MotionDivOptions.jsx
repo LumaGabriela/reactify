@@ -1,13 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Pencil, Trash } from 'lucide-react'
+import { Plus, Pencil, Trash } from 'lucide-react'
 
 const MotionDivOptions = ({
   isHovered,
   isEditing,
   isTemporary = false,
+  onAdd,
   onEdit,
   onDelete,
-  options = { edit: true, delete: true },
 }) => {
   return (
     <AnimatePresence>
@@ -19,7 +19,17 @@ const MotionDivOptions = ({
           transition={{ duration: 0.2 }}
           className="z-50 absolute right-0 top-0 flex items-center rounded-md bg-card border border-border shadow-lg"
         >
-          {options.edit && (
+          {onAdd && (
+            <Button
+              variant="motiondiv"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={onAdd}
+            >
+              <Plus className="size-4" />
+            </Button>
+          )}
+          {onEdit && (
             <Button
               variant="motiondiv"
               size="icon"
@@ -29,7 +39,7 @@ const MotionDivOptions = ({
               <Pencil className="size-4" />
             </Button>
           )}
-          {options.delete && (
+          {onDelete && (
             <Button
               variant="motiondiv"
               size="icon"
