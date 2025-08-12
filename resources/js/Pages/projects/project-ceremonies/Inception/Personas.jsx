@@ -309,25 +309,10 @@ const Personas = ({ project, setProject }) => {
   return (
     <div className="grid grid-cols-1 gap-2 w-full p-4">
       <div className="col-span-1 flex flex-col sm:flex-row gap-2">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button className="flex w-1/2 items-center justify-center gap-2 p-2 rounded-lg text-foreground bg-card hover:bg-muted transition-colors">
-              <UserCircle2 className="size-4 text-primary" />
-              Personas
-              <Badge className="bg-primary border-0">
-                {project?.personas?.length || 0}
-              </Badge>
-              <Info className="size-4 text-muted-foreground" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="bg-popover text-popover-foreground">
-            As personas representam os arquétipos de usuários do seu sistema...
-          </PopoverContent>
-        </Popover>
         <Button
           onClick={addNewPersona}
           disabled={isSubmitting}
-          className="!w-1/2 sm:w-auto bg-primary hover:bg-primary/90"
+          className="w-full"
         >
           <Plus size={18} className="mr-2" />
           {isSubmitting ? 'Criando...' : 'Nova Persona'}
