@@ -52,7 +52,7 @@ const AuthenticatedLayout = ({ children }) => {
   return (
     <div className="flex justify-start min-h-screen bg-background w-min-full">
       <LeftMenu />
-      <main className="flex-1 flex flex-col p-6 bg-background text-foreground items-center ">
+      <main className="ml-16 flex-1 flex flex-col p-6 bg-background text-foreground items-center ">
         {children}
       </main>
     </div>
