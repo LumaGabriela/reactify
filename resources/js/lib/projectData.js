@@ -7,6 +7,8 @@
 // },
 // }
 
+import { Button } from '@/components/ui/button'
+
 const tooltipInfo = {
   // tooltips do navMenu
   // inception
@@ -108,6 +110,20 @@ const tooltipInfo = {
       badge: 'bg-orange-600 ',
     },
   },
+  aiGeneratedStory: {
+    title: 'Gerar com IA',
+    description:
+      'Esta função utiliza IA para gerar Users Stories baseadas nos Objetivos das Personas e Journeys do Produto e gerar System Stories baseadas nas do e Goals do tipo Constraint(CG).',
+  },
+  epicStory: {
+    title: 'O que é uma História Epica?',
+    description:
+      'As histórias épicas são histórias de alto nível que descrevem um conjunto de funcionalidades relacionadas as historias originais de modo que se tornaram itens separados',
+    classNames: {
+      badge: 'bg-orange-600 ',
+      button: 'max-w-md md:max-w-2xl',
+    },
+  },
   businessGoal: {
     title: 'Business Goals',
     description:
@@ -116,11 +132,7 @@ const tooltipInfo = {
       badge: 'bg-orange-600 ',
     },
   },
-  aiGeneratedStory: {
-    title: 'Gerar com IA',
-    description:
-      'Esta função utiliza IA para gerar Users Stories baseadas nos Objetivos das Personas e Journeys do Produto e gerar System Stories baseadas nas do e Goals do tipo Constraint(CG).',
-  },
+
   constraintGoal: {
     title: 'Constraint Goals',
     description:

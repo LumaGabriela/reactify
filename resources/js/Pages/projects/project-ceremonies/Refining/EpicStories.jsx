@@ -29,14 +29,14 @@ const StoryCard = ({ story, addEpicStory }) => {
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="relative group  w-52"
+      className="relative group"
     >
-      <MotionDivOptions isHovered={isHovered} onAdd={addEpicStory} />
+      <MotionDivOptions isHovered={true} onAdd={addEpicStory} />
 
       {/* Este é o corpo do card, com o estilo que você solicitou. */}
       <div
         className={`
-          flex flex-col h-full  items-center justify-start p-2 gap-1 text-xs font-normal text-foreground
+          flex flex-col h-full w-52 items-center justify-start p-2 gap-1 text-xs font-normal text-foreground
           border border-border bg-card rounded-md shadow-sm transition-opacity duration-300 min-h-16
         `}
       >
@@ -236,10 +236,11 @@ const EpicStories = ({ project, setProject }) => {
 
   return (
     <section className="p-2 flex flex-col gap-2">
-      <div className="flex w-full">
-        <InfoButton data={tooltipInfo.epicStories} />
-      </div>
       <div className="flex flex-col gap-1">
+        <div className="flex w-full">
+          <span className="w-52" />
+          <InfoButton data={tooltipInfo.epicStory} />
+        </div>
         {project?.stories?.map((story, i) => {
           const relatedEpics = epicsByStoryId.get(story.id) || []
           return (
