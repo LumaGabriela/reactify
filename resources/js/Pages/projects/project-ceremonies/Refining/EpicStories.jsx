@@ -19,18 +19,10 @@ import { tooltipInfo } from '@/lib/projectData'
  * @param {{ story: object, addEpicStory: () => void }} props
  */
 const StoryCard = ({ story, addEpicStory }) => {
-  const [isHovered, setIsHovered] = useState(false)
-
-  // Seleciona a variante de cor com base no tipo da estória.
-  // Garante um fallback para 'user' caso o tipo seja inválido.
   const selectedVariant = storyVariants[story.type] || storyVariants.user
 
   return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="relative group"
-    >
+    <div className="relative group">
       <MotionDivOptions isHovered={true} onAdd={addEpicStory} />
 
       {/* Este é o corpo do card, com o estilo que você solicitou. */}
@@ -80,7 +72,6 @@ const EpicStoryCard = ({
   }
 
   const handleSave = () => {
-    // Não faz nada se o título não mudou
     if (editValue === epicStory.title) {
       setIsEditing(false)
       return

@@ -104,7 +104,7 @@ const LeftMenu = () => {
       <motion.aside
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        animate={{ opacity: 1, width: isHovered ? '13rem' : '4rem' }}
+        animate={{ opacity: 1, width: isHovered ? '14rem' : '4rem' }}
         transition={{ duration: 0.3 }}
         className={
           'fixed bg-background text-foreground border-r border-border flex flex-col min-h-screen z-50'
@@ -260,13 +260,18 @@ const LeftMenu = () => {
                           value={`project-${project.id}`}
                           className="border-b-0"
                         >
-                          <AccordionTrigger className="justify-start w-full text-left h-9 font-normal hover:no-underline hover:bg-accent/50 rounded-md px-2">
+                          <AccordionTrigger
+                            className={cn(
+                              'justify-start w-full text-left h-9 font-normal hover:no-underline rounded-md px-2 ',
+                              isCurrentProject ? 'bg-primary ' : 'bg-accent ',
+                            )}
+                          >
                             <span
                               className={cn(
                                 isCurrentProject
-                                  ? 'text-primary'
-                                  : 'text-muted-foreground',
-                                'hover:text-foreground truncate',
+                                  ? 'text-primary-foreground '
+                                  : 'text-foreground ',
+                                ' truncate',
                               )}
                             >
                               {project.title}
@@ -292,7 +297,7 @@ const LeftMenu = () => {
                                     route().current('project.show') &&
                                       isCurrentProject &&
                                       route().params.page === item.url
-                                      ? 'text-foreground bg-primary'
+                                      ? 'text-primary-foreground bg-primary'
                                       : 'text-muted-foreground',
                                   )}
                                 >
