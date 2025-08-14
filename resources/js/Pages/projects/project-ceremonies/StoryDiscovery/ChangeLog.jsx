@@ -1,9 +1,4 @@
 import { router } from '@inertiajs/react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog'
 import ChangeRequestForm from '../../../../Components/ChangeRequestForm'
 
 const ChangeLog = ({ project }) => {
@@ -15,14 +10,14 @@ const ChangeLog = ({ project }) => {
       SOLICITADA: 'bg-yellow-100 text-yellow-800',
       APROVADA: 'bg-green-100 text-green-800',
       REJEITADA: 'bg-red-100 text-red-800',
-      IMPLEMENTADA: 'bg-blue-100 text-blue-800'
+      IMPLEMENTADA: 'bg-blue-100 text-blue-800',
     }
-    
+
     const statusLabels = {
       SOLICITADA: 'Solicitada',
       APROVADA: 'Aprovada',
       REJEITADA: 'Rejeitada',
-      IMPLEMENTADA: 'Implementada'
+      IMPLEMENTADA: 'Implementada',
     }
 
     return (
@@ -34,8 +29,8 @@ const ChangeLog = ({ project }) => {
 
   const formatStories = (stories, impactType) => {
     return stories
-      .filter(story => story.pivot.impact_type === impactType)
-      .map(story => story.code || `US-${story.id}`)
+      .filter((story) => story.pivot.impact_type === impactType)
+      .map((story) => story.code || `US-${story.id}`)
       .join(', ')
   }
 
@@ -52,13 +47,12 @@ const ChangeLog = ({ project }) => {
         >
           Go to Product Backlog
         </Button>
-        
+
         <Dialog open={showForm} onOpenChange={setShowForm}>
           <DialogTrigger asChild>
             <Button>Nova Solicitação</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogTitle>Nova Solicitação de Mudança</DialogTitle>
+          <DialogContent className="max-w-4xl h-content p-0 border-0">
             <ChangeRequestForm
               project={project}
               stories={project.stories || []}
@@ -91,7 +85,10 @@ const ChangeLog = ({ project }) => {
                 <TableCell className="text-center">
                   {request.requester?.name || 'N/A'}
                 </TableCell>
-                <TableCell className="max-w-xs truncate" title={request.description}>
+                <TableCell
+                  className="max-w-xs truncate"
+                  title={request.description}
+                >
                   {request.description}
                 </TableCell>
                 <TableCell className="text-center">

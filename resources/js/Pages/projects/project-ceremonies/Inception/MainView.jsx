@@ -14,19 +14,11 @@ import {
   PenLine as EditIcon,
   X,
   Save,
+  Calendar as CalendarIcon,
 } from 'lucide-react'
 import ProgressIcon from '@/Components/ProgressIcon'
 import { format } from 'date-fns'
-import { Calendar as CalendarIcon } from 'lucide-react'
-
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 import TextareaAutosize from 'react-textarea-autosize'
 
 // Helper to map variants to Tailwind classes
