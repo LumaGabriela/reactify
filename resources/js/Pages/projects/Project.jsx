@@ -73,6 +73,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       tooltip: tooltipInfo.stories,
     },
     {
+      label: 'Overall Model',
+      value: true,
+      tooltip: tooltipInfo.overallModel,
+    },
+    {
       label: 'Matriz de Priorização',
       value: false,
       tooltip: tooltipInfo.prioritizationMatrix,
@@ -229,6 +234,8 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     switch (activeStoryDiscoveryMenu) {
       case 'Stories':
         return <Stories project={project} setProject={setProject} />
+      case 'Overall Model':
+        return <OverallModel project={project} setProject={setProject} />
       case 'Matriz de Priorização':
         return (
           <PrioritizationMatrix project={project} setProject={setProject} />
