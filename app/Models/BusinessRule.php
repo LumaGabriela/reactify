@@ -15,17 +15,22 @@ class BusinessRule extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'story_id',
-        'code',
-        'description',
-    ];
+     protected $fillable = [
+       'title',
+       'story_id',
+       'project_id',
 
+     ];
     /**
      * Get the story that owns the business rule.
      */
-    public function story(): BelongsTo
-    {
-        return $this->belongsTo(Story::class);
-    }
+     public function story()
+     {
+       return $this->belongsTo(Story::class);
+     }
+
+     public function project()
+     {
+       return $this->belongsTo(Project::class);
+     }
 }
