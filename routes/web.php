@@ -19,6 +19,7 @@ use App\Http\Controllers\PrioritizationController;
 use App\Http\Controllers\MatrixPriorityController;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\StorySprintController;
+use App\Http\Controllers\ChangeRequestController;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -123,6 +124,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/{sprint}/add-stories', [StorySprintController::class, 'store'])->name('sprint-stories.store');
     Route::delete('/{sprint}/stories/{story}', [StorySprintController::class, 'destroy'])->name('sprint-stories.destroy');
     Route::patch('/{sprint}/update', [StorySprintController::class, 'update'])->name('sprint-stories.update');
+  });
+
+  Route::prefix('change-request')->group(function () {
+    Route::post('/', [ChangeRequestController::class, 'store'])->name('change-request.store');
+    Route::patch('/{changeRequest}', [ChangeRequestController::class, 'update'])->name('change-request.update');
+    Route::delete('/{changeRequest}', [ChangeRequestController::class, 'destroy'])->name('change-request.destroy');
   });
 
   Route::prefix('overall-model-classes')->group(function () {

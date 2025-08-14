@@ -93,12 +93,12 @@ class Project extends Model
     return $this->hasMany(Sprint::class);
   }
 
-  public function changeRequests()
+  public function change_requests()
   {
     return $this->hasMany(ChangeRequest::class);
   }
 
-  public function systemInterfaces()
+  public function system_interfaces()
   {
     return $this->hasMany(SystemInterface::class);
   }

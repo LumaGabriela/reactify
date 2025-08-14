@@ -19,7 +19,7 @@ class ProjectController extends Controller
   public function getUpdatedProject(Project $project)
   {
     return response()->json([
-      'project' => $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations', 'matrix_priorities', 'epic_stories', 'business_rules']),
+      'project' => $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations', 'matrix_priorities', 'sprints.stories', 'epic_stories', 'business_rules', 'change_requests']),
     ]);
   }
 
@@ -33,7 +33,7 @@ class ProjectController extends Controller
     $projects = Project::whereIn('id', $validated['ids'])->get();
 
     return response()->json([
-      'projects' => $projects->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations', 'matrix_priorities', 'epic_stories', 'business_rules']),
+      'projects' => $projects->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations', 'matrix_priorities', 'sprints.stories', 'epic_stories', 'business_rules', 'change_requests']),
       'message' => 'Projects updated successfully.',
       'status' => 'success',
     ]);
@@ -50,7 +50,7 @@ class ProjectController extends Controller
       abort(403, 'Acesso não autorizado a este projeto.');
     }
 
-    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations', 'matrix_priorities', 'sprints.stories', 'epic_stories', 'business_rules']);
+    $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations', 'matrix_priorities', 'sprints.stories', 'epic_stories', 'business_rules', 'change_requests']);
 
     return Inertia::render('projects/Project', [
       'project' => $project,
