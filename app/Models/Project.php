@@ -37,12 +37,11 @@ class Project extends Model
     return $this->hasOne(ProductCanvas::class);
   }
 
-
-
   public function personas()
   {
     return $this->hasMany(Persona::class);
   }
+
   public function goal_sketches()
   {
     return $this->hasMany(Goal::class);
@@ -52,14 +51,22 @@ class Project extends Model
   {
     return $this->hasMany(Story::class);
   }
+
   public function epic_stories()
   {
     return $this->hasMany(EpicStory::class);
   }
+
+  public function business_rules()
+  {
+    return $this->hasMany(BusinessRule::class);
+  }
+
   public function invitations(): HasMany
   {
     return $this->hasMany(ProjectInvitation::class);
   }
+
   public function users(): BelongsToMany
   {
     return $this->belongsToMany(User::class, 'user_project')->withPivot('role')->withTimestamps();

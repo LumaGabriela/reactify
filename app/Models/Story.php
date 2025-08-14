@@ -29,6 +29,11 @@ class Story extends Model
     return $this->hasMany(EpicStory::class);
   }
 
+  public function businessRules()
+  {
+    return $this->hasMany(BusinessRule::class);
+  }
+
   public function sprints()
   {
     return $this->belongsToMany(Sprint::class, 'story_sprint')
@@ -41,10 +46,6 @@ class Story extends Model
     return $this->sprints()->where('status', 'active')->first();
   }
 
-  public function businessRules()
-  {
-    return $this->hasMany(BusinessRule::class);
-  }
 
   public function usageScenarios()
   {

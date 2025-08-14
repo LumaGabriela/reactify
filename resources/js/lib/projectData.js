@@ -124,6 +124,14 @@ const tooltipInfo = {
       button: 'max-w-md md:max-w-2xl',
     },
   },
+  businessRule: {
+    title: 'O que é uma Business Rule (regra de negócio)?',
+    description:
+      'As regras de negócio são regras que o aplicativo deve seguir, como garantir que os usuários tenham acesso a recursos apenas se estiverem autenticados ou garantir que os usuários não possam acessar recursos que não estão disponíveis.',
+    classNames: {
+      button: 'max-w-md md:max-w-2xl',
+    },
+  },
   businessGoal: {
     title: 'Business Goals',
     description:

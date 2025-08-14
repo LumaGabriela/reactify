@@ -1,10 +1,4 @@
-import {
-  ArrowRight,
-  CornerDownRight,
-  // Mantive os ícones originais, ajuste se necessário
-  X,
-  Check,
-} from 'lucide-react'
+import { ArrowRight, CornerDownRight, X, Check } from 'lucide-react'
 import MotionDivOptions from '@/Components/MotionDivOptions'
 import { storyVariants } from '../StoryDiscovery/Stories'
 import React, { useMemo, useState } from 'react' // Adicionei useState que estava faltando no seu exemplo original para EpicStoryCard
@@ -12,8 +6,6 @@ import { router } from '@inertiajs/react'
 import { isTemporary } from '@/lib/utils'
 import InfoButton from '@/Components/InfoButton'
 import { tooltipInfo } from '@/lib/projectData'
-import { Badge } from '@/Components/ui/badge' // Adicionei importações faltantes para o componente funcionar
-import { Input } from '@/Components/ui/input'
 
 /**
  * Componente para renderizar um único card de estória.
@@ -144,7 +136,7 @@ const BusinessRuleCard = ({
               variant="outline"
               className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
             >
-              {`${story.type === 'system' ? 'SS' : 'US'}${story.id}.${
+              {`BR${story.id}.${
                 isTemporary(businessRule.id) ? '' : businessRule.id
               }`.toUpperCase()}
             </Badge>

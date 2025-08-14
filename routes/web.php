@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\EpicStoryController;
+use App\Http\Controllers\BusinessRuleController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\ProfileController;
@@ -92,6 +93,15 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{story}', [EpicStoryController::class, 'update'])->name('epic-story.update');
 
     Route::delete('/{story}', [EpicStoryController::class, 'destroy'])->name('epic-story.destroy');
+  });
+
+  //rotas para business rules
+  Route::prefix('business-rule')->group(function () {
+    Route::post('/', [BusinessRuleController::class, 'store'])->name('business-rule.store');
+
+    Route::patch('/{rule}', [BusinessRuleController::class, 'update'])->name('business-rule.update');
+
+    Route::delete('/{rule}', [BusinessRuleController::class, 'destroy'])->name('business-rule.destroy');
   });
 
   //   Rotas para OverallModel
