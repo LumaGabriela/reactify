@@ -1,28 +1,6 @@
-import { useState, useEffect } from 'react'
 import { Plus, LoaderCircle, X } from 'lucide-react'
 import { usePage, router } from '@inertiajs/react'
-import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetFooter,
-  SheetClose,
-} from '@/components/ui/sheet'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import axios from 'axios'
-import { Separator } from '@/components/ui/separator'
 
 export function ProjectPermissions({ projectId, ownerId }) {
   const { auth, errors } = usePage().props
@@ -175,7 +153,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
                         }
                         disabled={!canManagePermissions || isOwner}
                       >
-                        <SelectTrigger className="w-[120px]">
+                        <SelectTrigger className="w-20">
                           <SelectValue placeholder="Role" />
                         </SelectTrigger>
                         <SelectContent>
@@ -196,6 +174,21 @@ export function ProjectPermissions({ projectId, ownerId }) {
                   </div>
                 )
               })}
+          {/* Seção de ações principais */}
+          <div className="flex flex-col w-full gap-2 pt-4">
+            <SheetClose asChild>
+              <Button variant="outline" className="text-muted-foreground">
+                Cancelar
+              </Button>
+            </SheetClose>
+            <Button
+              variant="default"
+              onClick={handleSaveChanges}
+              disabled={isLoading || isAddingUser}
+            >
+              {isLoading ? 'Salvando...' : 'Salvar Alterações'}
+            </Button>
+          </div>
         </div>
         {canManagePermissions && (
           <SheetFooter>
@@ -244,22 +237,6 @@ export function ProjectPermissions({ projectId, ownerId }) {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-
-              {/* Seção de ações principais */}
-              <div className="flex flex-col w-full gap-2 pt-4">
-                <SheetClose asChild>
-                  <Button variant="outline" className="text-muted-foreground">
-                    Cancelar
-                  </Button>
-                </SheetClose>
-                <Button
-                  variant="default"
-                  onClick={handleSaveChanges}
-                  disabled={isLoading || isAddingUser}
-                >
-                  {isLoading ? 'Salvando...' : 'Salvar Alterações'}
-                </Button>
               </div>
             </div>
           </SheetFooter>
