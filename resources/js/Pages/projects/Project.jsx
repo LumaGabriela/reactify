@@ -29,6 +29,7 @@ import MainLayout from '@/Layouts/MainLayout'
 
 import Sprint from './project-ceremonies/Sprint/Sprint'
 import { tooltipInfo } from '@/lib/projectData.js'
+import Inspection from './project-ceremonies/Inspection/Inspection.jsx'
 
 const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const [project, setProject] = useState({ ...projectDB })
@@ -293,6 +294,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               <TabsTrigger value="story-discovery">Story Discovery</TabsTrigger>
               <TabsTrigger value="refining">Refining</TabsTrigger>
               <TabsTrigger value="modeling">Modeling</TabsTrigger>
+              <TabsTrigger value="inspection">Inspection</TabsTrigger>
               <TabsTrigger value="backlog">Product Backlog</TabsTrigger>
               <TabsTrigger value="sprint">Sprint</TabsTrigger>
             </TabsList>
@@ -355,6 +357,9 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               setActiveMenu={setActiveModelingMenu}
             />
             {renderModelingContent()}
+          </TabsContent>
+          <TabsContent value="inspection">
+            <Inspection project={project} setProject={setProject} />
           </TabsContent>
           <TabsContent value="backlog">
             <ProductBacklog project={project} setProject={setProject} />

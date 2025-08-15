@@ -20,6 +20,7 @@ use App\Http\Controllers\MatrixPriorityController;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\StorySprintController;
 use App\Http\Controllers\ChangeRequestController;
+use App\Http\Controllers\InvestCardController;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -172,6 +173,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/', [ProductCanvasController::class, 'store'])->name('product-canvas.store');
     Route::patch('/{productCanvas}', [ProductCanvasController::class, 'update'])->name('product-canvas.update');
     Route::delete('/{productCanvas}', [ProductCanvasController::class, 'destroy'])->name('product-canvas.delete');
+  });
+
+  Route::prefix('invest-card')->group(function () {
+    Route::post('/', [InvestCardController::class, 'store'])->name('invest-card.store');
+    Route::patch('/{investCard}', [InvestCardController::class, 'update'])->name('invest-card.update');
+    Route::delete('/{investCard}', [InvestCardController::class, 'destroy'])->name('invest-card.destroy');
   });
 
   //pagina de notificacoes

@@ -36,7 +36,7 @@ class ProjectSeeder extends Seeder
         "email" => "admin@example.com",
         "password" => Hash::make("senha123"),
         // "user_role_id" => $adminRoleId,
-        'provider_avatar' => 'https://www.allthingswild.co.uk/wild-bunch/raccoon/',
+        'provider_avatar' => 'https://www.allthingswild.co.uk/wp-content/uploads/2022/01/IMG_4702.jpg',
         "active" => true,
         "email_verified_at" => now(),
         "created_at" => now(),

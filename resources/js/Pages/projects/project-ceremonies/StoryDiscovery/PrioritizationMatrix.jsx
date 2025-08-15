@@ -128,7 +128,6 @@ const GoalCard = ({ goal }) => {
   const selectedType = goalTypeColors[goal.type] || goalTypeColors.bg
   const selectedPriority = goalTypeColors[goal.priority] || goalTypeColors.bg
 
-  console.log(selectedType)
   return (
     <Card className="bg-card  border border-border transition-all duration-300 ease-in-out p-0 min-h-40 w-40 rounded-md">
       <CardContent className="p-2 h-full text-xs flex flex-col gap-2">

@@ -33,7 +33,10 @@ class Story extends Model
   {
     return $this->hasMany(BusinessRule::class);
   }
-
+  public function investCard()
+  {
+    return $this->hasOne(InvestCard::class);
+  }
   public function sprints()
   {
     return $this->belongsToMany(Sprint::class, 'story_sprint')

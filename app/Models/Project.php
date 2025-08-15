@@ -97,4 +97,8 @@ class Project extends Model
   {
     return $this->hasMany(SystemInterface::class);
   }
+  public function invest_cards()
+  {
+    return $this->hasMany(InvestCard::class);
+  }
 }

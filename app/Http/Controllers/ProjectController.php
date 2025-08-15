@@ -19,7 +19,22 @@ class ProjectController extends Controller
   public function getUpdatedProject(Project $project)
   {
     return response()->json([
-      'project' => $project->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations', 'matrix_priorities', 'sprints.stories', 'epic_stories', 'business_rules', 'change_requests']),
+      'project' => $project->load([
+        'stories',
+        'goal_sketches',
+        'journeys',
+        'personas',
+        'product_canvas',
+        'crc_cards',
+        'overall_model_classes',
+        'prioritizations',
+        'matrix_priorities',
+        'sprints.stories',
+        'epic_stories',
+        'business_rules',
+        'change_requests',
+        'invest_cards'
+      ]),
     ]);
   }
 
@@ -33,7 +48,22 @@ class ProjectController extends Controller
     $projects = Project::whereIn('id', $validated['ids'])->get();
 
     return response()->json([
-      'projects' => $projects->load(['stories', 'goal_sketches', 'journeys', 'personas', 'product_canvas', 'crc_cards', 'overall_model_classes', 'prioritizations', 'matrix_priorities', 'sprints.stories', 'epic_stories', 'business_rules', 'change_requests']),
+      'projects' => $projects->load([
+        'stories',
+        'goal_sketches',
+        'journeys',
+        'personas',
+        'product_canvas',
+        'crc_cards',
+        'overall_model_classes',
+        'prioritizations',
+        'matrix_priorities',
+        'sprints.stories',
+        'epic_stories',
+        'business_rules',
+        'change_requests',
+        'invest_cards'
+      ]),
       'message' => 'Projects updated successfully.',
       'status' => 'success',
     ]);
@@ -64,6 +94,7 @@ class ProjectController extends Controller
       'epic_stories',
       'business_rules',
       'change_requests',
+      'invest_cards',
       'users' => function ($query) {
         $query->select(['user_id', 'name', 'email', 'provider_avatar']);
       }

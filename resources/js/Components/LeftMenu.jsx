@@ -98,7 +98,11 @@ const LeftMenu = () => {
     currentRouteName &&
     currentRouteName.startsWith('project') &&
     !route().current('projects.index')
-  console.log(props)
+
+  useEffect(() => {
+    console.log(props)
+  }, [props])
+
   return (
     <AnimatePresence>
       <motion.aside
