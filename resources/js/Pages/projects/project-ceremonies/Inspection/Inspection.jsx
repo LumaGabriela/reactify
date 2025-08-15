@@ -241,39 +241,81 @@ const Inspection = ({ project, setProject }) => {
   }
 
   return (
-    <section className="p-2 flex flex-col gap-2">
-      <div className="flex flex-col gap-1">
-        <div className="flex w-full">
-          <span className="w-52" />
-          <InfoButton data={tooltipInfo.inspection} />
-        </div>
-        {project?.stories?.map((story) => {
-          const relatedInvestCards = investCardsByStoryId.get(story.id) || []
-          return (
-            <section className="py-1 flex gap-1 items-stretch" key={story.id}>
-              <StoryCard
-                story={story}
-                addInvestCard={() => addInvestCard(story.id)}
-              />
+    <section className="p-2 flex flex-col gap-2 max-w-7xl">
+      <div className="flex w-full">
+        <InfoButton data={tooltipInfo.inspection} />
+      </div>
+      <div className="flex gap-1 items-center justify-evenly w-full">
+        <section className="flex flex-col gap-1">
+          {project?.stories
+            ?.filter((story) => story.type === 'system')
+            .map((story) => {
+              const relatedInvestCards =
+                investCardsByStoryId.get(story.id) || []
+              return (
+                <section
+                  className="py-1 flex gap-1 items-stretch"
+                  key={story.id}
+                >
+                  <StoryCard
+                    story={story}
+                    addInvestCard={() => addInvestCard(story.id)}
+                  />
 
-              <div className="flex flex-col gap-1 w-full">
-                {[...relatedInvestCards]
-                  .sort((a, b) => a.id - b.id)
-                  .map((investCard, index, array) => (
-                    <InvestCard
-                      key={investCard.id}
-                      story={story}
-                      investCard={investCard}
-                      lastElement={
-                        index === array.length - 1 && array.length > 1
-                      }
-                      setProject={setProject}
-                    />
-                  ))}
-              </div>
-            </section>
-          )
-        })}
+                  <div className="flex flex-col gap-1 ">
+                    {[...relatedInvestCards]
+                      .sort((a, b) => a.id - b.id)
+                      .map((investCard, index, array) => (
+                        <InvestCard
+                          key={investCard.id}
+                          story={story}
+                          investCard={investCard}
+                          lastElement={
+                            index === array.length - 1 && array.length > 1
+                          }
+                          setProject={setProject}
+                        />
+                      ))}
+                  </div>
+                </section>
+              )
+            })}
+        </section>
+        <section className="flex flex-col gap-1">
+          {project?.stories
+            ?.filter((story) => story.type === 'user')
+            .map((story) => {
+              const relatedInvestCards =
+                investCardsByStoryId.get(story.id) || []
+              return (
+                <section
+                  className="py-1 flex gap-1 items-stretch"
+                  key={story.id}
+                >
+                  <StoryCard
+                    story={story}
+                    addInvestCard={() => addInvestCard(story.id)}
+                  />
+
+                  <div className="flex flex-col gap-1 ">
+                    {[...relatedInvestCards]
+                      .sort((a, b) => a.id - b.id)
+                      .map((investCard, index, array) => (
+                        <InvestCard
+                          key={investCard.id}
+                          story={story}
+                          investCard={investCard}
+                          lastElement={
+                            index === array.length - 1 && array.length > 1
+                          }
+                          setProject={setProject}
+                        />
+                      ))}
+                  </div>
+                </section>
+              )
+            })}
+        </section>
       </div>
     </section>
   )
