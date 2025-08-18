@@ -16,7 +16,6 @@ return new class extends Migration
       $table->foreignId('project_id')->constrained()->onDelete('cascade');
       $table->foreignId('story_id')->constrained()->onDelete('cascade');
       $table->foreignId('priority_id')->constrained('matrix_priorities')->onDelete('cascade');
-      $table->unique(['project_id', 'story_id', 'priority_id', 'position']);
       $table->integer('position');
       $table->timestamps();
       $table->softDeletes();
