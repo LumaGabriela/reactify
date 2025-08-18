@@ -241,7 +241,7 @@ const Goals = ({ project, setProject }) => {
           id: `temp-${Date.now()}`,
           title: 'New Goal',
           type: 'bg',
-          priority: 'med',
+          priority: 'medium',
         },
       ],
     })
@@ -251,7 +251,7 @@ const Goals = ({ project, setProject }) => {
       {
         title: 'New Goal',
         type: 'bg',
-        priority: 'med',
+        priority: 'medium',
         project_id: project.id,
       },
       { preserveState: true, preserveScroll: true },

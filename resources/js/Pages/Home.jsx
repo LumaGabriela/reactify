@@ -408,8 +408,8 @@ const Dashboard = ({}) => {
   )
 }
 
-const Home = ({ projects }) => {
-  return <Dashboard projects={projects} />
+const Home = ({}) => {
+  return <Dashboard />
 }
 
 Home.layout = (page) => <MainLayout children={page} />
