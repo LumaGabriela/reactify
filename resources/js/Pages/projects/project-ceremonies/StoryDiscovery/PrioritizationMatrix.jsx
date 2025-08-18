@@ -22,7 +22,12 @@ import { typeColors as goalTypeColors } from '../Inception/Goals'
 import { priorityColors as goalPriorityColors } from '../Inception/Goals'
 import EditPriorities from './EditPriorities'
 
-const SortablePriorityColumn = ({ priority, children, itemCount }) => {
+const SortablePriorityColumn = ({
+  priority,
+  children,
+  itemCount,
+  className,
+}) => {
   const {
     attributes,
     listeners,
@@ -497,7 +502,7 @@ const PrioritizationMatrix = ({ project, setProject }) => {
                 </GoalCard>
               ))}
             </aside>
-            <div className="flex-1 grid grid-flow-col auto-cols-[180px] gap-2 pr-2">
+            <div className="flex-1 grid grid-flow-col auto-cols-max gap-2 pr-2">
               <SortableContext
                 items={priorityIds}
                 strategy={horizontalListSortingStrategy}
@@ -519,7 +524,7 @@ const PrioritizationMatrix = ({ project, setProject }) => {
                           <DroppableCell
                             key={cellId}
                             id={cellId}
-                            className="min-h-40 w-40"
+                            className="min-h-40 min-w-40 max-w-60"
                           >
                             {storiesInCell && storiesInCell.length > 0 ? (
                               storiesInCell.map((story) => (
