@@ -11,9 +11,8 @@ export const typeColors = {
 }
 export const priorityColors = {
   high: { color: '!bg-red-600', title: 'high' },
-  med: { color: '!bg-yellow-600', title: 'med' },
+  medium: { color: '!bg-yellow-600', title: 'medium' },
   low: { color: '!bg-green-600', title: 'low' },
-  urgent: { color: '!bg-pink-600', title: 'urgent' },
 }
 const GoalItem = ({
   goal,
