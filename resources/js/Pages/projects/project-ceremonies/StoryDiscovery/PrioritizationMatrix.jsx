@@ -47,7 +47,7 @@ const SortablePriorityColumn = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="rounded-md flex flex-col items-stretch h-full"
+      className="rounded-md flex flex-col items-center h-full"
     >
       {/* Cabeçalho da Coluna (agora é a área de arrastar) */}
       <div
@@ -70,7 +70,9 @@ const SortablePriorityColumn = ({
       </div>
 
       {/* Área de Conteúdo (Cards) */}
-      <div className="p-2 gap-2 flex-1 flex flex-col">{children}</div>
+      <div className="p-2 gap-2 flex-1 items-center flex flex-col">
+        {children}
+      </div>
     </div>
   )
 }
@@ -111,7 +113,7 @@ const StoryCard = ({ story, priority = null, isDragOverlay = false }) => {
       {...listeners}
       {...attributes}
       className={`
-         flex flex-col flex-1 max-w-40 items-center justify-start p-2 gap-1 text-xs font-normal text-foreground ${priority ? 'text-slate-50' : 'border border-border'}  rounded-md shadow-sm  transition-opacity duration-300 min-h-16 ${cursorClass}`}
+         flex flex-col flex-1 w-full min-w-20 max-w-40 items-center justify-start p-2 gap-1 text-xs font-normal text-foreground ${priority ? 'text-slate-50' : 'border border-border'}  rounded-md shadow-sm  transition-opacity duration-300 min-h-16 ${cursorClass}`}
     >
       {!story.isTemporary && (
         <div className=" mr-auto">
@@ -160,12 +162,13 @@ const GoalCard = ({ goal }) => {
   )
 }
 
-const DroppableCell = ({ id, children, className = '' }) => {
+const DroppableCell = ({ id, children, className = '', width = 10 }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: id,
   })
   return (
     <div
+      style={{ width: width + 'rem' }}
       ref={setNodeRef}
       className={`
         flex flex-row  justify-center rounded-md transition-all duration-150 border border-slate-900/30
@@ -424,7 +427,6 @@ const PrioritizationMatrix = ({ project, setProject }) => {
             const storyDetails = project.stories.find(
               (s) => s.id === draggedStoryData.story_id,
             )
-            console.log(draggedStoryData)
             router.post(
               route('prioritization.store'),
               {
@@ -496,11 +498,13 @@ const PrioritizationMatrix = ({ project, setProject }) => {
           <section className="flex gap-2 justify-between">
             <aside className="flex flex-col w-44 items-center bg-card  gap-2 rounded">
               <span className="h-12 py-2 mb-1">Goals</span>
-              {project.goal_sketches.map((goal) => (
-                <GoalCard key={goal.id} goal={goal}>
-                  {goal.title}
-                </GoalCard>
-              ))}
+              {project.goal_sketches
+                .sort((a, b) => a.type - b.type)
+                .map((goal) => (
+                  <GoalCard key={goal.id} goal={goal}>
+                    {goal.title}
+                  </GoalCard>
+                ))}
             </aside>
             <div className="flex-1 grid grid-flow-col auto-cols-max gap-2 pr-2">
               <SortableContext
@@ -520,11 +524,16 @@ const PrioritizationMatrix = ({ project, setProject }) => {
                       {Array.from({ length: GRID_ROWS }).map((_, rowIndex) => {
                         const cellId = `cell-${priority.id}-${rowIndex}`
                         const storiesInCell = prioritizationMatrix[cellId]
+                        const width = storiesInCell
+                          ? storiesInCell.length * 7
+                          : 10
+
                         return (
                           <DroppableCell
                             key={cellId}
                             id={cellId}
-                            className={` w-[${storiesInCell ? storiesInCell.length * 10 : 10}rem]    min-h-40 min-w-40`}
+                            width={width}
+                            className={`min-h-40 min-w-40`}
                           >
                             {storiesInCell && storiesInCell.length > 0 ? (
                               storiesInCell.map((story) => (
