@@ -22,7 +22,7 @@ const StoryCard = ({ story, addInvestCard }) => {
 
   return (
     <div className="relative group">
-      <MotionDivOptions isHovered={true} onAdd={addInvestCard} />
+      {/* <MotionDivOptions isHovered={true} onAdd={addInvestCard} />*/}
 
       <div
         className={`
@@ -129,9 +129,9 @@ const InvestCard = ({ investCard, lastElement = false, setProject }) => {
 
   return (
     <section
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="investCard flex flex-1 items-center max-w-lg md:max-w-sm gap-2"
+      // onMouseEnter={() => setIsHovered(true)}
+      // onMouseLeave={() => setIsHovered(false)}
+      className="investCard flex flex-1 items-center max-w-lg gap-2"
     >
       {lastElement ? (
         <CornerDownRight className="text-border size-5 shrink-0" />
@@ -139,12 +139,12 @@ const InvestCard = ({ investCard, lastElement = false, setProject }) => {
         <ArrowRight className="text-border size-5 shrink-0" />
       )}
       <div className="relative group w-full">
-        {!isTemporary(investCard.id) && (
+        {/* {!isTemporary(investCard.id) && (
           <MotionDivOptions
             isHovered={isHovered} // Sempre visível para facilitar acesso
             onDelete={handleDelete}
           />
-        )}
+        )}*/}
 
         <div className="flex flex-col flex-1 p-3 gap-3 text-sm font-normal text-foreground bg-card border border-border rounded-md shadow-sm">
           {/* Cabeçalho */}
@@ -241,11 +241,11 @@ const Inspection = ({ project, setProject }) => {
   }
 
   return (
-    <section className="p-2 flex flex-col gap-2 max-w-7xl">
+    <section className="p-2 flex flex-col gap-2 items-center justify-evenly">
       <div className="flex w-full">
         <InfoButton data={tooltipInfo.inspection} />
       </div>
-      <div className="flex gap-1 items-center justify-evenly w-full">
+      <div className="flex gap-1 justify-around w-full max-w-5xl">
         <section className="flex flex-col gap-1">
           {project?.stories
             ?.filter((story) => story.type === 'system')
@@ -254,12 +254,12 @@ const Inspection = ({ project, setProject }) => {
                 investCardsByStoryId.get(story.id) || []
               return (
                 <section
-                  className="py-1 flex gap-1 items-stretch"
+                  className="py-1 flex gap-1 items-stretch  min-h-52"
                   key={story.id}
                 >
                   <StoryCard
                     story={story}
-                    addInvestCard={() => addInvestCard(story.id)}
+                    // addInvestCard={() => addInvestCard(story.id)}
                   />
 
                   <div className="flex flex-col gap-1 ">

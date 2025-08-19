@@ -92,7 +92,15 @@ const tooltipInfo = {
       badge: 'bg-purple-600 ',
     },
   },
-
+  //inspection
+  inspection: {
+    title: 'Inspection',
+    description:
+      'As inspeções são atividades de avaliação e melhoria do sistema, como a análise de usabilidade, a revisão de código e outras tarefas que garantem a qualidade e a eficiência do sistema.',
+    classNames: {
+      badge: 'bg-purple-600 ',
+    },
+  },
   // tooltips internos
   userStory: {
     title: 'User Stories',
