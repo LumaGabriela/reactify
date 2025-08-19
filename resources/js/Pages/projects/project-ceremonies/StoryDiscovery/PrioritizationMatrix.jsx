@@ -47,7 +47,7 @@ const SortablePriorityColumn = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="rounded-md flex flex-col items-center h-full"
+      className="rounded-md flex flex-col items-stretch h-full"
     >
       {/* Cabeçalho da Coluna (agora é a área de arrastar) */}
       <div
@@ -111,7 +111,7 @@ const StoryCard = ({ story, priority = null, isDragOverlay = false }) => {
       {...listeners}
       {...attributes}
       className={`
-         flex flex-col flex-1 !max-w-xl items-center justify-start p-2 gap-1 text-xs font-normal text-foreground ${priority ? 'text-slate-50' : 'border border-border'}  rounded-md shadow-sm  transition-opacity duration-300 min-h-16 ${cursorClass}`}
+         flex flex-col flex-1 max-w-40 items-center justify-start p-2 gap-1 text-xs font-normal text-foreground ${priority ? 'text-slate-50' : 'border border-border'}  rounded-md shadow-sm  transition-opacity duration-300 min-h-16 ${cursorClass}`}
     >
       {!story.isTemporary && (
         <div className=" mr-auto">
@@ -524,7 +524,7 @@ const PrioritizationMatrix = ({ project, setProject }) => {
                           <DroppableCell
                             key={cellId}
                             id={cellId}
-                            className="min-h-40 min-w-40 max-w-60"
+                            className={` w-[${storiesInCell ? storiesInCell.length * 10 : 10}rem]    min-h-40 min-w-40`}
                           >
                             {storiesInCell && storiesInCell.length > 0 ? (
                               storiesInCell.map((story) => (
