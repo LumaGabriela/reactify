@@ -70,13 +70,18 @@ const SortablePriorityColumn = ({
       </div>
 
       {/* Área de Conteúdo (Cards) */}
-      <div className="p-2 gap-2 flex-1 items-center flex flex-col">
+      <div className="p-2 gap-2 flex-1 items-center flex flex-col w-full">
         {children}
       </div>
     </div>
   )
 }
-const StoryCard = ({ story, priority = null, isDragOverlay = false }) => {
+const StoryCard = ({
+  story,
+  priority = null,
+  isDragOverlay = false,
+  width = null,
+}) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: `story-${story.story_id}`,
@@ -98,11 +103,8 @@ const StoryCard = ({ story, priority = null, isDragOverlay = false }) => {
   if (story.isTemporary) {
     cursorClass = 'opacity-50 !cursor-not-allowed'
   } else if (isDragOverlay || isDragging) {
-    // O clone no overlay (isDragOverlay) OU o item original sendo arrastado (isDragging)
-    // devem ter o cursor 'grabbing'.
     cursorClass = 'cursor-grabbing'
   } else {
-    // O item original em seu estado normal.
     cursorClass = 'cursor-grab'
   }
 
@@ -113,7 +115,7 @@ const StoryCard = ({ story, priority = null, isDragOverlay = false }) => {
       {...listeners}
       {...attributes}
       className={`
-         flex flex-col flex-1 w-full min-w-20 max-w-40 items-center justify-start p-2 gap-1 text-xs font-normal text-foreground ${priority ? 'text-slate-50' : 'border border-border'}  rounded-md shadow-sm  transition-opacity duration-300 min-h-16 ${cursorClass}`}
+         flex flex-col flex-1 w-full min-w-36 max-w-56 items-center justify-start p-2 gap-1 text-xs font-normal text-foreground ${priority ? 'text-slate-50' : 'border border-border'}  rounded-md shadow-sm  transition-opacity duration-300  ${cursorClass}`}
     >
       {!story.isTemporary && (
         <div className=" mr-auto">
@@ -136,7 +138,7 @@ const GoalCard = ({ goal }) => {
   const selectedPriority = goalTypeColors[goal.priority] || goalTypeColors.bg
 
   return (
-    <Card className="bg-card  border border-border transition-all duration-300 ease-in-out p-0 min-h-40 w-40 rounded-md">
+    <Card className="bg-card  border border-border transition-all duration-300 ease-in-out p-0 h-32 w-full rounded-md">
       <CardContent className="p-2 h-full text-xs flex flex-col gap-2">
         <div className="gap-2 flex w-full items-center justify-center">
           <Badge
@@ -154,7 +156,7 @@ const GoalCard = ({ goal }) => {
         </div>
 
         {/* Área do Título (apenas exibição) */}
-        <p className="m-0 font-normal text-foreground break-words w-full min-h-[24px]">
+        <p className="m-0 font-normal text-foreground break-words w-full min-h-8">
           {goal.title}
         </p>
       </CardContent>
@@ -162,16 +164,15 @@ const GoalCard = ({ goal }) => {
   )
 }
 
-const DroppableCell = ({ id, children, className = '', width = 10 }) => {
+const DroppableCell = ({ id, children, className = '' }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: id,
   })
   return (
     <div
-      style={{ width: width + 'rem' }}
       ref={setNodeRef}
       className={`
-        flex flex-row  justify-center rounded-md transition-all duration-150 border border-slate-900/30
+        flex flex-wrap justify-center w-full rounded-md transition-all duration-150 p-2 gap-2 border border-slate-900/30
         ${isOver ? ' bg-card/60' : ''}
         ${className}
       `}
@@ -457,7 +458,7 @@ const PrioritizationMatrix = ({ project, setProject }) => {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <main className="flex flex-col  gap-4 p-4 md:p-6 bg-background text-foreground min-h-screen">
+      <main className="flex flex-col gap-2 py-2 bg-background text-foreground min-h-screen">
         {/* botoes de opcoes*/}
         <div className="w-full flex gap-3 justify-start items-center  relative">
           <EditPriorities
@@ -475,7 +476,7 @@ const PrioritizationMatrix = ({ project, setProject }) => {
           </h2>
           <DroppableCell
             id="story-list"
-            className="grid grid-cols-5 gap-2 p-2 items-start"
+            className="grid grid-cols-6 gap-2 p-2 items-start border-0"
           >
             {unassignedStories.length > 0 ? (
               unassignedStories.map((story) => {
@@ -496,8 +497,8 @@ const PrioritizationMatrix = ({ project, setProject }) => {
 
         <section className="flex-1">
           <section className="flex gap-2 justify-between">
-            <aside className="flex flex-col w-44 items-center bg-card  gap-2 rounded">
-              <span className="h-12 py-2 mb-1">Goals</span>
+            <aside className="flex flex-col w-64 items-center bg-card p-2 gap-2 rounded">
+              <span className="h-11 py-1 ">Goals</span>
               {project.goal_sketches
                 .sort((a, b) => a.type - b.type)
                 .map((goal) => (
@@ -524,16 +525,12 @@ const PrioritizationMatrix = ({ project, setProject }) => {
                       {Array.from({ length: GRID_ROWS }).map((_, rowIndex) => {
                         const cellId = `cell-${priority.id}-${rowIndex}`
                         const storiesInCell = prioritizationMatrix[cellId]
-                        const width = storiesInCell
-                          ? storiesInCell.length * 7
-                          : 10
 
                         return (
                           <DroppableCell
                             key={cellId}
                             id={cellId}
-                            width={width}
-                            className={`min-h-40 min-w-40`}
+                            className={`min-h-32 min-w-60 max-w-[24rem] `}
                           >
                             {storiesInCell && storiesInCell.length > 0 ? (
                               storiesInCell.map((story) => (

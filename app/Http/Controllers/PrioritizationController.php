@@ -21,7 +21,7 @@ class PrioritizationController extends Controller
 
     Story::where('id', $validatedData['story_id'])->update(['status' => 'prioritized']);
 
-    return back()->with(['message' => 'Prioritization matrix created successfully', 'status' => 'success']);
+    return back()->with(['message' => 'Story successfully prioritized', 'status' => 'success']);
   }
 
   public function update(Request $request, Prioritization $prioritization)
@@ -33,7 +33,7 @@ class PrioritizationController extends Controller
 
     $prioritization->update($validatedData);
 
-    return back()->with(['message' => 'Prioritization matrix updated successfully', 'status' => 'success']);
+    return back()->with(['message' => 'Story priority updated successfully', 'status' => 'success']);
   }
 
   public function destroy(Prioritization $prioritization)
@@ -42,6 +42,6 @@ class PrioritizationController extends Controller
 
     $prioritization->delete();
 
-    return back()->with(['message' => 'Prioritization matrix deleted successfully', 'status' => 'success']);
+    return back()->with(['message' => 'Story successfully removed from matrix', 'status' => 'success']);
   }
 }
