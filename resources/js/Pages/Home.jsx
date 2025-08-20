@@ -312,7 +312,7 @@ const Dashboard = ({}) => {
                           className="flex items-center gap-2 hover:underline"
                         >
                           <div
-                            className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`}
+                            className={`size-2.5 shrink-0 rounded-full ${color}`}
                           ></div>
                           {project.title}
                         </Link>

@@ -37,7 +37,6 @@ const StoryCard = ({ story, addEpicStory }) => {
             variant="outline"
             className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
           >
-            {/* Lógica para exibir 'SS' para 'system' e 'US' para 'user', seguido do ID. */}
             {`${story.type === 'system' ? 'SS' : 'US'}${story.id}`.toUpperCase()}
           </Badge>
         </div>
