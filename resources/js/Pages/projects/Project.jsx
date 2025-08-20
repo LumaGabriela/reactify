@@ -213,7 +213,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   }, [activeModelingMenu])
 
   useEffect(() => {
-    // console.log(project?.crc_cards)
+    console.log(project?.product_canvas)
   }, [project])
 
   const renderInceptionContent = () => {

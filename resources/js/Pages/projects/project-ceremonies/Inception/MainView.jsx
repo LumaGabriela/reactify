@@ -20,6 +20,7 @@ import ProgressIcon from '@/Components/ProgressIcon'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import TextareaAutosize from 'react-textarea-autosize'
+import { router } from '@inertiajs/react'
 
 // Helper to map variants to Tailwind classes
 const cardVariants = {
@@ -229,19 +230,45 @@ const ExpandableCard = ({
 }
 
 const MainView = ({ project = {}, setProject }) => {
-  const [productCanvas, setProductCanvas] = useState(
-    project?.product_canvas || {},
-  )
   const [date, setDate] = useState()
 
   // This function would be updated to save the new content
   const updateProductCanvas = async (prop, newContent) => {
-    // ... implementation for saving data
+    const productCanvasId = project.product_canvas.id
+    if (!productCanvasId) return
+
+    router.patch(
+      route('product-canvas.update', productCanvasId),
+      {
+        [prop]: newContent,
+      },
+      {
+        onSuccess: () => {
+          setProject((prev) => ({
+            ...prev,
+            product_canvas: { ...prev.product_canvas, [prop]: newContent },
+          }))
+        },
+      },
+    )
   }
 
   // This function would be updated to save the new content
-  const updateProject = async (prop, content) => {
-    // ... implementation for saving data
+  const updateProject = async (prop, newContent) => {
+    router.patch(
+      route('project.update', project.id),
+      {
+        description: newContent,
+      },
+      {
+        onSuccess: () => {
+          setProject((prev) => ({
+            ...prev,
+            description: newContent,
+          }))
+        },
+      },
+    )
   }
 
   return (
@@ -349,7 +376,7 @@ const MainView = ({ project = {}, setProject }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <ExpandableCard
           title="Problems"
-          content={productCanvas.issues}
+          content={project?.product_canvas?.issues}
           variant="destructive"
           icon={AlertCircle}
           placeholder="What problems does this project solve?"
@@ -357,7 +384,7 @@ const MainView = ({ project = {}, setProject }) => {
         />
         <ExpandableCard
           title="Solutions"
-          content={productCanvas.solutions}
+          content={project?.product_canvas?.solutions}
           variant="warning"
           icon={CheckCircle}
           placeholder="How does the project solve the problems?"
@@ -367,7 +394,7 @@ const MainView = ({ project = {}, setProject }) => {
         />
         <ExpandableCard
           title="Involved Personas"
-          content={productCanvas.personas}
+          content={project?.product_canvas?.personas}
           variant="success"
           icon={Users}
           placeholder="Who are the main users?"
@@ -377,7 +404,7 @@ const MainView = ({ project = {}, setProject }) => {
         />
         <ExpandableCard
           title="Restrictions"
-          content={productCanvas.restrictions}
+          content={project?.product_canvas?.restrictions}
           variant="accent"
           icon={Slash}
           placeholder="What are the project's limitations?"
@@ -387,7 +414,7 @@ const MainView = ({ project = {}, setProject }) => {
         />
         <ExpandableCard
           title="Is"
-          content={productCanvas.product_is}
+          content={project?.product_canvas?.product_is}
           variant="info"
           icon={Check}
           placeholder="What this product IS..."
@@ -397,7 +424,7 @@ const MainView = ({ project = {}, setProject }) => {
         />
         <ExpandableCard
           title="Is Not"
-          content={productCanvas.product_is_not}
+          content={project?.product_canvas?.product_is_not}
           variant="secondary"
           icon={X}
           placeholder="What this product IS NOT..."

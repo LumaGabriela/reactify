@@ -172,7 +172,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::prefix('product-canvas')->group(function () {
     Route::post('/', [ProductCanvasController::class, 'store'])->name('product-canvas.store');
     Route::patch('/{productCanvas}', [ProductCanvasController::class, 'update'])->name('product-canvas.update');
-    Route::delete('/{productCanvas}', [ProductCanvasController::class, 'destroy'])->name('product-canvas.delete');
+    Route::delete('/{productCanvas}', [ProductCanvasController::class, 'destroy'])->name('product-canvas.destroy');
   });
 
   Route::prefix('invest-card')->group(function () {

@@ -132,7 +132,7 @@ const Dashboard = ({}) => {
   }, [])
 
   useEffect(() => {
-    console.log(currentProjects)
+    // console.log(currentProjects?.product_canvas)
   }, [currentProjects])
 
   useEcho(`projects`, 'ProjectUpdated', (e) => {
