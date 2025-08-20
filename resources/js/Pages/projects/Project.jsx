@@ -30,7 +30,8 @@ import MainLayout from '@/Layouts/MainLayout'
 import Sprint from './project-ceremonies/Sprint/Sprint'
 import { tooltipInfo } from '@/lib/projectData.js'
 import Inspection from './project-ceremonies/Inspection/Inspection.jsx'
-
+//chatbot
+import ChatBot from './ChatBot.jsx'
 const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const [project, setProject] = useState({ ...projectDB })
   const [isEditing, setIsEditing] = useState(false)
@@ -213,7 +214,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   }, [activeModelingMenu])
 
   useEffect(() => {
-    console.log(project?.product_canvas)
+    // console.log(project?.product_canvas)
   }, [project])
 
   const renderInceptionContent = () => {
@@ -368,6 +369,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
             <Sprint project={project} setProject={setProject} />
           </TabsContent>
         </Tabs>
+        <ChatBot />
       </div>
     </div>
   )
