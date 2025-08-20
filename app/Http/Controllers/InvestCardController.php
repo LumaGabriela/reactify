@@ -35,7 +35,7 @@ class InvestCardController extends Controller
   {
     $validated = $request->validate([
       'independent' => 'nullable|boolean',
-      'negociable' => 'nullable|boolean',
+      'negotiable' => 'nullable|boolean',
       'valuable' => 'nullable|boolean',
       'estimable' => 'nullable|boolean',
       'small' => 'nullable|boolean',

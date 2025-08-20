@@ -14,16 +14,6 @@ class StoryObserver
   public function created(Story $story): void
   {
     $this->updateProject($story);
-    InvestCard::create([
-      'story_id' => $story->id,
-      'project_id' => $story->project_id,
-      'independent' => false,
-      'negotiable' => false,
-      'valuable' => false,
-      'estimable' => false,
-      'small' => false,
-      'testable' => false,
-    ]);
   }
 
   public function updated(Story $story): void

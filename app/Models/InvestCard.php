@@ -10,7 +10,7 @@ class InvestCard extends Model
     'story_id',
     'project_id',
     'independent',
-    'negociable',
+    'negotiable',
     'valuable',
     'estimable',
     'small',

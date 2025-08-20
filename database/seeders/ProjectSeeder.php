@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Actions\CreateStoryWithInvestCard;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -197,40 +198,41 @@ class ProjectSeeder extends Seeder
     ]);
 
     // Criar Stories
-    DB::table("stories")->insert([
+    $storiesData = [
       [
         "title" => "Como usuário, quero criar uma conta para acessar o aplicativo",
         "type" => "user",
-        "project_id" => $projectId,
-        "status" => "draft",
-        "created_at" => now(),
-        "updated_at" => now(),
       ],
       [
         "title" => "Como usuário, quero criar e gerenciar playlists para organizar minhas músicas",
         "type" => "user",
-        "project_id" => $projectId,
-        "status" => "draft",
-        "created_at" => now(),
-        "updated_at" => now(),
       ],
       [
         "title" => "Como administrador, quero gerenciar usuários para manter o controle de acesso ao sistema",
         "type" => "system",
-        "project_id" => $projectId,
-        "status" => "draft",
-        "created_at" => now(),
-        "updated_at" => now(),
       ],
       [
         "title" => "Guaxinim fofo",
         "type" => "system",
-        "project_id" => $projectId,
-        "status" => "draft",
-        "created_at" => now(),
-        "updated_at" => now(),
       ],
-    ]);
+    ];
+
+    DB::transaction(function () use ($storiesData, $projectId) {
+      // 2. Obtenha uma instância da sua Action.
+      //    Usar app() é a melhor prática, pois o Service Container do Laravel resolverá quaisquer dependências que a Action possa ter.
+      $createStoryAction = app(CreateStoryWithInvestCard::class);
+
+      // 3. Itere sobre o array e execute a Action para cada story.
+      foreach ($storiesData as $storyData) {
+        // Adicione os dados que são comuns a todos, se necessário
+        $dataToCreate = array_merge($storyData, [
+          'project_id' => $projectId,
+        ]);
+
+        // Execute a action com os dados combinados
+        $createStoryAction->execute($dataToCreate);
+      }
+    });
 
     // Criar Journey com vários steps
     $journeySteps = [

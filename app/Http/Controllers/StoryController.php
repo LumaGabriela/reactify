@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\CreateStoryWithInvestCard;
 use App\Models\Story;
 use App\Http\Requests\StoreStoryRequest;
 use App\Http\Requests\BulkStoreStoryRequest;
@@ -12,25 +13,25 @@ use Illuminate\Support\Facades\Log;
 
 class StoryController extends Controller
 {
-  public function store(StoreStoryRequest $request)
+  public function store(StoreStoryRequest $request, CreateStoryWithInvestCard $createStoryAction)
   {
     $validated = $request->validated();
 
-    Story::create($validated);
+    $createStoryAction->execute($validated);
 
-    Log::info('Story created', $validated);
+    Log::info('Story created', $createStoryAction);
     return back();
   }
 
-  public function bulk(BulkStoreStoryRequest $request)
+  public function bulk(BulkStoreStoryRequest $request, CreateStoryWithInvestCard $createStoryAction)
   {
     $validated = $request->validated();
 
     Log::warning('Bulk Story created', $validated['stories']);
 
-    DB::transaction(function () use ($validated) {
+    DB::transaction(function () use ($validated, $createStoryAction) {
       foreach ($validated['stories'] as $story) {
-        Story::create($story);
+        $createStoryAction->execute($story);
       }
     });
 
@@ -65,36 +66,36 @@ class StoryController extends Controller
 
   public function addToSprint(Request $request, Story $story)
   {
-      $validated = $request->validate([
-          'sprint_id' => 'required|exists:sprints,id',
-          'kanban_status' => 'sometimes|in:todo,in_progress,review,done',
-          'position' => 'sometimes|integer|min:0'
-      ]);
+    $validated = $request->validate([
+      'sprint_id' => 'required|exists:sprints,id',
+      'kanban_status' => 'sometimes|in:todo,in_progress,review,done',
+      'position' => 'sometimes|integer|min:0'
+    ]);
 
-      $story->sprints()->attach($validated['sprint_id'], [
-          'kanban_status' => $validated['kanban_status'] ?? 'todo',
-          'position' => $validated['position'] ?? 0
-      ]);
+    $story->sprints()->attach($validated['sprint_id'], [
+      'kanban_status' => $validated['kanban_status'] ?? 'todo',
+      'position' => $validated['position'] ?? 0
+    ]);
 
-      return back()->with(['status' => 'success', 'message' => 'Story added to sprint']);
+    return back()->with(['status' => 'success', 'message' => 'Story added to sprint']);
   }
 
   public function removeFromSprint(Story $story, $sprintId)
   {
-      $story->sprints()->detach($sprintId);
-      return back()->with(['status' => 'success', 'message' => 'Story removed from sprint']);
+    $story->sprints()->detach($sprintId);
+    return back()->with(['status' => 'success', 'message' => 'Story removed from sprint']);
   }
 
   public function updateKanbanStatus(Request $request, Story $story, $sprintId)
   {
-      $validated = $request->validate([
-          'kanban_status' => 'required|in:todo,in_progress,review,done',
-          'position' => 'sometimes|integer|min:0'
-      ]);
+    $validated = $request->validate([
+      'kanban_status' => 'required|in:todo,in_progress,review,done',
+      'position' => 'sometimes|integer|min:0'
+    ]);
 
-      $story->sprints()->updateExistingPivot($sprintId, $validated);
+    $story->sprints()->updateExistingPivot($sprintId, $validated);
 
-      return back()->with(['status' => 'success', 'message' => 'Kanban status updated']);
+    return back()->with(['status' => 'success', 'message' => 'Kanban status updated']);
   }
 
   public function destroy(Story $story)
@@ -104,6 +105,4 @@ class StoryController extends Controller
     Log::warning('Story deleted', ['id' => $story->id]);
     return back();
   }
-
-
 }

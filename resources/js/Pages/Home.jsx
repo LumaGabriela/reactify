@@ -149,9 +149,6 @@ const Dashboard = ({}) => {
       prev.filter((project) => project.id !== e.projectId),
     )
   })
-  const raco = projects[0]?.users.map((user) => user.provider_avatar)
-
-  console.log(raco)
 
   return (
     <div className="bg-background text-white p-6 w-full mx-auto ">

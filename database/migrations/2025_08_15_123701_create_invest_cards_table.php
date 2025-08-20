@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('invest_cards', function (Blueprint $table) {
       $table->id();
       $table->boolean('independent')->default(false);
-      $table->boolean('negociable')->default(false);
+      $table->boolean('negotiable')->default(false);
       $table->boolean('valuable')->default(false);
       $table->boolean('estimable')->default(false);
       $table->boolean('small')->default(false);
