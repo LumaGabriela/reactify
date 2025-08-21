@@ -1,10 +1,4 @@
-import {
-  ArrowRight,
-  CornerDownRight,
-  X,
-  Check,
-  LoaderCircle,
-} from 'lucide-react'
+import { ArrowRight, CornerDownRight, LoaderCircle } from 'lucide-react'
 import MotionDivOptions from '@/Components/MotionDivOptions'
 import { storyVariants } from '../StoryDiscovery/Stories'
 import { router } from '@inertiajs/react'

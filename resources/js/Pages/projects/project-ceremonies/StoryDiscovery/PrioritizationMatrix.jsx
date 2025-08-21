@@ -514,7 +514,7 @@ const PrioritizationMatrix = ({ project, setProject }) => {
                   const priorityA = priorityOrder[a.priority] // Pega o valor numérico para o tipo de 'a'
                   const priorityB = priorityOrder[b.priority] // Pega o valor numérico para o tipo de 'b'
 
-                  return priorityA - priorityB // Subtrai para ordenar
+                  return priorityB - priorityA // Subtrai para ordenar
                 })
                 .map((goal) => (
                   <GoalCard key={goal.id} goal={goal}>
