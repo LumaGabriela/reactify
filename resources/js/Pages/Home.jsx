@@ -10,6 +10,96 @@ import {
 import { Link, router, usePage } from '@inertiajs/react'
 import MainLayout from '@/Layouts/MainLayout'
 
+const ProjectCard = ({ project, toggleActiveProject, deleteProject }) => {
+  return (
+    <AlertDialog>
+      <Card className="flex flex-col justify-between h-64 w-52 hover:shadow-md">
+        {/* CABEÇALHO: Título do projeto e menu de ações */}
+
+        <CardHeader className="flex-row items-center justify-between">
+          <span />
+          <CardTitle className="text-md">
+            <Link
+              href={route('project.show', project.id)}
+              className="flex items-center gap-2 hover:underline"
+            >
+              {/* <div className={`size-2.5 shrink-0 rounded-full ${color}`}></div>*/}
+              {project.title}
+            </Link>
+          </CardTitle>
+
+          {/* MENU DE AÇÕES */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <EllipsisVertical className="size-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem
+                onSelect={() => toggleActiveProject(project.id)}
+              >
+                <Power
+                  className={`mr-2 size-4 ${project.active ? 'text-success' : 'text-destructive'}`}
+                />
+                <span>{project.active ? 'Desativar' : 'Ativar'}</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                  <Trash2 className="mr-2 size-4" />
+                  <span>Excluir</span>
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </CardHeader>
+
+        {/* CONTEÚDO: Descrição e contagem de membros */}
+        <CardContent className="">
+          <Link href={route('project.show', project.id)}>
+            <CardDescription>{project.description}</CardDescription>
+          </Link>
+        </CardContent>
+
+        {/* RODAPÉ: Status e badge de Ativo/Inativo */}
+        <CardFooter>
+          <AvatarCircles
+            numPeople={project?.users.length}
+            avatarUrls={project?.users.map(
+              (user) =>
+                ({
+                  imageUrl: user.provider_avatar,
+                  profileUrl: '',
+                }) || {},
+            )}
+          />
+        </CardFooter>
+      </Card>
+
+      {/* CONTEÚDO DO DIÁLOGO DE CONFIRMAÇÃO */}
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Excluir "{project.title}"?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Esta ação não pode ser desfeita. Isso excluirá permanentemente o
+            projeto e todos os seus dados associados.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => deleteProject(project.id)}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Excluir
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
 const Dashboard = ({}) => {
   const props = usePage().props
   const projects = props.auth.projects || []
@@ -263,25 +353,26 @@ const Dashboard = ({}) => {
 
       {/* Task Overview */}
       <div className="my-8">
-        <p className="font-semibold text-lg mb-4 text-foreground">
-          Task Overview
-        </p>
+        <p className="font-semibold text-lg mb-4 text-foreground">Projects</p>
 
         <div className="flex space-x-2 mb-6">
           {taskFilters.map((filter, index) => (
-            <button
+            <Button
+              variant="ghost"
               onClick={() => handleFilterChange(filter)}
-              className={`px-4 py-1 rounded transition-colors duration-200 ${
-                filter.active ? 'bg-gray-800 text-white' : 'text-gray-400'
+              className={`px-4 py-1 hover:bg-secondary/50 rounded transition-colors duration-200 ${
+                filter.active
+                  ? 'bg-secondary text-foreground'
+                  : 'text-muted-foreground'
               }`}
               key={index}
             >
               {filter.name}
-            </button>
+            </Button>
           ))}
         </div>
 
-        <div className="tasks grid grid-cols-3 gap-4">
+        <div className="tasks flex gap-4">
           {/* Todo Task */}
           {projects &&
             filteredProjects.map((project, index) => {
@@ -302,101 +393,12 @@ const Dashboard = ({}) => {
               }
 
               return (
-                <AlertDialog key={index}>
-                  <Card className="flex h-full flex-col transition-all hover:shadow-md">
-                    {/* CABEÇALHO: Título do projeto e menu de ações */}
-                    <CardHeader className="flex-row items-center justify-between">
-                      <CardTitle className="text-lg">
-                        <Link
-                          href={route('project.show', project.id)}
-                          className="flex items-center gap-2 hover:underline"
-                        >
-                          <div
-                            className={`size-2.5 shrink-0 rounded-full ${color}`}
-                          ></div>
-                          {project.title}
-                        </Link>
-                      </CardTitle>
-
-                      {/* MENU DE AÇÕES */}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <EllipsisVertical className="size-5" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem
-                            onSelect={() => toggleActiveProject(project.id)}
-                          >
-                            <Power
-                              className={`mr-2 size-4 ${project.active ? 'text-success' : 'text-destructive'}`}
-                            />
-                            <span>
-                              {project.active ? 'Desativar' : 'Ativar'}
-                            </span>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <AlertDialogTrigger asChild>
-                            <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
-                              <Trash2 className="mr-2 size-4" />
-                              <span>Excluir</span>
-                            </DropdownMenuItem>
-                          </AlertDialogTrigger>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </CardHeader>
-
-                    {/* CONTEÚDO: Descrição e contagem de membros */}
-                    <CardContent className="">
-                      <Link href={route('project.show', project.id)}>
-                        <CardDescription>{project.description}</CardDescription>
-                      </Link>
-                    </CardContent>
-
-                    {/* RODAPÉ: Status e badge de Ativo/Inativo */}
-                    <CardFooter className="flex justify-between">
-                      <Badge
-                        variant={project.active ? 'default' : 'destructive'}
-                      >
-                        {project.active ? 'Ativo' : 'Inativo'}
-                      </Badge>
-                      <AvatarCircles
-                        numPeople={project?.users.length}
-                        avatarUrls={project?.users.map(
-                          (user) =>
-                            ({
-                              imageUrl: user.provider_avatar,
-                              profileUrl: '',
-                            }) || {},
-                        )}
-                      />
-                    </CardFooter>
-                  </Card>
-
-                  {/* CONTEÚDO DO DIÁLOGO DE CONFIRMAÇÃO */}
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Excluir "{project.title}"?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Esta ação não pode ser desfeita. Isso excluirá
-                        permanentemente o projeto e todos os seus dados
-                        associados.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => deleteProject(project.id)}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      >
-                        Excluir
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  toggleActiveProject={toggleActiveProject}
+                  deleteProject={deleteProject}
+                />
               )
             })}
         </div>

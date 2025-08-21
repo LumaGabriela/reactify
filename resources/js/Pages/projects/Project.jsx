@@ -289,7 +289,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
           }
           className="w-full  "
         >
-          <div className="flex gap-4 items-center justify-start w-full">
+          <div className="flex  gap-4 items-center justify-start w-full">
             <TabsList>
               <TabsTrigger value="inception">Inception</TabsTrigger>
               <TabsTrigger value="story-discovery">Story Discovery</TabsTrigger>
@@ -302,7 +302,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
             {/* title and change title button  */}
             <div
               id="project-title-content"
-              className="flex gap-4 px-4 w-full cursor-pointer"
+              className="flex justify-between gap-4 px-4 w-1/2 cursor-pointer"
             >
               {isEditing ? (
                 <Input
@@ -312,10 +312,10 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
                   onKeyUp={(e) => {
                     if (e.key === 'Enter') updateProjectTitle()
                   }}
-                  className="bg-background  !text-3xl font-bold text-foreground text-center h-full p-0 border-0 m-0"
+                  className="bg-background !text-3xl font-bold text-foreground  h-full p-0 border-0 m-0"
                 />
               ) : (
-                <p className="bg-background text-3xl font-bold text-foreground text-center h-full w-full p-0 border-0 m-0">
+                <p className="bg-background text-left text-3xl font-bold text-foreground  h-full w-full p-0 border-0 m-0">
                   {project.title}
                 </p>
               )}
