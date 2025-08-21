@@ -186,6 +186,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/', [NotificationController::class, 'store'])->name('notifications.store');
     Route::patch('/{notification}', [NotificationController::class, 'update'])->name('notifications.update');
+    Route::patch('/read', [NotificationController::class, 'read'])->name('notifications.read');
     Route::delete('/{notification}', [NotificationController::class, 'destroy'])->name('notifications.delete');
   });
 });

@@ -11,4 +11,10 @@ class NotificationController extends Controller
   {
     return Inertia::render('Notifications');
   }
+
+  public function read(Request $request)
+  {
+    $request->user()->unreadNotifications->markAsRead();
+    return back();
+  }
 }
