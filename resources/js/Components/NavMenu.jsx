@@ -19,7 +19,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
         {menuItems.map((menuItem, index) => (
           <div
             key={index}
-            className={`flex-1 z-20 h-9 flex items-center justify-evenly text-center text-foreground font-medium text-lg cursor-pointer
+            className={`flex-1 z-20 h-9 flex items-center justify-evenly text-center font-medium text-lg cursor-pointer
               border-primary border-b-2 slide-in
               ${index === 0 ? 'rounded-tl-md rounded-bl-md' : ''}
               ${
@@ -27,7 +27,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
                   ? 'rounded-tr-md rounded-br-md'
                   : ''
               }
-              ${menuItem.value ? 'bg-primary text-white' : 'bg-card'}`}
+              ${menuItem.value ? 'bg-primary text-background' : 'text-muted-foreground bg-card'}`}
             onClick={() => handleItemClick(menuItem)}
           >
             {menuItem.label}
@@ -40,7 +40,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
                   size={15}
                 />
               </PopoverTrigger>
-              <PopoverContent className="bg-background text-white ">
+              <PopoverContent className="bg-background text-foreground ">
                 {menuItem.tooltip.description || 'Description'}
                 <PopoverArrow className="fill-background" />
               </PopoverContent>
