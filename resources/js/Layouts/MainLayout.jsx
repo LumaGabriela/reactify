@@ -11,10 +11,12 @@ const GuestLayout = ({ children }) => {
     <div className="guestlayout flex min-h-screen w-full flex-col items-center bg-background pt-6 sm:justify-center sm:pt-0">
       <Particles className="absolute inset-0 w-full h-full" />
       <div className="mb-12">
-        <Link href="/">
-          <h1 className="text-6xl font-bold text-white mb-6 animate-fade-in-up">
-            <span className="text-purple-2">Reactify</span>
-          </h1>
+        <Link
+          as={'button'}
+          href="/"
+          className="text-6xl font-bold text-primary mb-6 animate-fade-in-up"
+        >
+          Reactify
         </Link>
       </div>
 

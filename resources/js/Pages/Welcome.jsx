@@ -11,7 +11,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         <Particles className="absolute inset-0 w-full h-full" />
         <div className="relative flex min-h-screen flex-col items-center justify-center selection:bg-primary/20">
           {/* Header */}
-          <header className="absolute top-0 w-full px-6 py-6 flex justify-between items-center">
+          {/* <header className="absolute top-0 w-full px-6 py-6 flex justify-between items-center">
             <div className="text-2xl font-bold text-primary">Reactify</div>
             <nav className="flex gap-4">
               {auth.user ? (
@@ -38,7 +38,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 </>
               )}
             </nav>
-          </header>
+          </header>*/}
 
           {/* Hero Section */}
           <div className="flex flex-col items-center text-center py-32 px-6">
@@ -53,8 +53,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-16">
               <Link
+                as={'button'}
                 href={route('register')}
-                className="px-8 py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="px-8 py-4 bg-primary text-background hover:bg-primary/90 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 Registre
               </Link>
