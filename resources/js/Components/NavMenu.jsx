@@ -19,7 +19,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
         {menuItems.map((menuItem, index) => (
           <div
             key={index}
-            className={`flex-1 z-20 h-9 flex items-center justify-evenly text-center font-medium text-lg cursor-pointer
+            className={`flex-1 z-20 h-9 flex items-center justify-evenly text-center font-medium text-base cursor-pointer
               border-primary border-b-2 slide-in
               ${index === 0 ? 'rounded-tl-md rounded-bl-md' : ''}
               ${
