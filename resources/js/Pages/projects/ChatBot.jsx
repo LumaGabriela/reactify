@@ -2,10 +2,6 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-// Componentes do Shadcn/UI e ícones
-import { Button } from '@/components/ui/button' // Adapte o caminho se necessário
-import { Input } from '@/components/ui/input' // Vamos usar o Input do shadcn também
 import { MessageSquare, X, SendHorizontal } from 'lucide-react'
 
 /**
@@ -16,10 +12,41 @@ import { MessageSquare, X, SendHorizontal } from 'lucide-react'
  * @returns {JSX.Element} O componente ChatBot renderizado.
  */
 const ChatBot = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      text: 'Olá! 👋 Como posso te ajudar hoje sobre o sistema?',
+      sender: 'bot',
+      timestamp: new Date().toISOString(),
+    },
+    {
+      id: 2,
+      text: 'Gostaria de .........',
+      sender: 'user',
+      timestamp: new Date().toISOString(),
+    },
+  ])
+  const [isOpen, setIsOpen] = useState(true)
+  const [message, setMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const toggleChat = () => {
     setIsOpen((prevState) => !prevState)
+  }
+  const handleSendMessage = () => {
+    if (message.trim() === '') return
+
+    // setIsLoading(true)
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        id: prevMessages.length + 1,
+        text: message,
+        sender: 'user',
+        timestamp: new Date().toISOString(),
+      },
+    ])
+    setMessage('')
   }
 
   return (
@@ -39,46 +66,66 @@ const ChatBot = () => {
             aria-labelledby="chat-heading"
           >
             {/* Cabeçalho do Chat */}
-            <div className="flex justify-between items-center p-4 bg-primary text-primary-foreground rounded-t-lg">
-              <h3 id="chat-heading" className="text-lg font-semibold">
+            <header className="flex justify-between items-center p-4 bg-primary text-primary-foreground rounded-t-lg">
+              <h3 id="chat-heading" className="text-base font-semibold">
                 Assistente Virtual
               </h3>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={toggleChat}
-                className="h-8 w-8 hover:bg-primary-foreground/10"
+                className="size-5"
               >
-                <X className="h-5 w-5" />
+                <X className="size-5" />
               </Button>
-            </div>
+            </header>
 
             {/* Corpo do Chat (área de mensagens) */}
-            <div className="flex-1 text-sm p-4 overflow-y-auto bg-background space-y-4">
+            <main className="flex-1 text-xs font-normal p-4 overflow-y-auto bg-background flex flex-col gap-2">
               {/* Mensagem de boas-vindas do bot */}
-              <div className="flex justify-start">
-                <div className="p-3 rounded-lg bg-muted text-muted-foreground max-w-xs">
-                  <p>Olá! 👋 Como posso te ajudar hoje sobre o sistema?</p>
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`relative flex items-center ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`rounded-lg px-4 py-2 ${message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
+                  >
+                    {message.text}
+                  </div>
+                  <span
+                    style={{
+                      clipPath: 'polygon(0 0, 50% 100%, 100% 0)',
+                    }}
+                    className={`absolute bottom-0 size-3 block translate-y-1/2 ${message.sender === 'user' ? 'bg-primary text-primary-foreground -rotate-45 translate-x-1/2' : 'bg-secondary text-secondary-foreground rotate-45 -translate-x-1/2'}`}
+                  />
                 </div>
-              </div>
-              {/* Exemplo de mensagem do usuário */}
-              <div className="flex justify-end">
-                <div className="p-3 rounded-lg bg-primary text-primary-foreground max-w-xs">
-                  <p>Gostaria de saber como criar um novo relatório.</p>
-                </div>
-              </div>
-            </div>
+              ))}
+            </main>
 
             {/* Rodapé do Chat (campo de input) */}
             <div className="p-4 border-t border-border bg-card rounded-b-lg">
               <div className="flex items-center space-x-2">
                 <Input
+                  disabled={isLoading}
                   type="text"
                   placeholder="Digite sua pergunta..."
                   className="flex-1"
+                  value={message}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSendMessage()
+                    }
+                  }}
+                  onChange={(e) => setMessage(e.target.value)}
                 />
-                <Button size="icon" aria-label="Enviar mensagem">
-                  <SendHorizontal className="h-5 w-5" />
+                <Button
+                  disabled={isLoading}
+                  size="icon"
+                  aria-label="Enviar mensagem"
+                  onClick={handleSendMessage}
+                >
+                  <SendHorizontal className="size-5" />
                 </Button>
               </div>
             </div>
