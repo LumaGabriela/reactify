@@ -21,12 +21,12 @@ const ChatBot = () => {
     },
     {
       id: 2,
-      text: 'Gostaria de .........',
+      text: 'Gostaria de ...',
       sender: 'user',
       timestamp: new Date().toISOString(),
     },
   ])
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 

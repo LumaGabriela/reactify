@@ -19,7 +19,7 @@ class StoryController extends Controller
 
     $createStoryAction->execute($validated);
 
-    Log::info('Story created', $createStoryAction);
+    Log::info('Story created');
     return back();
   }
 
