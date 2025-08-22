@@ -106,11 +106,11 @@ const EpicStoryCard = ({
     })
   }
   return (
-    <section className="epicStory flex flex-1 items-center  max-w-md md:max-w-2xl gap-1">
+    <section className="epicStory flex flex-1 items-center  max-w-md md:max-w-4xl gap-1">
       {lastElement ? (
-        <CornerDownRight className="text-border size-5 " />
+        <CornerDownRight className="text-primary size-5 " />
       ) : (
-        <ArrowRight className="text-border size-5 " />
+        <ArrowRight className="text-primary size-5 " />
       )}
       <div
         onMouseEnter={() => !isEditing && setIsHovered(true)} // Desativa o hover durante a edição
@@ -126,20 +126,18 @@ const EpicStoryCard = ({
 
         <div
           className={`
-            flex flex-col flex-1 items-center justify-start p-2 gap-2 text-xs font-normal text-foreground bg-card
+            flex  flex-1 items-start justify-start p-2 gap-2 text-xs font-normal text-foreground bg-card
             border border-border rounded-md shadow-sm transition-opacity duration-300 min-h-16
           `}
         >
-          <div className="mr-auto">
-            <Badge
-              variant="outline"
-              className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
-            >
-              {`${story.type === 'system' ? 'SS' : 'US'}${story.id}.${
-                isTemporary(epicStory.id) ? '' : epicStory.id
-              }`.toUpperCase()}
-            </Badge>
-          </div>
+          <Badge
+            variant="outline"
+            className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
+          >
+            {`${story.type === 'system' ? 'SS' : 'US'}${story.id}.${
+              isTemporary(epicStory.id) ? '' : epicStory.id
+            }`.toUpperCase()}
+          </Badge>
 
           {/* 🎨 RENDERIZAÇÃO CONDICIONAL: MODO DE EDIÇÃO OU VISUALIZAÇÃO */}
           {isEditing ? (
@@ -208,7 +206,7 @@ const EpicStories = ({ project, setProject }) => {
     router.post(route('epic-story.store'), {
       story_id: storyId,
       project_id: project.id,
-      title: 'Nova Epic Story',
+      title: 'Nova Story',
     })
     setProject((prevProject) => ({
       ...prevProject,
@@ -217,7 +215,7 @@ const EpicStories = ({ project, setProject }) => {
         {
           story_id: storyId,
           project_id: project.id,
-          title: 'Nova Epic Story',
+          title: 'Nova Story',
           id: `temp-${new Date()}`,
         },
       ],
@@ -227,10 +225,6 @@ const EpicStories = ({ project, setProject }) => {
   return (
     <section className="p-2 flex flex-col gap-2">
       <div className="flex flex-col gap-1">
-        <div className="flex w-full">
-          <span className="w-52" />
-          <InfoButton data={tooltipInfo.epicStory} />
-        </div>
         {project?.stories?.map((story, i) => {
           const relatedEpics = epicsByStoryId.get(story.id) || []
           return (

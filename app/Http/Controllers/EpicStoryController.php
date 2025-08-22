@@ -17,7 +17,7 @@ class EpicStoryController extends Controller
 
     $story = EpicStory::create($validated);
 
-    return back()->with(['status' => 'success', 'message' => 'Epic Story created successfully']);
+    return back()->with(['status' => 'success', 'message' => 'Story created successfully']);
   }
 
   public function update(Request $request, EpicStory $story)
@@ -28,13 +28,13 @@ class EpicStoryController extends Controller
 
     $story->update($validated);
 
-    return back()->with(['status' => 'success', 'message' => 'Epic Story updated successfully']);
+    return back()->with(['status' => 'success', 'message' => 'Story updated successfully']);
   }
 
   public function destroy(EpicStory $story)
   {
     $story->delete();
 
-    return back()->with(['status' => 'success', 'message' => 'Epic Story deleted successfully']);
+    return back()->with(['status' => 'success', 'message' => 'Story deleted successfully']);
   }
 }

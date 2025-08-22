@@ -107,11 +107,11 @@ const BusinessRuleCard = ({
   }
 
   return (
-    <section className="businessRule flex flex-1 items-center max-w-md md:max-w-2xl gap-1">
+    <section className="businessRule flex flex-1 items-center max-w-md md:max-w-4xl gap-1">
       {lastElement ? (
-        <CornerDownRight className="text-border size-5 " />
+        <CornerDownRight className="text-primary size-5 " />
       ) : (
-        <ArrowRight className="text-border size-5 " />
+        <ArrowRight className="text-primary size-5 " />
       )}
       <div
         onMouseEnter={() => !isEditing && setIsHovered(true)}
@@ -127,20 +127,18 @@ const BusinessRuleCard = ({
 
         <div
           className={`
-            flex flex-col flex-1 items-center justify-start p-2 gap-2 text-xs font-normal text-foreground bg-card
+            flex flex-row flex-1 items-start justify-start p-2 gap-2 text-xs font-normal text-foreground bg-card
             border border-border rounded-md shadow-sm transition-opacity duration-300 min-h-16
           `}
         >
-          <div className="mr-auto">
-            <Badge
-              variant="outline"
-              className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
-            >
-              {`BR${story.id}.${
-                isTemporary(businessRule.id) ? '' : businessRule.id
-              }`.toUpperCase()}
-            </Badge>
-          </div>
+          <Badge
+            variant="outline"
+            className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
+          >
+            {`BR${
+              isTemporary(businessRule.id) ? '' : businessRule.id
+            }`.toUpperCase()}
+          </Badge>
 
           {/* 🎨 RENDERIZAÇÃO CONDICIONAL: MODO DE EDIÇÃO OU VISUALIZAÇÃO */}
           {isEditing ? (
@@ -212,42 +210,32 @@ const BusinessRules = ({ project, setProject }) => {
   }
 
   return (
-    <section className="p-2 flex flex-col gap-2">
-      <div className="flex flex-col gap-1">
-        <div className="flex w-full">
-          <span className="w-52" />
-          {/* Certifique-se que tooltipInfo.businessRule existe */}
-          <InfoButton data={tooltipInfo.businessRule} />
-        </div>
-        {project?.stories?.map((story) => {
-          const relatedBusinessRules =
-            businessRulesByStoryId.get(story.id) || []
-          return (
-            <section className="py-1 flex gap-1 items-stretch" key={story.id}>
-              <StoryCard
-                story={story}
-                addBusinessRule={() => addBusinessRule(story.id)}
-              />
+    <section className="p-2 flex flex-col gap-2 ">
+      {project?.stories?.map((story) => {
+        const relatedBusinessRules = businessRulesByStoryId.get(story.id) || []
+        return (
+          <section className="py-1 flex gap-1 items-stretch" key={story.id}>
+            <StoryCard
+              story={story}
+              addBusinessRule={() => addBusinessRule(story.id)}
+            />
 
-              <div className="flex flex-col gap-1 w-full">
-                {[...relatedBusinessRules]
-                  .sort((a, b) => a.id - b.id)
-                  .map((businessRule, index, array) => (
-                    <BusinessRuleCard
-                      key={businessRule.id}
-                      story={story}
-                      businessRule={businessRule}
-                      lastElement={
-                        index === array.length - 1 && array.length > 1
-                      }
-                      setProject={setProject}
-                    />
-                  ))}
-              </div>
-            </section>
-          )
-        })}
-      </div>
+            <div className="flex flex-col gap-1 w-full">
+              {[...relatedBusinessRules]
+                .sort((a, b) => a.id - b.id)
+                .map((businessRule, index, array) => (
+                  <BusinessRuleCard
+                    key={businessRule.id}
+                    story={story}
+                    businessRule={businessRule}
+                    lastElement={index === array.length - 1 && array.length > 1}
+                    setProject={setProject}
+                  />
+                ))}
+            </div>
+          </section>
+        )
+      })}
     </section>
   )
 }

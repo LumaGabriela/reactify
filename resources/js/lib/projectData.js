@@ -52,7 +52,7 @@ const tooltipInfo = {
   epicStories: {
     title: 'Epic Stories',
     description:
-      'As histórias épicas são relatos de eventos que ocorrem em um contexto específico, como a criação de contas para acessar o sistema, a gestão de playlists para organizar músicas e outras funcionalidades voltadas para a experiência do usuário.',
+      'As histórias épicas são histórias de complexas o bastante que necessitam ser divididas em várias histórias de usuário para serem implementadas.',
   },
   businessRules: {
     title: 'Business Rules',
@@ -126,10 +126,10 @@ const tooltipInfo = {
   epicStory: {
     title: 'O que é uma História Epica?',
     description:
-      'As histórias épicas são histórias de alto nível que descrevem um conjunto de funcionalidades relacionadas as historias originais de modo que se tornaram itens separados',
+      'As histórias épicas são histórias de complexas o bastante que necessitam ser divididas em várias histórias de usuário para serem implementadas.',
     classNames: {
       badge: 'bg-orange-600 ',
-      button: 'max-w-md md:max-w-2xl',
+      // button: 'max-w-md md:max-w-2xl',
     },
   },
   businessRule: {

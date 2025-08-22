@@ -128,9 +128,9 @@ const InvestCard = ({ investCard, lastElement = false, setProject }) => {
       className="investCard flex flex-1 items-center max-w-lg gap-2"
     >
       {lastElement ? (
-        <CornerDownRight className="text-border size-5 shrink-0" />
+        <CornerDownRight className="text-primary size-5 shrink-0" />
       ) : (
-        <ArrowRight className="text-border size-5 shrink-0" />
+        <ArrowRight className="text-primary size-5 shrink-0" />
       )}
       <div className="relative group w-full">
         {/* {!isTemporary(investCard.id) && (
