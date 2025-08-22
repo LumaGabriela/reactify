@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\InvestCardStatus;
 use App\Models\Story;
 use Illuminate\Support\Facades\DB;
 
@@ -26,12 +27,12 @@ class CreateStoryWithInvestCard
 
       $story->investCard()->create([
         'project_id' => $data['project_id'],
-        'independent' => false,
-        'negotiable' => false,
-        'valuable' => false,
-        'estimable' => false,
-        'small' => false,
-        'testable' => false,
+        'independent' => InvestCardStatus::NO,
+        'negotiable' => InvestCardStatus::NO,
+        'valuable' => InvestCardStatus::NO,
+        'estimable' => InvestCardStatus::NO,
+        'small' => InvestCardStatus::NO,
+        'testable' => InvestCardStatus::NO,
       ]);
 
       return $story;

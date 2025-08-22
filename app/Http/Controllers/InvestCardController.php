@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\InvestCardStatus;
 use App\Models\InvestCard;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class InvestCardController extends Controller
 {
@@ -16,12 +18,12 @@ class InvestCardController extends Controller
 
     $investCard = InvestCard::firstOrCreate(['story_id' => $validated['story_id']], [
       'project_id' => $validated['project_id'],
-      'independent' => false,
-      'negotiable' => false,
-      'valuable' => false,
-      'estimable' => false,
-      'small' => false,
-      'testable' => false,
+      'independent' => InvestCardStatus::NO,
+      'negotiable' => InvestCardStatus::NO,
+      'valuable' => InvestCardStatus::NO,
+      'estimable' => InvestCardStatus::NO,
+      'small' => InvestCardStatus::NO,
+      'testable' => InvestCardStatus::NO,
     ]);
 
     if ($investCard->wasRecentlyCreated) {
@@ -34,12 +36,12 @@ class InvestCardController extends Controller
   public function update(Request $request, InvestCard $investCard)
   {
     $validated = $request->validate([
-      'independent' => 'nullable|boolean',
-      'negotiable' => 'nullable|boolean',
-      'valuable' => 'nullable|boolean',
-      'estimable' => 'nullable|boolean',
-      'small' => 'nullable|boolean',
-      'testable' => 'nullable|boolean',
+      'independent' => ['nullable', Rule::enum(InvestCardStatus::class)],
+      'negotiable' => ['nullable', Rule::enum(InvestCardStatus::class)],
+      'valuable' => ['nullable', Rule::enum(InvestCardStatus::class)],
+      'estimable' => ['nullable', Rule::enum(InvestCardStatus::class)],
+      'small' => ['nullable', Rule::enum(InvestCardStatus::class)],
+      'testable' => ['nullable', Rule::enum(InvestCardStatus::class)],
     ]);
 
     $investCard->update($validated);

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\InvestCardStatus;
 
 class InvestCard extends Model
 {
@@ -15,6 +16,15 @@ class InvestCard extends Model
     'estimable',
     'small',
     'testable'
+  ];
+
+  protected $casts = [
+    'independent' => InvestCardStatus::class,
+    'negotiable' => InvestCardStatus::class,
+    'valuable' => InvestCardStatus::class,
+    'estimable' => InvestCardStatus::class,
+    'small' => InvestCardStatus::class,
+    'testable' => InvestCardStatus::class,
   ];
 
   public function story()

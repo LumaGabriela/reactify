@@ -13,12 +13,12 @@ return new class extends Migration
   {
     Schema::create('invest_cards', function (Blueprint $table) {
       $table->id();
-      $table->boolean('independent')->default(false);
-      $table->boolean('negotiable')->default(false);
-      $table->boolean('valuable')->default(false);
-      $table->boolean('estimable')->default(false);
-      $table->boolean('small')->default(false);
-      $table->boolean('testable')->default(false);
+      $table->string('independent')->default('no');
+      $table->string('negotiable')->default('no');
+      $table->string('valuable')->default('no');
+      $table->string('estimable')->default('no');
+      $table->string('small')->default('no');
+      $table->string('testable')->default('no');
 
       $table->foreignId('story_id')
         ->constrained()->onDelete('cascade');

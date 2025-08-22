@@ -77,12 +77,12 @@ const InvestCard = ({ investCard, lastElement = false, setProject }) => {
    * @param {string} value O novo valor ('true', 'false', ou 'null')
    */
   const handleValueChange = (field, value) => {
-    const parsedValue = value === 'null' ? null : value === 'true'
+    console.log(value)
     if (isTemporary(investCard.id)) return
     // 1. Atualização Otimista do Estado Local
     setInvestState((prevState) => ({
       ...prevState,
-      [field]: parsedValue,
+      [field]: value,
     }))
 
     // Atualiza o estado global do projeto também
@@ -90,7 +90,7 @@ const InvestCard = ({ investCard, lastElement = false, setProject }) => {
       ...project,
       invest_cards: project.invest_cards.map((card) => {
         if (card.id === investCard.id) {
-          return { ...card, [field]: parsedValue }
+          return { ...card, [field]: value }
         }
         return card
       }),
@@ -100,7 +100,7 @@ const InvestCard = ({ investCard, lastElement = false, setProject }) => {
     router.patch(
       route('invest-card.update', investCard.id),
       {
-        [field]: parsedValue, // Payload dinâmico: { independent: true }
+        [field]: value, // Payload dinâmico: { independent: true }
       },
       {
         preserveState: true, // Mantém o estado do React
@@ -173,9 +173,9 @@ const InvestCard = ({ investCard, lastElement = false, setProject }) => {
                 onValueChange={(value) => handleValueChange(option, value)}
                 className="flex items-center col-span-3 justify-self-end gap-4"
               >
-                <RadioGroupItem value="true" id={`${option}-yes`} />
-                <RadioGroupItem value="false" id={`${option}-no`} />
-                <RadioGroupItem value="null" id={`${option}-na`} />
+                <RadioGroupItem value="yes" id={`${option}-yes`} />
+                <RadioGroupItem value="no" id={`${option}-no`} />
+                <RadioGroupItem value="na" id={`${option}-na`} />
               </RadioGroup>
             </div>
           ))}
