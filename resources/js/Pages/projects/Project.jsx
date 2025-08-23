@@ -369,7 +369,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
             <Sprint project={project} setProject={setProject} />
           </TabsContent>
         </Tabs>
-        <ChatBot />
+        <ChatBot project={projectDB} currentPage={page} />
       </div>
     </div>
   )

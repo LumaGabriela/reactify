@@ -21,6 +21,7 @@ use App\Http\Controllers\SprintController;
 use App\Http\Controllers\StorySprintController;
 use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\InvestCardController;
+use App\Http\Controllers\ChatController;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -228,6 +229,8 @@ Route::prefix('api')
     Route::post('/projects/{project}/removeMember', [ProjectPermissionController::class, 'removeMember'])->name(
       'api.projects.permissions.removeMember'
     );
+    Route::post('/chat/{project}/send', [ChatController::class, 'sendMessage'])->name('api.chat.send');
+    // Route::get('/chat/{project}/history', [ChatController::class, 'getHistory'])->name('api.chat.history');
   });
 
 require __DIR__ . '/auth.php';

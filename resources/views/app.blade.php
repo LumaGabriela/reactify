@@ -7,12 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title inertia>{{ config('app.name', 'Laravel') }}</title>
   <link rel="icon" type="image/png" href="{!! asset('raccoonIcon.png') !!}" />
-  <!-- Fonts -->
-
   <link rel="preconnect" href="https://fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-  <!-- Scripts -->
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
   <script>
     // On page load or when changing themes, best to add inline in `head` to avoid FOUC
     if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
