@@ -1,4 +1,4 @@
-import { router } from '@inertiajs/react'
+import { router, usePage } from '@inertiajs/react'
 import MotionDivOptions from '@/Components/MotionDivOptions'
 import { Plus, Check, X, Edit, Trash2 } from 'lucide-react'
 
@@ -31,7 +31,7 @@ const EditableListItem = ({
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex items-center min-h-[32px] rounded-md transition-colors p-0 border-border border"
+      className="group relative flex items-center min-h-8 rounded-md transition-colors p-0 border-border border"
     >
       {isEditing ? (
         <div className="flex items-center gap-2 w-full p-0">
@@ -84,15 +84,19 @@ const CollaboratorItem = ({ item, onChange, onDelete, options = [] }) => {
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex items-center w-full"
+      className="group relative flex w-full"
     >
-      <Select value={item} onValueChange={onChange}>
-        <SelectTrigger className="h-8 flex-1 w-full">
+      <Select value={item} onValueChange={onChange} className="text-center">
+        <SelectTrigger className="h-8 justify-evenly">
           <SelectValue>{item || 'Selecione...'}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           {options.map((option, index) => (
-            <SelectItem key={index} value={option.name}>
+            <SelectItem
+              key={index}
+              value={option.name}
+              className="justify-evenly"
+            >
               {option.name}
             </SelectItem>
           ))}
@@ -149,10 +153,11 @@ const CRCCard = ({
     const updatedCards = project.crc_cards.map((c) =>
       c.id === cardId ? { ...c, [field]: updatedArray } : c,
     )
+    const updatedField = updatedCards.find((c) => c.id === cardId)[field]
+
     setProject({ ...project, crc_cards: updatedCards })
-    router.post(route('overall.store', { id: cardId }), {
-      [field]: field,
-      item: 'Novo item...',
+    router.patch(route('overall.update', { id: cardId }), {
+      [field]: updatedField,
     })
   }
 
@@ -215,7 +220,7 @@ const CRCCard = ({
               <Plus className="size-4" />
             </Button>
           </div>
-          {card.responsabilities.map((resp, i) => (
+          {card.responsabilities?.map((resp, i) => (
             <EditableListItem
               key={`${card.id}-resp-${i}`}
               item={resp}
@@ -275,6 +280,7 @@ const OverallModel = ({ project, setProject }) => {
   const [newReusableName, setNewReusableName] = useState('')
   const [deleteConfirmCardId, setDeleteConfirmCardId] = useState(null)
 
+  const { errors } = usePage().props
   const handleAddReusableName = () => {
     if (!newReusableName.trim()) return
     const currentNames = project.overall_model_classes || []
@@ -327,7 +333,9 @@ const OverallModel = ({ project, setProject }) => {
     )
     setProject({ ...project, crc_cards: updatedCards })
     setEditingField({ cardId: null, field: null, itemIndex: null })
-    // router.patch(...)
+    router.patch(route('overall.update', { id: cardId }), {
+      [field]: updatedArray,
+    })
   }
 
   const handleCollaboratorChange = (newValue, cardId, itemIndex) => {
@@ -375,56 +383,96 @@ const OverallModel = ({ project, setProject }) => {
     router.delete(route('overall.destroy', { id: deleteConfirmCardId }))
   }
 
+  const handleAddCard = () => {
+    const newCard = {
+      id: `temp-${new Date().getTime()}`,
+      class: 'Classe',
+      responsabilities: ['Responsabilidade'],
+      collaborators: ['Colaborador'],
+    }
+    const updatedCards = [...project.crc_cards, newCard]
+
+    router.post(
+      route('overall.store'),
+      {
+        class: newCard.class,
+        responsabilities: newCard.responsabilities,
+        collaborators: newCard.collaborators,
+        project_id: project.id,
+      },
+      {
+        onSuccess: () => {
+          setProject((prev) => ({ ...prev, crc_cards: updatedCards }))
+        },
+      },
+    )
+  }
+
   return (
     <div className="p-4 flex flex-col gap-6">
-      <Accordion
-        type="single"
-        collapsible
-        className="w-full bg-card border rounded-lg"
-      >
-        <AccordionItem value="item-1" className="border-b-0">
-          <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-            Banco de Classes
-          </AccordionTrigger>
-          <AccordionContent className="p-4 pt-0">
-            <div className="flex items-center gap-2 my-2">
-              <Input
-                placeholder="Adicionar nova classe ou colaborador..."
-                value={newReusableName}
-                onChange={(e) => setNewReusableName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleAddReusableName()}
-              />
-              <Button onClick={handleAddReusableName}>Salvar</Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {(project.overall_model_classes || []).length > 0 ? (
-                (project.overall_model_classes || []).map(
-                  (model_class, index) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="flex items-center gap-2"
-                    >
-                      {model_class.name}
-                      <button
-                        onClick={() => handleDeleteReusableName(model_class.id)}
-                        className="rounded-full hover:bg-destructive/20"
+      <section className="flex gap-2 ">
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full bg-card border rounded-lg"
+        >
+          <AccordionItem value="item-1" className="border-b-0">
+            <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+              Banco de Classes
+            </AccordionTrigger>
+            <AccordionContent className="p-4 pt-0">
+              <div className="flex items-center gap-2 my-2">
+                <Input
+                  placeholder="Adicionar nova classe ou colaborador..."
+                  value={newReusableName}
+                  onChange={(e) => setNewReusableName(e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === 'Enter' && handleAddReusableName()
+                  }
+                />
+                <Button onClick={handleAddReusableName}>Salvar</Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {(project.overall_model_classes || []).length > 0 ? (
+                  (project.overall_model_classes || []).map(
+                    (model_class, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="flex items-center gap-2"
                       >
-                        <X className="size-3" />
-                      </button>
-                    </Badge>
-                  ),
-                )
-              ) : (
-                <p className="text-xs text-muted-foreground italic">
-                  Nenhum nome salvo ainda.
-                </p>
-              )}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-
+                        {model_class.name}
+                        <button
+                          onClick={() =>
+                            handleDeleteReusableName(model_class.id)
+                          }
+                          className="rounded-full hover:bg-destructive/20"
+                        >
+                          <X className="size-3" />
+                        </button>
+                      </Badge>
+                    ),
+                  )
+                ) : (
+                  <p className="text-xs text-muted-foreground italic">
+                    Nenhum nome salvo ainda.
+                  </p>
+                )}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+        <Button className="h-11" onClick={handleAddCard}>
+          Adicionar CRC Card
+        </Button>
+      </section>
+      <div className="flex flex-col items-start">
+        {Object.keys(errors).map((key, item) => (
+          <span key={key} className="text-destructive text-xs font-normal">
+            {errors[key]}
+          </span>
+        ))}
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {project?.crc_cards
           ?.slice()

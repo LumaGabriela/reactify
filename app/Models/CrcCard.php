@@ -14,6 +14,7 @@ class CrcCard extends Model
     'class',
     'collaborators',
     'responsabilities',
+    'project_id',
   ];
 
   protected $casts = [
