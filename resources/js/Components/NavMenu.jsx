@@ -49,7 +49,7 @@ const NavMenu = ({ menuItems, setActiveMenu }) => {
         ))}
       </div>
 
-      <div className="relative h-0 w-full max-w-6xl">
+      <div className="relative h-0 w-full ">
         {menuItems.map(
           (menuItem, index) =>
             menuItem.value && (
