@@ -212,19 +212,7 @@ const ChatBot = ({ project, currentPage }) => {
   //   setIsLoading(false)
   // }
   // }
-  const cleanAIMarkdown = (text) => {
-    if (!text) return ''
 
-    // PASSO 1 (NOVO): Normalizar o "non-breaking space" (o culpado mais provável)
-    // O regex /\u00A0/g encontra todas as ocorrências do caractere non-breaking space
-    // (código Unicode \u00A0) e o substitui por um espaço normal.
-    let correctedText = text.replace(/\u00A0/g, ' ')
-
-    // PASSO 2 (ANTIGO): Corrigir a sintaxe de sub-listas (continua útil)
-    correctedText = correctedText.replace(/^\s*\*\s+\*/gm, '  *')
-
-    return correctedText
-  }
   return (
     <>
       <AnimatePresence>
@@ -258,10 +246,6 @@ const ChatBot = ({ project, currentPage }) => {
               className="flex-1 text-sm font-normal p-4 overflow-y-auto bg-background flex flex-col gap-4"
             >
               {messages.map((message) => {
-                const formattedMessage =
-                  message.sender !== 'user'
-                    ? cleanAIMarkdown(message.message)
-                    : message.message
                 return (
                   <div
                     key={message.id}
@@ -272,9 +256,9 @@ const ChatBot = ({ project, currentPage }) => {
                     >
                       {/* MODIFICADO: A propriedade 'text' agora é adicionada localmente. A original é 'message' */}
                       <div
-                        className={`${message.sender === 'user' ? ' text-primary-foreground' : 'text-secondary-foreground'} prose text-foreground prose-sm`}
+                        className={`${message.sender === 'user' ? ' text-primary-foreground' : 'text-secondary-foreground'} prose dark:prose-invert prose-sm [&_*]:text-inherit [&_a]:text-inherit`}
                       >
-                        <ReactMarkdown>{formattedMessage}</ReactMarkdown>
+                        <ReactMarkdown>{message.message}</ReactMarkdown>
                       </div>
                     </div>
                     <span
