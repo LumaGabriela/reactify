@@ -4,6 +4,29 @@ import { MessageSquare, X, SendHorizontal, LoaderCircle } from 'lucide-react'
 import OpenAI from 'openai'
 import ReactMarkdown from 'react-markdown'
 
+const AIMessage = ({ fullContent }) => {
+  const [displayedContent, setDisplayedContent] = useState('')
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDisplayedContent((prev) => fullContent.slice(0, prev.length + 1))
+    }, 40)
+    return () => clearInterval(interval)
+  }, [fullContent, displayedContent])
+
+  const isTyping = displayedContent.length < fullContent.length
+  return (
+    <>
+      <div
+        className={`inline prose-container prose prose-sm dark:prose-invert text-secondary-foreground max-w-none ${isTyping ? 'is-typing' : ''}`}
+      >
+        <ReactMarkdown>{displayedContent}</ReactMarkdown>
+      </div>
+      {isTyping && <span className="blinking-cursor bg-primary">||</span>}
+    </>
+  )
+}
+
 const ChatBot = ({ project, currentPage }) => {
   const [messages, setMessages] = useState([
     {
@@ -98,7 +121,6 @@ const ChatBot = ({ project, currentPage }) => {
         if (done) break
 
         const chunk = decoder.decode(value)
-        console.log(chunk)
         setMessages((prevMessages) =>
           prevMessages.map((msg) =>
             msg.id === aiMessageId
@@ -121,6 +143,11 @@ const ChatBot = ({ project, currentPage }) => {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    console.log(messages)
+  }, [messages])
+
   //usando gpt
   //   const METHODOLOGY_CONTEXT = `
   // As cerimônias do REACT e REACT-M são etapas estruturadas para o desenvolvimento e gerenciamento de requisitos de software. Ambos os métodos buscam entregar um produto de maior qualidade. O REACT foca no desenvolvimento de requisitos, que inclui a elicitação, análise, especificação e validação, enquanto o REACT-M aborda o gerenciamento de requisitos, com foco em mudanças e rastreabilidade. O REACT-M é uma extensão do REACT, compartilhando as mesmas cerimônias e papéis, mas adicionando atividades específicas de gerenciamento.
@@ -256,9 +283,16 @@ const ChatBot = ({ project, currentPage }) => {
                     >
                       {/* MODIFICADO: A propriedade 'text' agora é adicionada localmente. A original é 'message' */}
                       <div
-                        className={`${message.sender === 'user' ? ' text-primary-foreground' : 'text-secondary-foreground'} prose dark:prose-invert prose-sm [&_*]:text-inherit [&_a]:text-inherit`}
+                        className={`${message.sender === 'user' ? ' text-primary-foreground' : 'text-secondary-foreground'}`}
                       >
-                        <ReactMarkdown>{message.message}</ReactMarkdown>
+                        {message.sender !== 'user' ? (
+                          <AIMessage fullContent={message.message} />
+                        ) : (
+                          // A mensagem do usuário não precisa do efeito
+                          <div className="prose-container prose prose-sm">
+                            <ReactMarkdown>{message.message}</ReactMarkdown>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <span
