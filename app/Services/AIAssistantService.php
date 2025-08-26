@@ -23,12 +23,12 @@ class AIAssistantService
    *
    * @param Project $project
    * @param User $user
-   * @param string $pageContext
+   * @param array $pageContext
    * @param array $chatHistory
    * @param string $userMessage
    * @return string
    */
-  public function generateStreamedResponse(Project $project, User $user, string $pageContext, array $chatHistory, string $userMessage, callable $callback): void
+  public function generateStreamedResponse(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage, callable $callback): void
   {
     $prompt = $this->buildPrompt($project, $user, $pageContext, $chatHistory, $userMessage);
 
@@ -79,7 +79,7 @@ class AIAssistantService
    * @param string $userMessage
    * @return array
    */
-  private function buildPrompt(Project $project, User $user, string $pageContext, array $chatHistory, string $userMessage): array
+  private function buildPrompt(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage): array
   {
     // ALTERADO: A instrução inicial agora chama o novo método de contexto.
     $methodologyContext = $this->getMethodologyContext();
@@ -96,8 +96,9 @@ class AIAssistantService
 
     $context .= "Contexto do Projeto '{$project->title}':\n- Status Atual: {$project->status->value}\n- Descrição: {$project->description}\n\n";
 
-    $context .= "Contexto da Página Atual: '{$pageContext}'\n";
-    $context .= $this->getPageSpecificContext($pageContext);
+    $context .= "Contexto da Página Atual: '{$pageContext['page']}'\n";
+    $context .= "Contexto do Artefato Atual: '{$pageContext['artifact']}'\n";
+    // $context .= $this->getPageSpecificContext($pageContext);
 
     $contents = [];
     $contents[] = ['role' => 'user', 'parts' => [['text' => $context]]];
@@ -119,10 +120,10 @@ class AIAssistantService
    * Obtém dados contextuais específicos da página atual do banco.
    *
    */
-  private function getPageSpecificContext(string $page): string
-  {
-    return $page;
-  }
+  // private function getPageSpecificContext(string $page): string
+  // {
+  //   return $page;
+  // }
 
   private function getMethodologyContext(): string
   {

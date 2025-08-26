@@ -135,6 +135,31 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     },
   ])
 
+  const currentArtifact = useMemo(() => {
+    switch (page) {
+      case 'inception':
+        return activeMenu
+      case 'story-discovery':
+        return activeStoryDiscoveryMenu
+      case 'refining':
+        return activeRefiningMenu
+      case 'modeling':
+        return activeModelingMenu
+      case 'inspection':
+      case 'product-backlog':
+        // Para estes casos, o nome do artefato é o mesmo nome da página.
+        return page
+      default:
+        return page
+    }
+  }, [
+    page,
+    activeMenu,
+    activeStoryDiscoveryMenu,
+    activeRefiningMenu,
+    activeModelingMenu,
+  ])
+
   const updateProjectTitle = () => {
     setProject({ ...project, title: newTitle })
     setIsEditing(false)
@@ -369,7 +394,10 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
             <Sprint project={project} setProject={setProject} />
           </TabsContent>
         </Tabs>
-        <ChatBot project={projectDB} currentPage={page} />
+        <ChatBot
+          project={projectDB}
+          currentPage={{ page: page, artifact: currentArtifact }}
+        />
       </div>
     </div>
   )

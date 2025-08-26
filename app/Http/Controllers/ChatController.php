@@ -27,9 +27,12 @@ class ChatController extends Controller
    */
   public function store(Request $request, Project $project)
   {
+    ds($request['page_context']);
     $validated = $request->validate([
       'message' => 'required|string|max:2000',
-      'page_context' => 'required|string',
+      'page_context' => 'required|array',
+      'page_context.page' => 'required|string',
+      'page_context.artifact' => 'required|string',
       'history' => 'present|array'
     ]);
 
@@ -38,6 +41,7 @@ class ChatController extends Controller
     if (!$project->users()->where('user_id', $user->id)->exists()) {
       return response()->json(['error' => 'Acesso negado'], 403);
     }
+
     //streamed response
     return new StreamedResponse(function () use ($project, $user, $validated) {
       $this->aiAssistantService->generateStreamedResponse(

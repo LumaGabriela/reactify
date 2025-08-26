@@ -92,7 +92,6 @@ const ChatBot = ({ project, currentPage }) => {
           })), // Envia o histórico
         }),
       })
-
       if (!response.ok) {
         throw new Error('A resposta da rede não foi bem-sucedida.')
       }
@@ -143,10 +142,6 @@ const ChatBot = ({ project, currentPage }) => {
       setIsLoading(false)
     }
   }
-
-  useEffect(() => {
-    console.log(messages)
-  }, [messages])
 
   //usando gpt
   //   const METHODOLOGY_CONTEXT = `
