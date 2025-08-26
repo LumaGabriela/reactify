@@ -24,3 +24,4 @@ yarn-error.log
 env-reactify/
 .env.testing
 wrangler.jsonc
+laradumps.yaml
