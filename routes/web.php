@@ -211,7 +211,13 @@ Route::get('/', function () {
   ->middleware('guest')
   ->name('welcome');
 
-
+//rotas para chatbot
+Route::prefix('chat')
+  ->middleware(['auth', 'verified'])
+  ->group(function () {
+    Route::post('/{project}/', [ChatController::class, 'store'])->name('chat.store');
+    // Route::get('/{project}/history', [ChatController::class, 'getHistory'])->name('api.chat.history');
+  });
 
 // API routes that need session authentication
 Route::prefix('api')
@@ -229,8 +235,6 @@ Route::prefix('api')
     Route::post('/projects/{project}/removeMember', [ProjectPermissionController::class, 'removeMember'])->name(
       'api.projects.permissions.removeMember'
     );
-    Route::post('/chat/{project}/send', [ChatController::class, 'sendMessage'])->name('api.chat.send');
-    // Route::get('/chat/{project}/history', [ChatController::class, 'getHistory'])->name('api.chat.history');
   });
 
 require __DIR__ . '/auth.php';

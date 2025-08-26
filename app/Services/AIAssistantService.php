@@ -9,110 +9,125 @@ use Illuminate\Support\Facades\Log;
 
 class AIAssistantService
 {
-    protected $apiKey;
-    protected $baseUrl;
+  protected $apiKey;
+  protected $baseUrl;
 
-    public function __construct()
-    {
-        $this->apiKey = config('gemini.api_key');
-        $this->baseUrl = config('gemini.base_url');
-    }
+  public function __construct()
+  {
+    $this->apiKey = config('gemini.api_key');
+    $this->baseUrl = config('gemini.base_url');
+  }
 
-    /**
-     * Gera uma resposta do assistente de IA com base no contexto.
-     *
-     * @param Project $project
-     * @param User $user
-     * @param string $pageContext
-     * @param array $chatHistory
-     * @param string $userMessage
-     * @return string
-     */
-    public function generateResponse(Project $project, User $user, string $pageContext, array $chatHistory, string $userMessage): string
-    {
-        $prompt = $this->buildPrompt($project, $user, $pageContext, $chatHistory, $userMessage);
+  /**
+   * Gera uma resposta do assistente de IA com base no contexto.
+   *
+   * @param Project $project
+   * @param User $user
+   * @param string $pageContext
+   * @param array $chatHistory
+   * @param string $userMessage
+   * @return string
+   */
+  public function generateStreamedResponse(Project $project, User $user, string $pageContext, array $chatHistory, string $userMessage, callable $callback): void
+  {
+    $prompt = $this->buildPrompt($project, $user, $pageContext, $chatHistory, $userMessage);
 
-        try {
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '?key=' . $this->apiKey, [
-                'contents' => $prompt
-            ]);
+    $streamingUrl = $this->baseUrl . ':streamGenerateContent' . '?key=' . $this->apiKey;
 
-            if ($response->successful()) {
-                $data = $response->json();
-                if (empty($data['candidates'])) {
-                    return 'A resposta foi bloqueada por políticas de segurança ou não foi possível gerar um conteúdo válido.';
-                }
-                return $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Desculpe, não consegui processar sua solicitação.';
-            }
+    try {
+      $response = Http::timeout(300)
+        ->withHeaders([
+          'Content-Type' => 'application/json',
+        ])
+        ->withOptions(['stream' => true])
+        ->post($streamingUrl, [
+          'contents' => $prompt
+        ]);
+      if (!$response->successful()) {
+        Log::error('Gemini API Streaming Error: ' . $response->body());
+        $callback("Ocorreu um erro ao comunicar com o assistente.");
+        return;
+      }
 
-            Log::error('Gemini API Error: ' . $response->body());
-            return 'Ocorreu um erro ao comunicar com o assistente.';
+      $stream = $response->toPsrResponse()->getBody();
 
-        } catch (\Exception $e) {
-            Log::error('AIAssistantService Exception: ' . $e->getMessage());
-            return 'Ocorreu um erro interno no assistente.';
+      while (!$stream->eof()) {
+        $chunk = $stream->read(1024);
+
+        preg_match_all('/"text":\s*"([^"]+)/', $chunk, $matches);
+
+        foreach ($matches[1] as $textFragment) {
+          $decodedText = json_decode('"' . $textFragment . '"');
+          if ($decodedText) {
+            $callback($decodedText);
+          }
         }
+      }
+    } catch (\Exception $e) {
+      Log::error('AIAssistantService Exception: ' . $e->getMessage());
+      $callback('Ocorreu um erro interno no assistente.');
+    }
+  }
+
+  /**
+   * Constrói o prompt para a IA com base no contexto fornecido.
+   *
+   * @param Project $project
+   * @param User $user
+   * @param string $pageContext
+   * @param array $chatHistory
+   * @param string $userMessage
+   * @return array
+   */
+  private function buildPrompt(Project $project, User $user, string $pageContext, array $chatHistory, string $userMessage): array
+  {
+    // ALTERADO: A instrução inicial agora chama o novo método de contexto.
+    $methodologyContext = $this->getMethodologyContext();
+
+    $context = "Você é um assistente especialista na metodologia de engenharia de requisitos ágil REACT e REACT-M. Sua base de conhecimento principal e única fonte de verdade sobre a metodologia está descrita abaixo. Use APENAS este conhecimento para responder. Seja claro, objetivo e preciso.\n\n";
+    $context .= "**Instruções de Formatação: Ao criar listas, use a sintaxe padrão do Markdown. Para sub-listas, indente a linha com dois espaços e use um único asterisco. Exemplo: '* Item 1\\n  * Sub-item 1.1'.**\n\n";
+
+    $context .= "==== INÍCIO DA BASE DE CONHECIMENTO DA METODOLOGIA ====\n\n";
+    $context .= $methodologyContext;
+    $context .= "\n==== FIM DA BASE DE CONHECIMENTO DA METODOLOGIA ====\n\n";
+
+    $userRole = $project->users()->find($user->id)->pivot->role;
+    $context .= "Contexto do Usuário:\n- Nome: {$user->name}\n- Papel no Projeto: {$userRole}\n\n";
+
+    $context .= "Contexto do Projeto '{$project->title}':\n- Status Atual: {$project->status->value}\n- Descrição: {$project->description}\n\n";
+
+    $context .= "Contexto da Página Atual: '{$pageContext}'\n";
+    $context .= $this->getPageSpecificContext($pageContext);
+
+    $contents = [];
+    $contents[] = ['role' => 'user', 'parts' => [['text' => $context]]];
+    $contents[] = ['role' => 'model', 'parts' => [['text' => 'Entendido. Conhecimento carregado. Como posso ajudar?']]];
+
+    foreach ($chatHistory as $message) {
+      if (!empty($message['message'])) {
+        $role = $message['sender'] === 'user' ? 'user' : 'model';
+        $contents[] = ['role' => $role, 'parts' => [['text' => $message['message']]]];
+      }
     }
 
-    /**
-     * Constrói o prompt para a IA com base no contexto fornecido.
-     *
-     * @param Project $project
-     * @param User $user
-     * @param string $pageContext
-     * @param array $chatHistory
-     * @param string $userMessage
-     * @return array
-     */
-    private function buildPrompt(Project $project, User $user, string $pageContext, array $chatHistory, string $userMessage): array
-    {
-        // ALTERADO: A instrução inicial agora chama o novo método de contexto.
-        $methodologyContext = $this->getMethodologyContext();
-        
-        $context = "Você é um assistente especialista na metodologia de engenharia de requisitos ágil REACT e REACT-M. Sua base de conhecimento principal e única fonte de verdade sobre a metodologia está descrita abaixo. Use APENAS este conhecimento para responder. Seja claro, objetivo e preciso.\n\n";
-        $context .= "==== INÍCIO DA BASE DE CONHECIMENTO DA METODOLOGIA ====\n\n";
-        $context .= $methodologyContext;
-        $context .= "\n==== FIM DA BASE DE CONHECIMENTO DA METODOLOGIA ====\n\n";
+    $contents[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
 
-        $userRole = $project->users()->find($user->id)->pivot->role;
-        $context .= "Contexto do Usuário:\n- Nome: {$user->name}\n- Papel no Projeto: {$userRole}\n\n";
+    return $contents;
+  }
 
-        $context .= "Contexto do Projeto '{$project->title}':\n- Status Atual: {$project->status->value}\n- Descrição: {$project->description}\n\n";
+  /**
+   * Obtém dados contextuais específicos da página atual do banco.
+   *
+   */
+  private function getPageSpecificContext(string $page): string
+  {
+    return $page;
+  }
 
-        $context .= "Contexto da Página Atual: '{$pageContext}'\n";
-        $context .= $this->getPageSpecificContext($pageContext);
-
-        $contents = [];
-        $contents[] = ['role' => 'user', 'parts' => [['text' => $context]]];
-        $contents[] = ['role' => 'model', 'parts' => [['text' => 'Entendido. Conhecimento carregado. Como posso ajudar?']]];
-
-        foreach ($chatHistory as $message) {
-            if (!empty($message['message'])) {
-                $role = $message['sender'] === 'user' ? 'user' : 'model';
-                $contents[] = ['role' => $role, 'parts' => [['text' => $message['message']]]];
-            }
-        }
-        
-        $contents[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
-        
-        return $contents;
-    }
-
-    /**
-     * Obtém dados contextuais específicos da página atual do banco.
-     *
-     */
-    private function getPageSpecificContext(string $page): string
-    {
-        return $page;
-    }
-
-    private function getMethodologyContext(): string
-    {
-        // Usamos a sintaxe HEREDOC do PHP para facilitar a escrita de um longo texto.
-        return <<<EOD
+  private function getMethodologyContext(): string
+  {
+    // Usamos a sintaxe HEREDOC do PHP para facilitar a escrita de um longo texto.
+    return <<<EOD
             As cerimônias do REACT e REACT-M são etapas estruturadas para o desenvolvimento e gerenciamento de requisitos de software. Ambos os métodos buscam entregar um produto de maior qualidade. O REACT foca no desenvolvimento de requisitos, que inclui a elicitação, análise, especificação e validação, enquanto o REACT-M aborda o gerenciamento de requisitos, com foco em mudanças e rastreabilidade. O REACT-M é uma extensão do REACT, compartilhando as mesmas cerimônias e papéis, mas adicionando atividades específicas de gerenciamento.
 
             A seguir, a descrição de cada cerimônia e seus artefatos:
@@ -176,6 +191,5 @@ class AIAssistantService
             ### Tratamento de Mudanças no Backlog e Sprints
             Quando mudanças no produto são identificadas, o Backlog deve ser atualizado e repriorizado. O Backlog precisa ser novamente validado pelo Team. Todo o ciclo de cerimônias do REACT-M deve ser executado novamente para contemplar a mudança. Para controlar as solicitações de mudança, o Domain Expert pode utilizar um formulário de controle de mudanças.
             EOD;
-    }
-
+  }
 }
