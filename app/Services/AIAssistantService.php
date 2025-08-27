@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Gemini;
 
 class AIAssistantService
 {
@@ -28,44 +29,22 @@ class AIAssistantService
    * @param string $userMessage
    * @return string
    */
-  public function generateStreamedResponse(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage, callable $callback): void
+  public function generateStreamedResponse(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage): void
   {
     $prompt = $this->buildPrompt($project, $user, $pageContext, $chatHistory, $userMessage);
 
-    $streamingUrl = $this->baseUrl . ':streamGenerateContent' . '?key=' . $this->apiKey;
+    $jsonPrompt = json_encode($prompt, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-    try {
-      $response = Http::timeout(300)
-        ->withHeaders([
-          'Content-Type' => 'application/json',
-        ])
-        ->withOptions(['stream' => true])
-        ->post($streamingUrl, [
-          'contents' => $prompt
-        ]);
-      if (!$response->successful()) {
-        Log::error('Gemini API Streaming Error: ' . $response->body());
-        $callback("Ocorreu um erro ao comunicar com o assistente.");
-        return;
-      }
+    $apiKey = config('gemini.api_key');
 
-      $stream = $response->toPsrResponse()->getBody();
+    $client = Gemini::client($this->apiKey);
 
-      while (!$stream->eof()) {
-        $chunk = $stream->read(1024);
+    $stream = $client
+      ->generativeModel(model: 'gemini-2.5-flash-lite-preview-06-17')
+      ->streamGenerateContent($jsonPrompt);
 
-        preg_match_all('/"text":\s*"([^"]+)/', $chunk, $matches);
-
-        foreach ($matches[1] as $textFragment) {
-          $decodedText = json_decode('"' . $textFragment . '"');
-          if ($decodedText) {
-            $callback($decodedText);
-          }
-        }
-      }
-    } catch (\Exception $e) {
-      Log::error('AIAssistantService Exception: ' . $e->getMessage());
-      $callback('Ocorreu um erro interno no assistente.');
+    foreach ($stream as $response) {
+      echo $response->text();
     }
   }
 
@@ -79,7 +58,7 @@ class AIAssistantService
    * @param string $userMessage
    * @return array
    */
-  private function buildPrompt(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage): array
+  public function buildPrompt(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage): array
   {
     // ALTERADO: A instrução inicial agora chama o novo método de contexto.
     $methodologyContext = $this->getMethodologyContext();
