@@ -4,8 +4,10 @@ import { MessageSquare, X, SendHorizontal, LoaderCircle } from 'lucide-react'
 import OpenAI from 'openai'
 import ReactMarkdown from 'react-markdown'
 
-const AIMessage = ({ fullContent }) => {
-  const [displayedContent, setDisplayedContent] = useState('')
+const AIMessage = ({ fullContent, animate }) => {
+  const [displayedContent, setDisplayedContent] = useState(
+    animate ? '' : fullContent,
+  )
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,7 +48,7 @@ const ChatBot = ({ project, currentPage }) => {
     if (chatBodyRef.current) {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight
     }
-  }, [messages])
+  }, [messages, isOpen])
 
   const toggleChat = () => {
     // Ao abrir, limpa o histórico da sessão anterior.
@@ -267,7 +269,9 @@ const ChatBot = ({ project, currentPage }) => {
               ref={chatBodyRef}
               className="flex-1 text-sm font-normal p-4 overflow-y-auto bg-background flex flex-col gap-4"
             >
-              {messages.map((message) => {
+              {messages.map((message, index) => {
+                const isLastMessage = index === messages.length - 1
+                const shouldAnimate = isLastMessage && isLoading
                 return (
                   <div
                     key={message.id}
@@ -281,7 +285,10 @@ const ChatBot = ({ project, currentPage }) => {
                         className={`${message.sender === 'user' ? ' text-primary-foreground' : 'text-secondary-foreground'}`}
                       >
                         {message.sender !== 'user' ? (
-                          <AIMessage fullContent={message.message} />
+                          <AIMessage
+                            fullContent={message.message}
+                            animate={shouldAnimate}
+                          />
                         ) : (
                           // A mensagem do usuário não precisa do efeito
                           <div className="prose-container prose prose-sm">
