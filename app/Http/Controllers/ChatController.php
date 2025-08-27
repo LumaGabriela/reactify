@@ -7,10 +7,6 @@ use App\Services\AIAssistantService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use Gemini\Data\GenerationConfig;
-
-use Gemini\Data\Content; // 👈 Importe a classe Content
-
 class ChatController extends Controller
 {
   protected $aiAssistantService;

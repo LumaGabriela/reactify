@@ -6,7 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Gemini;
+use Gemini\Laravel\Facades\Gemini;
 
 class AIAssistantService
 {
@@ -33,16 +33,9 @@ class AIAssistantService
   {
     $prompt = $this->buildPrompt($project, $user, $pageContext, $chatHistory, $userMessage);
 
-    $jsonPrompt = json_encode($prompt, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-
-    $apiKey = config('gemini.api_key');
-
-    $client = Gemini::client($this->apiKey);
-
-    $stream = $client
-      ->generativeModel(model: 'gemini-2.5-flash-lite-preview-06-17')
-      ->streamGenerateContent($jsonPrompt);
-
+    $stream = Gemini::generativeModel(model: 'gemini-2.5-flash-lite-preview-06-17')
+      ->streamGenerateContent(...$prompt);
+    ds($prompt);
     foreach ($stream as $response) {
       echo $response->text();
     }
@@ -60,49 +53,43 @@ class AIAssistantService
    */
   public function buildPrompt(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage): array
   {
-    // ALTERADO: A instrução inicial agora chama o novo método de contexto.
-    $methodologyContext = $this->getMethodologyContext();
+    try {
+      $methodologyContext = $this->getMethodologyContext();
+      $context = "Você é um assistente especialista na metodologia de engenharia de requisitos ágil REACT e REACT-M. Sua base de conhecimento principal e única fonte de verdade sobre a metodologia está descrita abaixo. Use APENAS este conhecimento para responder. Seja claro, objetivo e preciso.\n\n";
+      $context .= "**Instruções de Formatação: Ao criar listas, use a sintaxe padrão do Markdown. Para sub-listas, indente a linha com dois espaços e use um único asterisco. Exemplo: '* Item 1\\n  * Sub-item 1.1'.**\n\n";
+      $context .= "==== INÍCIO DA BASE DE CONHECIMENTO DA METODOLOGIA ====\n\n";
+      $context .= $methodologyContext;
+      $context .= "\n==== FIM DA BASE DE CONHECIMENTO DA METODOLOGIA ====\n\n";
 
-    $context = "Você é um assistente especialista na metodologia de engenharia de requisitos ágil REACT e REACT-M. Sua base de conhecimento principal e única fonte de verdade sobre a metodologia está descrita abaixo. Use APENAS este conhecimento para responder. Seja claro, objetivo e preciso.\n\n";
-    $context .= "**Instruções de Formatação: Ao criar listas, use a sintaxe padrão do Markdown. Para sub-listas, indente a linha com dois espaços e use um único asterisco. Exemplo: '* Item 1\\n  * Sub-item 1.1'.**\n\n";
+      $userRole = $project->users()->find($user->id)->pivot->role;
+      $context .= "Contexto do Usuário:\n- Nome: {$user->name}\n- Papel no Projeto: {$userRole}\n\n";
+      $context .= "Contexto do Projeto '{$project->title}':\n- Status Atual: {$project->status->value}\n- Descrição: {$project->description}\n\n";
+      $context .= "Contexto da Página Atual: '{$pageContext['page']}'\n";
+      $context .= "Contexto do Artefato Atual: '{$pageContext['artifact']}'\n";
 
-    $context .= "==== INÍCIO DA BASE DE CONHECIMENTO DA METODOLOGIA ====\n\n";
-    $context .= $methodologyContext;
-    $context .= "\n==== FIM DA BASE DE CONHECIMENTO DA METODOLOGIA ====\n\n";
+      // Constrói um prompt único como string concatenada
+      $fullPrompt = $context . "\n\n";
+      $fullPrompt .= "Entendido. Conhecimento carregado. Como posso ajudar?\n\n";
 
-    $userRole = $project->users()->find($user->id)->pivot->role;
-    $context .= "Contexto do Usuário:\n- Nome: {$user->name}\n- Papel no Projeto: {$userRole}\n\n";
-
-    $context .= "Contexto do Projeto '{$project->title}':\n- Status Atual: {$project->status->value}\n- Descrição: {$project->description}\n\n";
-
-    $context .= "Contexto da Página Atual: '{$pageContext['page']}'\n";
-    $context .= "Contexto do Artefato Atual: '{$pageContext['artifact']}'\n";
-    // $context .= $this->getPageSpecificContext($pageContext);
-
-    $contents = [];
-    $contents[] = ['role' => 'user', 'parts' => [['text' => $context]]];
-    $contents[] = ['role' => 'model', 'parts' => [['text' => 'Entendido. Conhecimento carregado. Como posso ajudar?']]];
-
-    foreach ($chatHistory as $message) {
-      if (!empty($message['message'])) {
-        $role = $message['sender'] === 'user' ? 'user' : 'model';
-        $contents[] = ['role' => $role, 'parts' => [['text' => $message['message']]]];
+      // Adiciona histórico do chat
+      foreach ($chatHistory as $message) {
+        if (!empty($message['message'])) {
+          $sender = $message['sender'] === 'user' ? 'Usuário' : 'Assistente';
+          $fullPrompt .= "{$sender}: " . $message['message'] . "\n";
+        }
       }
+
+      // Adiciona a mensagem atual do usuário
+      $fullPrompt .= "Usuário: " . $userMessage . "\n\nAssistente:";
+
+      // Retorna como um array simples com uma única string
+      return [$fullPrompt];
+    } catch (\Exception $e) {
+      Log::error('Erro ao construir o prompt para o Gemini: ' . $e->getMessage());
+      return [];
     }
-
-    $contents[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
-
-    return $contents;
   }
 
-  /**
-   * Obtém dados contextuais específicos da página atual do banco.
-   *
-   */
-  // private function getPageSpecificContext(string $page): string
-  // {
-  //   return $page;
-  // }
 
   private function getMethodologyContext(): string
   {

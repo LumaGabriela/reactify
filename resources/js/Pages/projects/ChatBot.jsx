@@ -12,7 +12,7 @@ const AIMessage = ({ fullContent, animate }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setDisplayedContent((prev) => fullContent.slice(0, prev.length + 1))
-    }, 40)
+    }, 20)
     return () => clearInterval(interval)
   }, [fullContent, displayedContent])
 
@@ -101,7 +101,7 @@ const ChatBot = ({ project, currentPage }) => {
       const placeholderMessage = {
         id: aiMessageId,
         message: '',
-        sender: 'bot',
+        sender: 'model',
         timestamp: new Date().toISOString(),
       }
       // const aiResponse = await response.json()
@@ -321,7 +321,7 @@ const ChatBot = ({ project, currentPage }) => {
                   disabled={isLoading}
                   type="text"
                   placeholder="Digite sua pergunta..."
-                  className="flex-1"
+                  className="flex-1 font-normal"
                   value={inputMessage}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !isLoading) {
