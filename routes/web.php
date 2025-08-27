@@ -3,25 +3,31 @@
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\EpicStoryController;
 use App\Http\Controllers\BusinessRuleController;
+use App\Http\Controllers\UsageScenarioController;
+
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PersonaController;
+
 use App\Http\Controllers\ProductCanvasController;
 use App\Http\Controllers\OverallModelController;
 use App\Http\Controllers\OverallModelClassController;
 use App\Http\Controllers\WelcomeEmailController;
 use App\Http\Controllers\ProjectPermissionController;
+
 use App\Http\Controllers\ProjectInvitationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PrioritizationController;
 use App\Http\Controllers\MatrixPriorityController;
 use App\Http\Controllers\SprintController;
+
 use App\Http\Controllers\StorySprintController;
 use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\InvestCardController;
 use App\Http\Controllers\ChatController;
+
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -106,7 +112,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     Route::delete('/{rule}', [BusinessRuleController::class, 'destroy'])->name('business-rule.destroy');
   });
-
+  //rotas para UsageScenarios
+  Route::prefix('usage-scenario')->group(function () {
+    Route::post('/', [UsageScenarioController::class, 'store'])->name('usage-scenario.store');
+    Route::patch('/{scenario}', [UsageScenarioController::class, 'update'])->name('usage-scenario.update');
+    Route::delete('/{scenario}', [UsageScenarioController::class, 'destroy'])->name('usage-scenario.destroy');
+  });
   //   Rotas para OverallModel
   Route::prefix('overall')->group(function () {
     Route::post('/', [OverallModelController::class, 'store'])->name('overall.store');

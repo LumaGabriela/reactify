@@ -33,7 +33,8 @@ class ProjectController extends Controller
         'epic_stories',
         'business_rules',
         'change_requests',
-        'invest_cards'
+        'invest_cards',
+        'usage_scenarios'
       ]),
     ]);
   }
@@ -62,7 +63,8 @@ class ProjectController extends Controller
         'epic_stories',
         'business_rules',
         'change_requests',
-        'invest_cards'
+        'invest_cards',
+        'usage_scenarios'
       ]),
       'message' => 'Projects updated successfully.',
       'status' => 'success',
@@ -95,6 +97,7 @@ class ProjectController extends Controller
       'business_rules',
       'change_requests',
       'invest_cards',
+      'usage_scenarios',
       'users' => function ($query) {
         $query->select(['user_id', 'name', 'email', 'provider_avatar']);
       }

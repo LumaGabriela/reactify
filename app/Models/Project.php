@@ -57,6 +57,11 @@ class Project extends Model
     return $this->hasMany(BusinessRule::class);
   }
 
+  public function usage_scenarios()
+  {
+    return $this->hasMany(UsageScenario::class);
+  }
+
   public function invitations(): HasMany
   {
     return $this->hasMany(ProjectInvitation::class);

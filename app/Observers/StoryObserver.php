@@ -4,7 +4,6 @@ namespace App\Observers;
 
 use App\Events\ProjectUpdated;
 use App\Models\Story;
-use App\Models\InvestCard;
 
 class StoryObserver
 {

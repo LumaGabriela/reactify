@@ -14,6 +14,7 @@ return new class extends Migration
     Schema::create('usage_scenarios', function (Blueprint $table) {
       $table->id();
       $table->foreignId('story_id')->constrained()->onDelete('cascade');
+      $table->foreignId('project_id')->constrained()->onDelete('cascade');
       $table->jsonb('description');
       $table->timestamps();
       $table->softDeletes();

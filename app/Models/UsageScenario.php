@@ -8,33 +8,38 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UsageScenario extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'story_id',
-        'title',
-        'steps',
-    ];
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var array<int, string>
+   */
+  protected $fillable = [
+    'story_id',
+    'project_id',
+    'description',
+  ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'steps' => 'array',
-    ];
+  /**
+   * The attributes that should be cast.
+   *
+   * @var array<string, string>
+   */
+  protected $casts = [
+    'description' => 'array',
+  ];
 
-    /**
-     * Get the story that owns the usage scenario.
-     */
-    public function story(): BelongsTo
-    {
-        return $this->belongsTo(Story::class);
-    }
+  /**
+   * Get the story that owns the usage scenario.
+   */
+  public function story()
+  {
+    return $this->belongsTo(Story::class);
+  }
+
+  public function project()
+  {
+    return $this->belongsTo(Project::class);
+  }
 }
