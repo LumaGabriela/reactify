@@ -14,7 +14,7 @@ import ChangeLog from './project-ceremonies/StoryDiscovery/ChangeLog.jsx'
 // refining
 import EpicStories from './project-ceremonies/Refining/EpicStories.jsx'
 import BusinessRules from './project-ceremonies/Refining/BusinessRules.jsx'
-import UseScenarios from './project-ceremonies/Refining/UseScenarios.jsx'
+import UsageScenarios from './project-ceremonies/Refining/UsageScenarios.jsx'
 //modeling
 import OverallModel from './project-ceremonies/Modeling/OverallModel'
 import Interfaces from './project-ceremonies/Modeling/Interfaces.jsx'
@@ -109,7 +109,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     {
       label: 'Use Scenarios',
       value: false,
-      tooltip: tooltipInfo.useScenarios,
+      tooltip: tooltipInfo.usageScenarios,
     },
   ])
 
@@ -281,7 +281,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       case 'Business Rules':
         return <BusinessRules project={project} setProject={setProject} />
       case 'Use Scenarios':
-        return <UseScenarios project={project} setProject={setProject} />
+        return <UsageScenarios project={project} setProject={setProject} />
       default:
         return null
     }

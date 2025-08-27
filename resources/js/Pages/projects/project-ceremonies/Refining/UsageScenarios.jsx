@@ -1,4 +1,4 @@
-const UseScenarios = ({ project, setProject }) => {
+const UsageScenarios = ({ project, setProject }) => {
   const scenarios = [
     {
       id: 'US14',
@@ -80,4 +80,4 @@ const UseScenarios = ({ project, setProject }) => {
   )
 }
 
-export default UseScenarios
+export default UsageScenarios

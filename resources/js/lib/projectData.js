@@ -59,7 +59,7 @@ const tooltipInfo = {
     description:
       'As regras de negócio são instruções que definem as regras e restrições que devem ser seguidas para garantir a integridade e a consistência do sistema.',
   },
-  useScenarios: {
+  usageScenarios: {
     title: 'Use Cases',
     description:
       'Os casos de uso são relatos de eventos que ocorrem em um contexto específico, como a criação de contas para acessar o sistema, a gestão de playlists para organizar músicas e outras funcionalidades voltadas para a experiência do usuário.',
