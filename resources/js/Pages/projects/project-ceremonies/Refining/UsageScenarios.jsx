@@ -106,10 +106,11 @@ const ScenarioCard = ({ scenario, story, lastElement = false, setProject }) => {
       preserveScroll: true,
     })
   }
-  handleKeyDown = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       setIsEditing(false)
+      handleSave()
     }
     if (e.key === 'Escape') {
       setIsEditing(false)
