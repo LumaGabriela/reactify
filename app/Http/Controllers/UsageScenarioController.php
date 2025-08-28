@@ -16,8 +16,8 @@ class UsageScenarioController extends Controller
       'description.given' => 'required|string',
       'description.when' => 'required|string',
       'description.then_1' => 'required|string',
-      'description.and' => 'required|string',
-      'description.then_2' => 'required|string',
+      'description.and' => 'nullable|string',
+      'description.then_2' => 'nullable|string',
       'story_id' => 'required|exists:stories,id',
       'project_id' => 'required|exists:projects,id',
     ]);
