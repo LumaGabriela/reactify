@@ -131,11 +131,7 @@ const Interfaces = ({ project, setProject }) => {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* O componente com os botões de editar/excluir que aparece no hover */}
-        <MotionDivOptions
-          isHovered={isHovered}
-          onDelete={onDelete}
-          onEdit={() => onClick(data)} // Passa os dados para a função de edição
-        />
+        <MotionDivOptions isHovered={isHovered} onDelete={onDelete} />
 
         {/* Área principal do card, que também pode ser usada para edição */}
         <div className="cursor-pointer" onClick={() => onClick(data)}>
