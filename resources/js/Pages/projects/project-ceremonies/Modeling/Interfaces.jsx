@@ -5,7 +5,7 @@ import MotionDivOptions from '@/Components/MotionDivOptions'
  *
  * @param {{ project: object }} props
  */
-const Interfaces = ({ project }) => {
+const Interfaces = ({ project, setProject }) => {
   // A lista de todas as classes disponíveis para o formulário.
   const allClassModels = project.overall_model_classes || []
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -75,12 +75,22 @@ const Interfaces = ({ project }) => {
         preserveScroll: true, // Mantém a posição do scroll na página após a resposta.
         onSuccess,
       })
+      setProject((prevProject) => ({
+        ...prevProject,
+        system_interfaces: prevProject.system_interfaces.map((item) =>
+          item.id === data.id ? data : item,
+        ),
+      }))
     } else {
       // MODO CRIAÇÃO: Envia uma requisição POST para a rota de store.
       post(route('system-interface.store'), {
         preserveScroll: true,
         onSuccess,
       })
+      setProject((prevProject) => ({
+        ...prevProject,
+        system_interfaces: [...prevProject.system_interfaces, data],
+      }))
     }
     setData({
       id: null, // O 'id' diferencia se estamos criando (null) ou editando (number).
@@ -104,23 +114,31 @@ const Interfaces = ({ project }) => {
     )
   }
 
-  // --- Sub-componente para renderizar cada card ---
   const InterfaceCard = ({ data, onClick, onDelete }) => {
+    const [isHovered, setIsHovered] = useState(false)
+
     const relatedIds = data.overall_model_class_ids || []
     const idsToString = relatedIds.length > 0 ? `C${relatedIds.join('-C')}` : ''
-    const [isHovered, setIsHovered] = useState(false)
+    // Busca os dados completos das classes relacionadas usando a lista `allClassModels`
+    const relatedClasses = relatedIds
+      .map((id) => allClassModels.find((model) => model.id === id))
+      .filter(Boolean) // .filter(Boolean) remove quaisquer resultados nulos se um ID não for encontrado
+
     return (
       <div
-        className="relative group border border-border bg-card text-card-foreground rounded-lg shadow-md p-4 flex flex-col justify-between text-left cursor-pointer hover:shadow-lg hover:border-primary transition-all duration-200"
+        className="relative group border border-border bg-card text-card-foreground rounded-lg shadow-md p-4 flex flex-col justify-between text-left transition-all duration-200"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        {/* O componente com os botões de editar/excluir que aparece no hover */}
         <MotionDivOptions
           isHovered={isHovered}
           onDelete={onDelete}
-          onEdit={onClick}
+          onEdit={() => onClick(data)} // Passa os dados para a função de edição
         />
-        <div>
+
+        {/* Área principal do card, que também pode ser usada para edição */}
+        <div className="cursor-pointer" onClick={() => onClick(data)}>
           <h4 className="font-bold text-sm mb-2">{data.title}</h4>
           <p>
             <span className="font-bold text-sm">Input: </span>
@@ -131,20 +149,45 @@ const Interfaces = ({ project }) => {
             <span className="text-sm text-muted-foreground">{data.output}</span>
           </p>
         </div>
+
         <div className="flex justify-between items-center mt-4">
           <Button
             variant="secondary"
-            className="pointer-events-none text-xs h-8"
+            className="pointer-events-none text-xs size-8"
           >
-            ID: {data.id}
+            {data.id}
           </Button>
           {idsToString && (
-            <Button
-              variant="outline"
-              className="text-sm font-semibold pointer-events-none h-8"
-            >
-              {idsToString}
-            </Button>
+            // MUDANÇA: Envolvemos o botão em um componente Dialog
+            <Dialog>
+              <DialogTrigger asChild>
+                {/* MUDANÇA: O botão agora é clicável (removido pointer-events-none) */}
+                <Button
+                  variant="outline"
+                  className="text-sm font-semibold h-8 z-10"
+                >
+                  {idsToString}
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Classes Relacionadas</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-3 py-4">
+                  {relatedClasses.map((classData) => (
+                    <div
+                      key={classData.id}
+                      className="border p-3 rounded-lg bg-muted/50"
+                    >
+                      <h4 className="font-semibold text-sm">
+                        {/* Usando a propriedade 'name' como no seu código anterior */}
+                        {classData.id}: {classData.name}
+                      </h4>
+                    </div>
+                  ))}
+                </div>
+              </DialogContent>
+            </Dialog>
           )}
         </div>
       </div>
@@ -284,7 +327,7 @@ const Interfaces = ({ project }) => {
       </div>
 
       <h3 className="text-2xl font-bold mb-4 mt-6">Interfaces Internas</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {project?.system_interfaces
           ?.filter((i) => i.type === 'internal')
           .map((item) => (
@@ -298,7 +341,7 @@ const Interfaces = ({ project }) => {
       </div>
 
       <h3 className="text-2xl font-bold mb-4">Interfaces Externas</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {project?.system_interfaces
           ?.filter((i) => i.type === 'external')
           .map((item) => (

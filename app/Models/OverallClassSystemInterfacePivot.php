@@ -15,7 +15,6 @@ class OverallClassSystemInterfacePivot extends Pivot
 
       if ($systemInterface) {
         $project = $systemInterface->project;
-        ds($project);
         broadcast(new ProjectUpdated($project));
       }
     });
@@ -24,7 +23,6 @@ class OverallClassSystemInterfacePivot extends Pivot
 
       if ($systemInterface) {
         $project = $systemInterface->project;
-        ds($project);
         broadcast(new ProjectUpdated($project));
       }
     });
@@ -33,7 +31,6 @@ class OverallClassSystemInterfacePivot extends Pivot
 
       if ($systemInterface) {
         $project = $systemInterface->project;
-        ds($project);
         broadcast(new ProjectUpdated($project));
       }
     });
