@@ -210,9 +210,9 @@ const Interfaces = ({ project, setProject }) => {
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit}>
-              <div className="grid gap-4 py-4">
+              <div className="grid gap-2 py-2 ">
                 {/* Título */}
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-5 items-center gap-4">
                   <Label htmlFor="title" className="text-right">
                     Título
                   </Label>
@@ -220,7 +220,7 @@ const Interfaces = ({ project, setProject }) => {
                     id="title"
                     value={data.title}
                     onChange={(e) => setData('title', e.target.value)}
-                    className="col-span-3"
+                    className="col-span-4"
                   />
                   {errors.title && (
                     <p className="col-span-4 text-red-500 text-xs text-right">
@@ -229,7 +229,7 @@ const Interfaces = ({ project, setProject }) => {
                   )}
                 </div>
                 {/* Tipo */}
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-5 items-center gap-4">
                   <Label htmlFor="type" className="text-right">
                     Tipo
                   </Label>
@@ -237,7 +237,7 @@ const Interfaces = ({ project, setProject }) => {
                     value={data.type}
                     onValueChange={(value) => setData('type', value)}
                   >
-                    <SelectTrigger className="col-span-3">
+                    <SelectTrigger className="col-span-4">
                       <SelectValue placeholder="Selecione o tipo" />
                     </SelectTrigger>
                     <SelectContent>
@@ -247,7 +247,7 @@ const Interfaces = ({ project, setProject }) => {
                   </Select>
                 </div>
                 {/* Input */}
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-5 items-center gap-4">
                   <Label htmlFor="input" className="text-right">
                     Input
                   </Label>
@@ -255,16 +255,16 @@ const Interfaces = ({ project, setProject }) => {
                     id="input"
                     value={data.input}
                     onChange={(e) => setData('input', e.target.value)}
-                    className="col-span-3"
+                    className="col-span-4"
                   />
                   {errors.input && (
-                    <p className="col-span-4 text-red-500 text-xs text-right">
+                    <p className="col-span-5 text-red-500 text-xs text-right">
                       {errors.input}
                     </p>
                   )}
                 </div>
                 {/* Output */}
-                <div className="grid grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-5 items-center gap-4">
                   <Label htmlFor="output" className="text-right">
                     Output
                   </Label>
@@ -272,31 +272,32 @@ const Interfaces = ({ project, setProject }) => {
                     id="output"
                     value={data.output}
                     onChange={(e) => setData('output', e.target.value)}
-                    className="col-span-3"
+                    className="col-span-4"
                   />
                   {errors.output && (
-                    <p className="col-span-4 text-red-500 text-xs text-right">
+                    <p className="col-span-5 text-red-500 text-xs text-right">
                       {errors.output}
                     </p>
                   )}
                 </div>
                 {/* Classes Relacionadas */}
                 {data.type === 'internal' && (
-                  <div className="grid grid-cols-4 items-start gap-4">
+                  <div className="grid grid-cols-5 items-start gap-4">
                     <Label className="text-right pt-2">Classes</Label>
-                    <div className="col-span-3 border rounded-md p-2 h-32 overflow-y-auto">
+                    <div className="col-span-4 border rounded-md p-2">
                       {allClassModels.map((model) => (
                         <div
                           key={model.id}
                           className="flex items-center space-x-2 my-1"
                         >
-                          <input
-                            type="checkbox"
+                          <Checkbox
                             id={`rel-${model.id}`}
                             checked={data.overall_model_class_ids.includes(
                               model.id,
                             )}
-                            onChange={() => handleMultiSelectChange(model.id)}
+                            onCheckedChange={() =>
+                              handleMultiSelectChange(model.id)
+                            }
                             className="form-checkbox h-4 w-4"
                           />
                           <label
