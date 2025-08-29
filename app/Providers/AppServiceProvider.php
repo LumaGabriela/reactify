@@ -15,6 +15,7 @@ use App\Observers\MatrixPriorityObserver;
 use App\Observers\ChangeRequestObserver;
 use App\Observers\InvestCardObserver;
 use App\Observers\BusinessRuleObserver;
+use App\Observers\SystemInterfaceObserver;
 
 use App\Models\Story;
 use App\Models\EpicStory;
@@ -29,6 +30,8 @@ use App\Models\MatrixPriority;
 use App\Models\ChangeRequest;
 use App\Models\InvestCard;
 use App\Models\BusinessRule;
+use App\Models\SystemInterface;
+
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -58,9 +61,11 @@ class AppServiceProvider extends ServiceProvider
     Journey::observe(JourneyObserver::class);
     CrcCard::observe(CrcCardObserver::class);
     MatrixPriority::observe(MatrixPriorityObserver::class);
+
     Prioritization::observe(PrioritizationObserver::class);
     ChangeRequest::observe(ChangeRequestObserver::class);
     InvestCard::observe(InvestCardObserver::class);
     BusinessRule::observe(BusinessRuleObserver::class);
+    SystemInterface::observe(SystemInterfaceObserver::class);
   }
 }

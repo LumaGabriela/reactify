@@ -27,6 +27,7 @@ use App\Http\Controllers\StorySprintController;
 use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\InvestCardController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\SystemInterfaceController;
 
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
@@ -191,6 +192,13 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/', [InvestCardController::class, 'store'])->name('invest-card.store');
     Route::patch('/{investCard}', [InvestCardController::class, 'update'])->name('invest-card.update');
     Route::delete('/{investCard}', [InvestCardController::class, 'destroy'])->name('invest-card.destroy');
+  });
+
+  // pagina para system interfaces
+  Route::prefix('system-interface')->group(function () {
+    Route::post('/', [SystemInterfaceController::class, 'store'])->name('system-interface.store');
+    Route::patch('/{interface}', [SystemInterfaceController::class, 'update'])->name('system-interface.update');
+    Route::delete('/{interface}', [SystemInterfaceController::class, 'destroy'])->name('system-interface.destroy');
   });
 
   //pagina de notificacoes

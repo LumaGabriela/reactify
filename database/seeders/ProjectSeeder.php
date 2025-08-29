@@ -12,6 +12,8 @@ class ProjectSeeder extends Seeder
   public function run(): void
   {
 
+
+
     // Criar User Role (admin) se não existir
     $adminRole = DB::table("user_roles")->where("name", "admin")->first();
 
@@ -232,6 +234,47 @@ class ProjectSeeder extends Seeder
         // Execute a action com os dados combinados
         $createStoryAction->execute($dataToCreate);
       }
+    });
+    //inserir cards
+    $overall_classes = [
+      [
+        'name' => 'Filme',
+      ],
+      [
+        'name' => 'Legenda',
+      ],
+      [
+        'name' => 'Player de Vídeo',
+      ],
+      [
+        'name' => 'Usuário',
+      ],
+      [
+        'name' => 'Cadastro',
+      ],
+      [
+        'name' => 'Assinatura',
+      ],
+      [
+        'name' => 'Doacão',
+      ],
+      [
+        'name' => 'Administrador',
+      ],
+    ];
+
+    DB::transaction(function () use ($overall_classes, $projectId) {
+      foreach ($overall_classes as $overall_class) {
+        $data = array_merge(
+          $overall_class,
+          [
+            'project_id' => $projectId,
+            "created_at" => now(),
+            "updated_at" => now(),
+          ]
+        );
+        DB::table('overall_model_classes')->insert($data);
+      };
     });
 
     // Criar Journey com vários steps

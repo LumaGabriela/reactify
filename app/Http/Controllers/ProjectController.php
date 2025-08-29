@@ -34,7 +34,8 @@ class ProjectController extends Controller
         'business_rules',
         'change_requests',
         'invest_cards',
-        'usage_scenarios'
+        'usage_scenarios',
+        'system_interfaces'
       ]),
     ]);
   }
@@ -64,7 +65,8 @@ class ProjectController extends Controller
         'business_rules',
         'change_requests',
         'invest_cards',
-        'usage_scenarios'
+        'usage_scenarios',
+        'system_interfaces'
       ]),
       'message' => 'Projects updated successfully.',
       'status' => 'success',
@@ -98,6 +100,7 @@ class ProjectController extends Controller
       'change_requests',
       'invest_cards',
       'usage_scenarios',
+      'system_interfaces',
       'users' => function ($query) {
         $query->select(['user_id', 'name', 'email', 'provider_avatar']);
       }

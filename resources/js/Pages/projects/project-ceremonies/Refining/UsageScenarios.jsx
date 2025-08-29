@@ -332,7 +332,6 @@ const UsageScenarios = ({ project, setProject }) => {
     <section className="p-2 flex flex-col">
       {project?.stories?.map((story) => {
         const relatedScenarios = scenariosByStoryId.get(story.id) || []
-        console.log(relatedScenarios)
         return (
           <section className="py-1 flex gap-2 min-h-60" key={story.id}>
             <StoryCard
