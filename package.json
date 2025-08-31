@@ -5,6 +5,12 @@
     "build": "vite build",
     "dev": "vite"
   },
+  "overrides": {
+    "@excalidraw/excalidraw": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  },
   "devDependencies": {
     "@headlessui/react": "^2.0.0",
     "@inertiajs/react": "^2.0.0",
@@ -31,7 +37,7 @@
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
-    "@excalidraw/excalidraw": "^0.18.0",
+    "@excalidraw/excalidraw": "^0.17.6",
     "@inertiajs/inertia": "^0.11.1",
     "@inertiajs/react": "^2.0.6",
     "@laravel/stream-react": "^0.3.5",
