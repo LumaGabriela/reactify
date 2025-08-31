@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
-use App\Services\AIAssistantService;
+use App\Services\AIAssistantServiceGemini;
+use App\Services\AIAssistantServiceOllama;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,7 +12,7 @@ class ChatController extends Controller
 {
   protected $aiAssistantService;
 
-  public function __construct(AIAssistantService $aiAssistantService)
+  public function __construct(AIAssistantServiceOllama $aiAssistantService)
   {
     $this->aiAssistantService = $aiAssistantService;
   }

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Gemini\Laravel\Facades\Gemini;
 
-class AIAssistantService
+class AIAssistantServiceGemini
 {
   protected $apiKey;
   protected $baseUrl;
@@ -16,7 +16,7 @@ class AIAssistantService
   public function __construct()
   {
     $this->apiKey = config('gemini.api_key');
-    $this->baseUrl = config('gemini.base_url');
+    // $this->baseUrl = config('gemini.base_url');
   }
 
   /**

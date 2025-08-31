@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, X, SendHorizontal, LoaderCircle } from 'lucide-react'
-import OpenAI from 'openai'
 import ReactMarkdown from 'react-markdown'
 
 const AIMessage = ({ fullContent, animate }) => {
@@ -51,10 +50,6 @@ const ChatBot = ({ project, currentPage }) => {
   }, [messages, isOpen])
 
   const toggleChat = () => {
-    // Ao abrir, limpa o histórico da sessão anterior.
-    // if (!isOpen) {
-    //     setMessages([]);
-    // }
     setIsOpen((prevState) => !prevState)
   }
 
@@ -104,12 +99,6 @@ const ChatBot = ({ project, currentPage }) => {
         sender: 'model',
         timestamp: new Date().toISOString(),
       }
-      // const aiResponse = await response.json()
-
-      // const formattedAiResponse = {
-      //   ...aiResponse,
-      //   text: aiResponse.message,
-      // }
 
       setMessages((prevMessages) => [...prevMessages, placeholderMessage])
 
@@ -145,98 +134,6 @@ const ChatBot = ({ project, currentPage }) => {
     }
   }
 
-  //usando gpt
-  //   const METHODOLOGY_CONTEXT = `
-  // As cerimônias do REACT e REACT-M são etapas estruturadas para o desenvolvimento e gerenciamento de requisitos de software. Ambos os métodos buscam entregar um produto de maior qualidade. O REACT foca no desenvolvimento de requisitos, que inclui a elicitação, análise, especificação e validação, enquanto o REACT-M aborda o gerenciamento de requisitos, com foco em mudanças e rastreabilidade. O REACT-M é uma extensão do REACT, compartilhando as mesmas cerimônias e papéis, mas adicionando atividades específicas de gerenciamento.
-
-  // A seguir, a descrição de cada cerimônia e seus artefatos:
-
-  // * **1. Inception**
-  //     * **Objetivo**: É a primeira cerimônia, realizada no início do projeto, com o objetivo principal de **estabelecer uma visão de alto nível do produto pretendido**, definindo o que ele é e o que não é, o problema de negócio que busca resolver, suas restrições e seus usuários-chave ou fornecedores de requisitos. Pode ser repetida dependendo das mudanças no projeto ou antes de cada entrega.
-  //     * **Artefatos Gerados**: Product Canvas, Goal Sketch, Personas, Journeys.
-
-  // * **2. Story Discovery**
-  //     * **Objetivo**: **Elicitar estórias de usuário (requisitos funcionais) e estórias do sistema (requisitos não-funcionais)** a partir dos objetivos das personas e das jornadas de usuário, e das restrições e metas de negócio. Também visa conceber um Overall Model e iniciar a priorização dos requisitos.
-  //     * **Artefatos Gerados**: Estórias de Usuário e do Sistema, Overall Model (com CRC Cards), Matriz de Priorização, Product Backlog (Kanban), Team Kanban, Check Card e Inconsistency Card (da Inspection).
-
-  // * **3. Refining**
-  //     * **Objetivo**: **Detalhamento e elaboração das estórias mais prioritárias**, refinando-as com suas regras de negócio, decompondo estórias grandes e definindo cenários de aceitação (comportamentos do produto na visão dos usuários finais).
-  //     * **Artefatos Gerados**: Estórias refinadas (com suas derivadas), Regras de Negócio, Cenários de Aceitação.
-
-  // * **4. Modeling**
-  //     * **Objetivo**: Detalhar as Stories sob a perspectiva de objetos do produto e de seus componentes, refinando o Overall Model com mais detalhes. Também envolve a **representação do funcionamento operacional do produto** e seus componentes usando UI Storyboards.
-  //     * **Artefatos Gerados**: Overall Model refinado (CRC Cards com responsabilidades), Interfaces Internas e Externas, UI Storyboards/Protótipos.
-
-  // * **5. Inspection**
-  //     * **Objetivo**: É uma cerimônia de **execução contínua**, com o objetivo de **verificar e validar a viabilidade e a qualidade dos requisitos elicitados e artefatos derivados**.
-  //     * **Artefatos Gerados**: Check Card e Inconsistency Card, Formulário de Controle de Mudanças (REACT-M).
-
-  // ### Backlog do Produto (Product Backlog)
-  // O Backlog do Produto é uma lista de tarefas formada pelas estórias de usuário e do sistema que foram levantadas e priorizadas. O Domain Expert é o responsável por manter esse Backlog atualizado. A priorização é feita com base no valor de negócio e na complexidade.
-
-  // ### Sprints
-  // Sprints são ciclos curtos e iterativos de desenvolvimento. As cerimônias de Story Discovery, Refining, Modeling e Inspection acontecem de forma iterativa dentro das sprints. O Team gerencia suas tarefas técnicas usando o Team Kanban e estima o esforço com User Story Points (Planning Poker).
-
-  // ### Tratamento de Mudanças
-  // Quando mudanças são identificadas, o Backlog deve ser atualizado e repriorizado. Todo o ciclo de cerimônias do REACT-M deve ser executado novamente para contemplar a mudança.
-  // `
-
-  // try {
-  //   const apiKey = import.meta.env.VITE_HF_TOKEN
-  //   if (!apiKey) {
-  //     throw new Error('Chave VITE_HF_TOKEN não encontrada.')
-  //   }
-
-  //   const openai = new OpenAI({
-  //     baseURL: 'https://router.huggingface.co/v1',
-  //     apiKey: apiKey,
-  //     dangerouslyAllowBrowser: true,
-  //   })
-
-  //   // 1. Mensagem de sistema com a base de conhecimento da metodologia
-  //   const systemMessage = {
-  //     role: 'system',
-  //     content: `Você é um assistente especialista na metodologia de engenharia de requisitos ágil REACT e REACT-M. Sua única fonte de verdade é o texto a seguir. Use APENAS este conhecimento para responder. Seja claro e objetivo.\n\n--- INÍCIO DA BASE DE CONHECIMENTO ---\n${METHODOLOGY_CONTEXT}\n--- FIM DA BASE DE CONHECIMENTO ---`,
-  //   }
-
-  //   // 2. Mapeia o histórico da conversa atual
-  //   const conversationMessages = newMessages.map((msg) => ({
-  //     role: msg.sender === 'user' ? 'user' : 'assistant',
-  //     content: msg.message,
-  //   }))
-
-  //   // 3. Combina a instrução de sistema com a conversa
-  //   const apiMessages = [systemMessage, ...conversationMessages]
-
-  //   const response = await openai.chat.completions.create({
-  //     model: 'openai/gpt-oss-120b:cerebras',
-  //     messages: apiMessages,
-  //   })
-
-  //   const aiResponseContent = response.choices[0].message.content
-
-  //   const aiResponseMessage = {
-  //     id: 'ai-' + Date.now(),
-  //     sender: 'ai',
-  //     message: aiResponseContent,
-  //     created_at: new Date().toISOString(),
-  //   }
-
-  //   setMessages((prev) => [...prev, aiResponseMessage])
-  // } catch (error) {
-  //   console.error('Erro ao chamar API da Hugging Face:', error)
-  //   const errorMessage = {
-  //     id: `temp-error-${Date.now()}`,
-  //     text: 'Ocorreu um erro ao enviar sua mensagem. Verifique o console.',
-  //     sender: 'ai',
-  //     created_at: new Date().toISOString(),
-  //   }
-  //   setMessages((prevMessages) => [...prevMessages, errorMessage])
-  // } finally {
-  //   setIsLoading(false)
-  // }
-  // }
-
   return (
     <>
       <AnimatePresence>
@@ -254,7 +151,6 @@ const ChatBot = ({ project, currentPage }) => {
               <h3 id="chat-heading" className="text-base font-semibold">
                 Assistente Virtual
               </h3>
-              {/* REMOVIDO: Botão de lixeira */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -280,7 +176,6 @@ const ChatBot = ({ project, currentPage }) => {
                     <div
                       className={`max-w-[80%] rounded-lg text-left px-3 py-2 ${message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
                     >
-                      {/* MODIFICADO: A propriedade 'text' agora é adicionada localmente. A original é 'message' */}
                       <div
                         className={`${message.sender === 'user' ? ' text-primary-foreground' : 'text-secondary-foreground'}`}
                       >
