@@ -1,4 +1,5 @@
 import '../css/app.css'
+import '@excalidraw/excalidraw/index.css'
 import React from 'react'
 import './bootstrap'
 import { createInertiaApp, usePage } from '@inertiajs/react'
