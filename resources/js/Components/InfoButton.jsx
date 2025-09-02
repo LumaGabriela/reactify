@@ -22,7 +22,7 @@ const InfoButton = ({
             data.classNames?.button,
           )}
         >
-          {badgeContent && (
+          {badgeContent !== null && (
             <Badge
               variant="outline"
               className={cn(
