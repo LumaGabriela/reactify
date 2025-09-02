@@ -11,7 +11,7 @@ const GenerateIAButton = ({
       className={` flex items-center justify-center rounded-lg shadow-md transition-colors ${className}  ${
         isGenerating
           ? 'bg-muted text-muted-foreground'
-          : 'bg-gradient-to-r from-primary to-secondary text-foreground'
+          : 'bg-gradient-to-r from-primary to-secondary text-primary-foreground'
       }`}
     >
       <Button

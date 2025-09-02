@@ -1,17 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import MotionDivOptions from '@/Components/MotionDivOptions'
-import {
-  Plus,
-  Sparkles,
-  X,
-  Info,
-  Check,
-  LoaderCircle,
-  Trash,
-  ChevronsUp,
-  Minus,
-} from 'lucide-react'
+import { Plus, X, Check, LoaderCircle, ChevronsUp, Minus } from 'lucide-react'
 import { router } from '@inertiajs/react'
 import TextareaAutosize from 'react-textarea-autosize'
 import axios from 'axios'

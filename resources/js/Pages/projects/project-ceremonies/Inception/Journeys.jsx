@@ -34,6 +34,8 @@ import { router } from '@inertiajs/react'
 import { toast } from 'sonner'
 import TextareaAutosize from 'react-textarea-autosize'
 import { cn } from '@/lib/utils'
+import { tooltipInfo } from '@/lib/projectData'
+import GenerateIAButton from '@/Components/GenerateIAButton'
 
 const SortableJourneyStepItem = (props) => {
   const {
@@ -578,22 +580,24 @@ const Journeys = ({ project, setProject }) => {
                 {isModalMinimized && 'Generated Journeys'}
               </h3>
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   onClick={() => setIsModalMinimized(!isModalMinimized)}
-                  className="text-muted-foreground hover:text-foreground"
+                  size="icon"
+                  variant="ghost"
                 >
                   {isModalMinimized ? (
                     <ChevronsUp size={20} />
                   ) : (
                     <Minus size={20} />
                   )}
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={cancelGeneratedJourneys}
-                  className="text-muted-foreground hover:text-foreground"
+                  size="icon"
+                  variant="ghost"
                 >
                   <X size={24} />
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -877,32 +881,14 @@ const Journeys = ({ project, setProject }) => {
         <Button variant="outline" className="flex-1" onClick={addNewJourney}>
           <Plus size={18} className="mr-2" /> New Journey
         </Button>
-        <Button
-          className="flex-1 bg-gradient-to-r from-primary to-blue-600 hover:opacity-90 text-primary-foreground"
+        {/* generate with ai button*/}
+        <GenerateIAButton
+          isGenerating={isGeneratingAI}
           onClick={generateJourneys}
-          disabled={isGeneratingAI}
-        >
-          {isGeneratingAI ? (
-            <Loader2 className="animate-spin mr-2" size={18} />
-          ) : (
-            <Sparkles className="mr-2" size={18} />
-          )}
-          {isGeneratingAI ? 'Generating...' : 'Generate with AI'}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Info
-                onClick={(e) => e.stopPropagation()}
-                className="text-muted-foreground/80 cursor-pointer transition-colors hover:text-muted-foreground mx-2"
-                size={15}
-              />
-            </PopoverTrigger>
-            <PopoverContent className="bg-popover text-popover-foreground border-border">
-              This function uses AI to generate journeys based on the Goals
-              defined in the Personas.
-              <PopoverArrow className="fill-popover" />
-            </PopoverContent>
-          </Popover>
-        </Button>
+          tooltipTitle={tooltipInfo.aiGeneratedJourney.title}
+          tooltipDesctiption={tooltipInfo.aiGeneratedJourney.description}
+          className="w-1/2"
+        />
       </div>
     </div>
   )

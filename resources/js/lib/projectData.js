@@ -32,6 +32,11 @@ const tooltipInfo = {
     description:
       'Sequências de etapas (jornadas) que descrevem o caminho do usuário ou do administrador para atingir um objetivo no sistema.',
   },
+  aiGeneratedJourney: {
+    title: 'AI Generated Journeys',
+    description:
+      ' This function uses AI to generate journeys based on the Goals defined in the Personas.',
+  },
   //story discovery
   stories: {
     title: 'Stories',
