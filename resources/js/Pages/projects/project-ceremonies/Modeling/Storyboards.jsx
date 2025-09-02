@@ -393,13 +393,13 @@ const Storyboards = ({}) => {
           }}
           UIOptions={{
             canvasActions: {
-              changeViewBackgroundColor: false,
-              clearCanvas: false,
+              changeViewBackgroundColor: true,
+              clearCanvas: true,
               export: false,
-              loadScene: false,
-              saveAsImage: false,
-              saveToActiveFile: false,
-              toggleTheme: false,
+              loadScene: true,
+              saveAsImage: true,
+              saveToActiveFile: true,
+              toggleTheme: true,
               saveFileToDisk: false,
             },
             tools: {
