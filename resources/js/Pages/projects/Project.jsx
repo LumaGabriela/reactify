@@ -312,9 +312,9 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
           onValueChange={(e) =>
             router.get(route('project.show', { project: project.id, page: e }))
           }
-          className="w-full  "
+          className="w-full"
         >
-          <div className="flex  gap-4 items-center justify-start w-full">
+          <div className="flex gap-2 items-center justify-start w-full">
             <TabsList>
               <TabsTrigger value="inception">Inception</TabsTrigger>
               <TabsTrigger value="story-discovery">Story Discovery</TabsTrigger>
