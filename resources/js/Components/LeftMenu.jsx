@@ -106,8 +106,9 @@ const LeftMenu = () => {
   return (
     <AnimatePresence>
       <motion.aside
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        // onMouseEnter={() => setIsHovered(true)}
+        // onMouseLeave={() => setIsHovered(false)}
+
         animate={{ opacity: 1, width: isHovered ? '14rem' : '4rem' }}
         transition={{ duration: 0.3 }}
         className={
@@ -124,7 +125,10 @@ const LeftMenu = () => {
             transition={cardVariants.transition}
             className="p-4 h-16"
           >
-            <div className="flex items-center justify-between">
+            <div
+              className="flex items-center justify-between"
+              onClick={() => setIsHovered(!isHovered)}
+            >
               {/* link para dasboard */}
               <Link
                 as="div"
@@ -162,7 +166,8 @@ const LeftMenu = () => {
             animate="visible"
             exit="hidden"
             transition={cardVariants.transition}
-            className="w-full p-4 h-16 flex items-center justify-center"
+            className="w-full p-4 h-16 flex items-center justify-center cursor-pointer"
+            onClick={() => setIsHovered(!isHovered)}
           >
             <ChevronsRight className="size-5 text-foreground" />
           </motion.div>

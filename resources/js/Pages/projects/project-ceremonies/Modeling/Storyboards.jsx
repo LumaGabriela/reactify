@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react'
-import { Excalidraw, WelcomeScreen } from '@excalidraw/excalidraw'
+import React, { useState } from 'react'
+import { Excalidraw, WelcomeScreen, Footer } from '@excalidraw/excalidraw'
 
 const Storyboards = ({}) => {
   const [strokeWidth, setStrokeWidth] = useState(2)
   const [activeTool, setActiveTool] = useState('selection')
   const [isDarkMode, setIsDarkMode] = useState('light')
-
+  const [commandInputRef, setCommandInputRef] = useState(null)
   useEffect(() => {
     const html = document.querySelector('html')
     setIsDarkMode(html.classList.contains('dark'))
@@ -67,8 +67,24 @@ const Storyboards = ({}) => {
           <WelcomeScreen>
             <WelcomeScreen.Hints.ToolbarHint />
             <WelcomeScreen.Hints.MenuHint />
-            <WelcomeScreen.Hints.HelpHint />
+            {/* <WelcomeScreen.Hints.HelpHint />*/}
           </WelcomeScreen>
+          <Footer className="[&>*]:items-end">
+            <Command className=" flex-col-reverse">
+              <CommandInput
+                shortcut
+                ref={commandInputRef}
+                placeholder="Buscar Projetos..."
+                className="flex h-12 w-full rounded-md border-none bg-transparent px-4 py-3 text-sm text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              <CommandList className="max-h-[300px] overflow-y-auto overflow-x-hidden">
+                <CommandEmpty className="py-6 text-center text-sm text-zinc-500">
+                  Nenhum projeto encontrado.
+                </CommandEmpty>
+                <CommandGroup></CommandGroup>
+              </CommandList>
+            </Command>
+          </Footer>
         </Excalidraw>
       </div>
     </div>

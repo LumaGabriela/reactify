@@ -242,7 +242,7 @@ const ChatBot = ({ project, currentPage }) => {
       <Button
         onClick={toggleChat}
         size="icon"
-        className="fixed bottom-5 right-5 w-14 h-14 rounded-full shadow-lg transition-transform transform hover:scale-110 z-50"
+        className="fixed bottom-2 right-2 size-12 rounded-full shadow-lg transition-transform transform hover:scale-110 z-50"
         aria-label={isOpen ? 'Fechar chat' : 'Abrir chat'}
         aria-expanded={isOpen}
       >
@@ -255,9 +255,9 @@ const ChatBot = ({ project, currentPage }) => {
             transition={{ duration: 0.2 }}
           >
             {isOpen ? (
-              <X className="h-8 w-8" />
+              <X className="size-8" />
             ) : (
-              <MessageSquare className="h-8 w-8" />
+              <MessageSquare className="size-8" />
             )}
           </motion.div>
         </AnimatePresence>
