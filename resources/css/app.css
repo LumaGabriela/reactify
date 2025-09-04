@@ -302,3 +302,12 @@ body:has([aria-pressed='true']) {
     @apply bg-background text-foreground;
   }
 }
+
+.excalidraw-wrapper .excalidraw .App-menu_bottom {
+  align-items: flex-end;
+}
+.excalidraw-wrapper .excalidraw .footer-center {
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 0 1rem;
+}
