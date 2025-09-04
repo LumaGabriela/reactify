@@ -136,15 +136,16 @@ const LeftMenu = () => {
                 href={route('dashboard')}
               >
                 <Squirrel className="size-8 text-primary" />
-                <h1
-                  className={cn(
-                    'text-xl font-bold my-0 mx-2',
-                    isHovered ? '' : 'hidden',
-                  )}
-                >
-                  Reactify
-                </h1>
               </Link>
+              <h1
+                className={cn(
+                  'text-xl font-bold my-0 mx-2 cursor-pointer',
+                  isHovered ? '' : 'hidden',
+                )}
+              >
+                Reactify
+              </h1>
+
               <Button
                 variant="ghost"
                 size="icon"

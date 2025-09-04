@@ -8,22 +8,20 @@ const StoryCard = ({ story }) => {
   return (
     <div
       className={`
-          flex flex-col h-24 w-80 items-center justify-start p-2 gap-1 text-xs font-normal text-foreground
-          border border-border bg-card rounded-md shadow-sm transition-opacity duration-300 min-h-16
+          flex items-start h-14 w-1/2 p-1 gap-1 text-xs font-normal text-foreground
+          border border-border bg-card rounded-md shadow-sm transition-opacity duration-300
         `}
     >
-      <div className="mr-auto">
-        {story && (
-          <Badge
-            variant="outline"
-            className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
-          >
-            {`${story?.type === 'system' ? 'SS' : 'US'}${story.id}`.toUpperCase()}
-          </Badge>
-        )}
-      </div>
+      {story && (
+        <Badge
+          variant="outline"
+          className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
+        >
+          {`${story?.type === 'system' ? 'SS' : 'US'}${story.id}`.toUpperCase()}
+        </Badge>
+      )}
 
-      <p className="text-sm text-center">
+      <p className="text-sm text-left">
         {story?.title || 'Selecione uma story'}
       </p>
     </div>
@@ -31,10 +29,10 @@ const StoryCard = ({ story }) => {
 }
 
 const Storyboards = ({ project, setProject }) => {
-  const [strokeWidth, setStrokeWidth] = useState(2)
-  const [activeTool, setActiveTool] = useState('selection')
-  const [isDarkMode, setIsDarkMode] = useState('light')
+  const [isDarkMode, setIsDarkMode] = useState(false)
   const [selectedStory, setSelectedStory] = useState(null)
+  // Dentro do seu componente
+  const [searchQuery, setSearchQuery] = useState('')
 
   const [commandInputRef, setCommandInputRef] = useState(null)
   useEffect(() => {
@@ -48,7 +46,7 @@ const Storyboards = ({ project, setProject }) => {
       viewBackgroundColor: '#ffffff',
       currentItemStrokeColor: '#000000',
       currentItemBackgroundColor: 'transparent',
-      currentItemStrokeWidth: strokeWidth,
+      currentItemStrokeWidth: 2,
       currentItemRoughness: 1,
       currentItemOpacity: 100,
       gridSize: null,
@@ -59,7 +57,7 @@ const Storyboards = ({ project, setProject }) => {
   return (
     <div
       className="w-full h-96 mt-2 flex flex-col overflow-hidden"
-      style={{ height: 'calc(100vh - 140px)' }}
+      style={{ height: 'calc(100vh - 105px)' }}
     >
       {/* Barra de Ferramentas */}
 
@@ -67,15 +65,6 @@ const Storyboards = ({ project, setProject }) => {
       <div className="excalidraw-wrapper flex-1 relative h-full">
         <Excalidraw
           initialData={initialData}
-          onChange={(elements, appState) => {
-            // Sincronizar estado quando necessário
-            if (
-              appState.activeTool?.type &&
-              appState.activeTool.type !== activeTool
-            ) {
-              setActiveTool(appState.activeTool.type)
-            }
-          }}
           langCode="pt-BR"
           theme={isDarkMode ? 'dark' : 'light'}
           UIOptions={{
@@ -101,17 +90,24 @@ const Storyboards = ({ project, setProject }) => {
           </WelcomeScreen>
           <Footer>
             <StoryCard story={selectedStory} />
-            <Command className=" flex-col-reverse">
+            <Button>Salvar</Button>
+            <Command className="flex-col-reverse w-1/2 font-normal text-sm">
               <CommandInput
                 ref={commandInputRef}
+                onValueChange={(value) => {
+                  setSearchQuery(value)
+                }}
                 placeholder="Buscar stories..."
-                className="flex h-12 w-full rounded-md border-none bg-transparent px-4 py-3 text-sm text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+                className="!border-none focus:!outline-none focus:!ring-0 !bg-transparent"
               />
-              <CommandList className="max-h-[300px] overflow-y-auto overflow-x-hidden">
-                <CommandEmpty className="py-6 text-center text-sm text-zinc-500">
+              <CommandList className="overflow-y-auto overflow-x-hidden">
+                <CommandEmpty className="py-6 text-sm">
                   Nenhum projeto encontrado.
                 </CommandEmpty>
-                <CommandGroup>
+
+                <CommandGroup
+                  className={`${searchQuery.length > 0 ? '' : 'hidden'} text-left`}
+                >
                   {project?.stories?.map((story) => (
                     <CommandItem
                       key={story.id}

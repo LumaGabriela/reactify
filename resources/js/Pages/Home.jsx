@@ -321,7 +321,7 @@ const Dashboard = ({}) => {
               shortcut
               ref={commandInputRef}
               placeholder="Buscar Projetos..."
-              className="flex h-12 w-full rounded-md border-none bg-transparent px-4 py-3 text-sm text-zinc-300 placeholder:text-zinc-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+              className="border-none focus:outline-none focus:ring-0"
             />
             <CommandList className="max-h-[300px] overflow-y-auto overflow-x-hidden">
               <CommandEmpty className="py-6 text-center text-sm text-zinc-500">
@@ -337,7 +337,6 @@ const Dashboard = ({}) => {
                         onSelect={() => {
                           router.visit(route('project.show', project.id))
                         }}
-                        className="relative flex cursor-default select-none items-center justify-between rounded-lg px-3 py-2.5 text-sm text-foreground outline-none transition-colors "
                       >
                         <CheckCircle className="mr-3 size-4 text-foreground" />
                         <span className="truncate w-full">{project.title}</span>

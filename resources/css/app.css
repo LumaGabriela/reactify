@@ -1,3 +1,4 @@
+@import '@excalidraw/excalidraw/index.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -304,10 +305,11 @@ body:has([aria-pressed='true']) {
 }
 
 .excalidraw-wrapper .excalidraw .App-menu_bottom {
-  align-items: flex-end;
+  align-items: end;
+  padding: 0;
 }
 .excalidraw-wrapper .excalidraw .footer-center {
-  align-items: flex-end;
-  gap: 1rem;
-  padding: 0 1rem;
+  align-items: end;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
 }
