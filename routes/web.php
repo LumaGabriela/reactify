@@ -99,6 +99,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   });
   //rotas para storyboard
   Route::prefix('storyboard')->group(function () {
+    // Route::get('/projects/{project}/storyboards', [StoryboardController::class, 'index'])
+    //   ->name('storyboards.index');
     Route::post('/', [StoryboardController::class, 'store'])->name('storyboard.store');
     // Route::patch('/{storyboard}', [StoryboardController::class, 'update'])->name('storyboard.update');
     // Route::delete('/{storyboard}', [StoryboardController::class, 'destroy'])->name('storyboard.destroy');

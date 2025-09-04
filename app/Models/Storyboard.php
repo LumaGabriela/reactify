@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Storyboard extends Model
 {
-  protected $fillable = ['story_id', 'image_url'];
+  protected $fillable = [
+    'story_id',
+    'project_id',
+    'image_url'
+  ];
 
   public function story()
   {

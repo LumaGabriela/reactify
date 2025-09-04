@@ -18,7 +18,7 @@ import UsageScenarios from './project-ceremonies/Refining/UsageScenarios.jsx'
 //modeling
 import OverallModel from './project-ceremonies/Modeling/OverallModel'
 import Interfaces from './project-ceremonies/Modeling/Interfaces.jsx'
-import Storyboards from './project-ceremonies/Modeling/Storyboards.jsx'
+import Storyboards from './project-ceremonies/Modeling/Storyboards/Index.jsx'
 //
 import ProductBacklog from './project-ceremonies/ProductBacklog/ProductBacklog.jsx'
 //components
@@ -337,10 +337,10 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
                   onKeyUp={(e) => {
                     if (e.key === 'Enter') updateProjectTitle()
                   }}
-                  className="bg-background !text-3xl font-bold text-foreground  h-full p-0 border-0 m-0"
+                  className="bg-background !text-2xl font-bold text-right text-foreground  h-full p-0 border-0 m-0"
                 />
               ) : (
-                <p className="bg-background text-left text-3xl font-bold text-foreground  h-full w-full p-0 border-0 m-0">
+                <p className="bg-background text-right text-2xl font-bold text-foreground h-full w-full p-0 border-0 m-0">
                   {project.title}
                 </p>
               )}

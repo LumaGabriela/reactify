@@ -7,11 +7,14 @@ use App\Observers\EpicStoryObserver;
 use App\Observers\UsageScenarioObserver;
 use App\Observers\ProductCanvasObserver;
 use App\Observers\GoalSketchObserver;
+
+use App\Observers\StoryboardObserver;
 use App\Observers\PersonaObserver;
 use App\Observers\JourneyObserver;
 use App\Observers\CrcCardObserver;
 use App\Observers\PrioritizationObserver;
 use App\Observers\MatrixPriorityObserver;
+
 use App\Observers\ChangeRequestObserver;
 use App\Observers\InvestCardObserver;
 use App\Observers\BusinessRuleObserver;
@@ -22,10 +25,13 @@ use App\Models\EpicStory;
 use App\Models\UsageScenario;
 use App\Models\ProductCanvas;
 use App\Models\Goal;
+
 use App\Models\Journey;
 use App\Models\Persona;
 use App\Models\CrcCard;
 use App\Models\Prioritization;
+use App\Models\Storyboard;
+
 use App\Models\MatrixPriority;
 use App\Models\ChangeRequest;
 use App\Models\InvestCard;
@@ -54,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
     Story::observe(StoryObserver::class);
     EpicStory::observe(EpicStoryObserver::class);
     UsageScenario::observe(UsageScenarioObserver::class);
+    Storyboard::observe(StoryboardObserver::class);
 
     ProductCanvas::observe(ProductCanvasObserver::class);
     Goal::observe(GoalSketchObserver::class);

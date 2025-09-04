@@ -14,6 +14,7 @@ return new class extends Migration
     Schema::create('storyboards', function (Blueprint $table) {
       $table->id();
       $table->foreignId('story_id')->constrained()->onDelete('cascade');
+      $table->foreignId('project_id')->constrained()->onDelete('cascade');
       $table->string('image_url');
       $table->unique(['story_id']);
       $table->timestamps();

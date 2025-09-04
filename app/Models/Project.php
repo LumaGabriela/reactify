@@ -47,6 +47,11 @@ class Project extends Model
     return $this->hasMany(Story::class);
   }
 
+  public function storyboards()
+  {
+    return $this->hasMany(Storyboard::class);
+  }
+
   public function epic_stories()
   {
     return $this->hasMany(EpicStory::class);
