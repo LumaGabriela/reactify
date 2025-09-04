@@ -24,6 +24,10 @@ class Story extends Model
   {
     return $this->belongsTo(Project::class);
   }
+  public function storyboards()
+  {
+    return $this->hasMany(Storyboard::class);
+  }
   public function epicStories()
   {
     return $this->hasMany(EpicStory::class);

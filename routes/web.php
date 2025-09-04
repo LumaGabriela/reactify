@@ -4,6 +4,7 @@ use App\Http\Controllers\StoryController;
 use App\Http\Controllers\EpicStoryController;
 use App\Http\Controllers\BusinessRuleController;
 use App\Http\Controllers\UsageScenarioController;
+use App\Http\Controllers\StoryCardController;
 
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\JourneyController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\StorySprintController;
 use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\InvestCardController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\StoryboardController;
 use App\Http\Controllers\SystemInterfaceController;
 
 use Laravel\Socialite\Facades\Socialite;
@@ -95,7 +97,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{story}/prioritize', [StoryController::class, 'prioritize'])->name('story.prioritize');
     Route::delete('/{story}', [StoryController::class, 'destroy'])->name('story.delete');
   });
-
+  //rotas para storyboard
+  Route::prefix('storyboard')->group(function () {
+    Route::post('/', [StoryboardController::class, 'store'])->name('storyboard.store');
+    // Route::patch('/{storyboard}', [StoryboardController::class, 'update'])->name('storyboard.update');
+    // Route::delete('/{storyboard}', [StoryboardController::class, 'destroy'])->name('storyboard.destroy');
+  });
   // Rotas para epic stories
   Route::prefix('epic')->group(function () {
     Route::post('/', [EpicStoryController::class, 'store'])->name('epic-story.store');

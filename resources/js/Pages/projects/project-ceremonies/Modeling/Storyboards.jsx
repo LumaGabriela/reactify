@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
-import { Excalidraw, WelcomeScreen, Footer } from '@excalidraw/excalidraw'
+import { router } from '@inertiajs/react'
+import {
+  Excalidraw,
+  WelcomeScreen,
+  Footer,
+  exportToBlob,
+} from '@excalidraw/excalidraw'
 import { storyVariants } from '../StoryDiscovery/Stories'
 
 const StoryCard = ({ story }) => {
@@ -29,16 +35,18 @@ const StoryCard = ({ story }) => {
 }
 
 const Storyboards = ({ project, setProject }) => {
+  const [excalidrawAPI, setExcalidrawAPI] = useState(null)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [selectedStory, setSelectedStory] = useState(null)
   // Dentro do seu componente
   const [searchQuery, setSearchQuery] = useState('')
-
   const [commandInputRef, setCommandInputRef] = useState(null)
+
   useEffect(() => {
     const html = document.querySelector('html')
     setIsDarkMode(html.classList.contains('dark'))
   }, [])
+
   // Configuração inicial
   const initialData = {
     elements: [],
@@ -54,6 +62,51 @@ const Storyboards = ({ project, setProject }) => {
     },
   }
 
+  const handleSaveCanvas = async () => {
+    // Verificação para garantir que temos tudo o que precisamos
+    if (!excalidrawAPI || !selectedStory) {
+      alert('Por favor, selecione uma story antes de salvar.')
+      return
+    }
+
+    try {
+      const blob = await exportToBlob({
+        elements: excalidrawAPI.getSceneElements(),
+        appState: excalidrawAPI.getAppState(),
+        files: excalidrawAPI.getFiles(),
+        mimeType: 'image/png',
+      })
+
+      // Cria um objeto File a partir do Blob
+      const imageFile = new File(
+        [blob],
+        `storyboard_story_id=${selectedStory.id}.png`,
+        {
+          type: 'image/png',
+        },
+      )
+
+      // Prepara os dados e envia com o hook useForm
+      const formData = {
+        image: imageFile,
+        story_id: selectedStory.id,
+      }
+
+      router.post(route('storyboard.store'), formData, {
+        onSuccess: () => {
+          console.log('Storyboard salvo com sucesso!')
+          // Você pode adicionar um feedback aqui, como um toast.
+        },
+        onError: (errors) => {
+          console.error('Erro ao salvar:', errors)
+          alert('Ocorreu um erro ao salvar o storyboard.')
+        },
+      })
+    } catch (error) {
+      console.error('Erro ao exportar o canvas:', error)
+      alert('Não foi possível gerar a imagem do canvas.')
+    }
+  }
   return (
     <div
       className="w-full h-96 mt-2 flex flex-col overflow-hidden"
@@ -65,6 +118,7 @@ const Storyboards = ({ project, setProject }) => {
       <div className="excalidraw-wrapper flex-1 relative h-full">
         <Excalidraw
           initialData={initialData}
+          excalidrawAPI={(api) => setExcalidrawAPI(api)}
           langCode="pt-BR"
           theme={isDarkMode ? 'dark' : 'light'}
           UIOptions={{
@@ -90,7 +144,7 @@ const Storyboards = ({ project, setProject }) => {
           </WelcomeScreen>
           <Footer>
             <StoryCard story={selectedStory} />
-            <Button>Salvar</Button>
+            <Button onClick={handleSaveCanvas}>Salvar</Button>
             <Command className="flex-col-reverse w-1/2 font-normal text-sm">
               <CommandInput
                 ref={commandInputRef}
