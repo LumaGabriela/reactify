@@ -238,7 +238,7 @@ const Goals = ({ project, setProject }) => {
         ...(project.goal_sketches || []),
         {
           id: `temp-${Date.now()}`,
-          title: 'New Goal',
+          title: 'Nova Goal',
           type: 'bg',
           priority: 'medium',
         },
@@ -248,7 +248,7 @@ const Goals = ({ project, setProject }) => {
     router.post(
       route('goal.store'),
       {
-        title: 'New Goal',
+        title: 'Nova Goal',
         type: 'bg',
         priority: 'medium',
         project_id: project.id,
@@ -445,13 +445,13 @@ const Goals = ({ project, setProject }) => {
           ))}
       </div>
 
-      {/* --- "New Goal" Button --- */}
+      {/* --- "Nova Goal" Button --- */}
       <Button
         className="col-span-2 flex items-center justify-center w-full py-1 bg-card hover:bg-accent text-primary rounded-lg transition-colors shadow-md"
         onClick={addNewGoal}
       >
         <Plus size={18} className="mr-2" />
-        <span>New goal</span>
+        <span>Nova goal</span>
       </Button>
     </div>
   )
