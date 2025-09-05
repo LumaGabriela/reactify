@@ -25,6 +25,7 @@ import ProductBacklog from './project-ceremonies/ProductBacklog/ProductBacklog.j
 import { PenLine, X } from 'lucide-react'
 import { toast } from 'sonner'
 
+
 import MainLayout from '@/Layouts/MainLayout'
 
 import Sprint from './project-ceremonies/Sprint/Sprint'
@@ -314,7 +315,8 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
           }
           className="w-full"
         >
-          <div className="flex gap-2 items-center justify-start w-full">
+          <div className="flex justify-between items-center w-full">
+            {/* Left: Tabs */}
             <TabsList>
               <TabsTrigger value="inception">Inception</TabsTrigger>
               <TabsTrigger value="story-discovery">Story Discovery</TabsTrigger>
@@ -324,10 +326,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               <TabsTrigger value="backlog">Product Backlog</TabsTrigger>
               <TabsTrigger value="sprint">Sprint</TabsTrigger>
             </TabsList>
-            {/* title and change title button  */}
+
+          {/* Center: Title e Botão de Edição */}
             <div
               id="project-title-content"
-              className="flex justify-between gap-4 px-4 w-1/2 cursor-pointer"
+              className="flex-1 flex justify-center items-center gap-2 px-4 cursor-pointer" // Ajuste o gap aqui se precisar
             >
               {isEditing ? (
                 <Input
@@ -337,25 +340,25 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
                   onKeyUp={(e) => {
                     if (e.key === 'Enter') updateProjectTitle()
                   }}
-                  className="bg-background !text-2xl font-bold text-right text-foreground  h-full p-0 border-0 m-0"
+                  className="bg-background !text-2xl font-bold text-center text-foreground h-full p-0 border-0 m-0"
                 />
               ) : (
-                <p className="bg-background text-right text-2xl font-bold text-foreground h-full w-full p-0 border-0 m-0">
+                <p className="bg-background text-center text-2xl font-bold text-foreground h-full p-0 border-0 m-0">
                   {project.title}
                 </p>
               )}
-              {page === 'inception' && (
-                <>
-                  <button
-                    onClick={() => setIsEditing(!isEditing)}
-                    className="text-foreground hover:text-white transition-colors"
-                    title="Editar conteúdo"
-                  >
-                    {!isEditing ? <PenLine size={20} /> : <X size={20} />}
-                  </button>
-                  <ProjectPermissions projectId={project.id} />
-                </>
-              )}
+              <button
+                onClick={() => setIsEditing(!isEditing)}
+                className="text-foreground hover:text-white transition-colors p-1" // Adicionei p-1 para um pequeno padding
+                title="Editar nome do projeto"
+              >
+                {!isEditing ? <PenLine size={16} /> : <X size={16} />} {/* Reduzi o tamanho do ícone para 16 */}
+              </button>
+            </div>
+
+            {/* Right: Buttons (Apenas ProjectPermissions agora) */}
+            <div className="flex items-center gap-2">
+              <ProjectPermissions projectId={project.id} />
             </div>
           </div>
 
