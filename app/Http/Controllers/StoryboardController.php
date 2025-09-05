@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Storyboard;
 use Illuminate\Http\Request;
+use Cloudinary\Api\Exception\NotFound;
 use Log;
 
 class StoryboardController extends Controller
@@ -24,7 +25,28 @@ class StoryboardController extends Controller
 
       $folder = 'reactify/storyboards';
 
-      $uploadedFile = cloudinary()->uploadApi()->upload($file->getRealPath(), ['folder' => $folder, 'public_id' => 'story_id=' . $request['story_id']]);
+      $publicId = 'story_id=' . $request['story_id'];
+
+      $assetExistsInCloudinary = false;
+
+      try {
+        cloudinary()->adminApi()->asset(
+          $folder . '/' . $publicId
+        );
+        $assetExistsInCloudinary = true;
+      } catch (NotFound $e) {
+        // Esta exceção é esperada caso o arquivo não exista.
+        // Não precisamos fazer nada, $assetExistsInCloudinary continuará `false`.
+      }
+
+      $uploadedFile = cloudinary()->uploadApi()->upload(
+        $file->getRealPath(),
+        [
+          'folder' => $folder,
+          'public_id' => $publicId,
+          'overwrite' => true
+        ]
+      );
 
       $secureUrl = $uploadedFile['secure_url'];
 
@@ -34,50 +56,47 @@ class StoryboardController extends Controller
         'image_url' => $secureUrl,
       ]);
 
+      $message = '';
+
       if ($storyboard && $storyboard->wasRecentlyCreated) {
-        return back()->with(['status' => 'success', 'message' => 'Storyboard created successfully']);
-      } else if ($storyboard && !$storyboard->wasRecentlyCreated) {
-        return back()->with(['status' => 'success', 'message' => 'Storyboard updated successfully']);
+        $message = 'Storboard criado com sucesso';
       } else {
-        return back()->with(['status' => 'error', 'message' => 'Failed to create storyboard']);
+        if ($assetExistsInCloudinary) {
+          $message = 'Storyboard atualizado com sucesso';
+        } else {
+          // Cenário raro: o registro existia no DB, mas a imagem não existia no Cloudinary.
+          $message = 'Storyboard atualizado com sucesso (uma nova imagem foi adicionada).';
+        }
       }
+      return back()->with(['status' => 'success', 'message' => $message]);
     } catch (\Exception $e) {
       Log::error($e->getMessage());
       return back()->with(['status' => 'error', 'message' => 'Failed to create storyboard']);
     }
   }
 
-  // public function update(Storyboard $storyboard, Request $request)
-  // {
-  //   $request->validate([
-  //     'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-  //     'story_id' => 'required|exists:stories,id',
-  //   ]);
-
-  //   try {
-  //     $file = $request->file('image');
-
-  //     $folder = 'reactify/storyboards';
-
-  //     $uploadedFile = cloudinary()->uploadApi()->upload($file->getRealPath(), ['folder' => $folder, 'public_id' => 'story_id=' . $request['story_id']]);
-
-  //     $secureUrl = $uploadedFile['secure_url'];
-
-  //     $storyboard->update([
-  //       'story_id' => $request['story_id'],
-  //       'project_id' => $request['project_id'],
-  //       'image_url' => $secureUrl,
-  //     ]);
-
-  //     return back()->with(['status' => 'success', 'message' => 'Storyboard updated successfully']);
-  //   } catch (\Exception $e) {
-  //     Log::error($e->getMessage());
-  //     return back()->with(['status' => 'error', 'message' => 'Failed to update storyboard']);
-  //   }
-  // }
   public function destroy(Storyboard $storyboard)
   {
-    $storyboard->delete();
-    return back()->with(['status' => 'success', 'message' => 'Storyboard deleted successfully']);
+    try {
+      $publicID = 'reactify/storyboards/story_id=' . $storyboard->story_id;
+
+      $response = cloudinary()->adminApi()->deleteAssets([$publicID]);
+
+      $errorMessage = 'Erro ao excluir storyboard';
+
+      if (isset($response['deleted']) && in_array('not_found', $response['deleted'])) {
+        $errorMessage = 'Storyboard não encontrado no Cloudinary para exclusão.';
+
+        throw new \Exception('Asset com public_id "' . $publicID . '" não foi encontrado no Cloudinary para exclusão.');
+      }
+
+      $storyboard->delete();
+
+      return back()->with(['status' => 'success', 'message' => 'Storyboard deleted successfully']);
+    } catch (\Exception $e) {
+      Log::error($e->getMessage());
+
+      return back()->with(['status' => 'error', 'message' => $errorMessage]);
+    }
   }
 }

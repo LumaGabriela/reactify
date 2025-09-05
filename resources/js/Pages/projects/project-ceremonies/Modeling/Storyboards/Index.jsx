@@ -1,4 +1,3 @@
-import { Link } from '@inertiajs/react'
 import Editor from './Editor'
 import {
   LayoutGrid,
@@ -18,15 +17,8 @@ export const StoryboardCard = ({
   setTab,
 }) => {
   const handleDelete = (e) => {
-    e.preventDefault() // Impede a navegação do Link pai
-    if (confirm('Tem certeza que deseja excluir este storyboard?')) {
-      router.delete(
-        route('storyboards.destroy', {
-          project: project.id,
-          storyboard: storyboard.id,
-        }),
-      )
-    }
+    e.stopPropagation()
+    router.delete(route('storyboard.destroy', storyboard.id))
   }
 
   if (viewMode === 'list') {
@@ -136,6 +128,7 @@ const StoryboardsIndex = ({ project, setTab }) => {
             type="single"
             value={viewMode}
             onValueChange={handleViewModeChange}
+            className="text-foreground "
           >
             <ToggleGroupItem value="grid" aria-label="Grid view">
               <LayoutGrid className="h-4 w-4" />
@@ -182,7 +175,9 @@ const StoryboardsIndex = ({ project, setTab }) => {
               Comece a dar vida às suas stories.
             </p>
             <div className="mt-6">
-              <Button>
+              <Button
+                onClick={() => setTab({ tab: 'editor', storyboard: null })}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Criar seu primeiro Storyboard
               </Button>
