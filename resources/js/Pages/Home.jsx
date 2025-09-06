@@ -13,7 +13,7 @@ import MainLayout from '@/Layouts/MainLayout'
 const ProjectCard = ({ project, toggleActiveProject, deleteProject }) => {
   return (
     <AlertDialog>
-      <Card className="flex flex-col justify-between h-64 w-52 hover:shadow-md">
+      <Card className="flex flex-col justify-between h-52 w-96 hover:shadow-md">
         {/* CABEÇALHO: Título do projeto e menu de ações */}
 
         <CardHeader className="flex-row items-center justify-between">
@@ -56,9 +56,11 @@ const ProjectCard = ({ project, toggleActiveProject, deleteProject }) => {
         </CardHeader>
 
         {/* CONTEÚDO: Descrição e contagem de membros */}
-        <CardContent className="">
+        <CardContent className="flex-1 overflow-hidden">
           <Link href={route('project.show', project.id)}>
-            <CardDescription>{project.description}</CardDescription>
+            <CardDescription className="line-clamp-3"> {/* Limita o texto a 3 linhas */}
+              {project.description}
+            </CardDescription>
           </Link>
         </CardContent>
 
