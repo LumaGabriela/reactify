@@ -13,7 +13,9 @@ return new class extends Migration {
         Schema::create("projects", function (Blueprint $table) {
             $table->id();
             $table->string("title");
-            $table->string("description");
+            $table->text("description");
+            $table->string('status')->default('active');
+            $table->date('due_date')->nullable();
             $table->boolean("active")->default(true);
             $table->timestamps();
             $table->softDeletes();

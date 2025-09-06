@@ -13,13 +13,14 @@ class Project extends Model
 {
   use HasFactory, SoftDeletes;
 
-  protected $fillable = ['title', 'description', 'status'];
+  protected $fillable = ['title', 'description', 'status', 'due_date'];
 
   protected $table = 'projects';
 
   protected $casts = [
     'active' => 'boolean',
     'status' => ProjectStatus::class,
+    'due_date' => 'date',
   ];
 
   public function journeys()
@@ -50,6 +51,11 @@ class Project extends Model
   public function storyboards()
   {
     return $this->hasMany(Storyboard::class);
+  }
+
+  public function interviews()
+  {
+    return $this->hasMany(Interview::class);
   }
 
   public function epic_stories()
