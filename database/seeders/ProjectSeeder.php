@@ -92,7 +92,10 @@ class ProjectSeeder extends Seeder
     // Criar Projeto
     $projectId = DB::table("projects")->insertGetId([
       "title" => "Projeto Exemplo",
-      "description" => "Descrição do projeto exemplo.",
+      "description" => "O ClassicFlix é uma plataforma de streaming dedicada exclusivamente a filmes em domínio público, com o objetivo de democratizar o acesso a obras clássicas e históricas. A plataforma oferece um catálogo diversificado de títulos legendados em português, voltado tanto para fins educacionais quanto para entretenimento.
+      Com uma proposta acessível, o ClassicFlix pratica preços de assinatura reduzidos em comparação às plataformas tradicionais de streaming, incentivando a preservação e valorização cultural dos filmes clássicos.
+      Além do acesso ao catálogo, a plataforma conta com uma comunidade interativa, permitindo que os usuários compartilhem experiências, troquem recomendações e participem ativamente da valorização do cinema histórico.
+      O ClassicFlix funciona diretamente em navegadores desktop e mobile, garantindo praticidade e acessibilidade sem a necessidade de instalar aplicativos ou programas adicionais..",
       "active" => true,
       "created_at" => now(),
       "updated_at" => now(),
@@ -138,13 +141,19 @@ class ProjectSeeder extends Seeder
 
     // Criar Product Canvas vinculado ao Projeto
     DB::table("product_canvas")->insertGetId([
-      "issues" => "Problema",
-      "solutions" => "Solução",
-      "personas" => "Pessoa",
-      "restrictions" =>
-      "A plataforma deve funcionar em qualquer navegador web baseado no Chromium, no Opera, no Safari e no Mozilla Firefox. A plataforma deve exigir um cadastro do usuário. A plataforma deve exigir uma assinatura semestral ou anual para acesso ilimitado ao catálogo.",
-      "product_is" => "É",
-      "product_is_not" => "Nao É",
+      "issues" => "Acesso difícil ou limitado a filmes em domínio público para fins educacionais ou de entretenimento. Acesso difícil ou limitado a filmes em domínio público legendados em português.
+      Desinteresse de plataformas tradicionais de streaming em preservação histórica de filmes clássicos.
+      As plataformas de streaming praticam preços de assinatura muito elevados.",
+      "solutions" => "Criar uma plataforma de streaming para filmes em domínio público, com legendas em português e preços de assinaturas acessíveis.",
+      "personas" => "Leon Cardoso - Administrador da plataforma.
+      Thiago Guimarães - Usuário.",
+      "restrictions" =>"A plataforma deve funcionar em qualquer navegador web baseado no Chromium, no Opera, no Safari e no Mozilla Firefox. \nA plataforma deve exigir um cadastro do usuário.
+      A plataforma deve exigir uma assinatura semestral ou anual para acesso ilimitado ao catálogo.",
+      "product_is" => "É uma plataforma web.
+      É otimizada para navegadores desktop e mobile.
+      A plataforma oferece uma comunidade para interação entre usuários.",
+      "product_is_not" => "Não é um sistema desktop.
+      Não é um aplicativo móvel.",
       "project_id" => $projectId,
       "created_at" => now(),
       "updated_at" => now(),
