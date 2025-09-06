@@ -27,7 +27,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 
-
+import Interview from '@/Components/Interview'
 const cardVariants = {
   primary: 'border-t-primary text-primary',
   destructive: 'border-t-destructive text-destructive',
@@ -526,7 +526,11 @@ const MainView = ({ project = {}, setProject }) => {
             updateProductCanvas('product_is_not', content)
           }
         />
-
+        
+        <Interview
+          projectId={project.id}
+          interviews={project.interviews || []} // Passe a lista de entrevistas do seu projeto
+        />
       </div>
     </div>
   )

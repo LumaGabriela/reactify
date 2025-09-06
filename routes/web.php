@@ -30,6 +30,7 @@ use App\Http\Controllers\InvestCardController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\StoryboardController;
 use App\Http\Controllers\SystemInterfaceController;
+use App\Http\Controllers\InterviewController;
 
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
@@ -206,6 +207,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{interface}', [SystemInterfaceController::class, 'update'])->name('system-interface.update');
     Route::delete('/{interface}', [SystemInterfaceController::class, 'destroy'])->name('system-interface.destroy');
   });
+
+  // Rota para upload de entrevista
+  Route::post('/projects/{project}/interviews', [InterviewController::class, 'store'])->name('project.interviews.store');
+  Route::delete('/interviews/{interview}', [InterviewController::class, 'destroy'])->name('interview.destroy');
+
 
   //pagina de notificacoes
   Route::prefix('notifications')->group(function () {

@@ -36,7 +36,8 @@ class ProjectController extends Controller
         'invest_cards',
         'usage_scenarios',
         'system_interfaces',
-        'storyboards'
+        'storyboards',
+        'interviews'
       ]),
     ]);
   }
@@ -104,6 +105,7 @@ class ProjectController extends Controller
       'usage_scenarios',
       'system_interfaces',
       'storyboards',
+      'interviews',
       'users' => function ($query) {
         $query->select(['user_id', 'name', 'email', 'provider_avatar']);
       }
