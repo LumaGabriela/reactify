@@ -1,15 +1,38 @@
 import { router } from '@inertiajs/react'
-import { Plus } from 'lucide-react'
+import { Plus, Calendar as CalendarIcon } from 'lucide-react'
 import SprintList from './SprintList'
 import KanbanBoard from './KanbanBoard'
 import { toast } from 'sonner'
+import { useState } from 'react'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { cn } from '@/lib/utils'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
 
 const Sprint = ({ project, setProject }) => {
   const [activeSprint, setActiveSprint] = useState(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [view, setView] = useState('list')
-
   const sprints = project?.sprints || []
+
+  const [startDate, setStartDate] = useState(new Date())
+  const [endDate, setEndDate] = useState(
+    new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // Default para 14 dias no futuro
+  )
 
   const handleCreateSprint = (e) => {
     e.preventDefault()
@@ -17,8 +40,8 @@ const Sprint = ({ project, setProject }) => {
 
     const sprintData = {
       name: formData.get('name'),
-      start_date: formData.get('start_date'),
-      end_date: formData.get('end_date'),
+      start_date: startDate ? format(startDate, 'yyyy-MM-dd') : null,
+      end_date: endDate ? format(endDate, 'yyyy-MM-dd') : null,
       project_id: project.id,
       status: 'planning',
     }
@@ -31,10 +54,11 @@ const Sprint = ({ project, setProject }) => {
         if (page.props.project) {
           setProject(page.props.project)
         }
+        setStartDate(new Date());
+        setEndDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000));
       },
       onError: (errors) => {
         console.error('Erro ao criar sprint:', errors)
-
         const mensagens = Object.values(errors || {})
         if (mensagens.length > 0) {
           toast.warning(mensagens.join('\n'))
@@ -56,7 +80,7 @@ const Sprint = ({ project, setProject }) => {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle className="text-2xl">Sprint Management</CardTitle>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <Tabs value={view} onValueChange={setView}>
                 <TabsList>
                   <TabsTrigger value="list">Sprint List</TabsTrigger>
@@ -84,6 +108,7 @@ const Sprint = ({ project, setProject }) => {
             <CardTitle>Create New Sprint</CardTitle>
           </CardHeader>
           <CardContent>
+            {/* O formulário não precisa mais dos inputs de data */}
             <form onSubmit={handleCreateSprint} className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Sprint Name</label>
@@ -94,30 +119,69 @@ const Sprint = ({ project, setProject }) => {
                   required
                 />
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Start Date</label>
-                  <Input
-                    type="date"
-                    name="start_date"
-                    min={new Date().toISOString().split('T')[0]}
-                    defaultValue={new Date().toISOString().split('T')[0]}
-                    required
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={'outline'}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !startDate && 'text-muted-foreground',
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {startDate ? (
+                          format(startDate, 'dd/MM/yyyy', { locale: ptBR })
+                        ) : (
+                          <span>Escolha uma data</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={startDate}
+                        onSelect={setStartDate}
+                        disabled={{ before: new Date() }}
+                        locale={ptBR}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">End Date</label>
-                  <Input
-                    type="date"
-                    name="end_date"
-                    min={new Date().toISOString().split('T')[0]}
-                    defaultValue={
-                      new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
-                        .toISOString()
-                        .split('T')[0]
-                    }
-                    required
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={'outline'}
+                        className={cn(
+                          'w-full justify-start text-left font-normal',
+                          !endDate && 'text-muted-foreground',
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {endDate ? (
+                          format(endDate, 'dd/MM/yyyy', { locale: ptBR })
+                        ) : (
+                          <span>Escolha uma data</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={endDate}
+                        onSelect={setEndDate}
+                        disabled={{ before:  new Date() }}
+                        locale={ptBR}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
               <div className="flex gap-2">
