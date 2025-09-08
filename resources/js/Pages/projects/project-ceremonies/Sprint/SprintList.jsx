@@ -2,7 +2,7 @@ import { router } from '@inertiajs/react'
 import {
   Play,
   Check,
-  Calendar,
+  Calendar as CalendarIcon,
   Trash2,
   Eye,
   Info,
@@ -10,12 +10,15 @@ import {
   CheckCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 const SprintList = ({
   sprints,
   setActiveSprint,
   setView,
-  project,
+
   updateProject,
 }) => {
   const [editingSprint, setEditingSprint] = useState(null)
@@ -59,7 +62,7 @@ const SprintList = ({
   const statusConfig = {
     planning: {
       title: 'Sprints Planejadas',
-      icon: <Calendar className="w-5 h-5 text-blue-600" />,
+      icon: <CalendarIcon className="w-5 h-5 text-blue-600" />,
       color: 'text-blue-600',
       count: sprintsByStatus.planning.length,
     },
@@ -303,7 +306,7 @@ const SprintList = ({
       case 'completed':
         return <Check className="w-4 h-4 text-gray-600" />
       case 'planning':
-        return <Calendar className="w-4 h-4 text-blue-600" />
+        return <CalendarIcon className="w-4 h-4 text-blue-600" />
       default:
         return <Check className="w-4 h-4 text-gray-400" />
     }
@@ -484,18 +487,80 @@ const SprintList = ({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Data de Início</label>
-                <Input
-                  type="date"
-                  value={editForm.start_date}
-                  min={new Date().toISOString().split('T')[0]}
-                  disabled={sprint.status === 'active'}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, start_date: e.target.value })
-                  }
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={'outline'}
+                      className={cn(
+                        'w-full justify-start text-left font-normal',
+                        !editForm.start_date && 'text-muted-foreground',
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {editForm.start_date ? (
+                        format(editForm.start_date, 'dd/MM/yyyy', {
+                          locale: ptBR,
+                        })
+                      ) : (
+                        <span>Escolha uma data</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={editForm.end_date}
+                      onSelect={(value) =>
+                        setEditForm({
+                          ...editForm,
+                          start_date: value,
+                        })
+                      }
+                      disabled={{ before: new Date() }}
+                      locale={ptBR}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Data de Fim</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={'outline'}
+                      className={cn(
+                        'w-full justify-start text-left font-normal',
+                        !editForm.end_date && 'text-muted-foreground',
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {editForm.end_date ? (
+                        format(editForm.end_date, 'dd/MM/yyyy', {
+                          locale: ptBR,
+                        })
+                      ) : (
+                        <span>Escolha uma data</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={editForm.end_date}
+                      onSelect={(value) =>
+                        setEditForm({
+                          ...editForm,
+                          end_date: value,
+                        })
+                      }
+                      disabled={{ before: new Date() }}
+                      locale={ptBR}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {/* <label className="text-sm font-medium">Data de Fim</label>
                 <Input
                   type="date"
                   value={editForm.end_date}
@@ -504,14 +569,14 @@ const SprintList = ({
                   onChange={(e) =>
                     setEditForm({ ...editForm, end_date: e.target.value })
                   }
-                />
+                />*/}
               </div>
             </div>
           </div>
         ) : (
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 flex-wrap">
             <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
+              <CalendarIcon className="w-4 h-4" />
               <span className="font-medium">
                 {formatDate(sprint.start_date)} até{' '}
                 {formatDate(sprint.end_date)}

@@ -7,20 +7,6 @@ import { useState } from 'react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 
 const Sprint = ({ project, setProject }) => {
@@ -54,8 +40,8 @@ const Sprint = ({ project, setProject }) => {
         if (page.props.project) {
           setProject(page.props.project)
         }
-        setStartDate(new Date());
-        setEndDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000));
+        setStartDate(new Date())
+        setEndDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000))
       },
       onError: (errors) => {
         console.error('Erro ao criar sprint:', errors)
@@ -132,7 +118,7 @@ const Sprint = ({ project, setProject }) => {
                           !startDate && 'text-muted-foreground',
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        <CalendarIcon className="mr-2 size-4 " />
                         {startDate ? (
                           format(startDate, 'dd/MM/yyyy', { locale: ptBR })
                         ) : (
@@ -176,7 +162,7 @@ const Sprint = ({ project, setProject }) => {
                         mode="single"
                         selected={endDate}
                         onSelect={setEndDate}
-                        disabled={{ before:  new Date() }}
+                        disabled={{ before: new Date() }}
                         locale={ptBR}
                         initialFocus
                       />
