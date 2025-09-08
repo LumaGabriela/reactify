@@ -1,4 +1,4 @@
-import { Plus, Info, Check, X, Trash, LoaderCircle } from 'lucide-react'
+import { Plus, Check, X, LoaderCircle, ChevronDown } from 'lucide-react'
 import TextareaAutosize from 'react-textarea-autosize'
 import { router } from '@inertiajs/react'
 import { cn } from '@/lib/utils'
@@ -61,11 +61,12 @@ const GoalItem = ({
                 <PopoverTrigger disabled={isTemporary}>
                   <Badge
                     className={cn(
-                      'border-transparent text-white font-bold cursor-pointer',
+                      'border-transparent text-background font-bold cursor-pointer',
                       selectedType.color,
                     )}
                   >
                     {goal.type.toUpperCase()}
+                    <ChevronDown className="ml-1 size-3" />
                   </Badge>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto bg-popover border-border p-1">
@@ -77,7 +78,9 @@ const GoalItem = ({
                         className="h-auto p-2 justify-start hover:bg-accent"
                         onClick={() => onChangeGoalType(goal.id, type.title)}
                       >
-                        <Badge className={cn('w-full text-white', type.color)}>
+                        <Badge
+                          className={cn('w-full text-background', type.color)}
+                        >
                           {type.title.toUpperCase()}
                         </Badge>
                       </Button>
@@ -92,11 +95,12 @@ const GoalItem = ({
                 <PopoverTrigger disabled={isTemporary}>
                   <Badge
                     className={cn(
-                      'border-transparent text-white font-bold cursor-pointer',
+                      'border-transparent text-background font-bold cursor-pointer',
                       selectedPriority.color,
                     )}
                   >
                     {goal.priority.toUpperCase()}
+                    <ChevronDown className="ml-1 size-3" />
                   </Badge>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto bg-popover border-border p-1">
@@ -111,7 +115,10 @@ const GoalItem = ({
                         }
                       >
                         <Badge
-                          className={cn('w-full text-white', variant.color)}
+                          className={cn(
+                            'w-full text-background',
+                            variant.color,
+                          )}
                         >
                           {variant.title.toUpperCase()}
                         </Badge>
@@ -231,7 +238,7 @@ const Goals = ({ project, setProject }) => {
   }
 
   // Função para adicionar uma nova goal
-  const addNewGoal = () => {
+  const addNewGoal = (type = 'bg') => {
     setProject({
       ...project,
       goal_sketches: [
@@ -239,7 +246,7 @@ const Goals = ({ project, setProject }) => {
         {
           id: `temp-${Date.now()}`,
           title: 'Nova Goal',
-          type: 'bg',
+          type: type,
           priority: 'medium',
         },
       ],
@@ -249,7 +256,7 @@ const Goals = ({ project, setProject }) => {
       route('goal.store'),
       {
         title: 'Nova Goal',
-        type: 'bg',
+        type: type,
         priority: 'medium',
         project_id: project.id,
       },
@@ -388,7 +395,7 @@ const Goals = ({ project, setProject }) => {
             <div className="flex items-center mb-2 gap-2">
               <Badge
                 className={cn(
-                  'text-white',
+                  'text-background',
                   typeColors.find((c) => c.title === 'cg')?.color,
                 )}
               >
@@ -396,7 +403,7 @@ const Goals = ({ project, setProject }) => {
               </Badge>
               <Badge
                 className={cn(
-                  'text-white',
+                  'text-background',
                   priorityColors.find((c) => c.title === 'med')?.color,
                 )}
               >
@@ -408,6 +415,13 @@ const Goals = ({ project, setProject }) => {
             </p>
           </Card>
         )}
+        <Button
+          className="col-span-2 flex items-center justify-center w-full py-1 bg-card hover:bg-accent text-primary rounded-lg transition-colors shadow-md"
+          onClick={() => addNewGoal('cg')}
+        >
+          <Plus size={18} className="mr-2" />
+          <span>Nova Constraint Goal</span>
+        </Button>
       </div>
 
       {/* --- Column 2: Business Goals --- */}
@@ -443,16 +457,14 @@ const Goals = ({ project, setProject }) => {
               onChangeGoalPriority={changeGoalPriority}
             />
           ))}
+        <Button
+          className="col-span-2 flex items-center justify-center w-full py-1 bg-card hover:bg-accent text-primary rounded-lg transition-colors shadow-md"
+          onClick={() => addNewGoal('bg')}
+        >
+          <Plus size={18} className="mr-2" />
+          <span>Nova Business Goal</span>
+        </Button>
       </div>
-
-      {/* --- "Nova Goal" Button --- */}
-      <Button
-        className="col-span-2 flex items-center justify-center w-full py-1 bg-card hover:bg-accent text-primary rounded-lg transition-colors shadow-md"
-        onClick={addNewGoal}
-      >
-        <Plus size={18} className="mr-2" />
-        <span>Nova goal</span>
-      </Button>
     </div>
   )
 }

@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import MotionDivOptions from '@/Components/MotionDivOptions'
-import { Plus, X, Check, LoaderCircle, ChevronsUp, Minus } from 'lucide-react'
+import {
+  Plus,
+  X,
+  Check,
+  LoaderCircle,
+  ChevronsUp,
+  Minus,
+  ChevronDown,
+} from 'lucide-react'
 import { router } from '@inertiajs/react'
 import TextareaAutosize from 'react-textarea-autosize'
 import axios from 'axios'
@@ -58,6 +66,7 @@ const StoryItem = ({
                   className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
                 >
                   {`${story.type === 'system' ? 'SS' : 'US'}${isTemporary ? '' : story.id}`.toUpperCase()}
+                  <ChevronDown className="ml-1 size-3" />
                 </Badge>
               </PopoverTrigger>
               <PopoverContent className="w-auto bg-popover border-border p-1">
@@ -282,7 +291,7 @@ const Stories = ({ project, setProject }) => {
     }
   }
 
-  const addNewStory = () => {
+  const addNewStory = (type = 'user') => {
     setProject({
       ...project,
       stories: [
@@ -290,7 +299,7 @@ const Stories = ({ project, setProject }) => {
         {
           id: `temp-${Date.now()}`,
           title: 'Nova Story',
-          type: 'user',
+          type: type,
         },
       ],
     })
@@ -299,7 +308,7 @@ const Stories = ({ project, setProject }) => {
       route('story.store'),
       {
         title: 'Nova Story',
-        type: 'user',
+        type: type,
         project_id: project.id,
       },
       { preserveState: true, preserveScroll: true },
@@ -561,6 +570,13 @@ const Stories = ({ project, setProject }) => {
             </div>
           </div>
         )}
+        <Button
+          className="flex items-center justify-center py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors shadow-md"
+          onClick={() => addNewStory('user')}
+        >
+          <Plus size={18} className="mr-2" />
+          <span>Nova User Story</span>
+        </Button>
       </div>
       <div className="flex flex-col gap-2 ">
         <InfoButton
@@ -594,17 +610,16 @@ const Stories = ({ project, setProject }) => {
                 />
               )
             })}
+        <Button
+          className="flex items-center justify-center py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors shadow-md"
+          onClick={() => addNewStory('system')}
+        >
+          <Plus size={18} className="mr-2" />
+          <span>Nova System Story</span>
+        </Button>
       </div>
 
       <div className="w-full col-span-2 flex gap-2">
-        <Button
-          className="flex items-center justify-center w-1/2 py-1 bg-card hover:bg-muted text-primary rounded-lg transition-colors shadow-md"
-          onClick={addNewStory}
-        >
-          <Plus size={18} className="mr-2" />
-          <span>Nova story</span>
-        </Button>
-
         <GenerateIAButton
           isGenerating={isGenerating}
           onClick={generateStories}
