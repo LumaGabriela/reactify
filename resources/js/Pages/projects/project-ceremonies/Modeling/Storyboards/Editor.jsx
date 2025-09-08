@@ -198,10 +198,63 @@ const Editor = ({ project, storyboard, setTab }) => {
 
   return (
     <div
-      className="w-full h-96 mt-2 flex flex-col overflow-hidden"
+      className="w-full mt-2 flex "
       style={{ height: 'calc(100vh - 105px)' }}
     >
-      <div className="excalidraw-wrapper flex-1 relative h-full">
+      <section className="flex flex-col w-1/5 h-full ">
+        <div className="flex justify-between py-2">
+          <Button
+            onClick={handleSaveCanvas}
+            disabled={isProcessing || !selectedStory}
+          >
+            Salvar
+          </Button>
+          <Button
+          // onClick={handleSaveCanvas}
+          // disabled={isProcessing || !selectedStory}
+          >
+            Inserir anexo
+          </Button>
+        </div>
+        <Command className=" font-normal text-sm">
+          <CommandInput
+            ref={commandInputRef}
+            onValueChange={(value) => {
+              setSearchQuery(value)
+            }}
+            placeholder="Buscar stories..."
+            className="!border-none focus:!outline-none focus:!ring-0 !bg-transparent"
+          />
+
+          <CommandList className=" overflow-x-hidden max-h-full">
+            <CommandEmpty className="py-6 text-sm">
+              Nenhum projeto encontrado.
+            </CommandEmpty>
+
+            <CommandGroup className={`text-left`}>
+              {project?.stories?.map((story) => (
+                <CommandItem
+                  key={story.id}
+                  value={story.id}
+                  onSelect={() => {
+                    setSelectedStory(story)
+                  }}
+                  className={`${selectedStory.id === story.id ? 'text-background bg-muted-foreground' : ''}`}
+                >
+                  <Badge
+                  // className={`${selectedStory.id === story.id ? 'bg-accent text-foreground' : ''}`}
+                  >
+                    {story.type === 'user' ? 'US' : 'SS'}
+                    {story.id}
+                  </Badge>
+                  {story.title}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </section>
+      <div className="excalidraw-wrapper flex-1 relative w-[85%] h-full">
         {/* RENDERIZAÇÃO CONDICIONAL */}
         {!sceneData ? (
           <div className="w-full h-full flex items-center justify-center bg-card text-foreground">
@@ -249,7 +302,7 @@ const Editor = ({ project, storyboard, setTab }) => {
               <WelcomeScreen.Hints.ToolbarHint />
               <WelcomeScreen.Hints.MenuHint />
             </WelcomeScreen>
-
+            {/*
             <Footer>
               <StoryCard story={selectedStory} />
               <Button
@@ -258,44 +311,7 @@ const Editor = ({ project, storyboard, setTab }) => {
               >
                 Salvar
               </Button>
-
-              <Command className="flex-col-reverse w-1/2 font-normal text-sm">
-                <CommandInput
-                  ref={commandInputRef}
-                  onValueChange={(value) => {
-                    setSearchQuery(value)
-                  }}
-                  placeholder="Buscar stories..."
-                  className="!border-none focus:!outline-none focus:!ring-0 !bg-transparent"
-                />
-
-                <CommandList className="overflow-y-auto overflow-x-hidden">
-                  <CommandEmpty className="py-6 text-sm">
-                    Nenhum projeto encontrado.
-                  </CommandEmpty>
-
-                  <CommandGroup
-                    className={`${searchQuery.length > 0 ? '' : 'hidden'} text-left`}
-                  >
-                    {project?.stories?.map((story) => (
-                      <CommandItem
-                        key={story.id}
-                        value={story.id}
-                        onSelect={() => {
-                          setSelectedStory(story)
-                        }}
-                      >
-                        <Badge>
-                          {story.type === 'user' ? 'US' : 'SS'}
-                          {story.id}
-                        </Badge>
-                        {story.title}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </Footer>
+            </Footer>*/}
           </Excalidraw>
         )}
       </div>
