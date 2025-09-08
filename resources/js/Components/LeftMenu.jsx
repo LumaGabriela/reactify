@@ -14,6 +14,30 @@ import {
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 
+const useOnClickOutside = (ref, handler) => {
+  useEffect(() => {
+    const listener = (event) => {
+      // Não faz nada se o clique for dentro do elemento referenciado
+      if (!ref.current || ref.current.contains(event.target)) {
+        return
+      }
+      // Executa o handler se o clique for fora
+      handler(event)
+    }
+
+    // Adiciona o event listener para mousedown
+    document.addEventListener('mousedown', listener)
+    // Adiciona o event listener para touchstart (suporte mobile)
+    document.addEventListener('touchstart', listener)
+
+    // Função de limpeza: remove os event listeners quando o componente for desmontado
+    return () => {
+      document.removeEventListener('mousedown', listener)
+      document.removeEventListener('touchstart', listener)
+    }
+  }, [ref, handler]) // Recria o efeito se a ref ou o handler mudarem
+}
+
 const LeftMenu = () => {
   const [isHovered, setIsHovered] = useState(false)
   const { props } = usePage()
@@ -24,6 +48,39 @@ const LeftMenu = () => {
     document.documentElement.classList.contains('dark') ? 'dark' : 'light',
   )
 
+  const menuRef = useRef(null)
+  const menuItems = [
+    {
+      name: 'Notifications',
+      url: 'notifications.index',
+      icon: Bell,
+      badge: notifications.length,
+    },
+    { name: 'Profile', url: 'profile.edit', icon: User },
+    { name: 'Logout', url: 'logout', icon: LogOut },
+  ]
+  const projectPages = [
+    {
+      name: 'Inception',
+      url: 'inception',
+    },
+    {
+      name: 'Story Discovery',
+      url: 'story-discovery',
+    },
+    {
+      name: 'Refining',
+      url: 'refining',
+    },
+    {
+      name: 'Modeling',
+      url: 'modeling',
+    },
+    {
+      name: 'Backlog',
+      url: 'backlog',
+    },
+  ]
   const cardVariants = {
     hidden: {
       opacity: 0,
@@ -58,38 +115,9 @@ const LeftMenu = () => {
     return () => observer.disconnect()
   }, [])
 
-  const menuItems = [
-    {
-      name: 'Notifications',
-      url: 'notifications.index',
-      icon: Bell,
-      badge: notifications.length,
-    },
-    { name: 'Profile', url: 'profile.edit', icon: User },
-    { name: 'Logout', url: 'logout', icon: LogOut },
-  ]
-  const projectPages = [
-    {
-      name: 'Inception',
-      url: 'inception',
-    },
-    {
-      name: 'Story Discovery',
-      url: 'story-discovery',
-    },
-    {
-      name: 'Refining',
-      url: 'refining',
-    },
-    {
-      name: 'Modeling',
-      url: 'modeling',
-    },
-    {
-      name: 'Backlog',
-      url: 'backlog',
-    },
-  ]
+  useEffect(() => {
+    console.log(props)
+  }, [props])
 
   const currentRouteName = route().current()
   const currentProjectId = route().params.project
@@ -99,16 +127,11 @@ const LeftMenu = () => {
     currentRouteName.startsWith('project') &&
     !route().current('projects.index')
 
-  useEffect(() => {
-    console.log(props)
-  }, [props])
-
+  useOnClickOutside(menuRef, () => setIsHovered(false))
   return (
     <AnimatePresence>
       <motion.aside
-        // onMouseEnter={() => setIsHovered(true)}
-        // onMouseLeave={() => setIsHovered(false)}
-
+        ref={menuRef}
         animate={{ opacity: 1, width: isHovered ? '14rem' : '4rem' }}
         transition={{ duration: 0.3 }}
         className={

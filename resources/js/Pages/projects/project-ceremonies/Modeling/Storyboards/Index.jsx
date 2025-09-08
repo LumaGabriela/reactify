@@ -89,17 +89,38 @@ export const StoryboardCard = ({
           />
         </AspectRatio>
       </CardHeader>
-      <CardContent className="p-4">
-        <p
-          className="text-sm font-semibold truncate"
-          title={storyboard.story_id}
-        >
-          {storyboard.stor_id}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Atualizado em:{' '}
-          {new Date(storyboard.updated_at).toLocaleDateString('pt-BR')}
-        </p>
+      <CardContent className="p-2 flex justify-between font-normal">
+        <div className="size-5" />
+        <div>
+          <p
+            className="text-sm font-semibold truncate"
+            title={storyboard.story_id}
+          >
+            {storyboard.story_id}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Atualizado em:{' '}
+            {new Date(storyboard.updated_at).toLocaleDateString('pt-BR')}
+          </p>
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              onClick={(e) => e.preventDefault()}
+              size="icon"
+              variant="ghost"
+              className=""
+            >
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={handleDelete} className="text-red-500">
+              <Trash2 className="mr-2 size-4" />
+              Excluir
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardContent>
     </Card>
   )
