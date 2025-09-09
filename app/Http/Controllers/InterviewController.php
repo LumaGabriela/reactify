@@ -16,7 +16,6 @@ class InterviewController extends Controller
      */
     public function store(Request $request, Project $project)
     {
-        // 1. VALIDAÇÃO GENÉRICA: Aceita vários tipos de ficheiro com um limite de 50MB
         $request->validate([
             'interview' => 'required|file|mimes:mp3,wav,ogg,m4a,mp4,mov,webm,txt,pdf,doc,docx|max:51200',
         ]);
@@ -31,8 +30,6 @@ class InterviewController extends Controller
             $publicFileName = Str::slug($fileNameWithoutExtension) . '.' . $fileExtension;
             
             $folder = 'reactify/interviews/' . $project->id;
-
-            // 2. UPLOAD GENÉRICO: Usa 'resource_type' => 'auto'
             $uploadedFile = cloudinary()->uploadApi()->upload($file->getRealPath(), [
                 'folder'           => $folder,
                 'public_id'        => pathinfo($publicFileName, PATHINFO_FILENAME),
@@ -49,7 +46,7 @@ class InterviewController extends Controller
 
             return back()->with(['status' => 'success', 'message' => 'Entrevista enviada com sucesso.']);
         } catch (\Exception $e) {
-            Log::error("Falha no upload da entrevista: " . $e->getMessage());
+            //Log::error("Falha no upload da entrevista: " . $e->getMessage());
             return back()->with(['status' => 'error', 'message' => 'Falha ao enviar a entrevista.']);
         }
     }
@@ -62,13 +59,19 @@ class InterviewController extends Controller
         try {
             $publicID = $interview->public_id;
 
+            $errorMessage = 'Erro ao excluir entrevista';
+
             if ($publicID) {
-                // 3. LÓGICA DE EXCLUSÃO GENÉRICA: Usa a função auxiliar para determinar o tipo
                 $resourceType = $this->getResourceType($interview->file_name);
                 
-                cloudinary()->uploadApi()->destroy($publicID, [
+                $response = cloudinary()->adminApi()->deleteAssets([$publicID], [
                     'resource_type' => $resourceType
                 ]);
+
+                if (isset($response['deleted']) && in_array('not_found', $response['deleted'])) {
+                    $errorMessage = 'Entrevista não encontrada no Cloudinary para exclusão.';
+                    throw new \Exception('Asset com public_id "' . $publicID . '" não foi encontrado no Cloudinary para exclusão.');
+                }
             }
 
             $interview->delete();
@@ -76,13 +79,7 @@ class InterviewController extends Controller
             return back()->with(['status' => 'success', 'message' => 'Entrevista apagada com sucesso']);
         } catch (\Exception $e) {
             Log::error("Falha ao apagar a entrevista: ID " . $interview->id . " - " . $e->getMessage());
-
-            if ($e instanceof NotFound) {
-                 $interview->delete();
-                 return back()->with(['status' => 'warning', 'message' => 'Entrevista apagada do sistema, mas não foi encontrada no Cloudinary.']);
-            }
-
-            return back()->with(['status' => 'error', 'message' => 'Falha ao apagar a entrevista.']);
+            return back()->with(['status' => 'error', 'message' => $errorMessage]);
         }
     }
 

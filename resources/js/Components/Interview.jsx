@@ -8,26 +8,32 @@ import {
   Loader2,
   AlertTriangle,
   Trash2,
+  X,
+  Check,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
 const InterviewListItem = ({ interview }) => {
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false)
+
   const handleDelete = (e) => {
     e.preventDefault()
+    setShowConfirmDelete(true)
+  }
 
-    if (confirm('Tem certeza de que deseja excluir esta entrevista?')) {
-      router.delete(route('interview.destroy', interview.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-          toast.success('Entrevista excluída com sucesso.')
-        },
-        onError: (errors) => {
-          console.error('Erro ao excluir:', errors)
-          toast.error('Ocorreu um erro ao excluir a entrevista.')
-        },
-      })
-    }
+  const confirmDeletion = () => {
+    router.delete(route('interview.destroy', interview.id), {
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success('Entrevista excluída com sucesso.')
+      },
+      onError: (errors) => {
+        console.error('Erro ao excluir:', errors)
+        toast.error('Ocorreu um erro ao excluir a entrevista.')
+      },
+    })
+    setShowConfirmDelete(false)
   }
 
   const getFileIcon = (fileName) => {
@@ -56,13 +62,36 @@ const InterviewListItem = ({ interview }) => {
           {interview.file_name}
         </span>
       </a>
-      <button
-        onClick={handleDelete}
-        className="ml-4 text-destructive opacity-60 transition-opacity hover:opacity-100"
-        title="Excluir Entrevista"
-      >
-        <Trash2 className="h-4 w-4" />
-      </button>
+
+      <div className="relative flex items-center">
+        {showConfirmDelete ? (
+          <div className="flex items-center gap-2 ml-4">
+            <span className="text-xs text-muted-foreground">Confirmar?</span>
+            <button
+              onClick={confirmDeletion}
+              className="p-1 rounded-md bg-red-500 text-white hover:bg-red-600 transition-colors"
+              title="Confirmar exclusão"
+            >
+              <Check className="h-3 w-3" />
+            </button>
+            <button
+              onClick={() => setShowConfirmDelete(false)}
+              className="p-1 rounded-md bg-gray-500 text-white hover:bg-gray-600 transition-colors"
+              title="Cancelar"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleDelete}
+            className="ml-4 text-destructive opacity-60 transition-opacity hover:opacity-100"
+            title="Excluir Entrevista"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        )}
+      </div>
     </div>
   )
 }
@@ -77,9 +106,38 @@ const InterviewUploadCard = ({
   const [error, setError] = useState(null)
   const fileInputRef = useRef(null)
 
+  const validateFile = (file) => {
+    const allowedTypes = ['mp3', 'wav', 'ogg', 'm4a', 'mp4', 'mov', 'webm', 'txt', 'pdf', 'doc', 'docx']
+    const maxSize = 51200 * 1024 // 50MB em bytes
+    
+    const fileExtension = file.name.split('.').pop().toLowerCase()
+
+    console.error(fileExtension)
+    console.error(file.size)
+    
+    if (!allowedTypes.includes(fileExtension)) {
+      return 'Tipo de arquivo não permitido'
+    }
+    
+    if (file.size > maxSize) {
+      return 'Arquivo muito grande (máx: 50MB)'
+    }
+    
+    return null
+  }
+
   const handleFileChange = (e) => {
     const file = e.target.files[0]
     if (!file) return
+
+    const validationError = validateFile(file)
+    if (validationError) {
+      toast.error(validationError)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      return
+    }
 
     setIsUploading(true)
     setError(null)
@@ -96,6 +154,7 @@ const InterviewUploadCard = ({
         },
         onSuccess: () => {
           setIsUploading(false)
+          toast.success('Entrevista enviada com sucesso')
           if (fileInputRef.current) {
             fileInputRef.current.value = ''
           }
@@ -149,12 +208,15 @@ const InterviewUploadCard = ({
         />
       </div>
 
-      {error && (
-        <div className="mb-4 flex items-center rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-          <AlertTriangle className="mr-2 h-4 w-4" />
-          {error}
-        </div>
-      )}
+      {/* Informação sobre tipos e tamanho - posição fixa */}
+      <div className="mb-4 rounded-md bg-muted/50 p-3 text-center">
+        <p className="text-xs text-muted-foreground">
+          <strong>Tipos permitidos:</strong> mp3, wav, ogg, m4a, mp4, mov, webm, txt, pdf, doc, docx
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          <strong>Tamanho máximo:</strong> 50MB
+        </p>
+      </div>
 
       <div className="mt-2 space-y-2">
         {interviews.length > 0 ? (
