@@ -1,17 +1,7 @@
-import React, { useState, useEffect } from 'react'
-
 import { router } from '@inertiajs/react'
-
-import {
-  Excalidraw,
-  WelcomeScreen,
-  Footer,
-  exportToBlob,
-} from '@excalidraw/excalidraw'
-
+import { Excalidraw, WelcomeScreen, exportToBlob } from '@excalidraw/excalidraw'
 import { storyVariants } from '../../StoryDiscovery/Stories'
-
-import { CornerDownLeft } from 'lucide-react'
+import { Paperclip } from 'lucide-react'
 
 const blobToDataURL = (blob) => {
   return new Promise((resolve, reject) => {
@@ -22,20 +12,21 @@ const blobToDataURL = (blob) => {
   })
 }
 
-const StoryCard = ({ story }) => {
+const StoryCard = ({ story, onSelect, isSelected = false }) => {
   const selectedVariant = storyVariants[story?.type] || storyVariants.user
 
   return (
     <div
+      onClick={onSelect}
       className={`
-          flex items-start h-14 w-1/2 p-1 gap-1 text-sm font-normal text-foreground
-          border border-border bg-card rounded-md shadow-sm transition-opacity duration-300
+          flex items-start min-h-14 p-1 gap-1 cursor-pointer text-sm font-normal text-foreground
+          border border-border rounded-md shadow-sm transition-opacity duration-300 bg-card ${isSelected ? 'border-2 border-primary' : ''}
         `}
     >
       {story && (
         <Badge
           variant="outline"
-          className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg}`}
+          className={`border-transparent text-primary-foreground font-bold w-fit cursor-pointer ${selectedVariant.bg} `}
         >
           {`${story?.type === 'system' ? 'SS' : 'US'}${story.id}`.toUpperCase()}
         </Badge>
@@ -45,19 +36,14 @@ const StoryCard = ({ story }) => {
   )
 }
 
-const Editor = ({ project, storyboard, setTab }) => {
+const Editor = ({ project, setTab }) => {
   const [excalidrawAPI, setExcalidrawAPI] = useState(null)
   const [sceneData, setSceneData] = useState(null)
   const [isDarkMode, setIsDarkMode] = useState(false)
-  const [selectedStory, setSelectedStory] = useState(
-    project.stories?.find((story) => story.id === storyboard?.story_id) || null,
-  )
+  const [selectedStory, setSelectedStory] = useState(null)
+
   const [isProcessing, setIsProcessing] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const [commandInputRef, setCommandInputRef] = useState(null)
-  const [pendingImageUrl, setPendingImageUrl] = useState(
-    storyboard?.image_url || null,
-  )
 
   useEffect(() => {
     const html = document.querySelector('html')
@@ -65,10 +51,24 @@ const Editor = ({ project, storyboard, setTab }) => {
   }, [])
 
   useEffect(() => {
+    // 1. Se não houver story selecionada, limpa os dados e termina.
+    if (!selectedStory) {
+      setSceneData({ elements: [], files: {} })
+      return
+    }
+
+    // 2. Dispara o recarregamento (mostrando o loader).
+    // Esta é a sua descoberta crucial que força a remontagem do Excalidraw.
+    setSceneData(null)
     // Este useEffect agora PREPARA os dados ANTES de renderizar o Excalidraw
     const prepareInitialScene = async () => {
-      const imageUrl = storyboard?.image_url
+      const currentStoryboard = project.storyboards.find(
+        (sb) => sb.story_id === selectedStory.id,
+      )
 
+      const imageUrl = currentStoryboard?.image_url
+
+      console.log(imageUrl)
       // Se não houver imagem, preparamos uma cena vazia e terminamos
       if (!imageUrl) {
         setSceneData({
@@ -144,8 +144,8 @@ const Editor = ({ project, storyboard, setTab }) => {
       }
     }
 
-    prepareInitialScene()
-  }, [storyboard?.image_url]) // Roda apenas se a URL da imagem mudar
+    setTimeout(prepareInitialScene(), 0)
+  }, [selectedStory, project.storyboards]) // Roda apenas se a URL da imagem mudar
 
   const handleSaveCanvas = async () => {
     if (!excalidrawAPI || !selectedStory) {
@@ -197,62 +197,42 @@ const Editor = ({ project, storyboard, setTab }) => {
   }
 
   return (
-    <div
-      className="w-full mt-2 flex "
-      style={{ height: 'calc(100vh - 105px)' }}
-    >
-      <section className="flex flex-col w-1/5 h-full ">
-        <div className="flex justify-between py-2">
+    <div className="w-full mt-2 flex" style={{ height: 'calc(100vh - 105px)' }}>
+      <section className="flex flex-col w-1/5 h-full gap-2 p-2">
+        <div className="flex justify-between">
           <Button
             onClick={handleSaveCanvas}
             disabled={isProcessing || !selectedStory}
           >
             Salvar
           </Button>
-          <Button
-          // onClick={handleSaveCanvas}
-          // disabled={isProcessing || !selectedStory}
-          >
-            Inserir anexo
-          </Button>
         </div>
-        <Command className=" font-normal text-sm">
-          <CommandInput
-            ref={commandInputRef}
-            onValueChange={(value) => {
-              setSearchQuery(value)
-            }}
-            placeholder="Buscar stories..."
-            className="!border-none focus:!outline-none focus:!ring-0 !bg-transparent"
-          />
-
-          <CommandList className=" overflow-x-hidden max-h-full">
-            <CommandEmpty className="py-6 text-sm">
-              Nenhum projeto encontrado.
-            </CommandEmpty>
-
-            <CommandGroup className={`text-left`}>
-              {project?.stories?.map((story) => (
-                <CommandItem
-                  key={story.id}
-                  value={story.id}
-                  onSelect={() => {
-                    setSelectedStory(story)
-                  }}
-                  className={`${selectedStory.id === story.id ? 'text-background bg-muted-foreground' : ''}`}
-                >
-                  <Badge
-                  // className={`${selectedStory.id === story.id ? 'bg-accent text-foreground' : ''}`}
-                  >
-                    {story.type === 'user' ? 'US' : 'SS'}
-                    {story.id}
-                  </Badge>
-                  {story.title}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+        {/* user stories*/}
+        {project?.stories
+          ?.filter((story) => story.type === 'user')
+          .map((story) => (
+            <StoryCard
+              key={story.id}
+              story={story}
+              isSelected={story.id === selectedStory?.id}
+              onSelect={() => {
+                setSelectedStory(story)
+              }}
+            />
+          ))}
+        {/*system stories */}
+        {project?.stories
+          ?.filter((story) => story.type === 'system')
+          .map((story) => (
+            <StoryCard
+              key={story.id}
+              story={story}
+              isSelected={story.id === selectedStory?.id}
+              onSelect={() => {
+                setSelectedStory(story)
+              }}
+            />
+          ))}
       </section>
       <div className="excalidraw-wrapper flex-1 relative w-[85%] h-full">
         {/* RENDERIZAÇÃO CONDICIONAL */}
@@ -262,6 +242,7 @@ const Editor = ({ project, storyboard, setTab }) => {
           </div>
         ) : (
           <Excalidraw
+            key={selectedStory ? selectedStory.id : 'no-story-selected'}
             initialData={sceneData}
             excalidrawAPI={(api) => setExcalidrawAPI(api)}
             renderTopRightUI={() => (
@@ -271,12 +252,12 @@ const Editor = ({ project, storyboard, setTab }) => {
                     <Button
                       variant="secondary"
                       className="size-10"
-                      onClick={() => setTab({ tab: 'index', storyboard: null })}
+                      onClick={() => console.log('anexos')}
                     >
-                      <CornerDownLeft />
+                      <Paperclip />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Storyboards</TooltipContent>
+                  <TooltipContent>Inserir anexo</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             )}
@@ -302,16 +283,6 @@ const Editor = ({ project, storyboard, setTab }) => {
               <WelcomeScreen.Hints.ToolbarHint />
               <WelcomeScreen.Hints.MenuHint />
             </WelcomeScreen>
-            {/*
-            <Footer>
-              <StoryCard story={selectedStory} />
-              <Button
-                onClick={handleSaveCanvas}
-                disabled={isProcessing || !selectedStory}
-              >
-                Salvar
-              </Button>
-            </Footer>*/}
           </Excalidraw>
         )}
       </div>

@@ -18,13 +18,12 @@ import UsageScenarios from './project-ceremonies/Refining/UsageScenarios.jsx'
 //modeling
 import OverallModel from './project-ceremonies/Modeling/OverallModel'
 import Interfaces from './project-ceremonies/Modeling/Interfaces.jsx'
-import Storyboards from './project-ceremonies/Modeling/Storyboards/Index.jsx'
+import Storyboards from './project-ceremonies/Modeling/Storyboards/Storyboards.jsx'
 //
 import ProductBacklog from './project-ceremonies/ProductBacklog/ProductBacklog.jsx'
 //components
 import { PenLine, X } from 'lucide-react'
 import { toast } from 'sonner'
-
 
 import MainLayout from '@/Layouts/MainLayout'
 
@@ -327,7 +326,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               <TabsTrigger value="sprint">Sprint</TabsTrigger>
             </TabsList>
 
-          {/* Center: Title e Botão de Edição */}
+            {/* Center: Title e Botão de Edição */}
             <div
               id="project-title-content"
               className="flex-1 flex justify-center items-center gap-2 px-4 cursor-pointer" // Ajuste o gap aqui se precisar
@@ -352,7 +351,8 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
                 className="text-foreground hover:text-white transition-colors p-1" // Adicionei p-1 para um pequeno padding
                 title="Editar nome do projeto"
               >
-                {!isEditing ? <PenLine size={16} /> : <X size={16} />} {/* Reduzi o tamanho do ícone para 16 */}
+                {!isEditing ? <PenLine size={16} /> : <X size={16} />}{' '}
+                {/* Reduzi o tamanho do ícone para 16 */}
               </button>
             </div>
 
