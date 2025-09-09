@@ -41,7 +41,9 @@ const Editor = ({ project, setTab }) => {
   const [sceneData, setSceneData] = useState(null)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [selectedStory, setSelectedStory] = useState(null)
+  const [sceneVersion, setSceneVersion] = useState(0)
 
+  const fileInputRef = useRef(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [commandInputRef, setCommandInputRef] = useState(null)
 
@@ -56,12 +58,12 @@ const Editor = ({ project, setTab }) => {
       setSceneData({ elements: [], files: {} })
       return
     }
-
-    // 2. Dispara o recarregamento (mostrando o loader).
-    // Esta é a sua descoberta crucial que força a remontagem do Excalidraw.
     setSceneData(null)
     // Este useEffect agora PREPARA os dados ANTES de renderizar o Excalidraw
     const prepareInitialScene = async () => {
+      setSceneData(null)
+      // --- Adição importante: reseta a versão para a nova story ---
+      setSceneVersion(0)
       const currentStoryboard = project.storyboards.find(
         (sb) => sb.story_id === selectedStory.id,
       )
@@ -143,10 +145,86 @@ const Editor = ({ project, setTab }) => {
         setSceneData({ elements: [], files: {} })
       }
     }
-
-    setTimeout(prepareInitialScene(), 0)
+    // prepareInitialScene()
+    setTimeout(prepareInitialScene, 0)
   }, [selectedStory, project.storyboards]) // Roda apenas se a URL da imagem mudar
 
+  // Adicione esta função completa dentro do seu componente Editor
+  // Substitua sua função handleFileChange inteira por esta.
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files?.[0]
+    if (!file || !excalidrawAPI) {
+      return
+    }
+
+    try {
+      // 1. Captura o estado ATUAL do canvas
+      const existingElements = excalidrawAPI.getSceneElements()
+      const existingFiles = excalidrawAPI.getFiles()
+
+      // 2. Prepara os dados do NOVO arquivo
+      const dataURL = await blobToDataURL(file)
+      const img = new Image()
+      img.onload = () => {
+        const fileId = `file-${Date.now()}`
+
+        const newImageElement = {
+          id: `element-${Date.now()}`,
+          type: 'image',
+          fileId,
+          status: 'saved',
+          x: excalidrawAPI.getAppState().scrollX + 100,
+          y: excalidrawAPI.getAppState().scrollY + 100,
+          width: img.width,
+          height: img.height,
+          // ... resto das propriedades seguras ...
+          boundElements: [],
+          groupIds: [],
+          isDeleted: false,
+          angle: 0,
+          locked: false,
+          opacity: 100,
+          seed: Math.floor(Math.random() * 1000000),
+          version: 3,
+          versionNonce: Math.floor(Math.random() * 1000000),
+          updated: Date.now(),
+        }
+
+        const newFileData = {
+          [fileId]: {
+            mimeType: file.type,
+            id: fileId,
+            dataURL,
+            created: Date.now(),
+          },
+        }
+
+        // 3. Cria a nova cena completa, unindo o antigo e o novo
+        const newCompleteScene = {
+          elements: [...existingElements, newImageElement],
+          files: { ...existingFiles, ...newFileData },
+        }
+
+        // 4. Atualiza o estado da cena E incrementa a versão para forçar a remontagem
+        setSceneData(newCompleteScene)
+        setSceneVersion((prevVersion) => prevVersion + 1)
+
+        console.log('✅ Cena atualizada com anexo. Forçando remontagem.')
+      }
+      img.src = dataURL
+    } catch (error) {
+      console.error('Erro ao processar anexo para remontagem:', error)
+      alert('Não foi possível carregar o anexo.')
+    } finally {
+      if (event.target) event.target.value = ''
+    }
+  }
+
+  const handleInsertAttachmentClick = () => {
+    // Se a referência existir, simula um clique nela
+    fileInputRef.current?.click()
+  }
   const handleSaveCanvas = async () => {
     if (!excalidrawAPI || !selectedStory) {
       alert('Por favor, selecione uma story antes de salvar.')
@@ -206,6 +284,14 @@ const Editor = ({ project, setTab }) => {
           >
             Salvar
           </Button>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            accept="image/png, image/jpeg, image/gif, image/svg+xml"
+            onChange={handleFileChange} // A função que vamos criar
+          />
         </div>
         {/* user stories*/}
         {project?.stories
@@ -242,7 +328,8 @@ const Editor = ({ project, setTab }) => {
           </div>
         ) : (
           <Excalidraw
-            key={selectedStory ? selectedStory.id : 'no-story-selected'}
+            // key={selectedStory ? selectedStory.id : 'no-story-selected'}
+            key={`${selectedStory?.id || 'no-story'}-${sceneVersion}`}
             initialData={sceneData}
             excalidrawAPI={(api) => setExcalidrawAPI(api)}
             renderTopRightUI={() => (
@@ -252,7 +339,7 @@ const Editor = ({ project, setTab }) => {
                     <Button
                       variant="secondary"
                       className="size-10"
-                      onClick={() => console.log('anexos')}
+                      onClick={handleInsertAttachmentClick}
                     >
                       <Paperclip />
                     </Button>
