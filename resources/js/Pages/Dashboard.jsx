@@ -59,10 +59,20 @@ export const CeremonyCard = ({ item, className }) => {
           </div>
         )}
         <div className="flex-grow">
-          <h3 className="text-md font-semibold text-foreground">
-            {item.title}
-          </h3>
-
+          <div className="flex justify-between">
+            <h3 className="text-md font-semibold text-foreground">
+              {item.title}
+            </h3>
+            {/* SETA "VER MAIS" */}
+            <div
+              className="flex items-center gap-1 text-xs text-muted-foreground
+                         opacity-0 transition-all duration-300 ease-in-out
+                         group-hover:opacity-100 "
+            >
+              <span>ver mais</span>
+              <ArrowRight className="size-3" />
+            </div>
+          </div>
           {/* DESCRIÇÃO CONDICIONAL */}
           {/* Começa com altura máxima 0 e opacidade 0. */}
           {/* No hover do `group` (o card), a altura e opacidade aumentam. */}
@@ -73,28 +83,17 @@ export const CeremonyCard = ({ item, className }) => {
           </div>
         </div>
       </div>
-
-      {/* SETA "VER MAIS" */}
-      {/* Posicionada absolutamente à direita, só aparece no hover do group. */}
-      {/* <div
-        className="absolute top-1/2 right-4 flex -translate-y-1/2 items-center gap-1 text-xs text-muted-foreground
-                     opacity-0 transition-all duration-300 ease-in-out
-                     group-hover:opacity-100 group-hover:translate-x-0 translate-x-4"
-      >
-        <span>ver mais</span>
-        <ArrowRight className="size-3" />
-      </div>*/}
-
-      {/* Efeito ShineBorder da Magic UI */}
-      <ShineBorder
-        className="absolute inset-0"
-        shineColor={['#ccc', 'transparent']}
+      <BorderBeam
+        borderWidth={2}
+        size={50}
+        colorTo={'var(--primary)'}
+        colorFrom={'var(--secondary)'}
       />
     </Card>
   )
 }
 
-const Dashboard = ({ project }) => {
+const Dashboard = ({ project, setProject }) => {
   const [date, setDate] = useState(getDateObject(project.due_date))
   const isInitialMount = useRef(true)
   const [progress, setProgress] = useState(0)
@@ -108,9 +107,7 @@ const Dashboard = ({ project }) => {
       setProgress(0)
       return
     }
-    // console.log("VALORES DE ENTRADA:");
-    // console.log("-> `date` (do estado):", date);
-    // console.log("-> `project.created_at` (do backend):", project.created_at);
+
     const startDate = new Date(project.created_at)
     const endDate = new Date(date)
     const now = new Date()
@@ -126,17 +123,10 @@ const Dashboard = ({ project }) => {
     endDate.setHours(0, 0, 0, 0)
     now.setHours(0, 0, 0, 0)
 
-    //console.log("\nDATAS PROCESSADAS (sem horas):");
-    // console.log("-> Start Date:", startDate.toString());
-    // console.log("-> End Date:  ", endDate.toString());
-    // console.log("-> Now:       ", now.toString());
     const totalDuration = endDate.getTime() - startDate.getTime()
     const elapsedDuration = now.getTime() - startDate.getTime()
-    //console.log("-> Duração Total (Fim - Início):", totalDuration);
-    //console.log("-> Duração Decorrida (Hoje - Início):", elapsedDuration);
     if (totalDuration <= 0) {
       const finalProgress = now.getTime() >= endDate.getTime() ? 100 : 0
-      //console.log("-> Progresso Final:", finalProgress);
       setProgress(finalProgress)
       return
     }
@@ -182,7 +172,7 @@ const Dashboard = ({ project }) => {
     )
   }
   return (
-    <main className="flex min-h-full justify-between">
+    <main className="flex justify-between">
       <Head title="Dashboard" />
       <section className="flex flex-col p-2 w-4/5">
         <Button
@@ -312,7 +302,8 @@ const Dashboard = ({ project }) => {
           />
         </div>
       </section>
-      <aside className="ceremonies flex flex-col w-1/5 bg-card gap-2 px-2">
+      <aside className="ceremonies flex flex-col items-center w-1/5 bg-card gap-2 p-2">
+        <span>Ceremonies</span>
         {ceremonies.map((ceremony) => (
           <CeremonyCard
             key={ceremony}

@@ -41,9 +41,8 @@ const tooltipInfo = {
       'Lista de funcionalidades e requisitos do sistema, organizadas por prioridade.',
   },
   sprint: {
-    title: 'Product Backlog',
-    description:
-      'Lista de funcionalidades e requisitos do sistema, organizadas por prioridade.',
+    title: 'Sprint',
+    description: 'Sprint é ...',
   },
   // inception
   productCanvas: {
