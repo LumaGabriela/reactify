@@ -16,7 +16,6 @@ class InterviewController extends Controller
      */
     public function store(Request $request, Project $project)
     {
-        // 1. VALIDAÇÃO GENÉRICA: Aceita vários tipos de ficheiro com um limite de 50MB
         $request->validate([
             'interview' => 'required|file|mimes:mp3,wav,ogg,m4a,mp4,mov,webm,txt,pdf,doc,docx|max:51200',
         ]);
@@ -32,7 +31,6 @@ class InterviewController extends Controller
             
             $folder = 'reactify/interviews/' . $project->id;
 
-            // 2. UPLOAD GENÉRICO: Usa 'resource_type' => 'auto'
             $uploadedFile = cloudinary()->uploadApi()->upload($file->getRealPath(), [
                 'folder'           => $folder,
                 'public_id'        => pathinfo($publicFileName, PATHINFO_FILENAME),
@@ -63,12 +61,11 @@ class InterviewController extends Controller
             $publicID = $interview->public_id;
 
             if ($publicID) {
-                // 3. LÓGICA DE EXCLUSÃO GENÉRICA: Usa a função auxiliar para determinar o tipo
-                $resourceType = $this->getResourceType($interview->file_name);
-                
-                cloudinary()->uploadApi()->destroy($publicID, [
-                    'resource_type' => $resourceType
-                ]);
+                $response = cloudinary()->adminApi()->deleteAssets([$publicID]);
+
+                if (isset($response['deleted']) && in_array('not_found', $response['deleted'])) {
+                    throw new \Exception('Asset com public_id "' . $publicID . '" não foi encontrado no Cloudinary para exclusão.');
+                }
             }
 
             $interview->delete();
@@ -95,14 +92,9 @@ class InterviewController extends Controller
 
         // Cloudinary trata áudio como 'video'
         $videoTypes = ['mp4', 'mov', 'avi', 'webm', 'mp3', 'wav', 'ogg', 'm4a'];
-        $imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
 
         if (in_array($extension, $videoTypes)) {
             return 'video';
-        }
-
-        if (in_array($extension, $imageTypes)) {
-            return 'image';
         }
 
         // Para tudo o resto (PDF, TXT, DOCX, etc.)
