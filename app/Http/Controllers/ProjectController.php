@@ -79,7 +79,44 @@ class ProjectController extends Controller
   {
     return Inertia::render('Home');
   }
-  public function show(Project $project, string $page = 'inception')
+
+  public function show(Project $project)
+  {
+    $user = Auth::user();
+
+    if (!$project->users()->where('users.id', $user->id)->exists()) {
+      abort(403, 'Acesso não autorizado a este projeto.');
+    }
+
+    $project->load([
+      'stories',
+      'goal_sketches',
+      'journeys',
+      'personas',
+      'product_canvas',
+      'crc_cards',
+      'overall_model_classes',
+      'prioritizations',
+      'matrix_priorities',
+      'sprints.stories',
+      'epic_stories',
+      'business_rules',
+      'change_requests',
+      'invest_cards',
+      'usage_scenarios',
+      'system_interfaces',
+      'storyboards',
+      'interviews',
+      'users' => function ($query) {
+        $query->select(['user_id', 'name', 'email', 'provider_avatar']);
+      }
+    ]);
+
+    return Inertia::render('Dashboard', [
+      'project' => $project
+    ]);
+  }
+  public function ceremony(Project $project, string $ceremony)
   {
     $user = Auth::user();
 
@@ -113,10 +150,9 @@ class ProjectController extends Controller
 
     return Inertia::render('projects/Project', [
       'project' => $project,
-      'page' => $page,
+      'page' => $ceremony
     ]);
   }
-
   public function store(ProjectRequest $request)
   {
     $validatedData = $request->validated();

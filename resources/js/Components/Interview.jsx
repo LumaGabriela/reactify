@@ -10,12 +10,12 @@ import {
   Trash2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner' 
+import { toast } from 'sonner'
 
 const InterviewListItem = ({ interview }) => {
   const handleDelete = (e) => {
-    e.preventDefault() 
-    
+    e.preventDefault()
+
     if (confirm('Tem certeza de que deseja excluir esta entrevista?')) {
       router.delete(route('interview.destroy', interview.id), {
         preserveScroll: true,
@@ -67,7 +67,11 @@ const InterviewListItem = ({ interview }) => {
   )
 }
 
-const InterviewUploadCard = ({ projectId, interviews = [] }) => {
+const InterviewUploadCard = ({
+  projectId,
+  interviews = [],
+  className = '',
+}) => {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState(null)
@@ -114,7 +118,9 @@ const InterviewUploadCard = ({ projectId, interviews = [] }) => {
   }
 
   return (
-    <div className="col-span-1 rounded-lg border-t-4 border-t-primary bg-card p-4 shadow-lg transition-all duration-300 hover:shadow-xl md:col-span-2 lg:col-span-3">
+    <div
+      className={`${className}  rounded-lg border-t-4 border-t-primary bg-card p-4 shadow-lg transition-all duration-300 hover:shadow-xl`}
+    >
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h3 className="flex items-center text-lg font-bold text-card-foreground">
           <Mic className="mr-2 h-5 w-5 text-primary" />

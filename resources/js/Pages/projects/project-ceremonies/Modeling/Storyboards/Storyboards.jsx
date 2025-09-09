@@ -36,7 +36,7 @@ const StoryCard = ({ story, onSelect, isSelected = false }) => {
   )
 }
 
-const Editor = ({ project, setTab }) => {
+const Storyboards = ({ project }) => {
   const [excalidrawAPI, setExcalidrawAPI] = useState(null)
   const [sceneData, setSceneData] = useState(null)
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -377,4 +377,4 @@ const Editor = ({ project, setTab }) => {
   )
 }
 
-export default Editor
+export default Storyboards

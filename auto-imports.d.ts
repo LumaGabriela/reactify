@@ -24,6 +24,7 @@ declare global {
   const AspectRatio: typeof import('./resources/js/components/ui/aspect-ratio.jsx')['AspectRatio']
   const AvatarCircles: typeof import('./resources/js/components/magicui/avatar-circles.jsx')['AvatarCircles']
   const Badge: typeof import('./resources/js/components/ui/badge.jsx')['Badge']
+  const BorderBeam: typeof import('./resources/js/components/magicui/border-beam.jsx')['BorderBeam']
   const Button: typeof import('./resources/js/components/ui/button.jsx')['Button']
   const Calendar: typeof import('./resources/js/components/ui/calendar.jsx')['Calendar']
   const CalendarDayButton: typeof import('./resources/js/components/ui/calendar.jsx')['CalendarDayButton']

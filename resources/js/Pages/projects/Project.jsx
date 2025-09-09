@@ -22,7 +22,7 @@ import Storyboards from './project-ceremonies/Modeling/Storyboards/Storyboards.j
 //
 import ProductBacklog from './project-ceremonies/ProductBacklog/ProductBacklog.jsx'
 //components
-import { PenLine, X } from 'lucide-react'
+import { ArrowLeft, PenLine, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import MainLayout from '@/Layouts/MainLayout'
@@ -314,7 +314,20 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
           }
           className="w-full"
         >
-          <div className="flex justify-between items-center w-full">
+          <div className="flex justify-between items-center w-full gap-2">
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={() =>
+                router.get(
+                  route('project.show', {
+                    project: project.id,
+                  }),
+                )
+              }
+            >
+              <ArrowLeft />
+            </Button>
             {/* Left: Tabs */}
             <TabsList>
               <TabsTrigger value="inception">Inception</TabsTrigger>

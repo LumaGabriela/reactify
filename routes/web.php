@@ -81,7 +81,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::prefix('project')->group(function () {
     // Route for saving the state of the Prioritization Matrix for a project
     Route::post('/create', [ProjectController::class, 'store'])->name('project.store');
-    Route::get('/{project}/{page?}', [ProjectController::class, 'show'])->name('project.show');
+    Route::get('/{project}/', [ProjectController::class, 'show'])->name('project.show');
+    Route::get('/{project}/ceremony/{ceremony}', [ProjectController::class, 'ceremony'])->name('project.ceremony.show');
     Route::patch('/{project}/members/add', [ProjectController::class, 'addNewMember'])->name('project.users.add');
     Route::patch('/{project}', [ProjectController::class, 'update'])->name('project.update');
     Route::patch('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggle-active');

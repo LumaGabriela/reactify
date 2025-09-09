@@ -1,7 +1,6 @@
 import { useEcho } from '@laravel/echo-react'
 import {
   CheckCircle,
-  Users,
   CornerDownLeft,
   Power,
   Trash2,
@@ -58,7 +57,9 @@ const ProjectCard = ({ project, toggleActiveProject, deleteProject }) => {
         {/* CONTEÚDO: Descrição e contagem de membros */}
         <CardContent className="flex-1 overflow-hidden">
           <Link href={route('project.show', project.id)}>
-            <CardDescription className="line-clamp-3"> {/* Limita o texto a 3 linhas */}
+            <CardDescription className="line-clamp-3">
+              {' '}
+              {/* Limita o texto a 3 linhas */}
               {project.description}
             </CardDescription>
           </Link>

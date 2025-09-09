@@ -6,9 +6,6 @@ import {
   Check,
   Clock,
   CheckCircle,
-  Target,
-  GitBranch,
-  List,
   ChevronDown,
   ChevronUp,
   PenLine as EditIcon,
@@ -16,18 +13,14 @@ import {
   Save,
   Calendar as CalendarIcon,
 } from 'lucide-react'
-import ProgressIcon from '@/Components/ProgressIcon'
+
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import TextareaAutosize from 'react-textarea-autosize'
 import { router } from '@inertiajs/react'
-import { Progress } from '@/components/ui/progress'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 
-import Interview from '@/Components/Interview'
 const cardVariants = {
   primary: 'border-t-primary text-primary',
   destructive: 'border-t-destructive text-destructive',
@@ -236,68 +229,73 @@ const ExpandableCard = ({
 
 const getDateObject = (dateInput) => {
   if (!dateInput) {
-    return undefined;
+    return undefined
   }
-  const dateOnlyString = dateInput.substring(0, 10);
-  const date = new Date(`${dateOnlyString}T00:00:00`);
+  const dateOnlyString = dateInput.substring(0, 10)
+  const date = new Date(`${dateOnlyString}T00:00:00`)
 
   if (isNaN(date.getTime())) {
-    return undefined;
+    return undefined
   }
-  return date;
-};
+  return date
+}
 
 const MainView = ({ project = {}, setProject }) => {
-  const [date, setDate] = useState(getDateObject(project.due_date));
-  const isInitialMount = useRef(true);
-  const [progress, setProgress] = useState(0);
+  const [date, setDate] = useState(getDateObject(project.due_date))
+  const isInitialMount = useRef(true)
+  const [progress, setProgress] = useState(0)
 
- useEffect(() => {
+  useEffect(() => {
     // console.clear();
     if (!date || !project.created_at) {
-      console.log("PARADA: A data do deadline ou a data de criação do projeto não existem.");
-      setProgress(0);
-      return;
+      console.log(
+        'PARADA: A data do deadline ou a data de criação do projeto não existem.',
+      )
+      setProgress(0)
+      return
     }
     // console.log("VALORES DE ENTRADA:");
     // console.log("-> `date` (do estado):", date);
     // console.log("-> `project.created_at` (do backend):", project.created_at);
-    const startDate = new Date(project.created_at);
-    const endDate = new Date(date);
-    const now = new Date();
+    const startDate = new Date(project.created_at)
+    const endDate = new Date(date)
+    const now = new Date()
 
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      console.error("ERRO CRÍTICO: A `startDate` ou `endDate` é inválida. Não é possível calcular.");
-      setProgress(0);
-      return;
+      console.error(
+        'ERRO CRÍTICO: A `startDate` ou `endDate` é inválida. Não é possível calcular.',
+      )
+      setProgress(0)
+      return
     }
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(0, 0, 0, 0);
-    now.setHours(0, 0, 0, 0);
+    startDate.setHours(0, 0, 0, 0)
+    endDate.setHours(0, 0, 0, 0)
+    now.setHours(0, 0, 0, 0)
 
     //console.log("\nDATAS PROCESSADAS (sem horas):");
     // console.log("-> Start Date:", startDate.toString());
     // console.log("-> End Date:  ", endDate.toString());
     // console.log("-> Now:       ", now.toString());
-    const totalDuration = endDate.getTime() - startDate.getTime();
-    const elapsedDuration = now.getTime() - startDate.getTime();
+    const totalDuration = endDate.getTime() - startDate.getTime()
+    const elapsedDuration = now.getTime() - startDate.getTime()
     //console.log("-> Duração Total (Fim - Início):", totalDuration);
     //console.log("-> Duração Decorrida (Hoje - Início):", elapsedDuration);
     if (totalDuration <= 0) {
-      const finalProgress = now.getTime() >= endDate.getTime() ? 100 : 0;
+      const finalProgress = now.getTime() >= endDate.getTime() ? 100 : 0
       //console.log("-> Progresso Final:", finalProgress);
-      setProgress(finalProgress);
-      return;
+      setProgress(finalProgress)
+      return
     }
 
-    const progressPercentage = (Math.max(0, elapsedDuration) / totalDuration) * 100;
-    setProgress(progressPercentage);
-  }, [date, project.created_at]);
+    const progressPercentage =
+      (Math.max(0, elapsedDuration) / totalDuration) * 100
+    setProgress(progressPercentage)
+  }, [date, project.created_at])
 
   useEffect(() => {
     if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
+      isInitialMount.current = false
+      return
     }
     router.patch(
       route('project.update', project.id),
@@ -307,12 +305,11 @@ const MainView = ({ project = {}, setProject }) => {
       {
         preserveScroll: true,
         onError: (errors) => {
-          console.error('Failed to update deadline:', errors);
-        }
+          console.error('Failed to update deadline:', errors)
+        },
       },
-    );
-  }, [date]);
-
+    )
+  }, [date])
 
   const updateProductCanvas = async (prop, newContent) => {
     const productCanvasId = project.product_canvas.id
@@ -334,135 +331,12 @@ const MainView = ({ project = {}, setProject }) => {
     )
   }
 
-  const updateProject = async (prop, newContent) => {
-    router.patch(
-      route('project.update', project.id),
-      {
-        description: newContent,
-      },
-      {
-        onSuccess: () => {
-          setProject((prev) => ({
-            ...prev,
-            description: newContent,
-          }))
-        },
-      },
-    )
-  }
-
   return (
     <div className="w-full text-foreground p-4">
       {/* Dashboard Header */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-6">
-          <div className='mt-2'>
-            <div className="flex items-center text-muted-foreground">
-              <Clock size={16} className="mr-3.5" />
-              {project.updated_at ? (
-                <span>
-                  Atualizado: {format(new Date(project.updated_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-                </span>
-              ) : (
-                <span>Atualizado: -</span>
-              )}
-              <span className="mx-2 ml-3.5">•</span>
-              <span className="px-3 py-1 rounded-full text-xl font-medium bg-success/20 text-success">
-                {project.status}
-              </span>
-            </div>
-
-            <div className="text-left mt-2">
-              <div className="text-muted-foreground text-xl mb-1">
-                Progresso da Conclusão 
-              </div>
-              {date ? (
-                <div className="flex items-center">
-                  <Progress value={progress} className="w-32 h-2 mr-2" />
-                  <span className="text-sm font-medium">{`${Math.round(progress)}%`}</span>
-                </div>
-              ) : (
-                 <div className="text-sm text-muted-foreground italic">
-                    Defina um prazo de conclusão para visualizar o progresso.
-                 </div>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center gap-2 cursor-pointer select-none">
-            <p className="text-muted-foreground text-md m-0">Prazo</p>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={'outline'}
-                  className={cn(
-                    'w-[160px] justify-start text-left font-normal', 
-                    !date && 'text-muted-foreground',
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? (
-                    format(date, 'dd/MM/yyyy', { locale: ptBR })
-                  ) : (
-                    <span>Definir prazo</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  disabled={{ before: new Date() }}
-                  initialFocus
-                  locale={ptBR}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
-      </div>
-
-      {/* Progress Indicators */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-4 mb-6">
-        <ExpandableCard
-          title={project?.title || 'Project'}
-          content={project?.description}
-          col={1}
-          variant="secondary"
-          icon={List}
-          placeholder="Describe your project..."
-          onContentUpdate={(content) => updateProject('description', content)}
-        />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full items-center justify-center bg-card p-4 rounded-lg">
-          <ProgressIcon
-            value={project?.stories?.length || 0}
-            max={20}
-            colorClass="text-primary"
-            label="Stories"
-            icon={List}
-          />
-          <ProgressIcon
-            value={project?.personas?.length || 0}
-            max={10}
-            colorClass="text-destructive"
-            label="Personas"
-            icon={Users}
-          />
-          <ProgressIcon
-            value={project?.goal_sketches?.length || 0}
-            max={15}
-            colorClass="text-info"
-            label="Goals"
-            icon={Target}
-          />
-          <ProgressIcon
-            value={project?.journeys?.length || 0}
-            max={10}
-            colorClass="text-accent"
-            label="Journeys"
-            icon={GitBranch}
-          />
+          <div className="mt-2"></div>
         </div>
       </div>
 
@@ -526,14 +400,9 @@ const MainView = ({ project = {}, setProject }) => {
             updateProductCanvas('product_is_not', content)
           }
         />
-        
-        <Interview
-          projectId={project.id}
-          interviews={project.interviews || []} // Passe a lista de entrevistas do seu projeto
-        />
       </div>
     </div>
   )
 }
-
+export { ExpandableCard }
 export default MainView

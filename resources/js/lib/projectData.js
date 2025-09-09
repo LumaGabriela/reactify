@@ -7,10 +7,44 @@
 // },
 // }
 
-import { Button } from '@/components/ui/button'
-
 const tooltipInfo = {
   // tooltips do navMenu
+  // all ceremonies/tools
+  inception: {
+    title: 'Inception',
+    description:
+      'A fase inicial do projeto, onde são definidos os objetivos, personas e jornadas.',
+  },
+  storyDiscovery: {
+    title: 'Story Discovery',
+    description:
+      'Fase de descoberta de histórias de usuário, onde são identificados os principais cenários de uso do sistema.',
+  },
+  refining: {
+    title: 'Refining',
+    description:
+      'Fase de refinamento das histórias de usuário, onde são identificadas as principais funcionalidades e requisitos do sistema.',
+  },
+  modeling: {
+    title: 'Modeling',
+    description:
+      'Fase de modelagem do sistema, onde são definidas as entidades, relacionamentos e fluxos de dados.',
+  },
+  inspection: {
+    title: 'Inspection',
+    description:
+      'Fase de inspeção do sistema, onde são analisadas as funcionalidades e requisitos do sistema.',
+  },
+  productBacklog: {
+    title: 'Product Backlog',
+    description:
+      'Lista de funcionalidades e requisitos do sistema, organizadas por prioridade.',
+  },
+  sprint: {
+    title: 'Product Backlog',
+    description:
+      'Lista de funcionalidades e requisitos do sistema, organizadas por prioridade.',
+  },
   // inception
   productCanvas: {
     title: 'Product Canvas',
