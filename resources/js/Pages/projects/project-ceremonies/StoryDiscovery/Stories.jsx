@@ -15,7 +15,7 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import InfoButton from '@/Components/InfoButton'
 import { tooltipInfo } from '@/lib/projectData'
-import GenerateIAButton from '@/Components/GenerateIAButton'
+import GenerateAIButton from '@/Components/GenerateAIButton'
 export const storyVariants = {
   user: { bg: 'bg-purple-600', title: 'user' },
   system: { bg: 'bg-orange-600', title: 'system' },
@@ -617,14 +617,10 @@ const Stories = ({ project, setProject }) => {
           <Plus size={18} className="mr-2" />
           <span>Nova System Story</span>
         </Button>
-      </div>
-
-      <div className="w-full col-span-2 flex gap-2">
-        <GenerateIAButton
+        <GenerateAIButton
           isGenerating={isGenerating}
           onClick={generateStories}
-          tooltipTitle={tooltipInfo.aiGeneratedStory.title}
-          tooltipDesctiption={tooltipInfo.aiGeneratedStory.description}
+          tooltip={tooltipInfo.aiGeneratedStory}
           className="w-1/2"
         />
       </div>

@@ -35,7 +35,7 @@ import { toast } from 'sonner'
 import TextareaAutosize from 'react-textarea-autosize'
 import { cn } from '@/lib/utils'
 import { tooltipInfo } from '@/lib/projectData'
-import GenerateIAButton from '@/Components/GenerateIAButton'
+import GenerateAIButton from '@/Components/GenerateAIButton'
 
 const SortableJourneyStepItem = (props) => {
   const {
@@ -882,11 +882,10 @@ const Journeys = ({ project, setProject }) => {
           <Plus size={18} className="mr-2" /> New Journey
         </Button>
         {/* generate with ai button*/}
-        <GenerateIAButton
+        <GenerateAIButton
           isGenerating={isGeneratingAI}
           onClick={generateJourneys}
-          tooltipTitle={tooltipInfo.aiGeneratedJourney.title}
-          tooltipDesctiption={tooltipInfo.aiGeneratedJourney.description}
+          tooltip={tooltipInfo.aiGeneratedJourney}
           className="w-1/2"
         />
       </div>
