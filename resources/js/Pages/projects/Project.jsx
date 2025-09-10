@@ -139,14 +139,14 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     switch (page) {
       case 'inception':
         return activeMenu
-      case 'story-discovery':
+      case 'storyDiscovery':
         return activeStoryDiscoveryMenu
       case 'refining':
         return activeRefiningMenu
       case 'modeling':
         return activeModelingMenu
       case 'inspection':
-      case 'product-backlog':
+      case 'productBacklog':
         // Para estes casos, o nome do artefato é o mesmo nome da página.
         return page
       default:
@@ -310,7 +310,12 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         <Tabs
           value={page}
           onValueChange={(e) =>
-            router.get(route('project.show', { project: project.id, page: e }))
+            router.get(
+              route('project.ceremony.show', {
+                project: project.id,
+                ceremony: e,
+              }),
+            )
           }
           className="w-full"
         >
@@ -331,11 +336,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
             {/* Left: Tabs */}
             <TabsList>
               <TabsTrigger value="inception">Inception</TabsTrigger>
-              <TabsTrigger value="story-discovery">Story Discovery</TabsTrigger>
+              <TabsTrigger value="storyDiscovery">Story Discovery</TabsTrigger>
               <TabsTrigger value="refining">Refining</TabsTrigger>
               <TabsTrigger value="modeling">Modeling</TabsTrigger>
               <TabsTrigger value="inspection">Inspection</TabsTrigger>
-              <TabsTrigger value="backlog">Product Backlog</TabsTrigger>
+              <TabsTrigger value="productBacklog">Product Backlog</TabsTrigger>
               <TabsTrigger value="sprint">Sprint</TabsTrigger>
             </TabsList>
 
@@ -379,7 +384,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
             <NavMenu menuItems={menuItems} setActiveMenu={setActiveMenu} />
             {renderInceptionContent()}
           </TabsContent>
-          <TabsContent value="story-discovery">
+          <TabsContent value="storyDiscovery">
             <NavMenu
               menuItems={storyDiscoveryMenuItems}
               setActiveMenu={setActiveStoryDiscoveryMenu}
@@ -403,7 +408,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
           <TabsContent value="inspection">
             <Inspection project={project} setProject={setProject} />
           </TabsContent>
-          <TabsContent value="backlog">
+          <TabsContent value="productBacklog">
             <ProductBacklog project={project} setProject={setProject} />
           </TabsContent>
           <TabsContent value="sprint">

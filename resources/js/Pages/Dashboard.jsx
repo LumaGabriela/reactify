@@ -3,12 +3,13 @@ import ProgressIcon from '@/Components/ProgressIcon'
 import { ExpandableCard } from './projects/project-ceremonies/Inception/MainView'
 import Interview from '@/Components/Interview'
 import { tooltipInfo } from '@/lib/projectData'
+import { ProjectPermissions } from '@/Components/ProjectPermissions'
+import { ProjectSettings } from '@/Components/ProjectSettings'
 import {
   Users,
   Target,
   GitBranch,
   List,
-  ArrowLeft,
   Clock,
   ArrowRight,
   Calendar as CalendarIcon,
@@ -40,12 +41,12 @@ const ceremonies = [
   'sprint',
 ]
 
-export const CeremonyCard = ({ item, className }) => {
-  const [isHovered, setIsHovered] = useState(false)
+export const CeremonyCard = ({ item, className, onClick, delay = 0 }) => {
   const Icon = item?.icon
 
   return (
     <Card
+      onClick={onClick}
       className={cn(
         'group relative w-full p-4 overflow-hidden bg-background cursor-pointer',
         'transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl',
@@ -85,7 +86,8 @@ export const CeremonyCard = ({ item, className }) => {
       </div>
       <BorderBeam
         borderWidth={2}
-        size={50}
+        size={70}
+        delay={delay}
         colorTo={'var(--primary)'}
         colorFrom={'var(--secondary)'}
       />
@@ -175,22 +177,11 @@ const Dashboard = ({ project, setProject }) => {
     <main className="flex justify-between">
       <Head title="Dashboard" />
       <section className="flex flex-col p-2 w-4/5">
-        <Button
-          variant="secondary"
-          size="icon"
-          onClick={() =>
-            router.get(
-              route('project.ceremony.show', {
-                project: project.id,
-                ceremony: 'inception',
-              }),
-            )
-          }
-        >
-          <ArrowLeft />
-        </Button>
-        <aside className="flex justify-between">
+        <aside className="flex justify-between  py-1">
           <section className="flex flex-col items-start text-muted-foreground">
+            <p className="bg-background text-center text-xl font-bold text-foreground h-full p-0 border-0 m-0">
+              {project.title}
+            </p>
             Progresso da Conclusão
             {date ? (
               <div className="flex items-center">
@@ -220,7 +211,11 @@ const Dashboard = ({ project, setProject }) => {
               </span>
             </div>
           </section>
-          <section className="flex flex-col items-center gap-2 cursor-pointer select-none">
+          <section className="flex gap-2 items-end">
+            <ProjectPermissions projectId={project.id} />
+            <ProjectSettings project={project} />
+          </section>
+          <section className="flex flex-col items-center justify-end gap-2 cursor-pointer select-none">
             <p className="text-muted-foreground text-md m-0">Prazo</p>
             <Popover>
               <PopoverTrigger asChild>
@@ -304,11 +299,20 @@ const Dashboard = ({ project, setProject }) => {
       </section>
       <aside className="ceremonies flex flex-col items-center w-1/5 bg-card gap-2 p-2">
         <span>Ceremonies</span>
-        {ceremonies.map((ceremony) => (
+        {ceremonies.map((ceremony, index) => (
           <CeremonyCard
             key={ceremony}
             item={tooltipInfo[ceremony]}
+            delay={index * 1}
             className="flex flex-col p-2"
+            onClick={() =>
+              router.get(
+                route('project.ceremony.show', {
+                  project: project.id,
+                  ceremony: ceremony,
+                }),
+              )
+            }
           />
         ))}
       </aside>
