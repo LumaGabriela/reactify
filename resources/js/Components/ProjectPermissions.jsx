@@ -53,7 +53,7 @@ export function ProjectPermissions({ project }) {
   const handleSaveChanges = async () => {
     setIsLoading(true)
     router.post(
-      route('api.projects.permissions.update', projectId),
+      route('project.permissions.update', project.id),
       { users },
       {
         onSuccess: () => {
@@ -95,7 +95,7 @@ export function ProjectPermissions({ project }) {
   const handleRemoveUser = async (memberId) => {
     setIsLoading(true)
     router.post(
-      route('api.projects.permissions.removeMember', projectId),
+      route('project.permissions.removeMember', project.id),
       {
         id: memberId,
       },

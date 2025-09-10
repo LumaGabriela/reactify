@@ -170,7 +170,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
 
   const getUpdatedProject = async (projectID) => {
     try {
-      const response = await fetch('/api/project/' + projectID, {
+      const response = await fetch(route('project.updated', projectID), {
         method: 'GET',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',

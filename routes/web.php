@@ -87,6 +87,18 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::patch('/{project}', [ProjectController::class, 'update'])->name('project.update');
     Route::patch('/{project}/toggle-active', [ProjectController::class, 'toggleActive'])->name('project.toggle-active');
     Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
+    // rotas para permissões de projeto
+    Route::post('/{project}/permissions', [ProjectPermissionController::class, 'update'])->name(
+      'project.permissions.update'
+    );
+    Route::post('/{project}/addMember', [ProjectPermissionController::class, 'addMember'])->name(
+      'project.permissions.addMember'
+    );
+    Route::post('/{project}/removeMember', [ProjectPermissionController::class, 'removeMember'])->name(
+      'project.permissions.removeMember'
+    );
+    //rotas ṕara uso de websocket
+    Route::get('/{project}/getUpdated', [ProjectController::class, 'getUpdatedProject'])->name('project.updated');
   });
   //envia convite de projeto
   Route::post('/projects/{project}/invitations', [ProjectInvitationController::class, 'store'])->name('projects.invitations.store');
@@ -251,22 +263,5 @@ Route::prefix('chat')
     // Route::get('/{project}/history', [ChatController::class, 'getHistory'])->name('api.chat.history');
   });
 
-// API routes that need session authentication
-Route::prefix('api')
-  ->middleware(['auth', 'verified'])
-  ->group(function () {
-    Route::get('/projects/{project}/permissions', [ProjectPermissionController::class, 'index'])->name(
-      'api.project.permissions.index'
-    );
-    Route::post('/projects/{project}/permissions', [ProjectPermissionController::class, 'update'])->name(
-      'api.projects.permissions.update'
-    );
-    Route::post('/projects/{project}/addMember', [ProjectPermissionController::class, 'addMember'])->name(
-      'api.projects.permissions.addMember'
-    );
-    Route::post('/projects/{project}/removeMember', [ProjectPermissionController::class, 'removeMember'])->name(
-      'api.projects.permissions.removeMember'
-    );
-  });
 
 require __DIR__ . '/auth.php';

@@ -10,7 +10,3 @@ use App\Http\Controllers\StoryController;
 Route::post('/stories/generate', [StoryGeneratorControllerGemini::class, 'generateStories'])->name('story.generate');
 
 Route::post('/journeys/generate', [JourneyGeneratorController::class, 'generateJourneys'])->name('journey.generate');
-
-Route::get('/project/{project}', [ProjectController::class, 'getUpdatedProject'])->name('project.updated');
-
-Route::get('/projects', [ProjectController::class, 'getUpdatedProjects'])->name('projects.updated');

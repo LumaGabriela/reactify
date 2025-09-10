@@ -212,7 +212,7 @@ const Dashboard = ({ project, setProject }) => {
             </div>
           </section>
           <section className="flex gap-2 items-end">
-            <ProjectPermissions projectId={project.id} />
+            <ProjectPermissions project={project} />
             <ProjectSettings project={project} />
           </section>
           <section className="flex flex-col items-center justify-end gap-2 cursor-pointer select-none">
@@ -226,7 +226,7 @@ const Dashboard = ({ project, setProject }) => {
                     !date && 'text-muted-foreground',
                   )}
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  <CalendarIcon className="mr-2 size-4" />
                   {date ? (
                     format(date, 'dd/MM/yyyy', { locale: ptBR })
                   ) : (
