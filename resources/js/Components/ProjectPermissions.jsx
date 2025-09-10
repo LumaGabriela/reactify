@@ -2,7 +2,7 @@ import { Plus, LoaderCircle, X } from 'lucide-react'
 import { usePage, router } from '@inertiajs/react'
 import axios from 'axios'
 
-export function ProjectPermissions({ projectId, ownerId }) {
+export function ProjectPermissions({ project }) {
   const { auth, errors } = usePage().props
   const [users, setUsers] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -15,23 +15,38 @@ export function ProjectPermissions({ projectId, ownerId }) {
   // Variável de controle de permissão
   const canManagePermissions = currentUserRole === 'admin'
 
-  // Função para buscar os usuários do projeto
-  const fetchPermissions = async () => {
-    if (!projectId) return
-    setIsLoading(true)
-    try {
-      const response = await axios.get(`/api/projects/${projectId}/permissions`)
-      setUsers(response.data)
-
-      const currentUser = response.data.find((user) => user.id === auth.user.id)
-      if (currentUser) {
-        setCurrentUserRole(currentUser.role)
-      }
-    } catch (error) {
-      console.error('Failed to fetch permissions:', error)
-    } finally {
-      setIsLoading(false)
+  useEffect(() => {
+    if (isOpen) {
+      if (!project) return
+      const currentUsers = normalizeProjectUsers(project?.users)
+      setUsers(currentUsers)
+      const currentUserId = auth?.user?.id
+      setCurrentUserRole(
+        currentUsers.find((user) => user.id === currentUserId)?.role || '',
+      )
     }
+  }, [isOpen, project])
+
+  const normalizeProjectUsers = (projectUsers) => {
+    // Uma verificação de segurança para garantir que estamos recebendo um array.
+    if (!Array.isArray(projectUsers)) {
+      console.error('A entrada fornecida não é um array.')
+      return []
+    }
+
+    return projectUsers.map((user) => {
+      // Para cada usuário, separamos o objeto 'pivot' do 'resto das propriedades'.
+      const { pivot, user_id, ...restOfUser } = user
+
+      // Retornamos um novo objeto contendo:
+      // 1. Todas as propriedades originais do usuário (exceto 'pivot').
+      // 2. A nova propriedade 'role', extraída de 'pivot'.
+      return {
+        ...restOfUser,
+        role: pivot?.role, // Usamos optional chaining (?.) para evitar erros se 'pivot' não existir.
+        id: user_id,
+      }
+    })
   }
 
   // Função para salvar as alterações de roles
@@ -57,7 +72,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
     setIsAddingUser(true)
 
     router.post(
-      route('projects.invitations.store', projectId),
+      route('projects.invitations.store', project.id),
       {
         email: newUserEmail,
         role: newUserRole,
@@ -65,7 +80,8 @@ export function ProjectPermissions({ projectId, ownerId }) {
       {
         onSuccess: () => {
           setNewUserEmail('') // Limpa o input
-          fetchPermissions() // Recarrega a lista de usuários
+          // fetchPermissions() // Recarrega a lista de usuários
+          normalizeProjectUsers(project?.users)
         },
         onError: (error) => {
           // toast.error('Failed to add user')
@@ -85,7 +101,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
       },
       {
         onSuccess: () => {
-          fetchPermissions() // Recarrega a lista de usuários
+          // fetchPermissions() // Recarrega a lista de usuários
         },
         onError: (error) => {
           // toast.error('Failed to remove user')
@@ -106,11 +122,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
   }
 
   // Efeito para buscar os dados quando o sheet for aberto
-  useEffect(() => {
-    if (isOpen) {
-      fetchPermissions()
-    }
-  }, [isOpen, projectId])
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -133,7 +145,7 @@ export function ProjectPermissions({ projectId, ownerId }) {
             users
               .filter((user) => user.id !== auth.user.id)
               .map((user) => {
-                const isOwner = user.id == ownerId && user.role === 'admin'
+                const isOwner = user.id == auth.user.id && user.role === 'admin'
                 return (
                   <div
                     key={user.id}
