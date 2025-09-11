@@ -35,9 +35,12 @@ const cardVariants = {
 const ExpandableCard = ({
   title,
   content,
+  className = '',
   variant = 'primary',
   icon: IconComponent = CheckCircle,
   col = 1,
+  editable = true,
+  defaultExpanded = false,
   onContentUpdate,
   placeholder = 'Click to add content...',
 }) => {
@@ -96,6 +99,7 @@ const ExpandableCard = ({
   return (
     <div
       className={cn(
+        className,
         'bg-card rounded-lg border-t-4 transition-all duration-300 shadow-lg hover:shadow-xl h-full',
         col === 2 ? 'col-span-2' : '',
         expanded ? 'row-span-2' : '',
@@ -117,41 +121,45 @@ const ExpandableCard = ({
               {title}
             </h3>
           </div>
-
           {/* Action Buttons */}
-          <div className="flex items-center gap-2">
-            {isEditing ? (
-              <>
+          {editable && (
+            <div className="flex items-center gap-2">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="text-success hover:text-success/90 transition-colors disabled:opacity-50"
+                    title="Save (Ctrl+Enter)"
+                  >
+                    <Save
+                      size={16}
+                      className={isSaving ? 'animate-pulse' : ''}
+                    />
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    disabled={isSaving}
+                    className="text-destructive hover:text-destructive/90 transition-colors disabled:opacity-50"
+                    title="Cancel (Esc)"
+                  >
+                    <X size={16} />
+                  </button>
+                </>
+              ) : (
                 <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="text-success hover:text-success/90 transition-colors disabled:opacity-50"
-                  title="Save (Ctrl+Enter)"
+                  onClick={() => setIsEditing(true)}
+                  className={cn(
+                    'text-muted-foreground hover:text-foreground transition-colors',
+                    isHovered || !hasContent ? 'opacity-100' : 'opacity-0',
+                  )}
+                  title="Edit content"
                 >
-                  <Save size={16} className={isSaving ? 'animate-pulse' : ''} />
+                  <EditIcon size={16} />
                 </button>
-                <button
-                  onClick={handleCancel}
-                  disabled={isSaving}
-                  className="text-destructive hover:text-destructive/90 transition-colors disabled:opacity-50"
-                  title="Cancel (Esc)"
-                >
-                  <X size={16} />
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setIsEditing(true)}
-                className={cn(
-                  'text-muted-foreground hover:text-foreground transition-colors',
-                  isHovered || !hasContent ? 'opacity-100' : 'opacity-0',
-                )}
-                title="Edit content"
-              >
-                <EditIcon size={16} />
-              </button>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Card Content */}
@@ -182,7 +190,10 @@ const ExpandableCard = ({
                     )}
                     style={{
                       display: '-webkit-box',
-                      WebkitLineClamp: !expanded && needsExpansion ? 4 : 'none',
+                      WebkitLineClamp:
+                        !expanded && needsExpansion && !defaultExpanded
+                          ? 4
+                          : 'none',
                       WebkitBoxOrient: 'vertical',
                       overflow:
                         !expanded && needsExpansion ? 'hidden' : 'visible',
@@ -203,7 +214,7 @@ const ExpandableCard = ({
           </div>
 
           {/* Expand Button */}
-          {!isEditing && hasContent && needsExpansion && (
+          {!isEditing && hasContent && needsExpansion && !defaultExpanded && (
             <div className="mt-3 pt-2 border-t border-border">
               <button
                 onClick={() => setExpanded(!expanded)}
@@ -241,76 +252,6 @@ const getDateObject = (dateInput) => {
 }
 
 const MainView = ({ project = {}, setProject }) => {
-  const [date, setDate] = useState(getDateObject(project.due_date))
-  const isInitialMount = useRef(true)
-  const [progress, setProgress] = useState(0)
-
-  useEffect(() => {
-    // console.clear();
-    if (!date || !project.created_at) {
-      console.log(
-        'PARADA: A data do deadline ou a data de criação do projeto não existem.',
-      )
-      setProgress(0)
-      return
-    }
-    // console.log("VALORES DE ENTRADA:");
-    // console.log("-> `date` (do estado):", date);
-    // console.log("-> `project.created_at` (do backend):", project.created_at);
-    const startDate = new Date(project.created_at)
-    const endDate = new Date(date)
-    const now = new Date()
-
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      console.error(
-        'ERRO CRÍTICO: A `startDate` ou `endDate` é inválida. Não é possível calcular.',
-      )
-      setProgress(0)
-      return
-    }
-    startDate.setHours(0, 0, 0, 0)
-    endDate.setHours(0, 0, 0, 0)
-    now.setHours(0, 0, 0, 0)
-
-    //console.log("\nDATAS PROCESSADAS (sem horas):");
-    // console.log("-> Start Date:", startDate.toString());
-    // console.log("-> End Date:  ", endDate.toString());
-    // console.log("-> Now:       ", now.toString());
-    const totalDuration = endDate.getTime() - startDate.getTime()
-    const elapsedDuration = now.getTime() - startDate.getTime()
-    //console.log("-> Duração Total (Fim - Início):", totalDuration);
-    //console.log("-> Duração Decorrida (Hoje - Início):", elapsedDuration);
-    if (totalDuration <= 0) {
-      const finalProgress = now.getTime() >= endDate.getTime() ? 100 : 0
-      //console.log("-> Progresso Final:", finalProgress);
-      setProgress(finalProgress)
-      return
-    }
-
-    const progressPercentage =
-      (Math.max(0, elapsedDuration) / totalDuration) * 100
-    setProgress(progressPercentage)
-  }, [date, project.created_at])
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false
-      return
-    }
-    router.patch(
-      route('project.update', project.id),
-      {
-        due_date: date ? date.toISOString().split('T')[0] : null, // Envia a data no formato YYYY-MM-DD
-      },
-      {
-        preserveScroll: true,
-        onError: (errors) => {
-          console.error('Failed to update deadline:', errors)
-        },
-      },
-    )
-  }, [date])
-
   const updateProductCanvas = async (prop, newContent) => {
     const productCanvasId = project.product_canvas.id
     if (!productCanvasId) return

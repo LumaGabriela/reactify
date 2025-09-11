@@ -76,7 +76,7 @@ export function ProjectSettings({ project }) {
                 id="description"
                 value={data.description}
                 onChange={(e) => setData('description', e.target.value)}
-                className="bg-transparent border-0  w-full rounded"
+                className="bg-transparent border-0  w-full rounded text-sm"
                 disabled={processing}
               />
               {errors.description && (

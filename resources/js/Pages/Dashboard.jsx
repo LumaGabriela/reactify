@@ -48,7 +48,7 @@ export const CeremonyCard = ({ item, className, onClick, delay = 0 }) => {
     <Card
       onClick={onClick}
       className={cn(
-        'group relative w-full p-4 overflow-hidden bg-background cursor-pointer',
+        'group relative w-full p-6 overflow-hidden bg-background cursor-pointer',
         'transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl',
         className,
       )}
@@ -157,154 +157,142 @@ const Dashboard = ({ project, setProject }) => {
     )
   }, [date])
 
-  const updateProject = async (prop, newContent) => {
-    router.patch(
-      route('project.update', project.id),
-      {
-        description: newContent,
-      },
-      {
-        onSuccess: () => {
-          setProject((prev) => ({
-            ...prev,
-            description: newContent,
-          }))
-        },
-      },
-    )
-  }
   return (
-    <main className="flex justify-between">
-      <Head title="Dashboard" />
-      <section className="flex flex-col p-2 w-4/5">
-        <aside className="flex justify-between  py-1">
-          <section className="flex flex-col items-start text-muted-foreground">
-            <p className="bg-background text-center text-xl font-bold text-foreground h-full p-0 border-0 m-0">
-              {project.title}
-            </p>
-            Progresso da Conclusão
-            {date ? (
-              <div className="flex items-center">
-                <Progress value={progress} className="w-32 h-2 mr-2" />
-                <span className="text-sm font-medium">{`${Math.round(progress)}%`}</span>
-              </div>
-            ) : (
-              <div className="text-sm text-muted-foreground italic">
-                Defina um prazo de conclusão para visualizar o progresso.
-              </div>
-            )}
+    <main className="grid  grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] xl:grid-cols-[22rem,16rem,auto,auto] gap-4 p-4 w-full ">
+      <Head title={project.title || 'Project Title'} />
+      {/* progresso de conclusao*/}
+      <section className="bg-card rounded-lg flex flex-col justify-between text-muted-foreground p-2 gap-2 w-full h-full">
+        <div className=" flex flex-col items-start gap-2">
+          <span className="text-center flex gap-2 w-full justify-between text-xl text-foreground p-0 border-0 m-0 cursor-default">
+            {project.title}
+            <Badge
+              variant={`${project.status === 'active' ? 'secondary' : 'destructive'}`}
+            >
+              {project.status.toUpperCase()}
+            </Badge>
+          </span>
+          Progresso da Conclusão
+          {date ? (
             <div className="flex items-center">
-              <Clock size={16} className="mr-3.5" />
-              {project.updated_at ? (
-                <span>
-                  Atualizado:{' '}
-                  {format(new Date(project.updated_at), 'dd/MM/yyyy HH:mm', {
-                    locale: ptBR,
-                  })}
-                </span>
-              ) : (
-                <span>Atualizado: -</span>
-              )}
-              <span className="mx-2">•</span>
-              <span className="rounded-full text-lg font-medium bg-success/20 text-success">
-                {project.status.toUpperCase()}
-              </span>
+              <Progress value={progress} className="w-32 h-2 mr-2" />
+              <span className="text-sm font-medium">{`${Math.round(progress)}%`}</span>
             </div>
-          </section>
-          <section className="flex gap-2 items-end">
-            <ProjectPermissions project={project} />
-            <ProjectSettings project={project} />
-          </section>
-          <section className="flex flex-col items-center justify-end gap-2 cursor-pointer select-none">
-            <p className="text-muted-foreground text-md m-0">Prazo</p>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={'outline'}
-                  className={cn(
-                    'w-[160px] justify-start text-left font-normal',
-                    !date && 'text-muted-foreground',
-                  )}
-                >
-                  <CalendarIcon className="mr-2 size-4" />
-                  {date ? (
-                    format(date, 'dd/MM/yyyy', { locale: ptBR })
-                  ) : (
-                    <span>Definir prazo</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  disabled={{ before: new Date() }}
-                  initialFocus
-                  locale={ptBR}
-                />
-              </PopoverContent>
-            </Popover>
-          </section>
-        </aside>
-
-        {/* Progress Indicators */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-4 mb-6">
-          <ExpandableCard
-            title={project?.title || 'Project'}
-            content={project?.description}
-            col={1}
-            variant="secondary"
-            icon={List}
-            placeholder="Describe your project..."
-            onContentUpdate={(content) => updateProject('description', content)}
-          />
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 w-full items-center justify-center bg-card p-4 rounded-lg">
-            <ProgressIcon
-              value={project?.stories?.length || 0}
-              max={20}
-              colorClass="text-primary"
-              label="Stories"
-              icon={List}
-            />
-            <ProgressIcon
-              value={project?.personas?.length || 0}
-              max={10}
-              colorClass="text-destructive"
-              label="Personas"
-              icon={Users}
-            />
-            <ProgressIcon
-              value={project?.goal_sketches?.length || 0}
-              max={15}
-              colorClass="text-info"
-              label="Goals"
-              icon={Target}
-            />
-            <ProgressIcon
-              value={project?.journeys?.length || 0}
-              max={10}
-              colorClass="text-accent"
-              label="Journeys"
-              icon={GitBranch}
-            />
+          ) : (
+            <div className="text-sm text-muted-foreground italic">
+              Defina um prazo de conclusão para visualizar o progresso.
+            </div>
+          )}
+          <div className="flex items-center">
+            <Clock size={16} className="mr-3.5" />
+            {project.updated_at ? (
+              <span>
+                Atualizado:{' '}
+                {format(new Date(project.updated_at), 'dd/MM/yyyy HH:mm', {
+                  locale: ptBR,
+                })}
+              </span>
+            ) : (
+              <span>Atualizado: -</span>
+            )}
           </div>
-
-          <Interview
-            className="col-span-2"
-            projectId={project.id}
-            interviews={project.interviews || []} // Passe a lista de entrevistas do seu projeto
-          />
+        </div>
+        {/* opcoes*/}
+        <div className="flex  gap-2">
+          <ProjectPermissions project={project} />
+          <ProjectSettings project={project} />
         </div>
       </section>
-      <aside className="ceremonies flex flex-col items-center w-1/5 bg-card gap-2 p-2">
+
+      {/* prazo*/}
+      {/* <section className="col-span-1 bg-card rounded-lg flex flex-col items-center justify-start gap-2 cursor-pointer select-none">*/}
+      {/* <p className="text-muted-foreground text-md m-0">Prazo</p>*/}
+      {/* <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={'outline'}
+              className={cn(
+                'w-[160px] justify-start text-left font-normal',
+                !date && 'text-muted-foreground',
+              )}
+            >
+              <CalendarIcon className="mr-2 size-4" />
+              {date ? (
+                format(date, 'dd/MM/yyyy', { locale: ptBR })
+              ) : (
+                <span>Definir prazo</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">*/}
+
+      <Calendar
+        mode="single"
+        selected={date}
+        onSelect={setDate}
+        disabled={{ before: new Date() }}
+        initialFocus
+        locale={ptBR}
+        className="bg-card mx-auto xl:col-start-2 xl:row-start-1 xl:w-full"
+      />
+      {/* </PopoverContent>
+        </Popover>*/}
+      {/* Progress Indicators */}
+
+      <div className="grid grid-cols-2 xl:row-start-1 xl:col-start-3 gap-2 items-center justify-center bg-card p-4 rounded-lg">
+        <ProgressIcon
+          value={project?.stories?.length || 0}
+          max={20}
+          colorClass="text-primary"
+          label="Stories"
+          icon={List}
+        />
+        <ProgressIcon
+          value={project?.personas?.length || 0}
+          max={10}
+          colorClass="text-destructive"
+          label="Personas"
+          icon={Users}
+        />
+        <ProgressIcon
+          value={project?.goal_sketches?.length || 0}
+          max={15}
+          colorClass="text-info"
+          label="Goals"
+          icon={Target}
+        />
+        <ProgressIcon
+          value={project?.journeys?.length || 0}
+          max={10}
+          colorClass="text-accent"
+          label="Journeys"
+          icon={GitBranch}
+        />
+      </div>
+      <ExpandableCard
+        title={project?.title || 'Project'}
+        content={project?.description}
+        col={1}
+        variant="secondary"
+        icon={List}
+        editable={false}
+        defaultExpanded={true}
+        placeholder="Describe your project..."
+        className="xl:row-start-3 xl:col-span-3 min-w-full"
+        // onContentUpdate={(content) => updateProject('description', content)}
+      />
+      <Interview
+        className="xl:row-start-2 xl:col-span-3"
+        projectId={project.id}
+        interviews={project.interviews || []} // Passe a lista de entrevistas do seu projeto
+      />
+      {/* ceremonies*/}
+      <section className="ceremonies xl:col-start-4 xl:row-span-3 flex flex-col justify-between max-w-72 items-center bg-card gap-2 p-2">
         <span>Ceremonies</span>
         {ceremonies.map((ceremony, index) => (
           <CeremonyCard
             key={ceremony}
             item={tooltipInfo[ceremony]}
             delay={index * 1}
-            className="flex flex-col p-2"
             onClick={() =>
               router.get(
                 route('project.ceremony.show', {
@@ -315,7 +303,7 @@ const Dashboard = ({ project, setProject }) => {
             }
           />
         ))}
-      </aside>
+      </section>
     </main>
   )
 }

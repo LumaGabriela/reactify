@@ -32,6 +32,7 @@ import { tooltipInfo } from '@/lib/projectData.js'
 import Inspection from './project-ceremonies/Inspection/Inspection.jsx'
 //chatbot
 import ChatBot from './ChatBot.jsx'
+import { ProjectSettings } from '@/Components/ProjectSettings.jsx'
 const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const [project, setProject] = useState({ ...projectDB })
   const [isEditing, setIsEditing] = useState(false)
@@ -349,34 +350,15 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
               id="project-title-content"
               className="flex-1 flex justify-center items-center gap-2 px-4 cursor-pointer" // Ajuste o gap aqui se precisar
             >
-              {isEditing ? (
-                <Input
-                  type="text"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  onKeyUp={(e) => {
-                    if (e.key === 'Enter') updateProjectTitle()
-                  }}
-                  className="bg-background !text-2xl font-bold text-center text-foreground h-full p-0 border-0 m-0"
-                />
-              ) : (
-                <p className="bg-background text-center text-2xl font-bold text-foreground h-full p-0 border-0 m-0">
-                  {project.title}
-                </p>
-              )}
-              <button
-                onClick={() => setIsEditing(!isEditing)}
-                className="text-foreground hover:text-white transition-colors p-1" // Adicionei p-1 para um pequeno padding
-                title="Editar nome do projeto"
-              >
-                {!isEditing ? <PenLine size={16} /> : <X size={16} />}{' '}
-                {/* Reduzi o tamanho do ícone para 16 */}
-              </button>
+              <p className="bg-background text-center text-2xl font-bold text-foreground h-full p-0 border-0 m-0">
+                {project.title}
+              </p>
             </div>
 
             {/* Right: Buttons (Apenas ProjectPermissions agora) */}
             <div className="flex items-center gap-2">
-              <ProjectPermissions projectId={project.id} />
+              <ProjectSettings project={project} />
+              <ProjectPermissions project={project} />
             </div>
           </div>
 
