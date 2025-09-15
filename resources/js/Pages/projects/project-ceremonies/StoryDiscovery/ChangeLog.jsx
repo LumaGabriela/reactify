@@ -37,17 +37,6 @@ const ChangeLog = ({ project }) => {
   return (
     <div className="p-2">
       <div className="w-full flex justify-between items-center p-4">
-        <Button
-          variant="link"
-          onClick={() =>
-            router.get(
-              route('project.show', { project: project.id, page: 'backlog' }),
-            )
-          }
-        >
-          Go to Product Backlog
-        </Button>
-
         <Dialog open={showForm} onOpenChange={setShowForm}>
           <DialogTrigger asChild>
             <Button>Nova Solicitação</Button>
