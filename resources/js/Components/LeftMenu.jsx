@@ -10,6 +10,7 @@ import {
   Home,
   Bell,
   ChevronsRight,
+  Milestone,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -281,66 +282,25 @@ const LeftMenu = () => {
                     const isCurrentProject =
                       Number(currentProjectId) === project.id
                     return (
-                      <Accordion
+                      <AccordionItem
                         key={project.id}
-                        type="single"
-                        collapsible
-                        defaultValue={
+                        value={
                           isCurrentProject ? `project-${project.id}` : undefined
                         }
                       >
-                        <AccordionItem
-                          value={`project-${project.id}`}
-                          className="border-b-0"
+                        <Button
+                          variant={`${isCurrentProject ? 'secondary' : 'link'}`}
+                          className="w-full justify-start"
+                          onClick={() =>
+                            router.get(
+                              route('project.show', { id: project.id }),
+                            )
+                          }
                         >
-                          <AccordionTrigger
-                            className={cn(
-                              'justify-start w-full text-left h-9 font-normal hover:no-underline rounded-md px-2 ',
-                              isCurrentProject ? 'bg-primary ' : 'bg-accent ',
-                            )}
-                          >
-                            <span
-                              className={cn(
-                                isCurrentProject
-                                  ? 'text-primary-foreground '
-                                  : 'text-foreground ',
-                                ' truncate',
-                              )}
-                            >
-                              {project.title}
-                            </span>
-                          </AccordionTrigger>
-                          <AccordionContent className="pt-1">
-                            <div className="flex flex-col space-y-1 pl-5">
-                              {/* Link para a página principal do projeto */}
-                              {projectPages.map((item, index) => (
-                                <Button
-                                  key={index}
-                                  variant="secondary"
-                                  onClick={() =>
-                                    router.get(
-                                      route('project.show', {
-                                        project: project.id,
-                                        page: item.url,
-                                      }),
-                                    )
-                                  }
-                                  className={cn(
-                                    'justify-start w-full text-left h-8 font-normal',
-                                    route().current('project.show') &&
-                                      isCurrentProject &&
-                                      route().params.page === item.url
-                                      ? 'text-primary-foreground bg-primary'
-                                      : 'text-muted-foreground',
-                                  )}
-                                >
-                                  <span className="truncate">{item.name}</span>
-                                </Button>
-                              ))}
-                            </div>
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
+                          {isCurrentProject ? <Milestone /> : null}
+                          {project.title}
+                        </Button>
+                      </AccordionItem>
                     )
                   })}
                 </AccordionContent>
