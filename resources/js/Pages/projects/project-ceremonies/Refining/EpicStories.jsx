@@ -1,11 +1,4 @@
-import {
-  ArrowDownRight,
-  ArrowRight,
-  CornerDownRight,
-  Plus,
-  X,
-  Check,
-} from 'lucide-react'
+import { ArrowRight, CornerDownRight } from 'lucide-react'
 import MotionDivOptions from '@/Components/MotionDivOptions'
 import { storyVariants } from '../StoryDiscovery/Stories'
 import React from 'react'
@@ -13,6 +6,7 @@ import { router } from '@inertiajs/react'
 import { isTemporary } from '@/lib/utils'
 import InfoButton from '@/Components/InfoButton'
 import { tooltipInfo } from '@/lib/projectData'
+import ReactTextareaAutosize from 'react-textarea-autosize'
 /**
  * Componente para renderizar um único card de estória.
  * Gerencia seu próprio estado de hover para exibir o botão de adicionar.
@@ -142,12 +136,11 @@ const EpicStoryCard = ({
           {/* 🎨 RENDERIZAÇÃO CONDICIONAL: MODO DE EDIÇÃO OU VISUALIZAÇÃO */}
           {isEditing ? (
             <div className="w-full flex flex-col items-center gap-2">
-              <Input
-                type="text"
+              <ReactTextareaAutosize
+                id="description"
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
-                className="w-full text-sm h-8"
-                autoFocus
+                className="bg-transparent border-0  w-full rounded text-sm"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleSave()
                   if (e.key === 'Escape') handleCancel()
@@ -173,7 +166,7 @@ const EpicStoryCard = ({
               </div>*/}
             </div>
           ) : (
-            <p className="text-sm text-center w-full min-h-[32px] flex items-center justify-center">
+            <p className="text-sm text-center w-full min-h-[32px] flex items-center justify-start">
               {epicStory.title}
             </p>
           )}
@@ -225,33 +218,66 @@ const EpicStories = ({ project, setProject }) => {
   return (
     <section className="p-2 flex flex-col gap-2">
       <div className="flex flex-col gap-1">
-        {project?.stories?.map((story, i) => {
-          const relatedEpics = epicsByStoryId.get(story.id) || []
-          return (
-            <section className="py-1 flex gap-1 items-stretch" key={story.id}>
-              <StoryCard
-                story={story}
-                addEpicStory={() => addEpicStory(story.id)}
-              />
+        {/* user stories*/}
+        {project?.stories
+          ?.filter((story) => story.type === 'user')
+          .map((story, i) => {
+            const relatedEpics = epicsByStoryId.get(story.id) || []
+            return (
+              <section className="py-1 flex gap-1 items-stretch" key={story.id}>
+                <StoryCard
+                  story={story}
+                  addEpicStory={() => addEpicStory(story.id)}
+                />
 
-              <div className="flex flex-col gap-1 w-full">
-                {[...relatedEpics]
-                  .sort((a, b) => a.id - b.id)
-                  .map((epicStory, index, array) => (
-                    <EpicStoryCard
-                      key={epicStory.id}
-                      story={story}
-                      epicStory={epicStory}
-                      lastElement={
-                        index === array.length - 1 && array.length > 1
-                      }
-                      setProject={setProject}
-                    />
-                  ))}
-              </div>
-            </section>
-          )
-        })}
+                <div className="flex flex-col gap-1 w-full">
+                  {[...relatedEpics]
+                    .sort((a, b) => a.id - b.id)
+                    .map((epicStory, index, array) => (
+                      <EpicStoryCard
+                        key={epicStory.id}
+                        story={story}
+                        epicStory={epicStory}
+                        lastElement={
+                          index === array.length - 1 && array.length > 1
+                        }
+                        setProject={setProject}
+                      />
+                    ))}
+                </div>
+              </section>
+            )
+          })}
+        {/* system stories*/}
+        {project?.stories
+          ?.filter((story) => story.type === 'system')
+          .map((story, i) => {
+            const relatedEpics = epicsByStoryId.get(story.id) || []
+            return (
+              <section className="py-1 flex gap-1 items-stretch" key={story.id}>
+                <StoryCard
+                  story={story}
+                  addEpicStory={() => addEpicStory(story.id)}
+                />
+
+                <div className="flex flex-col gap-1 w-full">
+                  {[...relatedEpics]
+                    .sort((a, b) => a.id - b.id)
+                    .map((epicStory, index, array) => (
+                      <EpicStoryCard
+                        key={epicStory.id}
+                        story={story}
+                        epicStory={epicStory}
+                        lastElement={
+                          index === array.length - 1 && array.length > 1
+                        }
+                        setProject={setProject}
+                      />
+                    ))}
+                </div>
+              </section>
+            )
+          })}
       </div>
     </section>
   )
