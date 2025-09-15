@@ -49,6 +49,9 @@ const StoryCard = ({ story, addScenario }) => {
 const ScenarioCard = ({ scenario, story, lastElement = false, setProject }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(
+    scenario.description.and ? true : false,
+  )
   const [editValues, setEditValues] = useState({
     as: scenario.description.as || '',
     given: scenario.description.given || '',
@@ -121,7 +124,9 @@ const ScenarioCard = ({ scenario, story, lastElement = false, setProject }) => {
     const { name, value } = e.target
     setEditValues((prev) => ({ ...prev, [name]: value }))
   }
-
+  const expandScenario = () => {
+    setIsExpanded(!isExpanded)
+  }
   return (
     <section className="flex flex-1 items-center max-w-md md:max-w-4xl gap-1 h-full">
       {lastElement ? (
@@ -145,9 +150,26 @@ const ScenarioCard = ({ scenario, story, lastElement = false, setProject }) => {
 
         <div className="flex-1  border border-border bg-card rounded-md shadow-sm p-3">
           {isEditing ? (
-            <div className="w-full flex flex-col text-left font-normal items-center gap-3">
+            <div className="w-full flex flex-col text-left font-normal items-center gap-1">
               {/* botoes de salvar e sair*/}
-              <div className="flex items-center gap-2 self-start">
+              <div className="flex items-center gap-1 self-end">
+                <TooltipProvider delayDuration={100}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Switch
+                          variant="default"
+                          checked={isExpanded}
+                          onCheckedChange={expandScenario}
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {isExpanded ? 'Show less' : 'Show more'}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
                 <Button
                   variant="ghost"
                   size="icon"
@@ -207,26 +229,30 @@ const ScenarioCard = ({ scenario, story, lastElement = false, setProject }) => {
                   className="w-full text-sm "
                 />
               </div>
-              <div className="flex text-xs items-center gap-2 text-primary w-full">
-                <span className="w-10 font-bold">AND</span>
-                <Input
-                  name="and"
-                  value={editValues.and}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                  className="w-full text-sm "
-                />
-              </div>
-              <div className="flex text-xs items-center gap-2 text-primary w-full">
-                <span className="w-10 font-bold">THEN</span>
-                <Input
-                  name="then_2"
-                  value={editValues.then_2}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                  className="w-full text-sm "
-                />
-              </div>
+              {isExpanded ? (
+                <>
+                  <div className="flex text-xs items-center gap-2 text-primary w-full">
+                    <span className="w-10 font-bold">AND</span>
+                    <Input
+                      name="and"
+                      value={editValues.and}
+                      onChange={handleInputChange}
+                      onKeyDown={handleKeyDown}
+                      className="w-full text-sm "
+                    />
+                  </div>
+                  <div className="flex text-xs items-center gap-2 text-primary w-full">
+                    <span className="w-10 font-bold">THEN</span>
+                    <Input
+                      name="then_2"
+                      value={editValues.then_2}
+                      onChange={handleInputChange}
+                      onKeyDown={handleKeyDown}
+                      className="w-full text-sm "
+                    />
+                  </div>
+                </>
+              ) : null}
             </div>
           ) : (
             <div className="w-full bg-card rounded-lg p-2 shadow-sm">
@@ -307,8 +333,6 @@ const UsageScenarios = ({ project, setProject }) => {
         given: '...',
         when: '...',
         then_1: '...',
-        and: '...',
-        then_2: '...',
       },
     }
 
@@ -330,31 +354,64 @@ const UsageScenarios = ({ project, setProject }) => {
 
   return (
     <section className="p-2 flex flex-col">
-      {project?.stories?.map((story) => {
-        const relatedScenarios = scenariosByStoryId.get(story.id) || []
-        return (
-          <section className="py-1 flex gap-2 min-h-60" key={story.id}>
-            <StoryCard
-              story={story}
-              addScenario={() => addScenario(story.id)}
-            />
+      {project?.stories
+        ?.filter((story) => story.type === 'user')
+        .map((story) => {
+          const relatedScenarios = scenariosByStoryId.get(story.id) || []
+          return (
+            <section className="py-1 flex gap-2 min-h-48" key={story.id}>
+              <StoryCard
+                story={story}
+                addScenario={() => addScenario(story.id)}
+              />
 
-            <div className="flex flex-col gap-2 w-full">
-              {relatedScenarios
-                .sort((a, b) => a.id - b.id)
-                .map((scenario, index, array) => (
-                  <ScenarioCard
-                    key={scenario.id}
-                    scenario={scenario}
-                    story={story}
-                    setProject={setProject}
-                    lastElement={index === array.length - 1 && array.length > 1}
-                  />
-                ))}
-            </div>
-          </section>
-        )
-      })}
+              <div className="flex flex-col gap-2 w-full">
+                {relatedScenarios
+                  .sort((a, b) => a.id - b.id)
+                  .map((scenario, index, array) => (
+                    <ScenarioCard
+                      key={scenario.id}
+                      scenario={scenario}
+                      story={story}
+                      setProject={setProject}
+                      lastElement={
+                        index === array.length - 1 && array.length > 1
+                      }
+                    />
+                  ))}
+              </div>
+            </section>
+          )
+        })}
+      {project?.stories
+        ?.filter((story) => story.type === 'system')
+        .map((story) => {
+          const relatedScenarios = scenariosByStoryId.get(story.id) || []
+          return (
+            <section className="py-1 flex gap-2 min-h-48" key={story.id}>
+              <StoryCard
+                story={story}
+                addScenario={() => addScenario(story.id)}
+              />
+
+              <div className="flex flex-col gap-2 w-full">
+                {relatedScenarios
+                  .sort((a, b) => a.id - b.id)
+                  .map((scenario, index, array) => (
+                    <ScenarioCard
+                      key={scenario.id}
+                      scenario={scenario}
+                      story={story}
+                      setProject={setProject}
+                      lastElement={
+                        index === array.length - 1 && array.length > 1
+                      }
+                    />
+                  ))}
+              </div>
+            </section>
+          )
+        })}
     </section>
   )
 }

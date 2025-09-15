@@ -26,8 +26,8 @@ const MotionDivOptions = ({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant="motiondiv"
-                    size="icon"
+                    variant="ghost"
+                    size="motiondiv"
                     className="text-muted-foreground hover:text-foreground"
                     onClick={onAdd}
                   >
@@ -45,8 +45,8 @@ const MotionDivOptions = ({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant="motiondiv"
-                    size="icon"
+                    variant="ghost"
+                    size="motiondiv"
                     className="text-muted-foreground hover:text-foreground"
                     onClick={onEdit}
                   >
@@ -64,8 +64,8 @@ const MotionDivOptions = ({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant="motiondiv"
-                    size="icon"
+                    variant="ghost"
+                    size="motiondiv"
                     className="text-destructive/80 hover:text-destructive"
                     onClick={onDelete}
                   >
