@@ -5,6 +5,8 @@ namespace App\Http\Middleware;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\ProjectInvitation;
+use App\Notifications\UserInvitedToProject;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -34,7 +36,33 @@ class HandleInertiaRequests extends Middleware
       'auth' => [
         'user' =>
         fn() => $request->user() ? $request->user()->only(['id', 'name', 'email', 'provider_avatar']) : null,
-        'notifications' => fn() => $request->user() ? $request->user()->notifications()->get() : null,
+
+        'notifications' => function () use ($request) {
+          if (!$request->user()) {
+            return null;
+          }
+          $userNotifications = $request->user()->notifications()->get();
+
+          // filtro para notificacoes de convites
+          $invitationIds = $userNotifications
+            ->where('type', UserInvitedToProject::class)
+            ->pluck('data.invitation_id');
+
+          $invitations = ProjectInvitation::whereIn('id', $invitationIds)
+            ->get()
+            ->keyBy('id');
+
+          // 4. Mapeia a coleção original de notificações, "anexando" o modelo
+          //    completo do convite a cada notificação correspondente.
+          return $userNotifications->map(function ($notification) use ($invitations) {
+            if ($notification->type === UserInvitedToProject::class) {
+              $invitationId = $notification->data['invitation_id'];
+              $notification->invitation = $invitations->get($invitationId)->only(['id', 'project_id', 'created_at', 'expires_at', 'token', 'status']);
+            }
+            return $notification;
+          });
+        },
+
         'projects' => fn() => $request->user() ? $request->user()->projects()
           ->with(['users' => function ($query) {
             $query->select(['user_id', 'name', 'email', 'provider_avatar']);

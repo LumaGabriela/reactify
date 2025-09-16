@@ -1,7 +1,5 @@
 import MainLayout from '@/Layouts/MainLayout'
-import { usePage } from '@inertiajs/react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { usePage, router } from '@inertiajs/react'
 import { BellRing, Trash } from 'lucide-react'
 
 const Notifications = () => {
@@ -27,6 +25,7 @@ const Notifications = () => {
     // O método format() retorna a string final.
     return new Intl.DateTimeFormat('pt-BR', options).format(date)
   }
+
   return (
     <div className="container mx-auto py-10">
       <Card className="bg-card border-border">
@@ -36,7 +35,11 @@ const Notifications = () => {
               <BellRing className="h-6 w-6" />
               <span>Notifications</span>
             </div>
-            <Button variant="secondary" className="h-12 ">
+            <Button
+              variant="secondary"
+              className="h-12 "
+              onClick={() => router.patch(route('notifications.read'))}
+            >
               Mark all as read
               <Trash className="!size-6" />
             </Button>
@@ -45,17 +48,54 @@ const Notifications = () => {
         <CardContent>
           {notifications.length > 0 ? (
             <div className="cursor-pointer flex flex-col gap-4">
-              {notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="flex justify-between rounded-lg bg-foreground/10 p-4"
-                >
-                  <p className="font-medium text-foreground">
-                    {notification.data?.message}
-                  </p>
-                  <span>{formatDateTime(notification?.created_at)}</span>
-                </div>
-              ))}
+              {notifications.map((notification) => {
+                const { invitation } = notification
+
+                return (
+                  <section
+                    key={notification.id}
+                    className={`${notification.read_at ? 'opacity-50' : ''} flex justify-between rounded-lg bg-foreground/10 p-4`}
+                  >
+                    <div className="flex flex-col justify-between">
+                      <p className="font-medium text-foreground">
+                        {notification.data?.message}
+                      </p>
+                      <span className="text-xs">
+                        {formatDateTime(notification?.created_at)}
+                      </span>
+                    </div>
+                    {/* caso exista um token de convite*/}
+                    {invitation && invitation.status === 'pending' && (
+                      <div className="flex gap-2">
+                        <Button
+                          variant="default"
+                          onClick={() => {
+                            router.get(
+                              route('invitations.accept', {
+                                invitation: invitation.token,
+                              }),
+                            )
+                          }}
+                        >
+                          Accept
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => {
+                            router.get(
+                              route('invitations.decline', {
+                                invitation: invitation.token,
+                              }),
+                            )
+                          }}
+                        >
+                          Decline
+                        </Button>
+                      </div>
+                    )}
+                  </section>
+                )
+              })}
             </div>
           ) : (
             <div className="py-12 text-center">

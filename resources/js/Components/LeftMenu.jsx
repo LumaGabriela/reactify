@@ -55,33 +55,33 @@ const LeftMenu = () => {
       name: 'Notifications',
       url: 'notifications.index',
       icon: Bell,
-      badge: notifications.length,
+      badge: notifications.filter((n) => !n.read_at).length,
     },
     { name: 'Profile', url: 'profile.edit', icon: User },
     { name: 'Logout', url: 'logout', icon: LogOut },
   ]
-  const projectPages = [
-    {
-      name: 'Inception',
-      url: 'inception',
-    },
-    {
-      name: 'Story Discovery',
-      url: 'story-discovery',
-    },
-    {
-      name: 'Refining',
-      url: 'refining',
-    },
-    {
-      name: 'Modeling',
-      url: 'modeling',
-    },
-    {
-      name: 'Backlog',
-      url: 'backlog',
-    },
-  ]
+  // const projectPages = [
+  //   {
+  //     name: 'Inception',
+  //     url: 'inception',
+  //   },
+  //   {
+  //     name: 'Story Discovery',
+  //     url: 'story-discovery',
+  //   },
+  //   {
+  //     name: 'Refining',
+  //     url: 'refining',
+  //   },
+  //   {
+  //     name: 'Modeling',
+  //     url: 'modeling',
+  //   },
+  //   {
+  //     name: 'Backlog',
+  //     url: 'backlog',
+  //   },
+  // ]
   const cardVariants = {
     hidden: {
       opacity: 0,
