@@ -3,9 +3,14 @@
 namespace Database\Seeders;
 
 use App\Actions\CreateStoryWithInvestCard;
+use App\Notifications\UserInvitedToProject;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
+use App\Models\User;
+use App\Models\ProjectInvitation;
 
 class ProjectSeeder extends Seeder
 {
@@ -100,6 +105,29 @@ class ProjectSeeder extends Seeder
       "created_at" => now(),
       "updated_at" => now(),
     ]);
+
+    $projectId2 = DB::table("projects")->insertGetId([
+      "title" => "Projeto Exemplo 2",
+      "description" => "Testes...",
+      "active" => true,
+      "created_at" => now(),
+      "updated_at" => now(),
+    ]);
+
+    $invitation = ProjectInvitation::create([
+      'email' => 'admin@example.com',
+      'project_id' => $projectId2,
+      'inviter_id' => $userId1,
+      'role' => 'admin',
+      'status' => 'pending',
+      'token' => Str::uuid(),
+      'expires_at' => now()->addDays(7)
+    ]);
+
+    $invitedUser = User::where('email', 'admin@example.com')->first();
+
+    Notification::send($invitedUser, new UserInvitedToProject($invitation));
+
     //criar prioridades para matriz
     DB::table('matrix_priorities')->insert([
       [
@@ -147,7 +175,7 @@ class ProjectSeeder extends Seeder
       "solutions" => "Criar uma plataforma de streaming para filmes em domínio público, com legendas em português e preços de assinaturas acessíveis.",
       "personas" => "Leon Cardoso - Administrador da plataforma.
       Thiago Guimarães - Usuário.",
-      "restrictions" =>"A plataforma deve funcionar em qualquer navegador web baseado no Chromium, no Opera, no Safari e no Mozilla Firefox. \nA plataforma deve exigir um cadastro do usuário.
+      "restrictions" => "A plataforma deve funcionar em qualquer navegador web baseado no Chromium, no Opera, no Safari e no Mozilla Firefox. \nA plataforma deve exigir um cadastro do usuário.
       A plataforma deve exigir uma assinatura semestral ou anual para acesso ilimitado ao catálogo.",
       "product_is" => "É uma plataforma web.
       É otimizada para navegadores desktop e mobile.
