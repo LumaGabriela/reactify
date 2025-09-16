@@ -22,11 +22,7 @@ import {
   Trash,
   Map,
   CornerUpRight,
-  ChevronDown,
   ChevronRight,
-  Sparkles,
-  Loader2,
-  Info,
   Minus,
   ChevronsUp,
 } from 'lucide-react'

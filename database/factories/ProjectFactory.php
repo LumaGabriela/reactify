@@ -23,7 +23,7 @@ class ProjectFactory extends Factory
       'title' => $this->faker->randomElement(['Project Raccoon', 'Project Panda', 'Project Owl', 'Project Rat']),
       'description' => $this->faker->paragraph(),
       'active' => true,
-      'status' => 'draft',
+      'status' => 'active',
       "created_at" => now(),
       "updated_at" => now(),
       "deleted_at" => null,
