@@ -13,36 +13,37 @@ const tooltipInfo = {
   inception: {
     title: 'Inception',
     description:
-      'A fase inicial do projeto, onde são definidos os objetivos, personas e jornadas.',
+      'Esta cerimônia visa estabelecer uma visão de alto nível do produto, definindo o que ele é e o que não é, o problema de negócio que ele busca resolver, suas restrições e seus usuários-chave ou fornecedores de requisitos. É dividida em quatro etapas principais: obter a visão do produto (gerando um Product Canvas), obter um Goal Sketch (metas e restrições de negócio), obter Personas (modelando usuários-chave) e obter Journeys (mapeando a interação do usuário com o sistema). Todos os atores do REACT (Customer, Domain Expert, Team e Facilitator) participam, e ela ocorre geralmente no início do projeto, podendo ser repetida dependendo das mudanças ou antes de cada entrega.',
   },
   storyDiscovery: {
     title: 'Story Discovery',
     description:
-      'Fase de descoberta de histórias de usuário, onde são identificados os principais cenários de uso do sistema.',
+      'O principal objetivo desta cerimônia é elicitar e priorizar os requisitos do software, que são representados por estórias de usuário (funcionais) e estórias do sistema (não-funcionais), a partir dos objetivos das personas e das jornadas de usuário, bem como das restrições do produto e metas de negócio. Também se inicia a construção de um Overall Model do produto, que descreve as classes, objetos e suas relações internas utilizando a técnica de CRC cards, e as estórias são priorizadas com base no valor de negócio e complexidade de implementação. Todos os atores do REACT participam.',
   },
   refining: {
     title: 'Refining',
     description:
-      'Fase de refinamento das histórias de usuário, onde são identificadas as principais funcionalidades e requisitos do sistema.',
+      'Esta cerimônia é focada em detalhar e elaborar as estórias mais prioritárias, refinando os requisitos com maior riqueza de detalhes, descobrindo as regras de negócio e estabelecendo os cenários de uso ou aceitação. As estórias épicas (muito grandes) são decompostas em estórias menores para facilitar a entrega de valor mais rapidamente. A partir da análise das estórias de usuário, são identificadas e registradas as regras de negócio, e são definidos Cenários de Aceitação para as estórias prioritárias, descrevendo as condições para sua validação após a implementação. Todos os atores do REACT participam.',
   },
   modeling: {
     title: 'Modeling',
     description:
-      'Fase de modelagem do sistema, onde são definidas as entidades, relacionamentos e fluxos de dados.',
+      'O objetivo desta cerimônia é detalhar as estórias sob a perspectiva dos objetos do produto e seus componentes, refinando os requisitos mais técnicos em termos de modelagem e implementação. As etapas incluem a modelagem funcional (definição de responsabilidades dos CRC cards), a modelagem de interfaces (identificação de interfaces internas e externas do software) e a modelagem de conceitos operacionais (criação de protótipos como UI Storyboards para simular o fluxo operacional e facilitar a validação pelo Customer e a implementação pela equipe técnica). Todos os atores do REACT participam.',
   },
   inspection: {
     title: 'Inspection',
     description:
-      'Fase de inspeção do sistema, onde são analisadas as funcionalidades e requisitos do sistema.',
+      'Esta cerimônia tem como objetivo a verificação e validação contínua dos requisitos desenvolvidos ao longo das cerimônias do REACT e REACT-M, devendo ser realizada ao fim de cada uma delas ou em paralelo com Discovery, Refining e Modeling. A avaliação da viabilidade dos requisitos é feita com o auxílio dos critérios INVEST (Independent, Negotiable, Valuable, Estimable, Sized-Appropriately, Testable), que representam características desejáveis para os requisitos, e são utilizados check cards e inconsistency cards para registrar a avaliação e as soluções para inconsistências. Nesta cerimônia, também se busca mensurar o esforço necessário para o desenvolvimento das User Stories, utilizando técnicas como Planning Poker.',
   },
   productBacklog: {
     title: 'Product Backlog',
     description:
-      'Lista de funcionalidades e requisitos do sistema, organizadas por prioridade.',
+      'É uma lista de tarefas, especificamente as estórias (de usuário e do sistema) que foram levantadas e priorizadas nas cerimônias de Inception e Story Discovery, e que a equipe se compromete a entregar. O Domain Expert é o responsável por manter o Product Backlog atualizado e gerenciado, garantindo que o produto seja entregue incrementalmente e gere valor de negócio para os usuários, com as estórias priorizadas para auxiliar o Customer a definir a ordem de entrega das partes do produto. O REACT-M sugere a utilização de um Kanban adaptado para o Domain Expert para auxiliar o gerenciamento.',
   },
   sprint: {
     title: 'Sprint',
-    description: 'Sprint é ...',
+    description:
+      'Constitui o conjunto de estórias que foram selecionadas do Product Backlog para serem implementadas no ciclo de desenvolvimento atual (sprint). As Users Stories de maior prioridade, definidas pelo Customer, são movidas para esta raia no Domain Expert Kanban, indicando que devem ser implementadas no ciclo corrente. O Team também utiliza um Kanban adaptado (Team Kanban), onde as Users Stories selecionadas são colocadas na raia "Sprint Backlog" e a equipe discute e adiciona as tarefas necessárias para entregá-las na raia "To Do".',
   },
   // inception
   productCanvas: {

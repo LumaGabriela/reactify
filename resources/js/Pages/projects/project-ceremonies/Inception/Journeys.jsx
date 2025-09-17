@@ -99,7 +99,7 @@ const JourneyStepItem = ({
         <p className="m-0 text-primary-foreground">{stepIndex + 1}</p>
       </Badge>
 
-      <Card className="w-full bg-card border-border transition-shadow hover:shadow-lg z-20">
+      <Card className="w-full bg-card border-2 border-accent transition-shadow hover:shadow-lg z-20 font-normal">
         <CardContent className="flex flex-row items-start justify-between gap-2 p-2 min-h-[60px]">
           <section className="flex items-center flex-1">
             {isEditing ? (
