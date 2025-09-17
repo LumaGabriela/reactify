@@ -47,6 +47,16 @@ const Storyboards = ({ project }) => {
   const [isProcessing, setIsProcessing] = useState(false)
   const [commandInputRef, setCommandInputRef] = useState(null)
 
+  const {
+    state,
+    open,
+    setOpen,
+    openMobile,
+    setOpenMobile,
+    isMobile,
+    toggleSidebar,
+  } = useSidebar()
+
   useEffect(() => {
     const html = document.querySelector('html')
     setIsDarkMode(html.classList.contains('dark'))
@@ -70,7 +80,6 @@ const Storyboards = ({ project }) => {
 
       const imageUrl = currentStoryboard?.image_url
 
-      console.log(imageUrl)
       // Se não houver imagem, preparamos uma cena vazia e terminamos
       if (!imageUrl) {
         setSceneData({
@@ -276,25 +285,26 @@ const Storyboards = ({ project }) => {
 
   return (
     <div className="w-full mt-2 flex" style={{ height: 'calc(100vh - 105px)' }}>
-      <section className="flex flex-col w-1/5 h-full gap-2 p-2">
-        <div className="flex justify-between">
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        accept="image/png, image/jpeg, image/gif, image/svg+xml"
+        onChange={handleFileChange} // A função que vamos criar
+      />
+      <section
+        className={`${open ? ' w-1/5' : 'w-0'} flex flex-col h-full gap-2 p-2`}
+      >
+        {/* <div className="flex justify-between">
           <Button
             onClick={handleSaveCanvas}
             disabled={isProcessing || !selectedStory}
           >
             Salvar
           </Button>
-
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            accept="image/png, image/jpeg, image/gif, image/svg+xml"
-            onChange={handleFileChange} // A função que vamos criar
-          />
-        </div>
+        </div>*/}
         {/* user stories*/}
-        {project?.stories
+        {/* {project?.stories
           ?.filter((story) => story.type === 'user')
           .map((story) => (
             <StoryCard
@@ -305,20 +315,31 @@ const Storyboards = ({ project }) => {
                 setSelectedStory(story)
               }}
             />
-          ))}
+          ))}*/}
         {/*system stories */}
-        {project?.stories
-          ?.filter((story) => story.type === 'system')
-          .map((story) => (
-            <StoryCard
-              key={story.id}
-              story={story}
-              isSelected={story.id === selectedStory?.id}
-              onSelect={() => {
-                setSelectedStory(story)
-              }}
-            />
-          ))}
+        <main className="z-50 absolute translate-y-14 translate-x-60">
+          <SidebarTrigger />
+        </main>
+        <Sidebar className="relative z-40 w-full">
+          <SidebarHeader />
+          <SidebarContent>
+            <SidebarGroup>
+              {project?.stories
+                ?.filter((story) => story.type === 'system')
+                .map((story) => (
+                  <StoryCard
+                    key={story.id}
+                    story={story}
+                    isSelected={story.id === selectedStory?.id}
+                    onSelect={() => {
+                      setSelectedStory(story)
+                    }}
+                  />
+                ))}
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter />
+        </Sidebar>
       </section>
       <div className="excalidraw-wrapper flex-1 relative w-[85%] h-full">
         {/* RENDERIZAÇÃO CONDICIONAL */}
@@ -328,7 +349,6 @@ const Storyboards = ({ project }) => {
           </div>
         ) : (
           <Excalidraw
-            // key={selectedStory ? selectedStory.id : 'no-story-selected'}
             key={`${selectedStory?.id || 'no-story'}-${sceneVersion}`}
             initialData={sceneData}
             excalidrawAPI={(api) => setExcalidrawAPI(api)}

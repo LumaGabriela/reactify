@@ -295,7 +295,11 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
       case 'Internal and External Interfaces':
         return <Interfaces project={project} setProject={setProject} />
       case 'Storyboards':
-        return <Storyboards project={project} setProject={setProject} />
+        return (
+          <SidebarProvider>
+            <Storyboards project={project} setProject={setProject} />{' '}
+          </SidebarProvider>
+        )
       default:
         return null
     }
