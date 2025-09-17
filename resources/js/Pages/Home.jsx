@@ -6,7 +6,7 @@ import {
   Trash2,
   EllipsisVertical,
 } from 'lucide-react'
-import { Link, router, usePage } from '@inertiajs/react'
+import { Link, router, usePage, Head } from '@inertiajs/react'
 import MainLayout from '@/Layouts/MainLayout'
 
 const ProjectCard = ({ project, toggleActiveProject, deleteProject }) => {
@@ -245,6 +245,7 @@ const Dashboard = ({}) => {
 
   return (
     <div className="bg-background text-white p-6 w-full mx-auto ">
+      <Head title="Home" />
       {/* Header */}
       <div className="flex  justify-stretch items-stretch gap-2">
         <div className=" flex flex-col w-1/5">

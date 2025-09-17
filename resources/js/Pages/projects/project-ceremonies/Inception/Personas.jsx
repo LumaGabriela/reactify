@@ -46,19 +46,19 @@ const PersonaItem = ({
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex min-h-[40px] items-center justify-between rounded-md p-2 transition-colors hover:bg-muted/50 cursor-default"
+      className="group relative flex min-h-[40px] items-center justify-between rounded-md p-2 transition-colors font-normal hover:bg-muted/50 cursor-default"
     >
       {isEditing ? (
-        <div className="flex flex-col w-full items-center gap-2">
+        <div className="flex w-full items-center gap-2">
           <TextareaAutosize
             ref={textareaRef}
             value={editValue || ''}
             onChange={onValueChange}
             onKeyDown={handleKeyDown}
-            className="flex-1 resize-none rounded-md border bg-input p-2 text-sm transition-colors duration-200 focus-visible:ring-1 focus-visible:ring-ring"
+            className="bg-transparent border-0  w-full rounded text-sm"
             autoFocus
           />
-          <div className="flex items-center gap-1">
+          {/* <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="icon"
@@ -75,11 +75,11 @@ const PersonaItem = ({
             >
               <X className="size-4" />
             </Button>
-          </div>
+          </div>*/}
         </div>
       ) : (
         <p
-          className={`text-sm text-muted-foreground pr-4 ${
+          className={`text-sm text-muted-foreground text-left pr-4 ${
             !item ? 'italic text-muted-foreground/50' : ''
           }`}
         >
@@ -190,8 +190,8 @@ const Personas = ({ project, setProject }) => {
     setProject({ ...project, personas: updatedPersonas })
     setEditingPersona(null)
 
-    router.patch(`/persona/${personaId}`, {
-      name: editPersonaName,
+    router.patch(route('persona.update', personaId), {
+      [field]: updatedArray,
       project_id: project.id,
     })
   }
@@ -213,8 +213,8 @@ const Personas = ({ project, setProject }) => {
     setProject({ ...project, personas: updatedPersonas })
     setEditingField({ personaId: null, field: null, itemIndex: null })
 
-    router.patch(`/persona/${personaId}`, {
-      ...persona,
+    router.patch(route('persona.update', personaId), {
+      // ...persona,
       [field]: updatedArray,
       project_id: project.id,
     })
@@ -242,8 +242,8 @@ const Personas = ({ project, setProject }) => {
     setProject({ ...project, personas: updatedPersonas })
     setDeleteConfirmItem({ personaId: null, field: null, itemIndex: null })
 
-    router.patch(`/persona/${personaId}`, {
-      ...persona,
+    router.patch(route('persona.update', personaId), {
+      // ...persona,
       [field]: updatedArray,
       project_id: project.id,
     })
@@ -263,7 +263,7 @@ const Personas = ({ project, setProject }) => {
       personas: updatedPersonas,
     }))
 
-    router.delete(`/persona/${deleteConfirmPersona}`)
+    router.delete(route('persona.delete', deleteConfirmPersona))
   }
 
   const addNewItem = (personaId, field) => {
@@ -280,8 +280,8 @@ const Personas = ({ project, setProject }) => {
 
     setProject({ ...project, personas: updatedPersonas })
 
-    router.patch(`/persona/${personaId}`, {
-      ...persona,
+    router.patch(route('persona.update', personaId), {
+      // ...persona,
       [field]: updatedArray,
       project_id: project.id,
     })
@@ -307,12 +307,13 @@ const Personas = ({ project, setProject }) => {
   }, [editingField])
 
   return (
-    <div className="grid grid-cols-1 gap-2 w-full p-4">
-      <div className="col-span-1 flex flex-col sm:flex-row gap-2">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 w-full p-4">
+      <div className="xl:col-span-2 flex flex-col sm:flex-row gap-2">
         <Button
+          variant="secondary"
           onClick={addNewPersona}
           disabled={isSubmitting}
-          className="w-full"
+          className="flex items-center justify-center w-full py-1 bg-card hover:bg-accent text-primary rounded-lg transition-colors shadow-md"
         >
           <Plus size={18} className="mr-2" />
           {isSubmitting ? 'Criando...' : 'Nova Persona'}
@@ -329,7 +330,7 @@ const Personas = ({ project, setProject }) => {
             >
               <CardHeader className="flex-row items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <UserCircle2 className="h-8 w-8 text-primary" />
+                  <UserCircle2 className=" shrink-0 size-8 text-primary" />
                   {editingPersona === persona.id ? (
                     <Input
                       type="text"
@@ -338,11 +339,13 @@ const Personas = ({ project, setProject }) => {
                       onKeyUp={(e) => {
                         if (e.key === 'Enter') saveEditPersona()
                       }}
-                      className="text-xl font-bold"
+                      className="!text-xl font-bold"
                       autoFocus
                     />
                   ) : (
-                    <CardTitle className="text-xl">{persona.name}</CardTitle>
+                    <CardTitle className="ml-3 text-xl">
+                      {persona.name}
+                    </CardTitle>
                   )}
                 </div>
                 <div className="flex items-center gap-1">
@@ -374,7 +377,7 @@ const Personas = ({ project, setProject }) => {
                 </div>
               </CardHeader>
 
-              <CardContent className="persona grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+              <CardContent className="persona grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-2 gap-2">
                 {['profile', 'expectations', 'goals'].map((field) => (
                   <div
                     key={field}
@@ -389,10 +392,10 @@ const Personas = ({ project, setProject }) => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6"
+                        className="size-6"
                         onClick={() => addNewItem(persona.id, field)}
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="size-4" />
                       </Button>
                     </div>
                     <Separator />
