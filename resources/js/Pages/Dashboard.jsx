@@ -77,7 +77,7 @@ export const CeremonyCard = ({ item, className, onClick, delay = 0 }) => {
           {/* DESCRIÇÃO CONDICIONAL */}
           {/* Começa com altura máxima 0 e opacidade 0. */}
           {/* No hover do `group` (o card), a altura e opacidade aumentam. */}
-          <div className="overflow-hidden transition-all duration-300 ease-in-out max-h-0 group-hover:max-h-40">
+          <div className="overflow-hidden transition-all duration-300 ease-in-out max-h-0 group-hover:max-h-80">
             <p className="pt-1 text-sm text-muted-foreground opacity-0 transition-opacity duration-300 delay-100 group-hover:opacity-100">
               {item.description}
             </p>

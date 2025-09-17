@@ -24,11 +24,11 @@ import { Calendar } from '@/components/ui/calendar'
 const cardVariants = {
   primary: 'border-t-primary text-primary',
   destructive: 'border-t-destructive text-destructive',
-  warning: 'border-t-yellow-500 text-yellow-500',
-  success: 'border-t-success text-success',
+  warning: 'border-t-orange-400 text-orange-400',
+  success: 'border-t-emerald-500 text-emerald-500',
   info: 'border-t-cyan-500 text-cyan-500',
-  secondary: 'border-t-secondary text-secondary w-1/2',
-  accent: 'border-t-accent text-accent',
+  secondary: 'border-t-rose-500 text-rose-500',
+  accent: 'border-t-indigo-500 text-indigo-500',
   main: '',
 }
 
@@ -238,19 +238,6 @@ const ExpandableCard = ({
   )
 }
 
-const getDateObject = (dateInput) => {
-  if (!dateInput) {
-    return undefined
-  }
-  const dateOnlyString = dateInput.substring(0, 10)
-  const date = new Date(`${dateOnlyString}T00:00:00`)
-
-  if (isNaN(date.getTime())) {
-    return undefined
-  }
-  return date
-}
-
 const MainView = ({ project = {}, setProject }) => {
   const updateProductCanvas = async (prop, newContent) => {
     const productCanvasId = project.product_canvas.id
@@ -304,7 +291,7 @@ const MainView = ({ project = {}, setProject }) => {
         <ExpandableCard
           title="Involved Personas"
           content={project?.product_canvas?.personas}
-          variant="success"
+          variant="accent"
           icon={Users}
           placeholder="Who are the main users?"
           onContentUpdate={(content) =>
@@ -314,7 +301,7 @@ const MainView = ({ project = {}, setProject }) => {
         <ExpandableCard
           title="Restrictions"
           content={project?.product_canvas?.restrictions}
-          variant="accent"
+          variant="success"
           icon={Slash}
           placeholder="What are the project's limitations?"
           onContentUpdate={(content) =>
