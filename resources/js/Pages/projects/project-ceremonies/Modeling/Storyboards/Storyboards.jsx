@@ -12,14 +12,19 @@ const blobToDataURL = (blob) => {
   })
 }
 
-const StoryCard = ({ story, onSelect, isSelected = false }) => {
+const StoryCard = ({
+  story,
+  onSelect,
+  isSelected = false,
+  isCollapsed = false,
+}) => {
   const selectedVariant = storyVariants[story?.type] || storyVariants.user
 
   return (
     <div
       onClick={onSelect}
       className={`
-          flex items-start min-h-14 p-1 gap-1 cursor-pointer text-sm font-normal text-foreground
+          flex items-start p-2 gap-1 cursor-pointer text-sm font-normal text-foreground
           border border-border rounded-md shadow-sm transition-opacity duration-300 bg-card ${isSelected ? 'border-2 border-primary' : ''}
         `}
     >
@@ -31,7 +36,9 @@ const StoryCard = ({ story, onSelect, isSelected = false }) => {
           {`${story?.type === 'system' ? 'SS' : 'US'}${story.id}`.toUpperCase()}
         </Badge>
       )}
-      <p className="text-left">{story?.title || 'Selecione uma story'}</p>
+      {!isCollapsed && (
+        <p className="text-left">{story?.title || 'Selecione uma story'}</p>
+      )}
     </div>
   )
 }
@@ -293,35 +300,24 @@ const Storyboards = ({ project }) => {
         onChange={handleFileChange} // A função que vamos criar
       />
       <section
-        className={`${open ? ' w-1/5' : 'w-0'} flex flex-col h-full gap-2 p-2`}
+        className={`${open ? ' w-1/5' : 'w-24'} transition-all  grid grid-cols-1 h-full`}
       >
-        {/* <div className="flex justify-between">
-          <Button
-            onClick={handleSaveCanvas}
-            disabled={isProcessing || !selectedStory}
+        <Sidebar
+          style={{ '--width': open ? '100%' : '5rem' }}
+          collapsible={true}
+          className="relative z-40 w-[--width] h-full"
+        >
+          <SidebarHeader
+            className={`items-center w-full  ${open ? 'flex-row' : 'flex-col'}`}
           >
-            Salvar
-          </Button>
-        </div>*/}
-        {/* user stories*/}
-        {/* {project?.stories
-          ?.filter((story) => story.type === 'user')
-          .map((story) => (
-            <StoryCard
-              key={story.id}
-              story={story}
-              isSelected={story.id === selectedStory?.id}
-              onSelect={() => {
-                setSelectedStory(story)
-              }}
-            />
-          ))}*/}
-        {/*system stories */}
-        <main className="z-50 absolute translate-y-14 translate-x-60">
-          <SidebarTrigger />
-        </main>
-        <Sidebar className="relative z-40 w-full">
-          <SidebarHeader />
+            <SidebarTrigger />
+            <Button
+              onClick={handleSaveCanvas}
+              disabled={isProcessing || !selectedStory}
+            >
+              Salvar
+            </Button>
+          </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
               {project?.stories
@@ -330,6 +326,21 @@ const Storyboards = ({ project }) => {
                   <StoryCard
                     key={story.id}
                     story={story}
+                    isCollapsed={!open}
+                    isSelected={story.id === selectedStory?.id}
+                    onSelect={() => {
+                      setSelectedStory(story)
+                    }}
+                  />
+                ))}
+              {/* user stories*/}
+              {project?.stories
+                ?.filter((story) => story.type === 'user')
+                .map((story) => (
+                  <StoryCard
+                    key={story.id}
+                    story={story}
+                    isCollapsed={!open}
                     isSelected={story.id === selectedStory?.id}
                     onSelect={() => {
                       setSelectedStory(story)
@@ -338,7 +349,6 @@ const Storyboards = ({ project }) => {
                 ))}
             </SidebarGroup>
           </SidebarContent>
-          <SidebarFooter />
         </Sidebar>
       </section>
       <div className="excalidraw-wrapper flex-1 relative w-[85%] h-full">

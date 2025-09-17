@@ -296,7 +296,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         return <Interfaces project={project} setProject={setProject} />
       case 'Storyboards':
         return (
-          <SidebarProvider>
+          <SidebarProvider className="min-h-[calc(100vh-100px)]">
             <Storyboards project={project} setProject={setProject} />{' '}
           </SidebarProvider>
         )
