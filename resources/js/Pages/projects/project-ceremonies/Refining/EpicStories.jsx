@@ -217,68 +217,66 @@ const EpicStories = ({ project, setProject }) => {
 
   return (
     <section className="p-2 flex flex-col gap-2">
-      <div className="flex flex-col gap-1">
-        {/* user stories*/}
-        {project?.stories
-          ?.filter((story) => story.type === 'user')
-          .map((story, i) => {
-            const relatedEpics = epicsByStoryId.get(story.id) || []
-            return (
-              <section className="py-1 flex gap-1 items-stretch" key={story.id}>
-                <StoryCard
-                  story={story}
-                  addEpicStory={() => addEpicStory(story.id)}
-                />
+      {/* user stories*/}
+      {project?.stories
+        ?.filter((story) => story.type === 'user')
+        .map((story, i) => {
+          const relatedEpics = epicsByStoryId.get(story.id) || []
+          return (
+            <section className="py-1 flex items-stretch" key={story.id}>
+              <StoryCard
+                story={story}
+                addEpicStory={() => addEpicStory(story.id)}
+              />
 
-                <div className="flex flex-col gap-1 w-full">
-                  {[...relatedEpics]
-                    .sort((a, b) => a.id - b.id)
-                    .map((epicStory, index, array) => (
-                      <EpicStoryCard
-                        key={epicStory.id}
-                        story={story}
-                        epicStory={epicStory}
-                        lastElement={
-                          index === array.length - 1 && array.length > 1
-                        }
-                        setProject={setProject}
-                      />
-                    ))}
-                </div>
-              </section>
-            )
-          })}
-        {/* system stories*/}
-        {project?.stories
-          ?.filter((story) => story.type === 'system')
-          .map((story, i) => {
-            const relatedEpics = epicsByStoryId.get(story.id) || []
-            return (
-              <section className="py-1 flex gap-1 items-stretch" key={story.id}>
-                <StoryCard
-                  story={story}
-                  addEpicStory={() => addEpicStory(story.id)}
-                />
+              <div className="flex flex-col gap-1 w-full">
+                {[...relatedEpics]
+                  .sort((a, b) => a.id - b.id)
+                  .map((epicStory, index, array) => (
+                    <EpicStoryCard
+                      key={epicStory.id}
+                      story={story}
+                      epicStory={epicStory}
+                      lastElement={
+                        index === array.length - 1 && array.length > 1
+                      }
+                      setProject={setProject}
+                    />
+                  ))}
+              </div>
+            </section>
+          )
+        })}
+      {/* system stories*/}
+      {project?.stories
+        ?.filter((story) => story.type === 'system')
+        .map((story, i) => {
+          const relatedEpics = epicsByStoryId.get(story.id) || []
+          return (
+            <section className="py-1 flex gap-1 items-stretch" key={story.id}>
+              <StoryCard
+                story={story}
+                addEpicStory={() => addEpicStory(story.id)}
+              />
 
-                <div className="flex flex-col gap-1 w-full">
-                  {[...relatedEpics]
-                    .sort((a, b) => a.id - b.id)
-                    .map((epicStory, index, array) => (
-                      <EpicStoryCard
-                        key={epicStory.id}
-                        story={story}
-                        epicStory={epicStory}
-                        lastElement={
-                          index === array.length - 1 && array.length > 1
-                        }
-                        setProject={setProject}
-                      />
-                    ))}
-                </div>
-              </section>
-            )
-          })}
-      </div>
+              <div className="flex flex-col gap-1 w-full">
+                {[...relatedEpics]
+                  .sort((a, b) => a.id - b.id)
+                  .map((epicStory, index, array) => (
+                    <EpicStoryCard
+                      key={epicStory.id}
+                      story={story}
+                      epicStory={epicStory}
+                      lastElement={
+                        index === array.length - 1 && array.length > 1
+                      }
+                      setProject={setProject}
+                    />
+                  ))}
+              </div>
+            </section>
+          )
+        })}
     </section>
   )
 }

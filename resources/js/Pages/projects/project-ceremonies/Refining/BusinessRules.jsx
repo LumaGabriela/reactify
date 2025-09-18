@@ -217,7 +217,7 @@ const BusinessRules = ({ project, setProject }) => {
           const relatedBusinessRules =
             businessRulesByStoryId.get(story.id) || []
           return (
-            <section className="py-1 flex gap-1 items-stretch" key={story.id}>
+            <section className="py-1 flex items-stretch" key={story.id}>
               <StoryCard
                 story={story}
                 addBusinessRule={() => addBusinessRule(story.id)}
