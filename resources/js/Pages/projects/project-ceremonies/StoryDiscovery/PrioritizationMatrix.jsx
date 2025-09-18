@@ -20,6 +20,7 @@ import { router } from '@inertiajs/react'
 import { storyVariants } from './Stories'
 import { typeColors as goalTypeColors } from '../Inception/Goals'
 import { priorityColors as goalPriorityColors } from '../Inception/Goals'
+
 import EditPriorities from './EditPriorities'
 
 const SortablePriorityColumn = ({
@@ -172,7 +173,7 @@ const DroppableCell = ({ id, children, className = '' }) => {
     <div
       ref={setNodeRef}
       className={`
-        flex flex-row justify-center w-full rounded-md transition-all duration-150 gap-2 border border-slate-900/30
+        flex flex-row justify-center w-full rounded-md transition-all duration-150 gap-2 border border-slate-100/20
         ${isOver ? ' bg-card/60' : ''}
         ${className}
       `}

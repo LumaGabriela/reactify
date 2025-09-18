@@ -287,6 +287,7 @@ const LeftMenu = () => {
                         value={
                           isCurrentProject ? `project-${project.id}` : undefined
                         }
+                        className="border-b-0"
                       >
                         <Button
                           variant={`${isCurrentProject ? 'secondary' : 'link'}`}

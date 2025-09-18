@@ -53,7 +53,7 @@ const StoryItem = ({
       onMouseLeave={() => setIsHovered(false)}
       className="relative group"
     >
-      <Card className="bg-card border-0 transition-all duration-300 ease-in-out">
+      <Card className="bg-card border-0 transition-all duration-300 ease-in-out rounded">
         <CardContent className="p-2 flex items-center justify-between gap-2">
           <div className="flex flex-col items-start justify-between gap-2 flex-1 min-w-0">
             <Popover

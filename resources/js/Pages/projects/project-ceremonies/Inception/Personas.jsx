@@ -46,7 +46,7 @@ const PersonaItem = ({
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex min-h-[40px] items-center justify-between rounded-md p-2 transition-colors font-normal hover:bg-muted/50 cursor-default"
+      className="group relative flex min-h-[40px] items-center justify-between rounded p-2 transition-colors font-normal hover:bg-muted/50 cursor-default"
     >
       {isEditing ? (
         <div className="flex w-full items-center gap-2">
@@ -326,7 +326,7 @@ const Personas = ({ project, setProject }) => {
           .map((persona) => (
             <Card
               key={persona.id}
-              className="col-span-1 bg-card border-0 animate-fade-in"
+              className="col-span-1 bg-card border-0 animate-fade-in rounded"
             >
               <CardHeader className="flex-row items-center justify-between">
                 <div className="flex items-center gap-3">

@@ -1,7 +1,7 @@
 import { router } from '@inertiajs/react'
 import { Excalidraw, WelcomeScreen, exportToBlob } from '@excalidraw/excalidraw'
 import { storyVariants } from '../../StoryDiscovery/Stories'
-import { Paperclip } from 'lucide-react'
+import { Paperclip, Save } from 'lucide-react'
 
 const blobToDataURL = (blob) => {
   return new Promise((resolve, reject) => {
@@ -25,7 +25,7 @@ const StoryCard = ({
       onClick={onSelect}
       className={`
           flex items-start p-2 gap-1 cursor-pointer text-sm font-normal text-foreground
-          border border-border rounded-md shadow-sm transition-opacity duration-300 bg-card ${isSelected ? 'border-2 border-primary' : ''}
+          border-2 rounded-md shadow-sm transition-opacity duration-300 bg-card ${isSelected ? ' border-primary' : 'border-accent'}
         `}
     >
       {story && (
@@ -303,23 +303,17 @@ const Storyboards = ({ project }) => {
         className={`${open ? ' w-1/5' : 'w-24'} transition-all  grid grid-cols-1 h-full`}
       >
         <Sidebar
-          style={{ '--width': open ? '100%' : '5rem' }}
+          style={{ '--width': open ? '100%' : '4.8rem' }}
           collapsible={true}
           className="relative z-40 w-[--width] h-full"
         >
           <SidebarHeader
-            className={`items-center w-full  ${open ? 'flex-row' : 'flex-col'}`}
+            className={`${open ? 'items-end' : 'items-center'} w-full `}
           >
             <SidebarTrigger />
-            <Button
-              onClick={handleSaveCanvas}
-              disabled={isProcessing || !selectedStory}
-            >
-              Salvar
-            </Button>
           </SidebarHeader>
           <SidebarContent>
-            <SidebarGroup>
+            <SidebarGroup className="gap-2">
               {project?.stories
                 ?.filter((story) => story.type === 'system')
                 .map((story) => (
@@ -376,10 +370,25 @@ const Storyboards = ({ project }) => {
                   </TooltipTrigger>
                   <TooltipContent>Inserir anexo</TooltipContent>
                 </Tooltip>
+                <Tooltip delayDuration={100}>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <Button
+                        variant="secondary"
+                        className="size-10"
+                        onClick={handleSaveCanvas}
+                        disabled={isProcessing || !selectedStory}
+                      >
+                        <Save />
+                      </Button>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Salvar Storyboard</TooltipContent>
+                </Tooltip>
               </TooltipProvider>
             )}
             langCode="pt-BR"
-            theme={isDarkMode ? 'dark' : 'light'}
+            theme={isDarkMode ? 'light' : 'light'}
             UIOptions={{
               canvasActions: {
                 changeViewBackgroundColor: true,

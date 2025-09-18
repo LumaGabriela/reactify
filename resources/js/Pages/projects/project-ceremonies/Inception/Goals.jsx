@@ -49,7 +49,7 @@ const GoalItem = ({
       onMouseLeave={() => setIsHovered(false)}
       className="relative group"
     >
-      <Card className="bg-card border-0 transition-all duration-300 ease-in-out">
+      <Card className="bg-card border-0 transition-all duration-300 ease-in-out rounded">
         <CardContent className="p-2 flex flex-col gap-2">
           {/* Badge Row for Type and Priority */}
           <div className="flex items-center justify-between">
