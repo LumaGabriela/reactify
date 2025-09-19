@@ -33,6 +33,8 @@ import Inspection from './project-ceremonies/Inspection/Inspection.jsx'
 //chatbot
 import ChatBot from './ChatBot.jsx'
 import { ProjectSettings } from '@/Components/ProjectSettings.jsx'
+import { useMemo, useState, useEffect } from 'react' 
+
 const ProjectView = ({ projectDB = [], page = 'inception' }) => {
   const [project, setProject] = useState({ ...projectDB })
   const [isEditing, setIsEditing] = useState(false)
@@ -160,6 +162,34 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
     activeRefiningMenu,
     activeModelingMenu,
   ])
+
+  const artifactToDataKeyMap = useMemo(() => ({
+    'Product Canvas': 'product_canvas',
+    Personas: 'personas',
+    Goals: 'goal_sketches',
+    Journeys: 'journeys',
+    Stories: 'stories',
+    'Overall Model': 'overall_model_classes', 
+    'Matriz de Priorização': 'matrix_priorities',
+    'Change Log': 'change_requests',
+    'Epic Stories': 'epic_stories',
+    'Business Rules': 'business_rules',
+    'Use Scenarios': 'usage_scenarios',
+    'Internal and External Interfaces': 'system_interfaces',
+    Storyboards: 'storyboards',
+    //Inspection: '', 
+    //'Product Backlog': 'stories', 
+    Sprint: 'sprints.stories',
+  }), []);
+
+  const currentArtifactData = useMemo(() => {
+    if (!projectDB || !currentArtifact) {
+      return null;
+    }
+    const dataKey = artifactToDataKeyMap[currentArtifact];
+    return dataKey ? projectDB[dataKey] : null;
+  }, [projectDB, currentArtifact, artifactToDataKeyMap]);
+
 
   const updateProjectTitle = () => {
     setProject({ ...project, title: newTitle })
@@ -404,6 +434,7 @@ const ProjectView = ({ projectDB = [], page = 'inception' }) => {
         <ChatBot
           project={projectDB}
           currentPage={{ page: page, artifact: currentArtifact }}
+          currentContextData={currentArtifactData}
         />
       </div>
     </div>

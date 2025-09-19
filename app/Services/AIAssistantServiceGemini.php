@@ -29,9 +29,9 @@ class AIAssistantServiceGemini
    * @param string $userMessage
    * @return string
    */
-  public function generateStreamedResponse(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage): void
+  public function generateStreamedResponse(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage, ?array $contextData): void
   {
-    $prompt = $this->buildPrompt($project, $user, $pageContext, $chatHistory, $userMessage);
+    $prompt = $this->buildPrompt($project, $user, $pageContext, $chatHistory, $userMessage, $contextData);
 
     $stream = Gemini::generativeModel(model: 'gemini-2.5-flash-lite-preview-06-17')
       ->streamGenerateContent(...$prompt);
@@ -51,7 +51,7 @@ class AIAssistantServiceGemini
    * @param string $userMessage
    * @return array
    */
-  public function buildPrompt(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage): array
+  public function buildPrompt(Project $project, User $user, array $pageContext, array $chatHistory, string $userMessage, ?array $contextData): array
   {
     try {
       $methodologyContext = $this->getMethodologyContext();
@@ -66,6 +66,12 @@ class AIAssistantServiceGemini
       $context .= "Contexto do Projeto '{$project->title}':\n- Status Atual: {$project->status->value}\n- Descrição: {$project->description}\n\n";
       $context .= "Contexto da Página Atual: '{$pageContext['page']}'\n";
       $context .= "Contexto do Artefato Atual: '{$pageContext['artifact']}'\n";
+
+      if (!empty($contextData)) {
+        $jsonData = json_encode($contextData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $context .= "\nO usuário está visualizando os seguintes dados deste artefato na tela:\n";
+        $context .= "```json\n" . $jsonData . "\n```\n";
+      }
 
       // Constrói um prompt único como string concatenada
       $fullPrompt = $context . "\n\n";

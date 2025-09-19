@@ -28,7 +28,7 @@ const AIMessage = ({ fullContent, animate }) => {
   )
 }
 
-const ChatBot = ({ project, currentPage }) => {
+const ChatBot = ({ project, currentPage, currentContextData }) => {
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -67,7 +67,7 @@ const ChatBot = ({ project, currentPage }) => {
     setMessages(newMessages)
     setInputMessage('')
     setIsLoading(true)
-
+    console.log('currentContextData:', currentContextData)
     try {
       const csrfToken = document
         .querySelector('meta[name="csrf-token"]')
@@ -83,6 +83,7 @@ const ChatBot = ({ project, currentPage }) => {
         body: JSON.stringify({
           message: userMessage.message,
           page_context: currentPage,
+          context_data: currentContextData,
           history: newMessages.map((m) => ({
             sender: m.sender,
             message: m.message,
