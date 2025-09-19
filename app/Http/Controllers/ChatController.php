@@ -12,7 +12,7 @@ class ChatController extends Controller
 {
   protected $aiAssistantService;
 
-  public function __construct(AIAssistantServiceOllama $aiAssistantService)
+  public function __construct(AIAssistantServiceGemini $aiAssistantService)
   {
     $this->aiAssistantService = $aiAssistantService;
   }
