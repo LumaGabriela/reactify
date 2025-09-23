@@ -232,50 +232,56 @@ const LeftMenu = () => {
         </section>
 
         {/* Navigation */}
-        {isHovered && (
-          <motion.nav
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            transition={cardVariants.transition}
-            className="flex-1 p-2 space-y-1"
+        {/* {isHovered && (*/}
+        <motion.nav
+          variants={cardVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          transition={cardVariants.transition}
+          className="flex-1 p-2 space-y-1"
+        >
+          {/* Botão Home/Dashboard */}
+          <Button
+            variant="ghost"
+            onClick={() => router.get(route('dashboard'))}
+            className={cn(
+              'flex items-center p-2 rounded transition-colors',
+              isHovered ? 'w-full justify-start' : 'size-10',
+              route().current('dashboard') &&
+                'bg-accent text-accent-foreground',
+            )}
           >
-            {/* Botão Home/Dashboard */}
-            <Button
-              variant="ghost"
-              onClick={() => router.get(route('dashboard'))}
-              className={cn(
-                'flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors w-full justify-start',
-                route().current('dashboard') &&
-                  'bg-accent text-accent-foreground',
-              )}
-            >
-              <Home className="size-5" />
+            <Home className="!size-5" />
+            {isHovered && (
               <span className="font-medium hidden md:inline">Home</span>
-            </Button>
+            )}
+          </Button>
 
-            {/* Accordion Principal para "My Projects" */}
-            <Accordion
-              type="single"
-              collapsible
-              defaultValue={isProjectsSectionActive ? 'projects' : undefined}
-            >
-              <AccordionItem value="projects" className="border-b-0">
-                <AccordionTrigger
-                  className={cn(
-                    'flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors w-full hover:no-underline hover:bg-accent',
-                    isProjectsSectionActive &&
-                      'bg-accent text-accent-foreground',
-                  )}
-                >
-                  <div className="flex items-center space-x-3">
-                    <Grid className="h-5 w-5" />
+          {/* Accordion Principal para "My Projects" */}
+          <Accordion
+            type="single"
+            collapsible
+            defaultValue={isProjectsSectionActive ? 'projects' : undefined}
+          >
+            <AccordionItem value="projects" className="border-b-0">
+              <AccordionTrigger
+                className={cn(
+                  'flex items-center p-2 rounded transition-colors hover:no-underline hover:bg-accent',
+                  isHovered ? 'w-full justify-start' : 'size-10',
+                  isProjectsSectionActive && 'bg-accent text-accent-foreground',
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Grid className="size-5" />
+                  {isHovered && (
                     <span className="font-medium hidden md:inline truncate">
                       My Projects
                     </span>
-                  </div>
-                </AccordionTrigger>
+                  )}
+                </div>
+              </AccordionTrigger>
+              {isHovered && (
                 <AccordionContent className="pt-1 pl-4">
                   {/* Mapeando cada projeto para um Accordion aninhado */}
                   {projects.map((project) => {
@@ -305,39 +311,46 @@ const LeftMenu = () => {
                     )
                   })}
                 </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+              )}
+            </AccordionItem>
+          </Accordion>
 
-            {/* Outros itens do menu */}
-            {menuItems.map((item, index) => {
-              const IconComponent = item.icon
-              const isActive = currentRouteName === item.url
-              return (
-                <Button
-                  key={index}
-                  variant="ghost"
-                  onClick={() => {
-                    if (item.url === 'logout') {
-                      router.post(route('logout'))
-                      return
-                    }
-                    router.get(route(item.url))
-                  }}
-                  className={cn(
-                    'flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors w-full justify-start',
-                    isActive && 'bg-accent text-accent-foreground',
-                  )}
-                >
-                  <IconComponent className="size-5" />
+          {/* Outros itens do menu */}
+          {menuItems.map((item, index) => {
+            const IconComponent = item.icon
+            const isActive = currentRouteName === item.url
+            return (
+              <Button
+                key={index}
+                variant="ghost"
+                onClick={() => {
+                  if (item.url === 'logout') {
+                    router.post(route('logout'))
+                    return
+                  }
+                  router.get(route(item.url))
+                }}
+                className={cn(
+                  'flex items-center p-2 rounded transition-colors ',
+                  isActive && 'bg-accent text-accent-foreground',
+                  isHovered ? 'w-full justify-start' : 'size-10 ',
+                )}
+              >
+                <IconComponent className="size-5" />
+                {!isHovered && item.badge && <>{item.badge}</>}
+                {isHovered && (
                   <span className="font-medium hidden md:inline">
                     {item.name}
                   </span>
-                  {item.badge && <Badge className="ml-2">{item.badge}</Badge>}
-                </Button>
-              )
-            })}
-          </motion.nav>
-        )}
+                )}
+                {item.badge && isHovered && (
+                  <Badge className="size-5 !m-0">{item.badge}</Badge>
+                )}
+              </Button>
+            )
+          })}
+        </motion.nav>
+        {/* )}*/}
       </motion.aside>
     </AnimatePresence>
   )
