@@ -48,9 +48,13 @@ class ProjectPermissionController extends Controller
       'users.*.role' => 'required|string|in:admin,editor,viewer', // Adapte os papéis conforme necessário
     ]);
 
+    $editorUser = $request->user();
+
     $syncData = [];
 
     $changedUsers = [];
+    $changedUserIds = [];
+    $changedUsersModels = [];
 
     $oldRoles = $project->users->mapWithKeys(function ($user) {
       return [$user->id => $user->pivot->role];
@@ -64,6 +68,7 @@ class ProjectPermissionController extends Controller
       $oldRole = $oldRoles->get($userId);
 
       if ($oldRole !== null && $oldRole !== $newRole) {
+        $changedUserIds[] = $userId;
         $changedUsers[] = [
           'user_id' => $userId,
           'old_role' => $oldRole,
@@ -71,6 +76,7 @@ class ProjectPermissionController extends Controller
         ];
       }
     }
+    $changedUsersModels = User::whereIn('id', $changedUserIds)->get();
 
     if (!empty($changedUsers)) {
       $syncData = $newRoles->mapWithKeys(function ($role, $userId) {
@@ -79,6 +85,7 @@ class ProjectPermissionController extends Controller
 
       $project->users()->sync($syncData);
 
+      Notification::send($changedUsersModels, new UserPermissionsUpdatedNotification($project, $editorUser));
 
       return back()->with([
         'message' => 'Permissions updated successfully.',

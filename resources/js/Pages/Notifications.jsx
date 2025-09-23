@@ -54,10 +54,10 @@ const Notifications = () => {
                 return (
                   <section
                     key={notification.id}
-                    className={`${notification.read_at ? 'opacity-50' : ''} flex justify-between rounded-lg bg-foreground/10 p-4`}
+                    className={`${notification.read_at ? 'opacity-50' : ''} flex justify-between rounded bg-foreground/10 p-4`}
                   >
                     <div className="flex flex-col justify-between">
-                      <p className="font-medium text-foreground">
+                      <p className="text-foreground">
                         {notification.data?.message}
                       </p>
                       <span className="text-xs">

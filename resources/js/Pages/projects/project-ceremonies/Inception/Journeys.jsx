@@ -557,9 +557,9 @@ const Journeys = ({ project, setProject }) => {
     )
   }
 
-  useEffect(() => {
-    console.log(expandedJourney)
-  }, [expandedJourney])
+  // useEffect(() => {
+  //   console.log(expandedJourney)
+  // }, [expandedJourney])
 
   return (
     <div className="flex flex-col gap-4 p-4 w-full">
