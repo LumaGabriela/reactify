@@ -26,11 +26,11 @@ const InterviewListItem = ({ interview }) => {
     router.delete(route('interview.destroy', interview.id), {
       preserveScroll: true,
       onSuccess: () => {
-        toast.success('Entrevista excluída com sucesso.')
+        //toast.success('Entrevista excluída com sucesso.')
       },
       onError: (errors) => {
         console.error('Erro ao excluir:', errors)
-        toast.error('Ocorreu um erro ao excluir a entrevista.')
+        //toast.error('Ocorreu um erro ao excluir a entrevista.')
       },
     })
     setShowConfirmDelete(false)
@@ -62,6 +62,27 @@ const InterviewListItem = ({ interview }) => {
           {interview.file_name}
         </span>
       </a>
+
+      <div className="flex items-center gap-4">
+        {interview.status === 'processing' && (
+          <div className="flex items-center gap-2 text-xs text-blue-500">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Processando...</span>
+          </div>
+        )}
+        {interview.status === 'completed' && (
+          <div className="flex items-center gap-2 text-xs text-green-500">
+            <Check className="h-4 w-4" />
+            <span>Concluído</span>
+          </div>
+        )}
+        {interview.status === 'failed' && (
+          <div className="flex items-center gap-2 text-xs text-destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <span>Falhou</span>
+          </div>
+        )}
+        </div>
 
       <div className="relative flex items-center">
         {showConfirmDelete ? (
@@ -112,8 +133,8 @@ const InterviewUploadCard = ({
     
     const fileExtension = file.name.split('.').pop().toLowerCase()
 
-    console.error(fileExtension)
-    console.error(file.size)
+    // console.error(fileExtension)
+    // console.error(file.size)
     
     if (!allowedTypes.includes(fileExtension)) {
       return 'Tipo de arquivo não permitido'
@@ -132,7 +153,7 @@ const InterviewUploadCard = ({
 
     const validationError = validateFile(file)
     if (validationError) {
-      toast.error(validationError)
+      //toast.error(validationError)
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -154,7 +175,7 @@ const InterviewUploadCard = ({
         },
         onSuccess: () => {
           setIsUploading(false)
-          toast.success('Entrevista enviada com sucesso')
+          //toast.success('Entrevista enviada com sucesso')
           if (fileInputRef.current) {
             fileInputRef.current.value = ''
           }
@@ -163,7 +184,7 @@ const InterviewUploadCard = ({
           const errorMessage =
             errors.interview || 'Ocorreu um erro. Tente novamente.'
           setError(errorMessage)
-          toast.error(errorMessage)
+          //toast.error(errorMessage)
           setIsUploading(false)
           if (fileInputRef.current) {
             fileInputRef.current.value = ''
@@ -175,6 +196,7 @@ const InterviewUploadCard = ({
       },
     )
   }
+  const acceptedFileTypes = '.mp3,.wav,.ogg,.m4a,.mp4,.mov,.webm,.txt,.pdf,.doc,.docx';
 
   return (
     <div
@@ -204,7 +226,7 @@ const InterviewUploadCard = ({
           ref={fileInputRef}
           onChange={handleFileChange}
           className="hidden"
-          accept="audio/*,video/*,text/*,.pdf,.doc,.docx"
+          accept={acceptedFileTypes}
         />
       </div>
 

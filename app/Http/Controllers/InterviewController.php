@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Cloudinary\Api\Exception\NotFound;
 use Log;
+use App\Jobs\TranscribeInterviewJob; // Importa o novo Job
 
 class InterviewController extends Controller
 {
@@ -24,7 +25,6 @@ class InterviewController extends Controller
             $file = $request->file('interview');
             $originalName = $file->getClientOriginalName();
 
-            // Prepara um nome de ficheiro sanitizado, mas mantém a extensão
             $fileNameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
             $fileExtension = $file->getClientOriginalExtension();
             $publicFileName = Str::slug($fileNameWithoutExtension) . '.' . $fileExtension;
@@ -42,11 +42,16 @@ class InterviewController extends Controller
                 'file_name' => $originalName,
                 'file_path' => $uploadedFile['secure_url'],
                 'public_id' => $uploadedFile['public_id'],
+                'status'    => 'processing',
             ]);
 
-            return back()->with(['status' => 'success', 'message' => 'Entrevista enviada com sucesso.']);
+            // Despacha o Job para processar a transcrição em segundo plano
+            TranscribeInterviewJob::dispatch($interview);
+
+            return back()->with(['status' => 'success', 'message' => 'Entrevista enviada. O processamento foi iniciado.']);
+
         } catch (\Exception $e) {
-            //Log::error("Falha no upload da entrevista: " . $e->getMessage());
+            Log::error("Falha no upload da entrevista: " . $e->getMessage());
             return back()->with(['status' => 'error', 'message' => 'Falha ao enviar a entrevista.']);
         }
     }

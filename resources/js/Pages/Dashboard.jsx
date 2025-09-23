@@ -103,9 +103,9 @@ const Dashboard = ({ project, setProject }) => {
   useEffect(() => {
     // console.clear();
     if (!date || !project.created_at) {
-      console.log(
-        'PARADA: A data do deadline ou a data de criação do projeto não existem.',
-      )
+      // console.log(
+      //   'PARADA: A data do deadline ou a data de criação do projeto não existem.',
+      // )
       setProgress(0)
       return
     }

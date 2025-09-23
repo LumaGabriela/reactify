@@ -44,5 +44,8 @@ return [
     'client_secret' => env('GOOGLE_CLIENT_SECRET'),
     'redirect' => 'http://localhost:8000/auth/google/callback',
 ],
+  'python_transcriber' => [
+      'url' => env('PYTHON_TRANSCRIBER_URL'),
+  ],
 
 ];
