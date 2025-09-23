@@ -557,6 +557,10 @@ const Journeys = ({ project, setProject }) => {
     )
   }
 
+  useEffect(() => {
+    console.log(expandedJourney)
+  }, [expandedJourney])
+
   return (
     <div className="flex flex-col gap-4 p-4 w-full">
       {/* AI Generated Journeys Modal */}
@@ -690,7 +694,7 @@ const Journeys = ({ project, setProject }) => {
           .map((journey, i) => (
             <div
               key={i}
-              className="bg-card rounded-lg shadow-md overflow-hidden border border-border"
+              className={` bg-card rounded shadow-md overflow-hidden border border-border`}
             >
               <div
                 className="flex items-center justify-between py-2 px-3 cursor-pointer bg-card hover:bg-accent/50 transition-colors"
@@ -783,83 +787,83 @@ const Journeys = ({ project, setProject }) => {
                 </div>
               </div>
 
-              {expandedJourney === journey.id && (
-                <>
-                  {journey.steps && journey.steps.length > 0 ? (
-                    <DndContext
-                      sensors={sensors}
-                      collisionDetection={closestCenter}
-                      onDragEnd={(event) => handleDragEnd(event, journey.id)}
+              {/* {expandedJourney === journey.id && (*/}
+              <>
+                {journey.steps && journey.steps.length > 0 ? (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={(event) => handleDragEnd(event, journey.id)}
+                  >
+                    <SortableContext
+                      items={journey.steps.map((s) => s.id)}
+                      strategy={rectSortingStrategy}
                     >
-                      <SortableContext
-                        items={journey.steps.map((s) => s.id)}
-                        strategy={rectSortingStrategy}
+                      <div
+                        className={`${expandedJourney === journey.id ? 'max-h-screen opacity-1 p-4' : 'max-h-0 opacity-0'} transition-all duration-300 grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center  `}
                       >
-                        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start justify-center p-4">
-                          {journey.steps.map((step, stepIndex) => {
-                            const isCurrentlyEditing =
-                              editingStep.journeyId === journey.id &&
-                              editingStep.stepIndex === stepIndex
-                            return (
-                              <SortableJourneyStepItem
-                                key={step.id}
-                                step={step}
-                                stepIndex={stepIndex}
-                                isLastStep={
-                                  stepIndex === journey.steps.length - 1
-                                }
-                                color={colors[stepIndex % colors.length]}
-                                isEditing={isCurrentlyEditing}
-                                editValue={
-                                  isCurrentlyEditing
-                                    ? editValue
-                                    : step.description
-                                }
-                                onValueChange={(e) =>
-                                  setEditValue(e.target.value)
-                                }
-                                onEdit={() =>
-                                  startEditStep(journey.id, stepIndex)
-                                }
-                                onSave={saveEditStep}
-                                onCancel={cancelEditStep}
-                                onDelete={() =>
-                                  deleteStep(journey.id, stepIndex)
-                                }
-                                textareaRef={
-                                  isCurrentlyEditing ? textareaRef : null
-                                }
-                              />
-                            )
-                          })}
-                          <div className="flex justify-start items-center h-full">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="text-primary"
-                              onClick={() => addNewStep(journey.id)}
-                            >
-                              <Plus size={18} />
-                            </Button>
-                          </div>
+                        {journey.steps.map((step, stepIndex) => {
+                          const isCurrentlyEditing =
+                            editingStep.journeyId === journey.id &&
+                            editingStep.stepIndex === stepIndex
+                          return (
+                            <SortableJourneyStepItem
+                              key={step.id}
+                              step={step}
+                              stepIndex={stepIndex}
+                              isLastStep={
+                                stepIndex === journey.steps.length - 1
+                              }
+                              color={colors[stepIndex % colors.length]}
+                              isEditing={isCurrentlyEditing}
+                              editValue={
+                                isCurrentlyEditing
+                                  ? editValue
+                                  : step.description
+                              }
+                              onValueChange={(e) =>
+                                setEditValue(e.target.value)
+                              }
+                              onEdit={() =>
+                                startEditStep(journey.id, stepIndex)
+                              }
+                              onSave={saveEditStep}
+                              onCancel={cancelEditStep}
+                              onDelete={() => deleteStep(journey.id, stepIndex)}
+                              textareaRef={
+                                isCurrentlyEditing ? textareaRef : null
+                              }
+                            />
+                          )
+                        })}
+                        <div className="flex justify-start items-center h-full">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="text-primary"
+                            onClick={() => addNewStep(journey.id)}
+                          >
+                            <Plus size={18} />
+                          </Button>
                         </div>
-                      </SortableContext>
-                    </DndContext>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center p-4 text-muted-foreground">
-                      <p className="mb-2">This journey has no steps yet.</p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-primary"
-                        onClick={() => addNewStep(journey.id)}
-                      >
-                        <Plus size={16} className="mr-1" /> Add first step
-                      </Button>
-                    </div>
-                  )}
-                </>
-              )}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-4 text-muted-foreground">
+                    <p className="mb-2">This journey has no steps yet.</p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-primary"
+                      onClick={() => addNewStep(journey.id)}
+                    >
+                      <Plus size={16} className="mr-1" /> Add first step
+                    </Button>
+                  </div>
+                )}
+              </>
+              {/* )}*/}
             </div>
           ))
       ) : (

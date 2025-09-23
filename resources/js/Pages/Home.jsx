@@ -12,7 +12,7 @@ import MainLayout from '@/Layouts/MainLayout'
 const ProjectCard = ({ project, toggleActiveProject, deleteProject }) => {
   return (
     <AlertDialog>
-      <Card className="flex flex-col justify-between h-52 w-96 hover:shadow-md">
+      <Card className="flex flex-col rounded justify-between h-52 w-64 hover:shadow-md">
         {/* CABEÇALHO: Título do projeto e menu de ações */}
 
         <CardHeader className="flex-row items-center justify-between">
