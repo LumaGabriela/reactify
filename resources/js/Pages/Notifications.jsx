@@ -1,5 +1,5 @@
 import MainLayout from '@/Layouts/MainLayout'
-import { usePage, router } from '@inertiajs/react'
+import { usePage, router, Head } from '@inertiajs/react'
 import { BellRing, Trash } from 'lucide-react'
 
 const Notifications = () => {
@@ -28,6 +28,7 @@ const Notifications = () => {
 
   return (
     <div className="container mx-auto py-10">
+      <Head title="Notifications" />
       <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="flex items-center justify-between gap-2 text-2xl font-bold">

@@ -133,7 +133,7 @@ const LeftMenu = () => {
     <AnimatePresence>
       <motion.aside
         ref={menuRef}
-        animate={{ opacity: 1, width: isHovered ? '14rem' : '4rem' }}
+        animate={{ opacity: 1, width: isHovered ? '14rem' : '3.5rem' }}
         transition={{ duration: 0.3 }}
         className={
           'fixed bg-background text-foreground border-r border-border flex flex-col min-h-screen z-50'
@@ -247,7 +247,7 @@ const LeftMenu = () => {
             onClick={() => router.get(route('dashboard'))}
             className={cn(
               'flex items-center p-2 rounded transition-colors',
-              isHovered ? 'w-full justify-start' : 'size-10',
+              isHovered ? 'w-full justify-start' : 'size-9',
               route().current('dashboard') &&
                 'bg-accent text-accent-foreground',
             )}
@@ -265,22 +265,35 @@ const LeftMenu = () => {
             defaultValue={isProjectsSectionActive ? 'projects' : undefined}
           >
             <AccordionItem value="projects" className="border-b-0">
-              <AccordionTrigger
-                className={cn(
-                  'flex items-center p-2 rounded transition-colors hover:no-underline hover:bg-accent',
-                  isHovered ? 'w-full justify-start' : 'size-10',
-                  isProjectsSectionActive && 'bg-accent text-accent-foreground',
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <Grid className="size-5" />
-                  {isHovered && (
-                    <span className="font-medium hidden md:inline truncate">
-                      My Projects
-                    </span>
+              {isHovered ? (
+                <AccordionTrigger
+                  className={cn(
+                    'flex items-center p-2 rounded transition-colors hover:no-underline hover:bg-accent',
+                    isProjectsSectionActive &&
+                      'bg-accent text-accent-foreground',
                   )}
-                </div>
-              </AccordionTrigger>
+                >
+                  <div className="flex items-center gap-2">
+                    <Grid className="size-5" />
+                    {isHovered && (
+                      <span className="font-medium hidden md:inline truncate">
+                        My Projects
+                      </span>
+                    )}
+                  </div>
+                </AccordionTrigger>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={
+                    isProjectsSectionActive &&
+                    'bg-accent text-accent-foreground'
+                  }
+                >
+                  <Grid className="!size-5" />
+                </Button>
+              )}
               {isHovered && (
                 <AccordionContent className="pt-1 pl-4">
                   {/* Mapeando cada projeto para um Accordion aninhado */}
@@ -333,18 +346,21 @@ const LeftMenu = () => {
                 className={cn(
                   'flex items-center p-2 rounded transition-colors ',
                   isActive && 'bg-accent text-accent-foreground',
-                  isHovered ? 'w-full justify-start' : 'size-10 ',
+                  isHovered ? 'w-full justify-start' : 'size-9 ',
                 )}
               >
                 <IconComponent className="size-5" />
-                {!isHovered && item.badge && <>{item.badge}</>}
                 {isHovered && (
                   <span className="font-medium hidden md:inline">
                     {item.name}
                   </span>
                 )}
-                {item.badge && isHovered && (
-                  <Badge className="size-5 !m-0">{item.badge}</Badge>
+                {item.badge && (
+                  <Badge
+                    className={`${isHovered ? '' : ' absolute translate-x-1/2 -translate-y-1/2'} size-4 justify-center `}
+                  >
+                    {item.badge}
+                  </Badge>
                 )}
               </Button>
             )
