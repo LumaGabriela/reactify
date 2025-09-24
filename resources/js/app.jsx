@@ -30,7 +30,7 @@ createInertiaApp({
             expand
             className="toaster"
             richColors={true}
-            position="top-center"
+            position="bottom-center"
             duration={5000} // I noticed you had 50000, adjusted to 5s
           />
           <App {...props} />
