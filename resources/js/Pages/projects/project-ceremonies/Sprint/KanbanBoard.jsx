@@ -1,163 +1,205 @@
 // resources/js/Pages/Project/project-ceremonies/Sprint/KanbanBoard.jsx
 import { useState, useEffect, useMemo } from 'react'
 import { router } from '@inertiajs/react'
+import {
+  DndContext,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+} from '@dnd-kit/core'
+import { useDroppable } from '@dnd-kit/core'
+import { useDraggable } from '@dnd-kit/core'
+import { CSS } from '@dnd-kit/utilities'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
+// ============================================================================
+// Subcomponente para o Card da Story (Item Arrastável)
+// ============================================================================
+const KanbanStoryCard = ({ story, columnKey, isOverlay }) => {
+  // ✅ Hook do dnd-kit para tornar este componente arrastável
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: story.id, // ID único para o item arrastável
+      data: {
+        // Dados extras que podemos usar no onDragEnd
+        story,
+        fromColumn: columnKey,
+      },
+    })
+
+  // ✅ Estilo para o movimento suave do card durante o arraste
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    visibility: isDragging && !isOverlay ? 'hidden' : 'visible',
+    // zIndex: isDragging ? 100 : 'auto', // Garante que o card arrastado fique sobre os outros
+    // opacity: isDragging ? 0.5 : 1, // Efeito visual para indicar o arraste
+  }
+  // ✅ Adicionamos classes para o card no overlay ter um visual mais destacado
+  const overlayClasses = isOverlay
+    ? 'shadow-2xl cursor-grabbing'
+    : 'cursor-grab active:cursor-grabbing'
+  return (
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      <Card className={`p-3 ${overlayClasses}`}>
+        <div className="space-y-2">
+          <div className="flex justify-between items-start">
+            <Badge variant="outline" className="text-xs">
+              US{story.id}
+            </Badge>
+          </div>
+          <p className="text-sm font-medium">{story.title}</p>
+        </div>
+      </Card>
+    </div>
+  )
+}
+
+// ============================================================================
+// Subcomponente para a Coluna do Kanban (Área de Soltar)
+// ============================================================================
+const KanbanColumn = ({ id, title, variant, stories }) => {
+  // ✅ Hook do dnd-kit para tornar este componente uma área de soltar
+  const { setNodeRef, isOver } = useDroppable({
+    id: id,
+  })
+
+  return (
+    <Card
+      ref={setNodeRef}
+      className={`min-h-96 transition-colors ${isOver ? 'bg-muted/50' : ''}`} // Feedback visual ao passar por cima
+    >
+      <CardHeader className="pb-4">
+        <CardTitle className="flex justify-between items-center text-base">
+          <span className="capitalize">{title}</span>
+          <Badge variant={variant}>{stories.length}</Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {stories.map((story) => (
+          <KanbanStoryCard key={story.id} story={story} columnKey={id} />
+        ))}
+      </CardContent>
+    </Card>
+  )
+}
+
+// ============================================================================
+// Componente Principal do Kanban Board
+// ============================================================================
 const KanbanBoard = ({ sprint, project, setView, updateProject }) => {
-  // ✅ Estado local para refletir mudanças imediatas na UI
   const [localStories, setLocalStories] = useState([])
+  // ✅ Estado para armazenar a story que está sendo arrastada
+  const [activeStory, setActiveStory] = useState(null)
 
-  // ✅ Sincronizar estado local quando sprint muda
   useEffect(() => {
     if (sprint?.stories) {
       setLocalStories(sprint.stories)
     }
   }, [sprint])
 
-  // ✅ Usar localStories ao invés de sprint.stories
-  const stories = useMemo(() => {
-    if (!localStories.length) {
-      return {
-        todo: [],
-        in_progress: [],
-        testing: [],
-        done: []
+  const storiesByStatus = useMemo(() => {
+    const columns = { todo: [], in_progress: [], testing: [], done: [] }
+    localStories.forEach((story) => {
+      const status = story.pivot?.kanban_status || 'todo'
+      if (columns[status]) {
+        columns[status].push(story)
       }
-    }
-
-    return {
-      todo: localStories.filter(s => !s.pivot?.kanban_status || s.pivot?.kanban_status === 'todo'),
-      in_progress: localStories.filter(s => s.pivot?.kanban_status === 'in_progress'),
-      testing: localStories.filter(s => s.pivot?.kanban_status === 'testing'),
-      done: localStories.filter(s => s.pivot?.kanban_status === 'done')
-    }
+    })
+    return columns
   }, [localStories])
 
   const moveStory = (storyId, newStatus) => {
-    // ✅ Atualizar estado local ANTES da requisição
-    setLocalStories(prevStories => 
-      prevStories.map(story => 
-        story.id === storyId 
+    // A lógica de UI otimista permanece a mesma - isso é ótimo!
+    setLocalStories((prevStories) =>
+      prevStories.map((story) =>
+        story.id === storyId
           ? {
               ...story,
               pivot: {
                 ...story.pivot,
-                kanban_status: newStatus
-              }
+                kanban_status: newStatus,
+              },
             }
-          : story
-      )
+          : story,
+      ),
     )
 
-    router.patch(route('sprint-stories.update', sprint.id), {
-      story_id: storyId,
-      kanban_status: newStatus
-    }, {
-      preserveState: true,
-      preserveScroll: true,
-      onSuccess: (page) => {
-        // ✅ Sincronizar com dados do servidor em caso de sucesso
-        if (page.props.project) {
-          updateProject(page.props.project)
-          const updatedSprint = page.props.project.sprints?.find(s => s.id === sprint.id)
-          if (updatedSprint?.stories) {
-            setLocalStories(updatedSprint.stories)
-          }
-        }
+    router.patch(
+      route('sprint-stories.update', sprint.id),
+      {
+        story_id: storyId,
+        kanban_status: newStatus,
       },
-      onError: (errors) => {
-        console.error('Erro ao mover story:', errors)
-        // ✅ Reverter estado local em caso de erro
-        if (sprint?.stories) {
-          setLocalStories(sprint.stories)
-        }
-      }
-    })
+      {
+        preserveState: true,
+        preserveScroll: true,
+        onSuccess: (page) => {
+          if (page.props.project) {
+            updateProject(page.props.project)
+            const updatedSprint = page.props.project.sprints?.find(
+              (s) => s.id === sprint.id,
+            )
+            if (updatedSprint?.stories) {
+              setLocalStories(updatedSprint.stories)
+            }
+          }
+        },
+        onError: (errors) => {
+          console.error('Erro ao mover story:', errors)
+          if (sprint?.stories) {
+            setLocalStories(sprint.stories)
+          }
+        },
+      },
+    )
   }
+
+  // ✅ Novo handler: chamado quando o arraste COMEÇA
+  const handleDragStart = (event) => {
+    const story = event.active.data.current?.story
+    if (story) {
+      setActiveStory(story)
+    }
+  }
+
+  // ✅ Handler atualizado: chamado quando o arraste TERMINA
+  const handleDragEnd = (event) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id) {
+      const storyId = active.id
+      const fromColumn = active.data.current?.fromColumn
+      const toColumn = over.id
+
+      if (fromColumn && toColumn && fromColumn !== toColumn) {
+        moveStory(storyId, toColumn)
+      }
+    }
+
+    // ✅ Limpa a story ativa, independentemente de onde foi solta
+    setActiveStory(null)
+  }
+
+  // ✅ Configuração dos sensores para dnd-kit (mouse, toque, teclado)
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor),
+  )
 
   const columns = [
     { key: 'todo', title: 'To Do', variant: 'secondary' },
     { key: 'in_progress', title: 'In Progress', variant: 'default' },
     { key: 'testing', title: 'Testing', variant: 'outline' },
-    { key: 'done', title: 'Done', variant: 'secondary' }
+    { key: 'done', title: 'Done', variant: 'secondary' },
   ]
 
-  const getActionButtons = (story, columnKey) => {
-    const buttons = []
-    
-    switch (columnKey) {
-      case 'todo':
-        buttons.push(
-          <Button
-            key="start"
-            size="sm"
-            variant="outline"
-            onClick={() => moveStory(story.id, 'in_progress')}
-          >
-            Start <ArrowRight className="w-3 h-3 ml-1" />
-          </Button>
-        )
-        break
-      case 'in_progress':
-        buttons.push(
-          <Button
-            key="back"
-            size="sm"
-            variant="outline"
-            onClick={() => moveStory(story.id, 'todo')}
-          >
-            <ArrowLeft className="w-3 h-3 mr-1" /> Back
-          </Button>,
-          <Button
-            key="test"
-            size="sm"
-            variant="outline"
-            onClick={() => moveStory(story.id, 'testing')}
-          >
-            Test <ArrowRight className="w-3 h-3 ml-1" />
-          </Button>
-        )
-        break
-      case 'testing':
-        buttons.push(
-          <Button
-            key="back"
-            size="sm"
-            variant="outline"
-            onClick={() => moveStory(story.id, 'in_progress')}
-          >
-            <ArrowLeft className="w-3 h-3 mr-1" /> Back
-          </Button>,
-          <Button
-            key="done"
-            size="sm"
-            variant="outline"
-            onClick={() => moveStory(story.id, 'done')}
-          >
-            Done <ArrowRight className="w-3 h-3 ml-1" />
-          </Button>
-        )
-        break
-      case 'done':
-        buttons.push(
-          <Button
-            key="back"
-            size="sm"
-            variant="outline"
-            onClick={() => moveStory(story.id, 'testing')}
-          >
-            <ArrowLeft className="w-3 h-3 mr-1" /> Back
-          </Button>
-        )
-        break
-    }
-    
-    return buttons
-  }
-
+  // A lógica de renderização para o estado de 'nenhuma sprint' permanece a mesma
   if (!sprint) {
     return (
       <Card>
@@ -175,11 +217,10 @@ const KanbanBoard = ({ sprint, project, setView, updateProject }) => {
     )
   }
 
-  const totalStories = Object.values(stories).reduce((sum, arr) => sum + arr.length, 0)
+  const totalStories = localStories.length
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-4">
@@ -187,24 +228,18 @@ const KanbanBoard = ({ sprint, project, setView, updateProject }) => {
               <ArrowLeft className="w-4 h-4 mr-2" />
             </Button>
             <CardTitle>{sprint.name} - Kanban Board</CardTitle>
-            <Badge variant="outline">
-              {totalStories} stories total
-            </Badge>
+            <Badge variant="outline">{totalStories} stories total</Badge>
           </div>
         </CardHeader>
       </Card>
 
-      {/* Empty State */}
-      {totalStories === 0 && (
+      {totalStories === 0 ? (
         <Card className="border-dashed border-2 border-muted-foreground/25">
           <CardContent className="flex flex-col items-center justify-center py-8 text-center">
             <p className="text-muted-foreground mb-4">
               Esta sprint não possui stories ainda.
             </p>
-            <Button 
-              variant="outline"
-              onClick={() => setView('list')}
-            >
+            <Button variant="outline" onClick={() => setView('list')}>
               Voltar para a lista de sprints
             </Button>
             <p className="text-sm text-muted-foreground mt-2">
@@ -212,45 +247,32 @@ const KanbanBoard = ({ sprint, project, setView, updateProject }) => {
             </p>
           </CardContent>
         </Card>
+      ) : (
+        // ✅ DndContext envolve todo o quadro para habilitar o drag-n-drop
+        <DndContext
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {columns.map((column) => (
+              <KanbanColumn
+                key={column.key}
+                id={column.key}
+                title={column.title}
+                variant={column.variant}
+                stories={storiesByStatus[column.key]}
+              />
+            ))}
+          </div>
+          {/* ✅ O DragOverlay renderiza o card "flutuante" */}
+          <DragOverlay>
+            {activeStory ? (
+              <KanbanStoryCard story={activeStory} isOverlay />
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       )}
-
-      {/* Kanban Board */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {columns.map((column) => (
-          <Card key={column.key} className="min-h-96">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex justify-between items-center text-base">
-                <span className="capitalize">{column.title}</span>
-                <Badge variant={column.variant}>
-                  {stories[column.key].length}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {stories[column.key].map((story) => (
-                <Card key={story.id} className="p-3">
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-start">
-                      <Badge variant="outline" className="text-xs">
-                        US{story.id}
-                      </Badge>
-                    </div>
-                    <p className="text-sm font-medium">{story.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      Status: {story.pivot?.kanban_status || 'todo'}
-                    </p>
-                    
-                    {/* Action Buttons */}
-                    <div className="flex gap-1 flex-wrap">
-                      {getActionButtons(story, column.key)}
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
     </div>
   )
 }
