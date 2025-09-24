@@ -1,125 +1,138 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { router } from '@inertiajs/react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Loader2 } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react'
+import { router } from '@inertiajs/react'
+import { toast } from 'sonner'
+import { Loader2 } from 'lucide-react'
 
 const ProductBacklog = ({ project, setProject }) => {
-  const [localProject, setLocalProject] = useState(project);
-  const [selectedStories, setSelectedStories] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [localProject, setLocalProject] = useState(project)
+  const [selectedStories, setSelectedStories] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   // ✅ Sincronizar estado local quando project muda
   useEffect(() => {
-    setLocalProject(project);
-  }, [project]);
+    setLocalProject(project)
+  }, [project])
 
-  const { productBacklogStories, sprintBacklogStories, deliveredStories } = useMemo(() => {
-    const stories = localProject?.stories || [];
-    const sprints = localProject?.sprints || [];
+  const { productBacklogStories, sprintBacklogStories, deliveredStories } =
+    useMemo(() => {
+      const stories = localProject?.stories || []
+      const sprints = localProject?.sprints || []
 
-    const productBacklog = stories.filter((story) => {
-      const isInActiveSprint = sprints.some(sprint => 
-        (sprint.status === 'planning' || sprint.status === 'active') &&
-        sprint.stories?.some(sprintStory => sprintStory.id === story.id)
-      );
-      
-      return (
-        (story.status === 'prioritized' || story.value !== null) && 
-        !isInActiveSprint
-      );
-    }).sort((a, b) => {
-      if (a.status === 'prioritized' && b.status !== 'prioritized') return -1;
-      if (b.status === 'prioritized' && a.status !== 'prioritized') return 1;
-      return (b.value ?? -1) - (a.value ?? -1);
-    });
+      const productBacklog = stories
+        .filter((story) => {
+          const isInActiveSprint = sprints.some(
+            (sprint) =>
+              (sprint.status === 'planning' || sprint.status === 'active') &&
+              sprint.stories?.some(
+                (sprintStory) => sprintStory.id === story.id,
+              ),
+          )
 
-    const sprintBacklog = [];
-    const delivered = [];
+          return (
+            (story.status === 'prioritized' || story.value !== null) &&
+            !isInActiveSprint
+          )
+        })
+        .sort((a, b) => {
+          if (a.status === 'prioritized' && b.status !== 'prioritized')
+            return -1
+          if (b.status === 'prioritized' && a.status !== 'prioritized') return 1
+          return (b.value ?? -1) - (a.value ?? -1)
+        })
 
-    sprints.forEach(sprint => {
-      if (sprint.status === 'planning' || sprint.status === 'active') {
-        sprint.stories?.forEach(story => {
-          if (story.pivot?.kanban_status === 'done') {
-            delivered.push({...story, sprint_name: sprint.name});
-          } else {
-            sprintBacklog.push({...story, sprint_name: sprint.name});
-          }
-        });
+      const sprintBacklog = []
+      const delivered = []
+
+      sprints.forEach((sprint) => {
+        if (sprint.status === 'planning' || sprint.status === 'active') {
+          sprint.stories?.forEach((story) => {
+            if (story.pivot?.kanban_status === 'done') {
+              delivered.push({ ...story, sprint_name: sprint.name })
+            } else {
+              sprintBacklog.push({ ...story, sprint_name: sprint.name })
+            }
+          })
+        }
+      })
+
+      return {
+        productBacklogStories: productBacklog,
+        sprintBacklogStories: sprintBacklog,
+        deliveredStories: delivered,
       }
-    });
-
-    return {
-      productBacklogStories: productBacklog,
-      sprintBacklogStories: sprintBacklog,
-      deliveredStories: delivered
-    };
-  }, [localProject]);
+    }, [localProject])
 
   const handleStorySelection = (storyId) => {
-    setSelectedStories(prev => 
-      prev.includes(storyId) 
-        ? prev.filter(id => id !== storyId)
-        : [...prev, storyId]
-    );
-  };
+    setSelectedStories((prev) =>
+      prev.includes(storyId)
+        ? prev.filter((id) => id !== storyId)
+        : [...prev, storyId],
+    )
+  }
 
   const moveToSprint = async (sprintId) => {
-    if (selectedStories.length === 0) return;
+    if (selectedStories.length === 0) return
 
-    setIsLoading(true);
-    
-    setLocalProject(prevProject => {
-      const updatedProject = { ...prevProject };
-      const targetSprint = updatedProject.sprints.find(s => s.id === sprintId);
-      
+    setIsLoading(true)
+
+    setLocalProject((prevProject) => {
+      const updatedProject = { ...prevProject }
+      const targetSprint = updatedProject.sprints.find((s) => s.id === sprintId)
+
       if (targetSprint) {
         // Adicionar stories selecionadas ao sprint
-        const storiesToMove = updatedProject.stories.filter(s => selectedStories.includes(s.id));
-        targetSprint.stories = [...(targetSprint.stories || []), ...storiesToMove];
+        const storiesToMove = updatedProject.stories.filter((s) =>
+          selectedStories.includes(s.id),
+        )
+        targetSprint.stories = [
+          ...(targetSprint.stories || []),
+          ...storiesToMove,
+        ]
       }
-      
-      return updatedProject;
-    });
-    
-    router.post(route('sprint-stories.store', sprintId), {
-      story_ids: selectedStories
-    }, {
-      onSuccess: (page) => {
-        setSelectedStories([]);
-        setIsLoading(false);
-        toast.success('Stories moved to sprint successfully!');
-        
-        if (page.props.project) {
-          setProject(page.props.project);
-          setLocalProject(page.props.project);
-        }
+
+      return updatedProject
+    })
+
+    router.post(
+      route('sprint-stories.store', sprintId),
+      {
+        story_ids: selectedStories,
       },
-      onError: (errors) => {
-        setIsLoading(false);
-        setError('Failed to move stories to sprint');
-        toast.error('Failed to move stories to sprint');
-        console.error('Error:', errors);
-        
-        setLocalProject(project);
-      }
-    });
-  };
+      {
+        onSuccess: (page) => {
+          setSelectedStories([])
+          setIsLoading(false)
+          toast.success('Stories moved to sprint successfully!')
+
+          if (page.props.project) {
+            setProject(page.props.project)
+            setLocalProject(page.props.project)
+          }
+        },
+        onError: (errors) => {
+          setIsLoading(false)
+          setError('Failed to move stories to sprint')
+          toast.error('Failed to move stories to sprint')
+          console.error('Error:', errors)
+
+          setLocalProject(project)
+        },
+      },
+    )
+  }
 
   const board = {
     productBacklog: productBacklogStories,
     sprintBacklog: sprintBacklogStories,
     delivered: deliveredStories,
-  };
+  }
 
   const columnTitles = {
     productBacklog: 'Product Backlog',
     sprintBacklog: 'Sprint Backlog',
     delivered: 'Delivered',
-  };
+  }
 
   if (error) {
     return (
@@ -130,7 +143,7 @@ const ProductBacklog = ({ project, setProject }) => {
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
   return (
@@ -138,9 +151,7 @@ const ProductBacklog = ({ project, setProject }) => {
       {Object.keys(board).map((columnId) => (
         <Card key={columnId} className="w-1/3 flex flex-col">
           <CardHeader>
-            <CardTitle className="text-lg">
-              {columnTitles[columnId]}
-            </CardTitle>
+            <CardTitle className="text-lg">{columnTitles[columnId]}</CardTitle>
 
             {/* Action buttons for Product Backlog */}
             {columnId === 'productBacklog' && selectedStories.length > 0 && (
@@ -148,25 +159,27 @@ const ProductBacklog = ({ project, setProject }) => {
                 <p className="text-sm text-muted-foreground">
                   {selectedStories.length} stories selected
                 </p>
-                {localProject.sprints?.filter(s => s.status === 'planning').map(sprint => (
-                  <Button
-                    key={sprint.id}
-                    onClick={() => moveToSprint(sprint.id)}
-                    variant="default"
-                    size="sm"
-                    disabled={isLoading}
-                    className="w-full"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Moving...
-                      </>
-                    ) : (
-                      `Move to ${sprint.name}`
-                    )}
-                  </Button>
-                ))}
+                {localProject.sprints
+                  ?.filter((s) => s.status === 'planning')
+                  .map((sprint) => (
+                    <Button
+                      key={sprint.id}
+                      onClick={() => moveToSprint(sprint.id)}
+                      variant="default"
+                      size="sm"
+                      disabled={isLoading}
+                      className="w-full"
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Moving...
+                        </>
+                      ) : (
+                        `Move to ${sprint.name}`
+                      )}
+                    </Button>
+                  ))}
               </div>
             )}
           </CardHeader>
@@ -183,12 +196,17 @@ const ProductBacklog = ({ project, setProject }) => {
                       ${columnId === 'productBacklog' && selectedStories.includes(card.id) ? 'ring-2 ring-primary' : ''}
                       hover:shadow-md
                     `}
-                    onClick={() => columnId === 'productBacklog' && handleStorySelection(card.id)}
+                    onClick={() =>
+                      columnId === 'productBacklog' &&
+                      handleStorySelection(card.id)
+                    }
                   >
                     <CardContent className="p-3">
                       <p className="font-semibold text-sm">{`US${card.id}`}</p>
-                      <p className="text-sm text-muted-foreground mt-1">{card.title}</p>
-                      
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {card.title}
+                      </p>
+
                       <div className="flex flex-wrap gap-2 mt-2">
                         {card.sprint_name && (
                           <Badge variant="secondary" className="text-xs">
@@ -201,7 +219,7 @@ const ProductBacklog = ({ project, setProject }) => {
                           </Badge>
                         )}
                       </div>
-                      
+
                       {card.value && (
                         <p className="text-xs text-muted-foreground mt-2">
                           Value: {card.value}
@@ -220,7 +238,7 @@ const ProductBacklog = ({ project, setProject }) => {
         </Card>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default ProductBacklog;
+export default ProductBacklog

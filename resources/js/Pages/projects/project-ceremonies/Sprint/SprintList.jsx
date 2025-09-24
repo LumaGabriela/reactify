@@ -67,7 +67,7 @@ const SprintList = ({
       count: sprintsByStatus.planning.length,
     },
     active: {
-      title: 'Sprints Ativas',
+      title: 'Sprint Ativas',
       icon: <Play className="w-5 h-5 text-green-600" />,
       color: 'text-green-600',
       count: sprintsByStatus.active.length,
