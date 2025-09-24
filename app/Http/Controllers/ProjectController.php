@@ -69,7 +69,8 @@ class ProjectController extends Controller
         'invest_cards',
         'usage_scenarios',
         'system_interfaces',
-        'storyboards'
+        'storyboards',
+        'interviews'
       ]),
       'message' => 'Projects updated successfully.',
       'status' => 'success',

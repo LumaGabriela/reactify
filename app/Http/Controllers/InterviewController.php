@@ -38,11 +38,11 @@ class InterviewController extends Controller
                 'resource_type'    => 'auto', // Cloudinary deteta o tipo automaticamente
             ]);
 
-            $project->interviews()->create([
+            $interview = $project->interviews()->create([
                 'file_name' => $originalName,
                 'file_path' => $uploadedFile['secure_url'],
                 'public_id' => $uploadedFile['public_id'],
-                'status'    => 'processing',
+                'extraction_status' => 'processing',
             ]);
 
             // Despacha o Job para processar a transcrição em segundo plano

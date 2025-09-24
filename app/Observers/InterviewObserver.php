@@ -12,6 +12,16 @@ class InterviewObserver
         $this->updateProject($interview);
     }
 
+    public function updated(Interview $interview): void
+    {
+        $this->updateProject($interview);
+    }
+    
+    public function restored(Interview $interview): void
+    {
+        $this->updateProject($interview);
+    }
+
     public function deleted(Interview $interview): void
     {
         $this->updateProject($interview);

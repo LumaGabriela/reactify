@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('file_name'); // O nome original do ficheiro para exibição
             $table->string('file_path'); // A URL segura completa do Cloudinary
             $table->string('public_id')->nullable(); // O ID único do recurso no Cloudinary, usado para apagar
-            $table->string('status')->default('pending');
+            $table->string('extraction_status')->default('pending');
+            $table->longText('transcript')->nullable();
             $table->timestamps();
         });
     }

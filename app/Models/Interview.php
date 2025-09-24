@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Interview extends Model
 {
@@ -16,7 +15,8 @@ class Interview extends Model
         'file_name',
         'file_path',
         'public_id',
-        'status',
+        'extraction_status',
+        'transcript',
     ];
 
     /**
@@ -30,11 +30,6 @@ class Interview extends Model
     public function project()
     {
         return $this->belongsTo(Project::class);
-    }
-
-    public function content(): HasOne
-    {
-        return $this->hasOne(InterviewContent::class);
     }
 
     /**

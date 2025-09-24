@@ -28,8 +28,6 @@ class TranscribeInterviewJob implements ShouldQueue
 
     public function handle(): void
     {
-        // Garante que o conteúdo seja criado se não existir
-        $content = $this->interview->content()->firstOrCreate([], ['status' => 'processing']);
 
         $pythonServiceUrl = config('services.python_transcriber.url');
 
@@ -41,25 +39,21 @@ class TranscribeInterviewJob implements ShouldQueue
 
             if ($response->successful()) {
                 $transcript = $response->json('transcript');
-                $content->update([
+                $this->interview->update([
                     'transcript' => $transcript,
-                    'status' => 'completed'
+                    'extraction_status' => 'completed'
                 ]);
-                $this->interview->update(['status' => 'completed']);
             } else {
                 throw new \Exception('Serviço de transcrição retornou um erro: ' . $response->body());
             }
 
         } catch (\Exception $e) {
             Log::error('Falha no job de transcrição: ' . $e->getMessage());
-            $content->update(['status' => 'failed']);
-            $this->interview->update(['status' => 'failed']);
+            $this->interview->update(['extraction_status' => 'failed']);
             $this->fail($e); // Marca o job como falho
+            return;
         }
         
-        // Notifica o frontend
-        broadcast(new ProjectUpdated($this->interview->project));
-        Log::info("Job concluído para a entrevista ID: {$this->interview->id}. Disparando evento ProjectUpdated.");
-        broadcast(new ProjectUpdated($this->interview->project));
+        Log::info("Job concluído para a entrevista ID: {$this->interview->id}.");
     }
 }

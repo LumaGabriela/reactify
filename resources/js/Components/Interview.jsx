@@ -64,22 +64,22 @@ const InterviewListItem = ({ interview }) => {
       </a>
 
       <div className="flex items-center gap-4">
-        {interview.status === 'processing' && (
+        {interview.extraction_status === 'processing' && (
           <div className="flex items-center gap-2 text-xs text-blue-500">
             <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Processando...</span>
+            <span>Extraindo...</span>
           </div>
         )}
-        {interview.status === 'completed' && (
+        {interview.extraction_status === 'completed' && (
           <div className="flex items-center gap-2 text-xs text-green-500">
             <Check className="h-4 w-4" />
-            <span>Concluído</span>
+            <span>Extração concluída</span>
           </div>
         )}
-        {interview.status === 'failed' && (
+        {interview.extraction_status === 'failed' && (
           <div className="flex items-center gap-2 text-xs text-destructive">
             <AlertTriangle className="h-4 w-4" />
-            <span>Falhou</span>
+            <span>Extração falhou</span>
           </div>
         )}
         </div>
