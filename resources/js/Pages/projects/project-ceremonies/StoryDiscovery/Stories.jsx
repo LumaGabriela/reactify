@@ -207,7 +207,7 @@ const StoryItem = ({
                 <div className="flex flex-col gap-1">
                   {Object.values(storyVariants).map((variant, i) => (
                     <Button
-                      key={`temp-${Date}`}
+                      key={`temp-${i}`}
                       variant="ghost"
                       className="h-auto p-2 justify-start "
                       onClick={() => onChangeStoryType(story.id, variant.title)}
@@ -514,15 +514,17 @@ const Stories = ({ project, setProject }) => {
 
   return (
     <div className="stories rounded grid grid-cols-2 gap-2 w-full p-4 cursor-pointer items-start">
-      <GeneratedStoriesModal
-        isModalMinimized={!showAiModal}
-        changeModalState={() => setShowAiModal(!showAiModal)}
-        cancelGeneratedItems={cancelGeneratedStories}
-        generatedItems={aiGeneratedStories}
-        toggleItemSelection={toggleStorySelection}
-        confirmGeneratedItems={confirmGeneratedStories}
-        toggleAllItems={toggleAllStories}
-      />
+      {showAiModal && (
+        <GeneratedStoriesModal
+          isModalMinimized={isModalMinimized}
+          changeModalState={() => setIsModalMinimized(!isModalMinimized)}
+          cancelGeneratedItems={cancelGeneratedStories}
+          generatedItems={aiGeneratedStories}
+          toggleItemSelection={toggleStorySelection}
+          confirmGeneratedItems={confirmGeneratedStories}
+          toggleAllItems={toggleAllStories}
+        />
+      )}
       {/* {showAiModal && (
         <div
           className={`
