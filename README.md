@@ -21,6 +21,11 @@
    cd py_service
    pip install -r requirements.txt
    ```
+
+- Desativar o ambiente virtual (linux):
+   ```bash
+   deactivate
+   ```
    
 - Rodar(raiz)
    ```bash
