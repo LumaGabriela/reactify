@@ -5,8 +5,11 @@ use App\Http\Controllers\StoryGeneratorControllerGemini;
 use App\Http\Controllers\JourneyGeneratorController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\StoryController;
+use App\Http\Controllers\PersonaGeneratorControllerGemini;
 
 //Route::post('/stories/generate', [StoryGeneratorController::class, 'generateStories'])->name('story.generate');
 Route::post('/stories/generate', [StoryGeneratorControllerGemini::class, 'generateStories'])->name('story.generate');
 
 Route::post('/journeys/generate', [JourneyGeneratorController::class, 'generateJourneys'])->name('journey.generate');
+
+Route::post('/personas/generate', [PersonaGeneratorControllerGemini::class, 'generatePersonas'])->name('persona.generate');
