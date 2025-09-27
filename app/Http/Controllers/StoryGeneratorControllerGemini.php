@@ -56,7 +56,7 @@ class StoryGeneratorControllerGemini extends Controller
 
       $prompt = $this->createPrompt($personas, $journeys, $productConstraints, $constraintGoals);
 
-      $modelName = 'gemini-2.5-flash-lite-preview-06-17';
+      $modelName = config('gemini.model');
 
       $fullPrompt = 'Você é um especialista em engenharia de software e análise de requisitos. ' . $prompt;
 

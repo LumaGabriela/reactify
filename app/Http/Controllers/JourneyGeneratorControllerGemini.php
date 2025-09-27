@@ -158,7 +158,7 @@ class JourneyGeneratorControllerGemini extends Controller
             
             $fullPrompt = 'Você é um especialista em UX e jornadas do usuário. ' . $prompt;
 
-            $modelName = 'gemini-2.5-flash-lite-preview-06-17'; 
+            $modelName = config('gemini.model');
 
             $result = Gemini::generativeModel(model: $modelName)->generateContent($fullPrompt);
 
