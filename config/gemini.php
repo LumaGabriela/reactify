@@ -15,7 +15,8 @@ return [
     */
 
     'api_key' => env('GEMINI_API_KEY'),
-    // 'base_url' => env('GEMINI_BASE_URL'),
+    'model' => env('GEMINI_API_MODEL', 'gemini-2.5-flash-lite'),
+   
 
 
     /*

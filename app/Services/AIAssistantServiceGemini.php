@@ -11,12 +11,11 @@ use Gemini\Laravel\Facades\Gemini;
 class AIAssistantServiceGemini
 {
   protected $apiKey;
-  protected $baseUrl;
 
   public function __construct()
   {
     $this->apiKey = config('gemini.api_key');
-    // $this->baseUrl = config('gemini.base_url');
+    $this->modelName = config('gemini.model');
   }
 
   /**
@@ -33,7 +32,7 @@ class AIAssistantServiceGemini
   {
     $prompt = $this->buildPrompt($project, $user, $pageContext, $chatHistory, $userMessage, $contextData);
 
-    $stream = Gemini::generativeModel(model: 'gemini-2.5-flash-lite-preview-06-17')
+    $stream = Gemini::generativeModel(model: $this->modelName)
       ->streamGenerateContent(...$prompt);
     ds($prompt);
     foreach ($stream as $response) {
