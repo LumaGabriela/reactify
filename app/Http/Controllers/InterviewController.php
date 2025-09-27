@@ -42,6 +42,7 @@ class InterviewController extends Controller
                 'file_name' => $originalName,
                 'file_path' => $uploadedFile['secure_url'],
                 'public_id' => $uploadedFile['public_id'],
+                'resource_type'   => $uploadedFile['resource_type'],
                 'extraction_status' => 'processing',
             ]);
 
@@ -64,30 +65,31 @@ class InterviewController extends Controller
         try {
             $publicID = $interview->public_id;
 
-            $errorMessage = 'Erro ao excluir entrevista';
-
             if ($publicID) {
-                $resourceType = $this->getResourceType($interview->file_name);
+                $resourceType = $interview->resource_type; 
                 
-                $response = cloudinary()->adminApi()->deleteAssets([$publicID], [
+                if (!$resourceType) {
+                    $resourceType = $this->getResourceType($interview->file_name);
+                }
+
+                cloudinary()->adminApi()->deleteAssets([$publicID], [
                     'resource_type' => $resourceType
                 ]);
-
-                if (isset($response['deleted']) && in_array('not_found', $response['deleted'])) {
-                    $errorMessage = 'Entrevista não encontrada no Cloudinary para exclusão.';
-                    throw new \Exception('Asset com public_id "' . $publicID . '" não foi encontrado no Cloudinary para exclusão.');
-                }
             }
 
             $interview->delete();
 
             return back()->with(['status' => 'success', 'message' => 'Entrevista apagada com sucesso']);
-        } catch (\Exception $e) {
-            Log::error("Falha ao apagar a entrevista: ID " . $interview->id . " - " . $e->getMessage());
-            return back()->with(['status' => 'error', 'message' => $errorMessage]);
+        } catch (NotFound $e) {
+            Log::warning("Tentativa de excluir asset não encontrado no Cloudinary (public_id: {$interview->public_id}). Deletando do banco de dados mesmo assim.");
+            $interview->delete(); // Deleta do nosso banco mesmo se não estiver no Cloudinary
+            return back()->with(['status' => 'success', 'message' => 'Entrevista removida do sistema.']);
+        }
+        catch (\Exception $e) {
+            Log::error("Falha ao apagar a entrevista: ID {$interview->id} - " . $e->getMessage());
+            return back()->with(['status' => 'error', 'message' => 'Erro ao excluir entrevista.']);
         }
     }
-
     /**
      * Função auxiliar para determinar o resource_type do Cloudinary a partir do nome do ficheiro.
      */

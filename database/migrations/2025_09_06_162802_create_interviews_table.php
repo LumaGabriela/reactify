@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('public_id')->nullable(); // O ID único do recurso no Cloudinary, usado para apagar
             $table->string('extraction_status')->default('pending');
             $table->longText('transcript')->nullable();
+            $table->string('resource_type')->nullable();
             $table->timestamps();
         });
     }
